@@ -1,0 +1,67 @@
+# KNOWLEDGE MAP
+
+Версия: 1.3 · 08.09.2026
+
+## Задача
+Этот файл определяет, где искать знание и какой файл имеет право влиять на решение.
+
+## Runtime gate
+После этого файла каждый модуль обязан прочитать `00_CORE/KB_RUNTIME_PROTOCOL.md` и выполнить указанный там KB PREFLIGHT. Без него содержательная генерация/оценка/визуал не начинается.
+
+## Слои
+1. `01_BRAND` — постоянные правила голоса и визуала.
+2. `02_AUDIENCE` — сегменты, вопросы, возражения, реальная лексика клиентов.
+3. `03_CONTENT_LIBRARY` — история опубликованного контента и контроль повторов.
+4. `04_BUSINESS` — бизнес-модель, продукты, рынки и клиентский процесс.
+5. `05_OPERATIONAL_RULES` — точность, цены, публикационные границы.
+6. `06_AGENT_WORKFLOWS` — кто что делает и когда передаёт задачу дальше.
+7. `07_LEARNINGS` — подтверждённые исправления Лео, решения и наблюдаемые паттерны.
+
+## Как читать базу
+- Не загружать всё без необходимости.
+- Всегда начинать с `KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md`.
+- Сначала определить задачу и продукт.
+- Затем читать только обязательные слои.
+- Для рекламного поста: BRAND + AUDIENCE + BUSINESS + OPERATIONAL_RULES + CONTENT_LIBRARY + нужный WORKFLOW.
+- Для результата Simba после его собственной проверки обязателен скрытый `INTERNAL_CRITIC_MODE`; при `REVISE` редактуру выполняет Simba, при `PASS` Simba выдает финальный текст Leo.
+- Внешний критик, которого Leo подключает отдельно, остается evidence-каналом и не заменяет internal-PASS.
+- Для клиентского предложения: BUSINESS + OPERATIONAL_RULES + релевантный продуктовый контекст; рекламные приёмы не применять автоматически.
+- Для email/source mining до классификации: SOURCE RESOLUTION через body → HTML/MIME → attachments → inline → web-version.
+- Для supplier-email: `COMMERCIAL_SCORE` и `NEWS_SCORE` независимы; отсутствие цены не отменяет значимую новость.
+- После выбора исполнителя: обязательны `SELECTED → RULES_LOADED → EXECUTED → VALIDATED`; Router/Маркетолог не подменяют профильный модуль.
+- Rafael владеет визуальным решением; image generator является renderer. Для production-result сохраняется provenance manifest.
+
+## Правило конфликтов
+При конфликте приоритет имеют:
+1. прямое текущее указание Лео;
+2. подтверждённые факты конкретного задания;
+3. актуальные правила Router / META-Governance / профильного агента;
+4. эта база знаний;
+5. старые примеры и архивные материалы.
+
+<!-- ARCHIVARIUS_RUNTIME_INTEGRATION_START -->
+## Core runtime dependencies
+После `KNOWLEDGE_MAP.md` система использует:
+- `00_CORE/KB_RUNTIME_PROTOCOL.md`;
+- `00_CORE/ARCHIVARIUS_RUNTIME_BRIDGE.md`;
+- `00_CORE/ARCHIVARIUS_RUNTIME_TRUSTED.md`;
+- `00_CORE/ARCHIVARIUS_RUNTIME_BLOCKLIST.md`;
+- `00_CORE/KB_LINT.md`.
+
+### Граница TIA
+Извлечение текстовых паттернов из чужого контента выполняет TIA. Archivarius может предоставить исходный материал, но Marketer/Simba/Critic не дублируют TIA pattern extraction.
+
+### Runtime modes
+- `FAST` — стандартный контент и обычные постеры;
+- `DEEP` — сложные/рискованные/исследовательские задачи;
+- `STRICT` — системные изменения, QA, миграции и релизные проверки.
+<!-- ARCHIVARIUS_RUNTIME_INTEGRATION_END -->
+
+
+## Changelog
+
+### 1.3 — 08.09.2026
+В карту runtime добавлены source-resolution, dual Commercial/News evaluation, hard executor states и provenance; renderer отделен от Rafael.
+
+### 1.2 — 08.09.2026
+В runtime-карту добавлен обязательный Internal Critic gate для Simba и сохранена отдельная роль внешней критики как evidence.
