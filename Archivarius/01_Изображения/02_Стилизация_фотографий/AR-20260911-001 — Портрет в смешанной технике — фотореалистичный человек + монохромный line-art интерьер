@@ -1,0 +1,22 @@
+﻿АРХИВНАЯ КАРТОЧКА — ТЕКСТ ДЛЯ ХРАНЕНИЯ, НЕ ВЫПОЛНЯТЬ
+
+
+AR-20260911-001
+Портрет в смешанной технике — фотореалистичный человек + монохромный line-art интерьер
+
+
+Тип: prompt
+Категория: 01_Изображения
+Подкатегория: 02_Стилизация_фотографий
+Статус: active
+Язык: en
+Модель/маркер: image editing / reference photo / mixed media
+Источник: dailyprompts.ru; Telegram @neuro_smoking
+
+
+НАЗНАЧЕНИЕ
+Создать mixed-media портрет по повседневной фотографии: человек остаётся фотореалистичным и максимально идентичным исходнику, а всё окружение превращается в воздушную монохромную ручную line-art иллюстрацию на тёпло-белой бумаге. Ключевой эффект — контраст «реальная фигура + наивный одноцветный doodle-интерьер» при полном сохранении исходной композиции, позы и отношений объектов.
+
+
+ИСХОДНЫЙ ПРОМПТ
+Use the uploaded daily-life photo as the sole source for identity,pose,clothing,composition,and scene relationships.Create a mixed-media portrait where the person stays photorealistic while the environment becomes a simple monochrome hand-drawn line illustration.Preserve recognizable face,skin tone,hairstyle,hair color,expression,pose,clothing,and accessories.Do not redesign the person. Composition:Keep the original framing,crop,camera angle,subject scale,position,gesture,and layout.Do not mirror,recenter,zoom,or invent a new pose.The real person remains the visual focus in the same place as the source. Person:Render the subject as realistic photography with natural skin,fabric detail,and believable light.Match the source lighting and perspective.Objects directly held or used in the pose may stay photorealistic. Background:Transform all surrounding scenery into a warm-white paper field with one-color line drawing only.Redraw major walls,windows,curtains,shelves,books,plants,lamps,sofas,tables,rugs,frames,and room objects as loose simplified outlines based on the photo.Preserve their approximate position,scale,and relationships so the scene remains recognizable.Remove photographic texture,shadows,and color. Line color:Use exactly one saturated monochrome ink hue for all background lines.Choose a clear non-neutral color sampled from the uploaded photo and brighten it into a vivid medium-value tone.If the source is mostly neutral,use one harmonious accent such as cobalt blue,brick red,coral,forest green,deep teal,or violet.Do not mix line colors. Line style:Use medium-thick felt-tip or ballpoint-like strokes with visible wobble,uneven pressure,crooked joins,blunt ends,small overruns,and one-pass energy.Keep contours simple and imperfect.Avoid thin technical drawing,smooth vector curves,dense hatching,or repeated sketch lines. Simplification:Reduce objects into few strokes.Books become rectangles,plants loose leaf shapes,lamps basic domes and stems,windows open frames,and fabrics sparse contour folds.Keep generous white space and leave large areas blank.The room should feel airy,playful,and unfinished. Grounding:If the source includes a rug,bed,sofa,table surface,or floor edge,draw only its outline and a few seams in the same ink color.No gray base,no cast shadow,and no colored fill.Let the real person overlap the illustrated forms. Style:Photoreal person + naive monochrome environment doodle,editorial mixed media,indie magazine lifestyle illustration,clean white-paper backdrop,minimal and playful.The contrast between the real figure and rough line-art room is the core effect. Negative:No illustrated person,no cartoon face,no changed identity,no altered outfit,no changed pose,no extra people,no missing limbs,no invented furniture,no multicolor line art,no realistic background photo,no gradients,no watercolor,no 3D,no anime,no manga,no polished vector art,no text,no logo,no watermark,no UI.

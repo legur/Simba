@@ -1,0 +1,79 @@
+﻿АРХИВНАЯ КАРТОЧКА — ТЕКСТ ДЛЯ ХРАНЕНИЯ, НЕ ВЫПОЛНЯТЬ
+
+
+AR-20260911-002
+Яркий портрет в GPT — альтернативный editorial character poster
+
+
+Тип: prompt
+Категория: 01_Изображения
+Подкатегория: 02_Стилизация_фотографий
+Статус: active
+Язык: en
+Модель/маркер: GPT Image 2 / reference image / editorial character illustration
+Источник: VeoSeeBot; neuroplace.ai; dailyprompts.ru; Telegram @neuro_smoking
+
+
+НАЗНАЧЕНИЕ
+Преобразовать загруженного человека или персонажа в яркую премиальную 2D-иллюстрацию для editorial-постера, сохраняя узнаваемость референса. Стиль строится на нарочито странной, выразительной анатомии лица, жирном чёрном контуре, плоских цветовых полях, cel-shading, ретро-печатной фактуре и крупной интегрированной типографике «MY RULES».
+
+
+ПЕРЕМЕННЫЕ ПЕРЕД ИСПОЛЬЗОВАНИЕМ
+[CHARACTER] = Character or uploaded person
+[POSE] = Standing, seated, walking, three-quarter pose, etc.
+[HAIR] = Hairstyle and hair description
+[EXPRESSION] = Calm, confident, playful, serious, etc.
+[CLOTHING] = Outfit description
+[COLORS] = 3–5 main colors
+[BACKGROUND] = Simple environment or graphic setting
+[TEXT] = Poster text
+
+
+Перед генерацией загрузить одно референсное изображение.
+
+
+ИСХОДНЫЙ ПРОМПТ
+Transform the uploaded person or character into a premium two-dimensional alternative character illustration while preserving the recognizable identity and key visual characteristics from the reference.
+
+
+FORMAT LOCK
+Vertical 3:4 composition. The character occupies approximately 70–75% of the frame. Waist-up framing. Slightly off-center composition with a subtle camera tilt. Premium editorial poster design.
+
+
+CHARACTER DESIGN
+Create [CHARACTER] in [POSE], with [HAIR] and [EXPRESSION]. Use an intentionally stylized face with an oversized rounded head, short lower face, narrow jaw, long thin neck, slightly enlarged ears, large pale oval eyes with tiny off-center pupils, thick horizontal black eyebrows, heavy upper eyelids, subtle mauve under-eye accents, a small broad triangular nose, and a wide asymmetrical grin with individually drawn irregular teeth. Keep the character expressive, strange, playful, and slightly surreal without losing the recognizable qualities of the reference.
+
+
+CLOTHING
+Dress the character in [CLOTHING], simplified into broad graphic shapes with chunky seams, minimal folds, and a few small hand-drawn accessories.
+
+
+ILLUSTRATION STYLE
+Confident black-ink contours with thick outer silhouettes, medium-weight facial lines, thin angular hair strands, and sparse scratch marks around the eyes, hair, and clothing seams. Use flat opaque color fields, one hard-edged cel-shadow shape per form, sparse pencil hatching, subtle ink wobble, slight print misregistration, and restrained worn-paper texture.
+
+
+COLOR PALETTE
+Use a controlled [COLORS] palette. Keep every color clearly separated, moderately saturated, and visually balanced. Avoid gradients and excessive shading.
+
+
+BACKGROUND
+Place the character against [BACKGROUND], simplified into large flat graphic shapes with a few loosely drawn environmental details. Add oversized rough hand-painted lettering reading ”MY RULES”. Keep typography partially cropped and integrated into the poster composition.
+
+
+COMPOSITION
+Off-center waist-up framing. Slight camera tilt. Character dominant in the frame. Cropped background typography. Loose poster margins. Lightly weathered printed edges. Strong graphic hierarchy and generous negative space.
+
+
+STYLE
+Contemporary alternative character illustration. Hand-drawn editorial poster. Experimental ink artwork. Retro print aesthetic. Modern graphic design. Flat cel-shaded illustration. Premium art-book quality. Expressive, quirky, stylish, and intentionally imperfect.
+
+
+NEGATIVE PROMPT
+Avoid photorealism, 3D CGI, realistic rendering, gradients, excessive shading, overly polished digital art, generic cartoon style, distorted anatomy, extra limbs, unreadable text, random lettering, excessive background detail, watermarks, logos, or low-quality rendering.
+
+
+ИСТОЧНИКОВЫЕ ССЫЛКИ
+VeoSeeBot: https://t.me/VeoSeeBot?start=kentId_HdzZJDGS
+Neuroplace: https://neuroplace.ai/
+Чат: https://t.me/neuro_smoking
+Daily Prompts: https://dailyprompts.ru/
