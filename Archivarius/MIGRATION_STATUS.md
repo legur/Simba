@@ -1,0 +1,46 @@
+# Archivarius migration status
+
+Дата: 2026-10-03
+Целевая ветка: `archivarius`
+Источник миграции: Google Drive folder `1dTpgA5gfW-Opwk02YjM3znuyqTZYWYxO`
+
+## Статус
+
+Миграция **не завершена полностью**.
+
+Перенесено:
+- master index;
+- 10 категориальных индексов;
+- REVIEW index;
+- служебные отчёты;
+- `CORE_SPEC.md`;
+- `TAGS.md`;
+- inventory index;
+- первый TIA-файл.
+
+Фактических файлов Archivarius в GitHub на момент этой записи: 19.
+
+## Что остаётся
+
+Основная карточечная библиотека Google Drive содержит примерно 1750+ объектов по inventory snapshot, включая большой сторонний автоимпорт prompts.chat.
+
+Bulk-transfer между подключёнными Google Drive и GitHub блокируется защитой коннекторов для крупных пакетов и для части instruction-like файлов. Отдельные старые text/plain файлы также имеют несовместимую UTF-8 кодировку.
+
+Поэтому наличие индексного файла в этой ветке **не означает**, что все перечисленные в нём карточки уже физически находятся в GitHub.
+
+## Канонический статус на время миграции
+
+- Simba runtime: `legur/Simba@main`.
+- Archivarius branch: `legur/Simba@archivarius`.
+- Для карточек, отсутствующих в ветке `archivarius`, Google Drive пока остаётся источником исходного содержимого.
+- Не удалять исходный Drive Archivarius до полного count/hash reconciliation.
+
+## Критерий завершения
+
+Миграция считается завершённой только после:
+1. физического переноса всех требуемых карточек;
+2. сравнения количества файлов по категориям;
+3. проверки AR-ID / duplicate status;
+4. проверки active/draft/needs_fix/archive/duplicate;
+5. контрольного RELEASE-STRICT;
+6. явного переключения Archivarius source-of-truth на GitHub.
