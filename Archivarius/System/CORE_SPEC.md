@@ -1,0 +1,67 @@
+# Archivarius Core Spec v2.0
+
+## Назначение
+Archivarius — файловая система для хранения, поиска, нормализации и релизной сборки карточек промтов.
+
+## Принципы
+1. Источник истины — md-карточка
+2. Индекс — производный слой
+3. PROD — только релизный слепок
+4. Memory не используется для хранения карточек
+5. Семпл опционален
+6. Тип карточки влияет на правила валидации
+
+## Поддерживаемые типы карточек
+- prompt
+- prompt_pack
+- guide
+- methodology
+
+## Поддерживаемые статусы
+- draft
+- active
+- needs_fix
+- archived
+- duplicate
+
+## Правила включения в PROD
+В PROD включаются только карточки со статусом `active`.
+
+## Обязательные артефакты релиза
+- core/CORE_SPEC.md
+- index/INDEX.jsonl
+- index/INDEX.md
+- cards/*.md
+- changelog/CHANGELOG.md
+- QA_REPORT.md
+
+## Правила именования
+- Карточка: AR-YYYYMMDD-XXX.md
+- Семпл: 03_SAMPLES/AR-YYYYMMDD-XXX/S01.webp
+- QA-отчет: QA_REPORT_YYYYMMDD.md
+- PROD: PROD_Archivarius_YYYYMMDD.zip
+
+## Режимы проверки
+
+### ADD-LINT
+Проверяет:
+- наличие front matter
+- наличие id
+- наличие title
+- наличие type
+- наличие status
+- наличие содержимого карточки
+
+### RELEASE-STRICT
+Проверяет:
+- структуру архива
+- индекс
+- changelog
+- уникальность id
+- валидность active-карточек
+- broken references
+- корректность путей к sample
+
+## Источник истины
+Главным объектом системы является md-карточка в `cards/`.
+Индекс и релиз строятся только на ее основе.
