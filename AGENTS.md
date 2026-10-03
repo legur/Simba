@@ -1,152 +1,56 @@
-# AGENTS.md — Simba runtime adapter
+# AGENTS.md — Archivarius branch runtime
 
 ## Назначение
 
-Этот репозиторий — каноническая система создания контента Simba by Bon Tours.
-Источник истины: `legur/Simba@main`.
+Эта ветка `archivarius` предназначена для Archivarius — системы хранения, нормализации, поиска, классификации и релизной сборки карточек промтов, гайдов и методологий.
 
-Этот файл задаёт среде Codex физические пути и порядок загрузки. Он **не заменяет** Router, META-Governance, профильные модули или Knowledge Base.
+Рабочая ветка Simba остаётся `main`.
+Не переносить изменения из Archivarius в Simba `main` автоматически.
 
-## 1. Перед любой содержательной задачей
+## Точка входа
 
-Всегда сначала прочитать:
+Перед любой задачей Archivarius читать:
 
-1. `ROUTER_v10.1.md`
-2. `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md`
-3. `SIMBA KNOWLEDGE BASE/00_CORE/KB_RUNTIME_PROTOCOL.md`
+1. `Archivarius/System/Archivarius-System-v2.7.md`
+2. `Archivarius/System/Archivarius-CoreSpec-v2.2.md`
+3. `Archivarius/System/Archivarius-CardSchema-v2.1.md`
+4. `Archivarius/System/Archivarius-Tags-v2.1.md`
+5. `Archivarius/INDEX_ARCHIVARIUS.md`
+6. `Archivarius/MIGRATION_STATUS.md`
 
-После классификации задачи Router определяет профильный модуль и обязательный KB PREFLIGHT.
+Для viral prompt-posts дополнительно использовать:
+`Archivarius/System/Archivarius-ViralPromptPosts-Protocol-v1.0.md`, если файл присутствует.
 
-Если обязательный KB-файл недоступен, не подменять его памятью: `BLOCKED_KB_UNAVAILABLE`.
+## Source of truth во время миграции
 
-## 2. Перед изменением самой системы
+Пока `Archivarius/MIGRATION_STATUS.md` имеет статус «миграция не завершена»:
 
-Если задача меняет архитектуру, routing, правила, KB, workflow, версию модуля или поведение системы:
+- системный слой Archivarius читается из GitHub ветки `archivarius`;
+- физически перенесённые карточки читаются из GitHub;
+- карточки, которых ещё нет в GitHub, остаются на Google Drive;
+- нельзя утверждать, что GitHub содержит полную библиотеку, пока не выполнена count/hash reconciliation.
 
-1. прочитать `META-Governance-v8.1.md`;
-2. использовать режим `STRICT`;
-3. прочитать затрагиваемый канонический файл целиком;
-4. изменить существующий файл по тому же пути;
-5. выполнить `SIMBA KNOWLEDGE BASE/00_CORE/KB_LINT.md`, если изменение затрагивает Router/META/00_CORE/workflow/KB-зависимость;
-6. проверить результат после записи.
+После завершения миграции источник истины должен быть переключён отдельным явным решением.
 
-Не создавать параллельные рабочие копии `old`, `backup`, `final-final`, `v2` без прямой команды Leo.
+## Запись новых правил
 
-## 3. Физическая карта активных модулей
+Если Leo говорит «сохрани», «теперь делаем так», «всегда», «больше не» применительно к Archivarius:
 
-| Логическая роль | Канонический файл |
-|---|---|
-| Router | `ROUTER_v10.1.md` |
-| META-Governance | `META-Governance-v8.1.md` |
-| AI-Маркетолог | `AI-Marketer-Simba-by-Bon-Tours-v5.0.md` |
-| Simba | `Симба (Писатель)/Simba-v5.0.md` |
-| Humanizer | `Симба (Писатель)/Humanizer-v1.4.md` |
-| News | `Симба (Писатель)/News-v1.2.md` |
-| Travel | `Симба (Писатель)/Travel-v1.3.md` |
-| Info | `Симба (Писатель)/Info-v1.2.md` |
-| Leo | `Симба (Писатель)/Leo-v1.3.md` |
-| Lumiere | `Симба (Писатель)/Lumiere-v1.1.md` |
-| Critic | `Critic/Critic-3.7.md` |
-| Audit | `Critic/Audit-v1.2.md` |
-| Rafael | `Rafael/RAFAEL_System_v6.2.md` |
-| Rafael routing | `Rafael/RAFAEL_Routing_v3.3.md` |
-| Rafael styles | `Rafael/RAFAEL_Styles_v3.3.md` |
-| Wix Formatter | `Wix-Formatter/Wix-TourFormatter-v1.5.md` |
-| Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` |
+1. определить, является ли это системным правилом;
+2. обновить соответствующий файл в ветке `archivarius`;
+3. зафиксировать Git commit;
+4. подтвердить Leo commit SHA.
 
-## 4. Runtime invariant
+## Карточки
 
-После выбора исполнителя обязательны состояния:
+- AR-ID не меняется.
+- Не создавать смысловые дубли.
+- Источник истины карточки — сама карточка, а не индекс.
+- Индексы являются производными.
+- В PROD идут только допустимые системой карточки.
+- Непроверенный массовый внешний импорт не считать автоматически авторским/проверенным слоем.
 
-`EXECUTOR_SELECTED → EXECUTOR_RULES_LOADED → EXECUTOR_EXECUTED → EXECUTOR_RESULT_VALIDATED`.
+## GitHub
 
-Router и AI-Маркетолог не пишут финальный текст вместо выбранного профильного модуля.
-Rafael является `VISUAL_EXECUTOR`; конкретный image generator является `RENDERER`.
-
-Для результата Simba обязателен скрытый:
-
-`SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE → [REVISE → SIMBA_REPAIR]* → INTERNAL_CRITIC_PASS → SIMBA_FINALIZE`.
-
-Промежуточные внутренние оценки Critic не показывать Leo без отдельного запроса.
-
-## 5. Knowledge Base
-
-Не загружать всю KB автоматически. Читать только набор, заданный `KB_RUNTIME_PROTOCOL.md`.
-
-Ключевые каталоги:
-
-- `00_CORE` — runtime architecture;
-- `01_BRAND` — голос и визуальные правила;
-- `02_AUDIENCE` — сегменты и язык;
-- `03_CONTENT_LIBRARY` — approved/published history и контроль повторов;
-- `04_BUSINESS` — стабильный бизнес-контекст;
-- `05_OPERATIONAL_RULES` — точность и публикационные ограничения;
-- `06_AGENT_WORKFLOWS` — передача задач между агентами;
-- `07_LEARNINGS` — решения, исправления, наблюдаемые паттерны.
-
-Никогда не использовать архивные цены, наличие, даты, расписания, тарифы, налоги, условия отмены, визовые/entry rules как текущие факты без нового подтверждения.
-
-## 6. Write-back
-
-По действующему runtime:
-
-- прямая корректировка Leo → `SIMBA KNOWLEDGE BASE/07_LEARNINGS/CORRECTIONS_LOG.md`;
-- системное решение Leo → `SIMBA KNOWLEDGE BASE/07_LEARNINGS/DECISION_LOG.md`;
-- `APPROVED_TEXT` → полный текст в `SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/` + обновление `_INDEX.md`;
-- статус `PUBLISHED` ставится только после явного подтверждения фактической публикации;
-- production provenance хранит `SOURCE / CLASSIFICATION / STRATEGIST / TEXT_EXECUTOR / VISUAL_EXECUTOR / RENDERER / EXECUTION_STATES / STATUS`.
-
-После write-back выполнять соответствующий профиль `KB_LINT.md`.
-
-## 7. Rafael
-
-После разрешённого триггера читать:
-
-- `Rafael/RAFAEL_System_v6.2.md`;
-- `Rafael/RAFAEL_Routing_v3.3.md`;
-- `Rafael/RAFAEL_Styles_v3.3.md`;
-- `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md`;
-- обязательный Rafael KB context из runtime protocol.
-
-Rafael должен формировать 5 существенно разных preview-концепций. Выбор Leo запускает отдельный финальный 1:1 render по сохранённому полному production prompt выбранного варианта.
-
-Для `Leo` и `Info` действует `HERO_IDENTITY_OVERRIDE=LEO`.
-
-Archivarius и YouMind — внешние reference-библиотеки. Их недоступность переводит Rafael в degraded mode, но не является `BLOCKED_KB_UNAVAILABLE`.
-
-## 8. GitHub и Google Drive
-
-GitHub `legur/Simba@main` — единственный канонический рабочий runtime.
-
-Google Drive `New Simba` после миграции — архив. Не читать и не писать его как источник актуальных системных правил, если Leo явно не просит сверить/восстановить материал.
-
-Legacy Drive IDs и инструкции, встречающиеся в старых перенесённых документах, не имеют приоритета над META-Governance и этим runtime adapter.
-
-## 9. Приоритет конфликтов
-
-1. прямое текущее указание Leo;
-2. подтверждённые факты текущей задачи;
-3. актуальные Router / META / профильный модуль;
-4. Knowledge Base;
-5. накопительные внешние рекомендации;
-6. архивные примеры.
-
-Не принимать решения за Leo там, где workflow требует его утверждения.
-
-
-## 10. Persistent rule write-back confirmation
-
-Если Leo во время работы формулирует постоянное изменение системы словами или смыслом уровня «теперь делаем так», «всегда», «больше не», «сохрани это», «запомни как правило»:
-
-1. отличить постоянное правило от правки только текущего материала;
-2. обновить соответствующий канонический файл в `legur/Simba@main`;
-3. записать корректировку в `CORRECTIONS_LOG.md` или системное решение в `DECISION_LOG.md`;
-4. выполнить требуемый `KB_LINT`;
-5. сделать Git commit;
-6. только после успешного commit считать правило сохранённым;
-7. в ответ Leo коротко подтвердить:
-   - что сохранено;
-   - суть правила;
-   - commit SHA.
-
-Нельзя говорить «сохранено», если изменение осталось только в текущем чате, памяти модели или локальной незакоммиченной рабочей копии.
+Все изменения Archivarius сохранять в ветку `archivarius`.
+Не писать Archivarius runtime-файлы в `main` без отдельной команды Leo.
