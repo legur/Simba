@@ -1,0 +1,55 @@
+name: Import Archivarius from Google Drive
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/import-archivarius.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout archivarius
+        uses: actions/checkout@v4
+        with:
+          ref: archivarius
+          fetch-depth: 0
+
+      - name: Install gdown
+        run: python -m pip install --quiet --upgrade gdown
+
+      - name: Download Archivarius Drive folder
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf /tmp/archivarius-drive
+          mkdir -p /tmp/archivarius-drive
+          gdown --folder "https://drive.google.com/drive/folders/1dTpgA5gfW-Opwk02YjM3znuyqTZYWYxO" \
+            -O /tmp/archivarius-drive --remaining-ok
+          mkdir -p Archivarius
+          cp -a /tmp/archivarius-drive/. Archivarius/
+          {
+            echo "Imported from Google Drive folder: 1dTpgA5gfW-Opwk02YjM3znuyqTZYWYxO"
+            echo "Import UTC: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+            echo "Files downloaded: $(find /tmp/archivarius-drive -type f | wc -l)"
+            echo "Directories downloaded: $(find /tmp/archivarius-drive -type d | wc -l)"
+          } > Archivarius/_IMPORT_REPORT.txt
+
+      - name: Commit imported snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Archivarius
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          git commit -m "Import Archivarius from Google Drive [skip ci]"
+          git push origin HEAD:archivarius
