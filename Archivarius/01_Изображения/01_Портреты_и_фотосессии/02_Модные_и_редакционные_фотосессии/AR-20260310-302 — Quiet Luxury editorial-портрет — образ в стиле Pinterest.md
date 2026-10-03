@@ -1,0 +1,37 @@
+---
+id: AR-20260310-302
+title: Pinterest quiet luxury editorial look
+type: prompt_photo
+status: active
+language: ru
+format: image_prompt
+primary_category: 01_Изображения
+subcategory: 01_Портреты_и_фотосессии
+platform:
+  - gpt-image
+  - nano_banana
+  - midjourney
+  - sd
+mode:
+  - photorealistic
+  - identity_lock
+  - editorial
+created: 2026-03-10
+updated: 2026-03-10
+tags:
+  - pinterest
+  - quiet luxury
+  - editorial
+  - portrait
+has_sample: false
+sample_status: none
+source: web_import
+canonical_id: null
+---
+
+## Описание
+Импортировано из статьи о трендовых промтах для Nano Banana.
+
+## Prompt
+
+Используй внешность с референса. Крупный план по пояс, редакционный стиль. Нейтральный городской фон или белая стена. Модная одежда в тренде quiet luxury: пальто или пиджак нейтральных тонов, базовые детали. Взгляд в объектив или чуть в сторону. Мягкий дневной свет, лёгкая расфокусировка фона. Стиль — Pinterest, Vogue street style. Вертикальный кадр 4:5.
