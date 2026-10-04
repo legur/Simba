@@ -85,8 +85,8 @@ Knowledge Base не хранит текущую цену/наличие как �
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
 | Router | ROUTER_v10.1.md | 10.1 + amendment rev.2 08.09 | ✅ активен — HARD DEFAULT + Source Resolution + Execution/Provenance gates + PROCESS_OWNER + Internal Critic |
-| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 5.0 + amendment rev.2 08.09 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance |
-| Simba | Simba-v5.0.md | 5.0 + amendment 08.09 | ✅ активен — KB PREFLIGHT + обязательный Internal Critic repair-loop; финальную редакцию после PASS выдает Simba |
+| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 5.0 + amendment rev.3 04.10 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; external marketing angle mining |
+| Simba | Simba-v5.0.md | 5.0 + amendment 04.10 | ✅ активен — KB PREFLIGHT + Internal Critic repair-loop + controlled colloquial hyperbole in sales copy |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
 | Travel | Travel-v1.3.md | 1.3 | ✅ активен |
 | Leo | Leo-v1.3.md | 1.3 | ✅ активен |
@@ -823,3 +823,13 @@ YouMind и Archivarius — неблокирующие external reference sources
 После изменения trusted/blocklist, bridge, core/workflow или постоянного KB-правила обязателен `KB_LINT.md`.
 Runtime modes: FAST / DEEP / STRICT.
 <!-- ARCHIVARIUS_BRIDGE_META_END -->
+
+### 8.1 runtime amendment — 04.10.2026
+
+Тип: поведение AI-Маркетолога / Simba / Feedback Learning.
+
+Что изменено: по прямому решению Leo общепринятые небуквальные гиперболы цены разрешены и должны рассматриваться как рабочий рекламный инструмент, отдельно от буквальных проверяемых ценовых claims. Разборы budetsdelano.ai теперь не только сохраняются как evidence, но и активно раскладываются Маркетологом на hook/angle-кандидаты для следующих релевантных коммерческих задач.
+
+Граница: конкретные проценты, история цены и реальные сравнения с товарами/услугами остаются проверяемыми facts; внешний эксперт не отменяет факты, прямые решения Leo и канонические правила.
+
+Затронуто: AI-Marketer-Simba-by-Bon-Tours-v5.0.md, Симба (Писатель)/Simba-v5.0.md, 01_BRAND/STYLE_LEO.md, 05_OPERATIONAL_RULES/FACTS_FRESHNESS_PRICING.md, 07_LEARNINGS/PATTERN_WATCH.md, 07_LEARNINGS/DECISION_LOG.md.
