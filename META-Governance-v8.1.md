@@ -1,8 +1,8 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 8.1 · GitHub runtime migration rev.6 · 02.10.2026
-Дата: 02.10.2026
+Версия: 8.2 · 05.10.2026 · уточнение полноты запросов; канонический путь сохранён
+Дата: 05.10.2026
 
 
 Это не модуль генерации контента. Это слой правил для ЛЮБОГО изменения архитектуры:
@@ -84,7 +84,7 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 10.1 + amendment rev.2 08.09 | ✅ активен — HARD DEFAULT + Source Resolution + Execution/Provenance gates + PROCESS_OWNER + Internal Critic |
+| Router | ROUTER_v10.1.md | 10.2 · 05.10.2026 | ✅ активен — HARD DEFAULT + Source Resolution + Execution/Provenance gates + PROCESS_OWNER + Internal Critic |
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 5.0 + amendment rev.4 04.10 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; external marketing angle mining |
 | Simba | Simba-v5.0.md | 5.0 + amendment 04.10 | ✅ активен — KB PREFLIGHT + Internal Critic repair-loop + controlled colloquial hyperbole in sales copy |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
@@ -638,6 +638,14 @@ Session-Logs (`1BNm2cqji3XtWd5R6Ww6Crvbg76POhilq`), без участия Лео
 
 
 ## CHANGELOG
+
+### 8.2 — 05.10.2026
+Тип: точечная синхронизация существующего routing/workflow.
+Что изменено: карта отражает Router 10.2 по прежнему пути; Router и CONTENT_PIPELINE уточняют приоритет конечной цели и полноту всех частей смешанного запроса.
+Причина: прямое подтверждение Leo «делай» для предложенного рабочего блока.
+Затронуто: ROUTER_v10.1.md (10.2), CONTENT_PIPELINE.md (1.6), DECISION_LOG.md (1.10). Новые роли, режимы, approval gates и правила генерации не вводились.
+
+
 
 
 ### Runtime amendment rev.5 — 25.09.2026
