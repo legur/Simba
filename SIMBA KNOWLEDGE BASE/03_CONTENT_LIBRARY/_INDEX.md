@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-05 | [Emirates: информация для пассажиров с отменёнными рейсами](2026-10-05_emirates_rerouting_tlv.md) | APPROVED | news | Emirates / TLV rerouting | условия и контакты без продажи услуг Leo | «отлично» после просьбы сделать просто информационный пост | high |
 | 2026-10-04 | Куда можно улететь уже в ближайшие дни? | PUBLICATION_PACKAGE_READY | sales | organized tours / last-minute / Poland + Georgia + Azerbaijan | три близких выезда как единый last-minute выбор | выбран текст 1 «Основной» и визуал 2 «Travel Editorial»; шаблон рубрики зафиксирован | high |
 | 2026-09-09 | Celebrity Cruises - Double Points | APPROVED_TEXT | sales | Celebrity Cruises / Captain's Club | считать не только цену, но и ценность ускоренного накопления статуса | выбран вариант 2 «Рациональный» | high |
 | 2026-09-09 | «Соучастник» — клавиатура и автокоррекция последствий | APPROVED_TEXT | expert_viral | Android-клавиатура «Соучастник» / технологии | автокоррекция как предупреждение о последствиях; инженерный эксперимент и сатира одновременно | подтверждено Leo после внешнего разбора; Critic 8.0–8.1, публикуемо | high |
