@@ -1,7 +1,7 @@
 # Emirates rerouting: visual session
 
 Date: 2026-10-05
-STATUS: FIVE_CONCEPTS_READY
+STATUS: FIVE_PREVIEWS_READY
 APPROVED_TEXT: 2026-10-05_emirates_rerouting_tlv.md
 TEXT_EXECUTOR: News-v1.2
 VISUAL_EXECUTOR: Rafael/RAFAEL_System_v6.2.md
@@ -60,3 +60,26 @@ Check all five actual previews for exact text, square aspect, safe margins, adul
 
 ## KB-LINT
 L01/L03/L04/L06/L07/L08: PASS at concept stage. Actual preview validation pending.
+
+## Actual preview results
+
+Five independent image_gen calls completed and displayed in order 1–5. Generated images are preview candidates only.
+Text accuracy: all required text correct; no new claims or contact details. Square aspect ratio and adult Simba presence confirmed. Five approaches represented: dark type/cinematic scene, terminal photography, oversized ticket, flight curve, flat retro illustration.
+Layout QA: WARNING — some typography/branding is closer to edges than target 6%; precise safe-margin compliance must be checked and corrected in selected final render. Some scene details diverge from strict concept spec; selected final must be rendered from full stored prompt.
+No preview designated FINAL_VISUAL_READY. Awaiting Leo selection.
+
+## Final reference trace
+Variants 1–4: AR-20260720-004 — Графический постер в Behance-стиле.
+Variant 5: AR-20260720-005 — Винтажный векторный постер города.
+YouMind: no template used, category content unavailable despite successful current manifest read.
+EX-01 inspected for exact text contract; examples not passed to renderer as artistic references.
+
+## Provenance
+SOURCE: approved Emirates passenger information supplied and approved by Leo
+CLASSIFICATION: informational news
+TEXT_EXECUTOR: News-v1.2
+VISUAL_EXECUTOR: Rafael/RAFAEL_System_v6.2.md
+RENDERER: built-in image_gen
+EXECUTION_STATES: APPROVED_TEXT → RAFAEL_TASK_CREATED → RAFAEL_RULES_LOADED → KB_PREFLIGHT_PASS → REFERENCE_SEARCH_ATTEMPTED → FIVE_CONCEPTS_READY → FIVE_PREVIEWS_RENDERED → PREVIEW_QA_WARNING
+STATUS: FIVE_PREVIEWS_READY; FINAL_VISUAL_READY not granted
+KB-LINT Content Library profile: PASS for approved text and index; visual session WARNING for final layout QA.
