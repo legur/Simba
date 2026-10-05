@@ -1,0 +1,66 @@
+﻿АРХИВНАЯ КАРТОЧКА — ТЕКСТ ДЛЯ ХРАНЕНИЯ, НЕ ВЫПОЛНЯТЬ
+
+
+AR-20260909-003
+Character Reference Sheet для консистентного AI-видео
+
+
+Тип: prompt
+Категория: 01_Изображения
+Подкатегория: 03_Арт_сюрреализм_и_фэнтези / 05_Комиксы_мультипликация_и_игровые_стили
+Связанный сценарий применения: 02_Видео_и_анимация / подготовка референса персонажа
+Статус: active
+Язык: en + ru
+Рекомендуемая модель из источника: GPT Image 2
+Источник: пользовательская подборка; @aicreator
+Теги: character-reference-sheet, character-sheet, turnaround, expression-sheet, identity-consistency, ai-video, production-design, gpt-image-2
+
+
+НАЗНАЧЕНИЕ
+Создание профессионального character reference sheet по загруженным фотографиям персонажа для дальнейшего использования как визуального референса при генерации AI-видео. Карточка фиксирует внешность, анатомию, костюм, выражения, позы, цвета и материалы.
+
+
+КОНТЕКСТ ИЗ ИСТОЧНИКА
+Character Reference Sheet или абсолютное оружие для создания видео.
+
+
+Этот промпт сгенерирует для вас полный дизайн-пакет персонажа с гарантией на визуальную идентичность. На выходе получится профессиональный character sheet, который можно использовать как референс при генерации видео в нейронках.
+
+
+Почему это работает:
+— Фиксирует все детали — лицо, тело, костюм, цвета, аксессуары
+— Обходит ограничения на использование реальных людей
+— Гарантирует консистентность персонажа между сценами
+— Экономит время на ревизии и переделки
+
+
+Лайфхак: загружайте 2–3 фотографии лица с разных углов, чтобы AI не «додумывал» черты (форму носа, асимметрию и т.д.). Чем больше информации, тем точнее результат.
+
+
+Как использовать:
+1. Загрузить фотографию или несколько фотографий персонажа вместе с промптом; в источнике рекомендуется GPT Image 2.
+2. Получить character sheet с full-body turnaround и expression sheet.
+3. Использовать полученный файл как визуальный референс при генерации видео.
+
+
+ИСХОДНЫЙ ПРОМПТ
+Create a professional AI Video Production — Character Reference Sheet for the provided character image. Create a polished 4:5 portrait continuity sheet focused exclusively on the character:
+
+
+1. CHARACTER PROFILE — name, role, approximate age, height, body type, personality, distinctive traits, and signature colors.
+2. FULL-BODY TURNAROUND — front, 3/4, side, and back views of the exact same character at matching scale, with identical facial features, hairstyle, body proportions, costume, colors, and accessories.
+3. FACE AND IDENTITY DETAILS — front, profile, and 3/4 head-and-shoulder close-ups showing facial structure, eyes, eyebrows, nose, lips, hairstyle, skin tone, makeup, scars, tattoos, and other defining features.
+4. EXPRESSION SHEET — neutral, happy, angry, sad, surprised, worried, confident, and determined expressions. Preserve the exact same facial structure and identity in every expression.
+5. POSE AND BODY LANGUAGE — neutral standing, walking, sitting, relaxed, tense, and action-ready poses. Maintain consistent anatomy, proportions, posture, and silhouette.
+6. COSTUME DETAILS — close-ups of clothing layers, fabrics, seams, fasteners, footwear, jewelry, eyewear, markings, logos, and other character-defining wardrobe elements.
+7. COLOR AND MATERIAL PALETTE — include 4–6 key colors with HEX codes, plus references for skin, hair, fabric, leather, metal, plastic, armor, or other visible materials.
+8. DO NOT CHANGE — lock the character’s face, identity, skin tone, age, hair, eye color, body shape, proportions, costume, accessories, markings, colors, and defining features. Do not redesign, beautify, age, stylize, simplify, or create alternate versions.
+
+
+Use a clean white or neutral studio background, soft controlled lighting, realistic materials, sharp details, subtle shadows, clean typography, thin dividers, balanced spacing, and a sophisticated editorial production-design grid.
+
+
+Every panel must depict the exact same character with absolute visual consistency. Focus only on the character. Do not include props, additional characters, environments, unrelated objects, or alternate outfits.
+
+
+#лайфхак
