@@ -1,7 +1,7 @@
 # KB RUNTIME PROTOCOL — SIMBA KNOWLEDGE BASE
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Дата: 02.10.2026 · GitHub migration  
+Дата: 06.10.2026 · GitHub migration + PATTERN_WATCH canonical learning runtime  
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
 ## 1. Назначение
@@ -67,6 +67,17 @@ Rafael = `VISUAL_EXECUTOR`; image generator = `RENDERER`.
 
 Manifest не заменяет Content Library и показывается Leo по запросу/при диагностике.
 
+## 2D. FACEBOOK FEEDBACK LEARNING OVERLAY
+
+Канонический learning-файл для содержательных разборов budetsdelano.ai: `07_LEARNINGS/PATTERN_WATCH.md`.
+
+Для любого создания или редактирования Facebook-поста через Simba, Info, Travel, Leo или News, включая маршруты через AI-Маркетолога, PATTERN_WATCH является обязательным runtime-контекстом. Загружать файл до генерации и передавать исполнителю только релевантные `OBSERVATION / SIGNAL / ACTIVE RULE CANDIDATE` для текущего модуля, канала, цели и механики поста.
+
+Humanizer не выбирает новые learning-сигналы, но обязан сохранять уже выбранные релевантные сигналы, если они не конфликтуют с фактами или правилами модуля. Для иных каналов применять только записи PATTERN_WATCH, явно относящиеся к этому каналу.
+
+Новый содержательный разбор budetsdelano.ai записывается непосредственно в PATTERN_WATCH. Разборы Critic, ChatGPT, Claude, ручные оценки и отдельные метрики могут использоваться для текущей правки, но не повышают уровень budetsdelano-паттернов.
+
+Legacy `Feedback-Learning-*` не является runtime-зависимостью.
 
 ## 3. Обязательные наборы контекста
 
@@ -79,6 +90,7 @@ Manifest не заменяет Content Library и показывается Leo �
 - `02_AUDIENCE/OBJECTIONS_AND_LANGUAGE.md`
 - `03_CONTENT_LIBRARY/_INDEX.md`
 - `03_CONTENT_LIBRARY/_PATTERN_TRACKER.md`
+- `07_LEARNINGS/PATTERN_WATCH.md`
 - релевантные файлы `04_BUSINESS`
 - `05_OPERATIONAL_RULES/FACTS_FRESHNESS_PRICING.md`
 - `06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md`
@@ -102,6 +114,7 @@ Manifest не заменяет Content Library и показывается Leo �
 - `01_BRAND/ANTI_STYLE.md`
 - `03_CONTENT_LIBRARY/_INDEX.md`
 - `03_CONTENT_LIBRARY/_PATTERN_TRACKER.md`
+- `07_LEARNINGS/PATTERN_WATCH.md`
 
 ### Новости туризма / News
 Обязательно:
@@ -174,7 +187,7 @@ Critic оценивает повторяемость не только внут�
 2. Подтвержденные факты конкретного задания.
 3. Актуальные Router / META-Governance / правила профильного модуля.
 4. Стабильные правила SIMBA KNOWLEDGE BASE.
-5. Feedback Learning и другие внешние/накопительные рекомендации.
+5. `07_LEARNINGS/PATTERN_WATCH.md` и другие внешние/накопительные рекомендации.
 6. Старые примеры и архивные материалы.
 
 Архивный пример никогда не отменяет текущий факт или прямое решение Leo.
@@ -223,7 +236,7 @@ Internal Critic является обязательным quality-gate Simba, н
 
 Leo может отдельно приносить комментарии внешнего критика. Они используются как evidence текущей доработки: после фильтрации применимости замечания возвращаются Simba, а обновленный текст снова проходит `INTERNAL_CRITIC_MODE`. Постоянное правило появляется только после прямого решения Leo или достаточного повторного подтверждения по модели доказательности `STYLE_FEEDBACK_MINING.md`.
 
-Существующий `Feedback Learning` для budetsdelano.ai остается отдельным внешним каналом доказательств и не имеет приоритета над прямыми решениями Leo или Knowledge Base.
+`07_LEARNINGS/PATTERN_WATCH.md` является каноническим Feedback Learning каналом budetsdelano.ai и не имеет приоритета над прямыми решениями Leo или стабильными правилами Knowledge Base.
 
 ## 8. Promotion rule
 

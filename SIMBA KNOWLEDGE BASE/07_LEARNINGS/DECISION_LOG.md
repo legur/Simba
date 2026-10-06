@@ -1,7 +1,7 @@
 ﻿# DECISION LOG
 
 
-Версия: 1.10 · 05.10.2026
+Версия: 1.11 · 06.10.2026
 
 
 ## Архитектурные решения
@@ -252,3 +252,19 @@ Leo подтвердил системную правку после разбор
 **Синхронизировано в:** `ROUTER_v10.1.md` (10.2), `META-Governance-v8.1.md` (8.2), `06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` (1.6). Канонические пути сохранены.
 
 **KB-LINT:** PASS — прямое системное решение; постоянная логика без динамических фактов; запись в routing/workflow и Decision Log; внешняя карточка адаптирована по явному решению Leo; исполнительные границы и обязательные gates сохранены; параллельные рабочие копии не созданы.
+
+
+## 06.10.2026 — PATTERN_WATCH становится каноническим Feedback Learning runtime
+
+**Основание:** Leo подтвердил исправление обнаруженной висячей зависимости: Router/META ссылались на отсутствующий `Feedback-Learning-v1.3.md`, тогда как актуальные разборы budetsdelano.ai уже хранились в `07_LEARNINGS/PATTERN_WATCH.md`.
+
+**Решение:**
+- `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` является единственным каноническим runtime-хранилищем Feedback Learning budetsdelano.ai;
+- legacy `Feedback-Learning-*` не является runtime-зависимостью;
+- перед созданием/редактированием Facebook-поста Router/Маркетолог обязаны загрузить PATTERN_WATCH и передать только релевантные сигналы;
+- Simba явно включает PATTERN_WATCH в обязательный preflight;
+- Humanizer сохраняет уже выбранные learning-сигналы, но не выбирает новые;
+- новые содержательные разборы budetsdelano.ai записываются непосредственно в PATTERN_WATCH; другие внешние оценки не повышают его evidence-level;
+- уровни: 1 = OBSERVATION, 2 = SIGNAL, 3+ = ACTIVE RULE CANDIDATE; promotion в постоянное правило остаётся под META/прямым решением Leo.
+
+**Синхронизировано в:** `ROUTER_v10.1.md` (10.3), `META-Governance-v8.1.md` (8.3), `00_CORE/KB_RUNTIME_PROTOCOL.md`, `Симба (Писатель)/Simba-v5.0.md`, `07_LEARNINGS/PATTERN_WATCH.md` (2.0).
