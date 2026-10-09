@@ -1,33 +1,52 @@
-import { spawnSync } from 'node:child_process';
-import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
-import { createStoryboard } from './core.js';
+import {spawnSync} from 'node:child_process';
+import {existsSync, mkdtempSync, writeFileSync, rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {join, resolve} from 'node:path';
+import {createStoryboard} from './core.js';
 
-export function renderReel({ offer, images, output, hook = 0, ffmpeg = 'ffmpeg', fontFile }) {
-  if (!Array.isArray(images) || images.length < 1) throw new Error('At least one image required');
-  if (!output) throw new Error('Output path required');
-  const storyboard = createStoryboard(offer, hook);
-  const temp = mkdtempSync(join(tmpdir(), 'simba-reel-'));
+function run(binary, args) {
+  const r = spawnSync(binary,args,{encoding:'utf8',maxBuffer:4*1024*1024});
+  if (r.error) throw r.error;
+  if (r.status !== 0) throw Error(`${binary} failed (${r.status}): ${r.stderr?.slice(-1800)}`);
+  return r.stdout;
+}
+function ffEscape(p) { return p.replaceAll('\\','/').replaceAll(':','\\:').replaceAll("'", "'\\''").replaceAll(',','\\,'); }
+function wrapText(text, limit=23) {
+  return text.split('\n').flatMap(para=>{
+    const words=para.split(/\s+/).filter(Boolean),lines=[];
+    let line='';
+    for (const word of words) {
+      if (line && (line+' '+word).length>limit) {lines.push(line);line=word;}
+      else line=line?line+' '+word:word;
+    }
+    lines.push(line);
+    return lines;
+  }).join('\n');
+}
+export function renderReel({offer,images,output,hook=0,customHooks=null,fontFile=null,ffmpeg='ffmpeg',ffprobe='ffprobe'}) {
+  if (!Array.isArray(images) || images.length===0) throw Error('At least one image required');
+  for (const file of images) if (!existsSync(resolve(file))) throw Error(`Missing image: ${file}`);
+  if (!output) throw Error('Output path required');
+  if (fontFile && !existsSync(resolve(fontFile))) throw Error(`Missing font: ${fontFile}`);
+  const board=createStoryboard(offer,hook,customHooks);
+  const temp=mkdtempSync(join(tmpdir(),'simba-reels-'));
+  const segments=[];
   try {
-    const args = ['-hide_banner','-loglevel','error','-y'];
-    for (let i=0;i<storyboard.scenes.length;i++) {
-      const scene = storyboard.scenes[i];
-      args.push('-loop','1','-framerate','30','-t',String(scene.seconds),'-i',resolve(images[i % images.length]));
+    for(let i=0;i<board.scenes.length;i++) {
+      const scene=board.scenes[i], image=resolve(images[i%images.length]);
+      const textPath=join(temp,`title-${i}.txt`),segment=join(temp,`segment-${i}.mp4`);
+      writeFileSync(textPath,wrapText(scene.text),'utf8');
+      const font=fontFile?`fontfile='${ffEscape(resolve(fontFile))}':`:'';
+      const filter=`scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,drawbox=x=65:y=620:w=950:h=680:color=black@0.65:t=fill,drawtext=${font}textfile='${ffEscape(textPath)}':fontcolor=white:fontsize=56:line_spacing=18:x=(w-text_w)/2:y=(h-text_h)/2:fix_bounds=1,format=yuv420p`;
+      run(ffmpeg,['-hide_banner','-loglevel','error','-y','-loop','1','-framerate','30','-i',image,'-t',String(scene.seconds),'-vf',filter,'-an','-c:v','libx264','-preset','ultrafast','-crf','25','-pix_fmt','yuv420p','-r','30',segment]);
+      segments.push(segment);
     }
-    const filters = [];
-    for (let i=0;i<storyboard.scenes.length;i++) {
-      const scene = storyboard.scenes[i];
-      const textPath = join(temp, `scene-${i}.txt`);
-      writeFileSync(textPath,scene.text,'utf8');
-      const font = fontFile ? `:fontfile='${resolve(fontFile).replaceAll('\\','/').replaceAll(':','\\:').replaceAll("'","\\'")}'` : '';
-      filters.push(`[${i}:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,setsar=1,drawbox=x=50:y=680:w=980:h=550:color=black@0.55:t=fill,drawtext=textfile='${textPath.replaceAll("'","\\'")}':fontcolor=white:fontsize=58:line_spacing=18:x=(w-text_w)/2:y=(h-text_h)/2${font},format=yuv420p,fps=30,trim=duration=${scene.seconds},setpts=PTS-STARTPTS[v${i}]`);
-    }
-    filters.push(storyboard.scenes.map((_,i)=>`[v${i}]`).join('')+`concat=n=${storyboard.scenes.length}:v=1:a=0[out]`);
-    args.push('-filter_complex',filters.join(';'),'-map','[out]','-c:v','libx264','-preset','veryfast','-crf','23','-pix_fmt','yuv420p','-r','30','-movflags','+faststart',resolve(output));
-    const result = spawnSync(ffmpeg,args,{encoding:'utf8',maxBuffer:1024*1024*4});
-    if (result.error) throw result.error;
-    if (result.status !== 0) throw new Error(`FFmpeg failed: ${result.stderr || result.status}`);
-    return {output:resolve(output),durationSeconds:storyboard.scenes.reduce((s,x)=>s+x.seconds,0),storyboard};
-  } finally { rmSync(temp,{recursive:true,force:true}); }
+    const concatPath=join(temp,'concat.txt');
+    writeFileSync(concatPath,segments.map(p=>`file '${p.replaceAll("'","'\\''")}'`).join('\n')+'\n');
+    run(ffmpeg,['-hide_banner','-loglevel','error','-y','-f','concat','-safe','0','-i',concatPath,'-c','copy','-movflags','+faststart',resolve(output)]);
+    const probe=JSON.parse(run(ffprobe,['-v','error','-show_entries','format=duration:stream=codec_name,width,height','-of','json',resolve(output)]));
+    const video=probe.streams.find(s=>s.codec_name==='h264');
+    if (!video || video.width!==1080 || video.height!==1920 || Math.abs(Number(probe.format.duration)-14)>0.2) throw Error('Output QC failed');
+    return {output:resolve(output),durationSeconds:Number(probe.format.duration),width:video.width,height:video.height,codec:video.codec_name,storyboard:board};
+  } finally {rmSync(temp,{recursive:true,force:true});}
 }
