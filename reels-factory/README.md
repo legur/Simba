@@ -1,23 +1,21 @@
-# SIMBA REELS FACTORY — MVP
+# SIMBA REELS FACTORY — tested silent-reels MVP
 
-Рабочая ветка: `feature/simba-reels-factory`.
+Standalone Node.js 20+ CLI. No npm dependencies. Requires FFmpeg with drawtext and ffprobe on PATH. No automatic publication or external AI calls.
 
-Цель: создать 9:16 silent Reels из разрешённых медиа с титрами, без автоматической публикации.
+## Run
 
-## Архитектура
-Маркетолог → Simba → Сценарист (SILENT) → Rafael → renderer (FFmpeg) → QC → ручное утверждение → экспорт.
+```bash
+cd reels-factory
+npm test
+node src/cli.js hooks example.json
+node src/cli.js storyboard example.json
+node src/cli.js render example.json output.mp4
+```
 
-**Важно:** существующие `AGENTS.md`, Router, META, KB, Сценарист и Rafael остаются источниками правил. Этот каталог не заменяет их.
+Replace photo1.jpg, photo2.jpg, photo3.jpg with your own licensed photos. Image paths resolve relative to the input JSON file. An output.mp4.json QC manifest is written beside the MP4.
 
-## MVP
-1. Импорт локальных изображений/видео с подтверждёнными правами.
-2. Генерация 5 хуков через сменяемый LLM-адаптер (OpenAI API — основной).
-3. Ручное утверждение хука и сценария.
-4. Рендер 1080×1920 MP4 H.264 с текстовыми слоями.
-5. Проверка разрешения, длительности, кириллицы и безопасных зон.
-6. Экспорт MP4, обложки и текста поста.
+Optional hooks: exactly five approved custom strings. A supplied price requires priceVerified:true, and a supplied date requires dateVerified:true. conflict:true blocks rendering. Verification flags are operator attestations, not automated verification.
 
-Не использовать неподтверждённые цены и даты. Не публиковать автоматически.
+Scope: five deterministic hooks, three silent scenes (4+6+4 seconds), 1080×1920 H.264 MP4, FFprobe QC. No OpenAI/Gemini API, no publishing, no music, no Wix, no tested RTL yet. Production integration must respect AGENTS.md, META, Router, KB, Scenario Writer, Rafael and human approval.
 
-## Следующий шаг для Codex
-Прочитать `AGENTS.md`, `META-Governance-v8.1.md`, `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md`, `SIMBA KNOWLEDGE BASE/00_CORE/KB_RUNTIME_PROTOCOL.md`, `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md`, а также профильные Rafael и KB-файлы. Затем предложить точный план зависимостей, среды запуска, хранения медиа и тестов; не менять канонические правила без отдельного согласования.
+Local verification on 2026-10-09: 8/8 Node tests passed; demo MP4 rendered and ffprobe validated 1080×1920 H.264 duration 14s.
