@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { validateOffer,generateHooks,createStoryboard } from '../src/core.js';
+const offer={title:'Неделя в Италии',destination:'Италию',cta:'Напишите нам'};
+test('generates exactly five hooks',()=>{const hooks=generateHooks(offer);assert.equal(hooks.length,5);assert.equal(new Set(hooks).size,5)});
+test('storyboard lasts 14 seconds',()=>assert.equal(createStoryboard(offer).scenes.reduce((a,s)=>a+s.seconds,0),14));
+test('rejects unverified price',()=>assert.throws(()=>validateOffer({...offer,price:'100 EUR'}),/Unverified price/));
+test('rejects unverified date',()=>assert.throws(()=>validateOffer({...offer,date:'10.10'}),/Unverified date/));
+test('blocks conflicting offer',()=>assert.throws(()=>generateHooks({...offer,conflict:true}),/FACT CONFLICT/));
+test('rejects invalid hook index',()=>assert.throws(()=>createStoryboard(offer,9),/Invalid hook/));
+test('keeps verified facts',()=>{const s=createStoryboard({...offer,price:'€999',priceVerified:true,date:'10–17 ноября',dateVerified:true});assert.match(s.scenes[1].text,/€999/);assert.match(s.scenes[1].text,/ноября/)});
