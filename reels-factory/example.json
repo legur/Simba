@@ -1,0 +1,13 @@
+{
+  "offer": {
+    "title": "Путешествие в Италию",
+    "destination": "Италию",
+    "cta": "Напишите нам для подробностей"
+  },
+  "hook": 0,
+  "images": [
+    "./photo1.jpg",
+    "./photo2.jpg",
+    "./photo3.jpg"
+  ]
+}
