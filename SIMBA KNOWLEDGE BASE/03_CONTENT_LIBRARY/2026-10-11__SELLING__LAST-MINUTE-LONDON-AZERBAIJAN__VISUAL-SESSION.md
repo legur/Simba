@@ -1,4 +1,4 @@
-STATUS: PUBLICATION_PACKAGE_READY
+STATUS: REVISED_VISUAL_READY_FOR_LEO
 DATE: 2026-10-11
 SOURCE_TEXT: SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-10-11__SELLING__LAST-MINUTE-LONDON-AZERBAIJAN__APPROVED.md
 TEXT_EXECUTOR: Simba-v5.0
@@ -33,3 +33,28 @@ REPAIR: uniform outer padding edit only, preserve content.
 FINAL_ARTIFACT: exec-f9b29518-6f13-4215-96f1-8399832eac29.png
 EXECUTION_STATES: APPROVED_TEXT → TEMPLATE_LOCK_CHECK(YES) → REFERENCE_SEARCH → PRODUCTION_PROMPT_SAVED → FINAL_RENDER → SAFE_MARGIN_EDIT → FINAL_QA_PASS
 KB-LINT: PASS (L01–L09; dated offer and reference trace scoped to this issue)
+
+
+## Revision 2026-10-11 — equal prominence for both destinations
+SOURCE: Leo rejected London-only poster («Мне не нравится»); input tool returned «Показать оба направления». Leo subsequently reported the question was not visible; interpretation was explained in chat.
+SCOPE: current issue only, not a permanent change of the rubric template.
+OVERRIDE: two intentional destination zones, equal headings and separate dates, shared price anchor.
+REVISED_ARTIFACT: exec-05ae53db-5781-47ad-a6a9-91c1d533a913.png
+STATUS: REVISED_VISUAL_READY_FOR_LEO; not approved or published.
+QA: both destination headings, 14–20 and 14–21 October correctly assigned; 999 USD per person; one Simba; square; no contacts or new inclusion claims. Layout candidate awaiting Leo.
+REFERENCES: original editorial poster (layout/outfit); official Simba master v1.0 three-quarter (identity); no new external card used in local revision.
+REVISION_PROMPT:
+Edit poster Image 1 to give BOTH London and Azerbaijan equal prominence in the SAME square travel editorial advertisement. Image 1 = layout, palette, typography and current Simba outfit reference. Image 2 = official Simba identity reference, preserve face, muzzle, amber eyes, golden-brown mane, fur, age and muscular anthropomorphic proportions exactly. USER CHANGE: both destinations must be equally important; this is a two-choice offer, not a London-only poster.
+PRESERVE: square 1:1 format, ivory #F7F3EB editorial background, charcoal serif headline, burgundy #852724 typography and price card, warm white card lettering, clean generous padding (at least6%), thin lower divider and centered brand. Preserve photoreal adult Simba identity, dark brown autumn jacket and cream shirt.
+CHANGE: replace the single London hero image with ONE wide hero window containing two deliberate equal-size photographic destination zones, London on LEFT and Azerbaijan on RIGHT. These are intentionally two alternate destinations, do not merge their architecture into a fake real city. Left shows recognizable Elizabeth Tower/Westminster along Thames in warm autumn light. Right shows atmospheric Baku old-city sandstone architecture with distant recognizable Flame Towers, equally rich and attractive warm autumn editorial photography. At top above this hero window create two equal-height destination headings, equal visual weight: 'Лондон' on left and 'Азербайджан' on right. Immediately beneath each heading in smaller clean sans type place its own trip dates, left '14–20 октября', right '14–21 октября'. Do not put a London-only date in the price card.
+Simba is ONE waist-up character centered near the lower middle of the hero window, bridging the two destination zones as a host, so neither side owns him, and not covering important destination architecture or labels. Friendly calm expression, anatomically natural. He may shift to center, preserving identity and clothes. Shared burgundy rounded price card is centered overlapping the bottom of the hero window and ivory lower area. It shows only the shared '999$' and 'на человека', large and mobile readable. This one price applies to both destinations. Above everything retain centered bold serif main headline '14 октября — уже в поездку', maximum two lines.
+EXACT TEXT, each once:
+'14 октября — уже в поездку'
+'Лондон'
+'14–20 октября'
+'Азербайджан'
+'14–21 октября'
+'999$'
+'на человека'
+'Simba by Bon Tours'
+No additional text anywhere. No tour lists, bullet icons, flags, extra claims, 'всё включено', airline logos, contacts, QR, slogan, watermarks or background lettering. All text accurately spelled, horizontal and mobile readable. Clean equal-destination hierarchy, cohesive photograph light and restrained editorial polish. Output ONE final square poster.
