@@ -1,4 +1,4 @@
-STATUS: PRODUCTION_PROMPT_READY
+STATUS: PUBLICATION_PACKAGE_READY
 DATE: 2026-10-11
 SOURCE_TEXT: SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-10-11__SELLING__LAST-MINUTE-LONDON-AZERBAIJAN__APPROVED.md
 TEXT_EXECUTOR: Simba-v5.0
@@ -27,3 +27,9 @@ Price card next line: "на человека"
 Price card next line: "14–20 октября"
 Bottom brand: "Simba by Bon Tours"
 NO EXTRA TEXT. No contacts, phone, WhatsApp, QR, office address, slogan, icons, airline logos, tour list, Azerbaijan label, fake discount, extra claims, signs or readable background lettering. No borders within hero image, no additional decorative text, no artifacts, duplicate lion or extra limbs. All six text strings spelled exactly and contained within safe margins.
+
+FINAL QA: PASS — square 1:1, exact six text strings, master identity, locked template, safe margins, no new claims or contacts.
+REPAIR: uniform outer padding edit only, preserve content.
+FINAL_ARTIFACT: exec-f9b29518-6f13-4215-96f1-8399832eac29.png
+EXECUTION_STATES: APPROVED_TEXT → TEMPLATE_LOCK_CHECK(YES) → REFERENCE_SEARCH → PRODUCTION_PROMPT_SAVED → FINAL_RENDER → SAFE_MARGIN_EDIT → FINAL_QA_PASS
+KB-LINT: PASS (L01–L09; dated offer and reference trace scoped to this issue)
