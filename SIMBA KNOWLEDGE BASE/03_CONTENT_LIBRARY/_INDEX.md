@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-12 | [Рождественские рынки Германии 2026](2026-10-12__INFO__GERMANY-CHRISTMAS-MARKETS__APPROVED.md) | APPROVED | info | Germany / Christmas markets | необычное расположение и проверка календаря посещения | «Отлично» | high |
 | 2026-10-12 | [Друскининкай: отели и камера сна](2026-10-12__TRAVEL__DRUSKININKAI-HOTELS-SOMNARIUM__APPROVED.md) | APPROVED | travel | Mineral SPA Draugystė / Mana Sleep & Spa | достойная тройка и личное знакомство с камерой сна | «Отлично» | high |
 | 2026-10-11 | [14 октября — Лондон или Азербайджан за 999$](2026-10-11__SELLING__LAST-MINUTE-LONDON-AZERBAIJAN__APPROVED.md) | PUBLICATION_PACKAGE_READY | sales | organized tours / London + Azerbaijan | близкий вылет, одинаковая цена, разные подтверждённые преимущества | «Берём 1 вариант»; внешний разбор «Публикуемо» | high |
 | 2026-10-05 | [Emirates: информация для пассажиров с отменёнными рейсами](2026-10-05_emirates_rerouting_tlv.md) | APPROVED | news | Emirates / TLV rerouting | условия и контакты без продажи услуг Leo | «отлично» после просьбы сделать просто информационный пост | high |
