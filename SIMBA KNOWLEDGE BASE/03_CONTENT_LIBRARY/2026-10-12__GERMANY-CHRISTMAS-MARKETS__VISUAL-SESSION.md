@@ -1,7 +1,8 @@
 # Германия: рождественские рынки — visual session
 
 Date: 2026-10-12
-STATUS: PREVIEWS_RENDERING
+STATUS: FIVE_PREVIEWS_READY
+EXECUTION_STATES: RAFAEL_RULES_LOADED → RAFAEL_CONCEPTS_AND_PROMPTS_READY → RENDERER_EXECUTED → FIVE_PREVIEWS_READY
 APPROVED_TEXT: 2026-10-12__INFO__GERMANY-CHRISTMAS-MARKETS__APPROVED.md
 TEXT_EXECUTOR: Info
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
@@ -72,3 +73,14 @@ EXACT TEXT headline: "РОЖДЕСТВЕНСКИЕ РЫНКИ ГЕРМАНИИ".
 ## KB-LINT
 
 PASS: approved text связан; prompts сохранены целиком; статус превью не выдан за финал; новая коммерческая информация не добавлена; external unavailable не превращён в KB blocker.
+
+## Preview QA
+
+Все 5 изображений получены и визуально проверены: квадрат 1:1, русский заголовок и бренд читаются, главный герой Leo узнаваем, нет контактов и новых офферов; композиции различаются. Точные поля safe margins требуют дополнительного контроля в выбранном финальном рендере. Финальный render ожидает выбора Leo.
+
+Preview IDs:
+1: exec-f3f7aad2-7fae-44df-9b4a-0e549d62d6ee.png
+2: exec-62b896b3-3ece-4cda-9a0f-59b8aecdc8f9.png
+3: exec-c7657fec-9d09-44a1-b65c-e9c8d65ebb82.png
+4: exec-700e7bb3-df5a-4fdb-b550-e0bd420fabc1.png
+5: exec-904cb240-e54d-4d72-94ce-69635af5922f.png
