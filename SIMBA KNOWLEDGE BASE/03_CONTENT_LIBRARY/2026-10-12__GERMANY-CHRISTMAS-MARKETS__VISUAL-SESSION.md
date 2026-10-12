@@ -1,7 +1,7 @@
 # Германия: рождественские рынки — visual session
 
 Date: 2026-10-12
-STATUS: FIVE_SIMBA_PREVIEWS_READY
+STATUS: PUBLICATION_PACKAGE_READY
 EXECUTION_STATES: RAFAEL_RULES_LOADED → RAFAEL_CONCEPTS_AND_PROMPTS_READY → RENDERER_EXECUTED → FIVE_PREVIEWS_READY
 APPROVED_TEXT: 2026-10-12__INFO__GERMANY-CHRISTMAS-MARKETS__APPROVED.md
 TEXT_EXECUTOR: Info
@@ -16,8 +16,8 @@ REFERENCE_LIBRARIES_UNAVAILABLE: true
 REFERENCE_TRACE: внешние карточки и шаблоны не использованы ни в одном варианте
 OAI_EXAMPLE_ID: EX-01 / EX-02 — прочитаны prompt mechanics в каноническом индексе; binary sample images недоступны через GitHub
 Routing deviation: 1 — STYLE 08 по таблице; 2/3 — cinematic для атмосферы места; 4 — ретро для исторического города; 5 — double exposure для журнального образа. Герой Leo сохранён во всех вариантах.
-SELECTED_VARIANT_ID: pending
-FINAL_VISUAL_READY: false
+SELECTED_VARIANT_ID: 1 (прямой выбор Leo)
+FINAL_VISUAL_READY: true
 
 ## Вариант 1 — Рождество крупным планом
 
@@ -132,3 +132,10 @@ Input preview: /workspace/scratch/32e326a39d59/generated_images/exec-904cb240-e5
 5: exec-e1cc3c19-3770-417a-92df-71f2fc14bf4a.png
 
 KB-LINT: PASS, текущая корректировка не стала общим правилом, пять preview не выданы за финальный файл.
+
+
+## Final production render
+
+2026-10-12: выбран вариант 1 с Simba. Полный сохранённый edit prompt заново прочитан перед отдельным renderer-вызовом. Baseline layout и выбранный Simba использованы как два референса. Получен новый квадратный файл exec-3a952b76-10c6-4d8b-970b-0dfee9294ec2.png. QA: текст совпадает, три надписи читаются; взрослый Simba; нет новых claims, телефонов и QR; композиция выбранного варианта сохранена. Rendering interface не предоставил параметр разрешения; итог максимального доступного квадратного размера, не заявляется 2048×2048.
+REFERENCE_TRACE: дополнительных внешних шаблонов нет.
+KB-LINT: PASS — выбор и финальный render зафиксированы, публикация не подтверждена.
