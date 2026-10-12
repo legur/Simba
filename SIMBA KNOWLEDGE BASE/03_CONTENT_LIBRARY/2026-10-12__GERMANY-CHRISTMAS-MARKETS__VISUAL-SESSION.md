@@ -1,7 +1,7 @@
 # Германия: рождественские рынки — visual session
 
 Date: 2026-10-12
-STATUS: SIMBA_PREVIEWS_RENDERING
+STATUS: FIVE_SIMBA_PREVIEWS_READY
 EXECUTION_STATES: RAFAEL_RULES_LOADED → RAFAEL_CONCEPTS_AND_PROMPTS_READY → RENDERER_EXECUTED → FIVE_PREVIEWS_READY
 APPROVED_TEXT: 2026-10-12__INFO__GERMANY-CHRISTMAS-MARKETS__APPROVED.md
 TEXT_EXECUTOR: Info
@@ -119,3 +119,16 @@ Input preview: /workspace/scratch/32e326a39d59/generated_images/exec-700e7bb3-df
 Edit this square travel poster. CHANGE ONLY the main human hero into Simba, the brand character: a lifelike adult anthropomorphic male lion traveller, golden tawny fur, beautiful full natural dark-gold mane, realistic feline muzzle, expressive amber eyes, dignified friendly adult appearance. Lion head and visible lion paws, NOT a human wearing a mascot suit. Keep the same pose, occupied space and placement as the human, same tan winter coat and practical winter scarf if present; remove human glasses and human beanie to show the mane. Photorealistic lion fur, physically believable clothing and integrated light. Preserve the double exposure of the Christmas street in the coat and shoulder; keep lion face unobscured. PRESERVE EXACTLY the poster's existing headline, secondary text, brand spelling "Simba by Bon Tours", background, architecture, light, colors, layout, type scale and typography, overall square 1:1 canvas. Do not add or remove other objects. No new text, no duplicated text, no phone, no QR, no slogans. The only main hero is the adult lion Simba, fully integrated in the scene, no human face remaining. Keep text readable with safe margins.
 
 Input preview: /workspace/scratch/32e326a39d59/generated_images/exec-904cb240-e54d-4d72-94ce-69635af5922f.png
+
+
+## Simba preview QA
+
+Все 5 preview созданы, визуально проверены: взрослый антропоморфный лев вместо Leo, сохранены тексты и сцены, формат квадратный. Референсы: предыдущие preview как edit input; новых Archivarius / YouMind не использовано. Вариант 2 повторён после сбоя первого вызова. Финальный рендер ожидает выбора номера.
+
+1: exec-60520b6a-80fb-45b8-a908-d80ea2488b5c.png
+2: exec-f918d1c1-7c24-468a-9f86-2a5e1c939a7a.png
+3: exec-2a748323-a267-48b8-8e5f-c029c228b028.png
+4: exec-1565ef69-95f5-405a-83f1-af6a6e60555a.png
+5: exec-e1cc3c19-3770-417a-92df-71f2fc14bf4a.png
+
+KB-LINT: PASS, текущая корректировка не стала общим правилом, пять preview не выданы за финальный файл.
