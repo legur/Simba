@@ -1,13 +1,13 @@
 # Германия: рождественские рынки — visual session
 
 Date: 2026-10-12
-STATUS: FIVE_PREVIEWS_READY
+STATUS: SIMBA_PREVIEWS_RENDERING
 EXECUTION_STATES: RAFAEL_RULES_LOADED → RAFAEL_CONCEPTS_AND_PROMPTS_READY → RENDERER_EXECUTED → FIVE_PREVIEWS_READY
 APPROVED_TEXT: 2026-10-12__INFO__GERMANY-CHRISTMAS-MARKETS__APPROVED.md
 TEXT_EXECUTOR: Info
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen.imagegen
-HERO_IDENTITY_OVERRIDE: LEO
+HERO_IDENTITY_OVERRIDE: SIMBA (прямое указание Leo 2026-10-12)
 IDENTITY_SOURCE: фото Leo 1000391907.heic, предоставлено 2026-10-12
 Format: 1:1
 ARCHIVARIUS_STATUS: UNAVAILABLE (поиск AR-20260720-005 в GitHub не вернул карточку; отдельного runtime-инструмента нет)
@@ -84,3 +84,38 @@ Preview IDs:
 3: exec-c7657fec-9d09-44a1-b65c-e9c8d65ebb82.png
 4: exec-700e7bb3-df5a-4fdb-b550-e0bd420fabc1.png
 5: exec-904cb240-e54d-4d72-94ce-69635af5922f.png
+
+
+## Корректировка персонажа — Simba
+
+Прямое указание Leo имеет приоритет. Предыдущие preview с Leo отменены как кандидаты. Редактируется только главный герой; композиции, тексты и окружение сохранены.
+
+### Вариант 1 — полный edit prompt
+
+Edit this square travel poster. CHANGE ONLY the main human hero into Simba, the brand character: a lifelike adult anthropomorphic male lion traveller, golden tawny fur, beautiful full natural dark-gold mane, realistic feline muzzle, expressive amber eyes, dignified friendly adult appearance. Lion head and visible lion paws, NOT a human wearing a mascot suit. Keep the same pose, occupied space and placement as the human, same tan winter coat and practical winter scarf if present; remove human glasses and human beanie to show the mane. Photorealistic lion fur, physically believable clothing and integrated light.  PRESERVE EXACTLY the poster's existing headline, secondary text, brand spelling "Simba by Bon Tours", background, architecture, light, colors, layout, type scale and typography, overall square 1:1 canvas. Do not add or remove other objects. No new text, no duplicated text, no phone, no QR, no slogans. The only main hero is the adult lion Simba, fully integrated in the scene, no human face remaining. Keep text readable with safe margins.
+
+Input preview: /workspace/scratch/32e326a39d59/generated_images/exec-f3f7aad2-7fae-44df-9b4a-0e549d62d6ee.png
+
+### Вариант 2 — полный edit prompt
+
+Edit this square travel poster. CHANGE ONLY the main human hero into Simba, the brand character: a lifelike adult anthropomorphic male lion traveller, golden tawny fur, beautiful full natural dark-gold mane, realistic feline muzzle, expressive amber eyes, dignified friendly adult appearance. Lion head and visible lion paws, NOT a human wearing a mascot suit. Keep the same pose, occupied space and placement as the human, same tan winter coat and practical winter scarf if present; remove human glasses and human beanie to show the mane. Photorealistic lion fur, physically believable clothing and integrated light.  PRESERVE EXACTLY the poster's existing headline, secondary text, brand spelling "Simba by Bon Tours", background, architecture, light, colors, layout, type scale and typography, overall square 1:1 canvas. Do not add or remove other objects. No new text, no duplicated text, no phone, no QR, no slogans. The only main hero is the adult lion Simba, fully integrated in the scene, no human face remaining. Keep text readable with safe margins.
+
+Input preview: /workspace/scratch/32e326a39d59/generated_images/exec-62b896b3-3ece-4cda-9a0f-59b8aecdc8f9.png
+
+### Вариант 3 — полный edit prompt
+
+Edit this square travel poster. CHANGE ONLY the main human hero into Simba, the brand character: a lifelike adult anthropomorphic male lion traveller, golden tawny fur, beautiful full natural dark-gold mane, realistic feline muzzle, expressive amber eyes, dignified friendly adult appearance. Lion head and visible lion paws, NOT a human wearing a mascot suit. Keep the same pose, occupied space and placement as the human, same tan winter coat and practical winter scarf if present; remove human glasses and human beanie to show the mane. Photorealistic lion fur, physically believable clothing and integrated light.  PRESERVE EXACTLY the poster's existing headline, secondary text, brand spelling "Simba by Bon Tours", background, architecture, light, colors, layout, type scale and typography, overall square 1:1 canvas. Do not add or remove other objects. No new text, no duplicated text, no phone, no QR, no slogans. The only main hero is the adult lion Simba, fully integrated in the scene, no human face remaining. Keep text readable with safe margins.
+
+Input preview: /workspace/scratch/32e326a39d59/generated_images/exec-c7657fec-9d09-44a1-b65c-e9c8d65ebb82.png
+
+### Вариант 4 — полный edit prompt
+
+Edit this square travel poster. CHANGE ONLY the main human hero into Simba, the brand character: a lifelike adult anthropomorphic male lion traveller, golden tawny fur, beautiful full natural dark-gold mane, realistic feline muzzle, expressive amber eyes, dignified friendly adult appearance. Lion head and visible lion paws, NOT a human wearing a mascot suit. Keep the same pose, occupied space and placement as the human, same tan winter coat and practical winter scarf if present; remove human glasses and human beanie to show the mane. Render the lion with sophisticated vintage print treatment consistent with this retro poster, retaining realistic feline anatomy.  PRESERVE EXACTLY the poster's existing headline, secondary text, brand spelling "Simba by Bon Tours", background, architecture, light, colors, layout, type scale and typography, overall square 1:1 canvas. Do not add or remove other objects. No new text, no duplicated text, no phone, no QR, no slogans. The only main hero is the adult lion Simba, fully integrated in the scene, no human face remaining. Keep text readable with safe margins.
+
+Input preview: /workspace/scratch/32e326a39d59/generated_images/exec-700e7bb3-df5a-4fdb-b550-e0bd420fabc1.png
+
+### Вариант 5 — полный edit prompt
+
+Edit this square travel poster. CHANGE ONLY the main human hero into Simba, the brand character: a lifelike adult anthropomorphic male lion traveller, golden tawny fur, beautiful full natural dark-gold mane, realistic feline muzzle, expressive amber eyes, dignified friendly adult appearance. Lion head and visible lion paws, NOT a human wearing a mascot suit. Keep the same pose, occupied space and placement as the human, same tan winter coat and practical winter scarf if present; remove human glasses and human beanie to show the mane. Photorealistic lion fur, physically believable clothing and integrated light. Preserve the double exposure of the Christmas street in the coat and shoulder; keep lion face unobscured. PRESERVE EXACTLY the poster's existing headline, secondary text, brand spelling "Simba by Bon Tours", background, architecture, light, colors, layout, type scale and typography, overall square 1:1 canvas. Do not add or remove other objects. No new text, no duplicated text, no phone, no QR, no slogans. The only main hero is the adult lion Simba, fully integrated in the scene, no human face remaining. Keep text readable with safe margins.
+
+Input preview: /workspace/scratch/32e326a39d59/generated_images/exec-904cb240-e54d-4d72-94ce-69635af5922f.png
