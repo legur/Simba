@@ -50,9 +50,18 @@ TEXT_EXECUTOR: News-v1.2
 VISUAL_EXECUTOR: RAFAEL_System_v6.2 (visual task created)
 RENDERER: image_gen (five previews generated)
 EXECUTION_STATES: SOURCE_RESOLVED → MODULE_KB_PREFLIGHT → EXECUTOR_RULES_LOADED → EXECUTOR_EXECUTED → EXECUTOR_RESULT_VALIDATED → LEO_APPROVAL → APPROVED_TEXT → RAFAEL_TASK_CREATED
-STATUS: APPROVED_TEXT / FIVE_PREVIEWS_READY / AWAITING_LEO_SELECTION
+STATUS: PUBLICATION_PACKAGE_READY / TEXT_APPROVED / FINAL_VARIANT_5
 
 ## Visual session
 
 2026-10-14__NEWS__NCL-WORLD-CRUISE-AWARDS__VISUAL_SESSION.md
-Five preview variants generated; separate final render awaits Leo's selection. Text remains APPROVED. Publication is not confirmed.
+Leo selected variant 5. A separate final square render was generated and checked. Text remains APPROVED; the publication package is ready. Publication is not confirmed.
+
+## Final visual
+
+Selected variant: 5 — Ретро
+Final render: /workspace/scratch/873cef4eb6c9/generated_images/exec-b388bd60-e70b-4dcb-b28f-cece3b491f92.png
+Actual dimensions: 1254x1254 (1:1)
+Status: PUBLICATION_PACKAGE_READY
+Published: no confirmation
+Reference: AR-20260720-005 — Винтажный векторный постер города
