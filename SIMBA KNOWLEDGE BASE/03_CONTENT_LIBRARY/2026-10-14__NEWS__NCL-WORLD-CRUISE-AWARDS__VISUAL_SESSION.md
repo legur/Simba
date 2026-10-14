@@ -6,7 +6,7 @@ TEXT_EXECUTOR: News-v1.2
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen built-in
 FORMAT: 1:1
-STATUS: FINAL_RENDER_PENDING / SELECTED_VARIANT_5
+STATUS: PUBLICATION_PACKAGE_READY / FINAL_VARIANT_5
 HERO: adult anthropomorphic lion Simba (news type)
 ANCHOR: STYLE 08; variants 2–5 deliberately explore different permitted announcement/cruise approaches.
 
@@ -139,7 +139,7 @@ TEXT_EXECUTOR: News-v1.2
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen
 EXECUTION_STATES: APPROVED_TEXT → RAFAEL_TASK_CREATED → RAFAEL_RULES_LOADED → KB_PREFLIGHT_PASS → REFERENCE_SEARCH_ATTEMPTED → OAI_EXAMPLE_INSPECTED → FIVE_CONCEPTS_READY → FIVE_PROMPTS_SAVED
-STATUS: FINAL_RENDER_PENDING / SELECTED_VARIANT_5
+STATUS: PUBLICATION_PACKAGE_READY / FINAL_VARIANT_5
 
 ## KB-LINT
 SOURCE, SCOPE, REFERENCES, VERSION HYGIENE: PASS. Full production prompts and reference traces preserved; no dynamic claims promoted to permanent rules. Five actual renders and QA still pending.
@@ -295,10 +295,10 @@ FINAL PRODUCTION RENDER: Use the supplied image as the chosen preview's composit
 ## Completion provenance and lint
 
 EXECUTION_STATES: APPROVED_TEXT → RAFAEL_TASK_CREATED → RAFAEL_RULES_LOADED → KB_PREFLIGHT_PASS → REFERENCE_SEARCH_ATTEMPTED → EX-01_INSPECTED → FIVE_CONCEPTS_READY → FIVE_PROMPTS_SAVED → RENDERER_EXECUTED_5_OF_5 → LOCAL_MARGIN_REPAIRS → PREVIEW_QA_COMPLETE → FIVE_PREVIEWS_READY
-STATUS: FINAL_RENDER_PENDING
+STATUS: PUBLICATION_PACKAGE_READY
 SELECTED_VARIANT_ID: 5
-FINAL_VISUAL_READY: NO
-PUBLICATION_PACKAGE_READY: NO
+FINAL_VISUAL_READY: YES
+PUBLICATION_PACKAGE_READY: YES
 PUBLISHED: NO
 KB-LINT: PASS — approved content preserved; full per-variant generation and final prompts saved; only used reference cards listed; no permanent rules altered; sources and scope explicit.
 
@@ -307,3 +307,22 @@ KB-LINT: PASS — approved content preserved; full per-variant generation and fi
 Leo: «Берем пятый номер, но сгенерирую её здесь на экране.»
 SELECTED_VARIANT_ID: 5
 Full FINAL_VARIANT_5 production prompt freshly read from the canonical session before renderer invocation. Selected preview is used as composition/identity reference. Separate final render started; no publication authorization implied.
+
+## Final render completed — variant 5
+
+SELECTED_VARIANT_ID: 5
+LEO_SELECTION: explicit selection of fifth preview and request for inline generation
+FINAL_RENDER_OUTPUT: /workspace/scratch/873cef4eb6c9/generated_images/exec-b388bd60-e70b-4dcb-b28f-cece3b491f92.png
+FINAL_OUTPUT_SIZE: 1254x1254, square 1:1 (actual tool output; no size control exposed)
+NEW_RENDERER_OUTPUT: confirmed; different pixel hash from selected preview
+FULL_SAVED_PROMPT_RELOADED_BEFORE_RENDER: YES
+REFERENCE_IMAGE_ROLE: selected variant 5 composition and Simba identity
+REFERENCE_TRACE: AR-20260720-005 — Винтажный векторный постер города — mid-century travel-poster balance, restrained palette; EX-01 exact-text mechanics
+QA: selected scene retained; adult anthropomorphic Simba present; four inscription groups correctly spelled and legible; attribution retained; no extra claim, contact or QR
+FINAL_VISUAL_READY: YES
+PUBLICATION_PACKAGE_READY: YES
+PUBLISHED: NO
+EXECUTION_STATES: PREVIEW_SELECTED_5 → SELECTED_PROMPT_RELOADED → FINAL_RENDER_EXECUTED → FINAL_VISUAL_QA_COMPLETE → FINAL_VISUAL_READY → PUBLICATION_PACKAGE_READY
+RENDERER: built-in image_gen
+VISUAL_EXECUTOR: RAFAEL_System_v6.2
+KB-LINT: PASS (Content Library profile; full approved text retained, status correct, references/provenance saved, index updated, no rules changed)
