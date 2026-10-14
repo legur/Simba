@@ -6,7 +6,7 @@ TEXT_EXECUTOR: News-v1.2
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen built-in
 FORMAT: 1:1
-STATUS: FIVE_PREVIEWS_READY / AWAITING_LEO_SELECTION
+STATUS: FINAL_RENDER_PENDING / SELECTED_VARIANT_5
 HERO: adult anthropomorphic lion Simba (news type)
 ANCHOR: STYLE 08; variants 2–5 deliberately explore different permitted announcement/cruise approaches.
 
@@ -139,7 +139,7 @@ TEXT_EXECUTOR: News-v1.2
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen
 EXECUTION_STATES: APPROVED_TEXT → RAFAEL_TASK_CREATED → RAFAEL_RULES_LOADED → KB_PREFLIGHT_PASS → REFERENCE_SEARCH_ATTEMPTED → OAI_EXAMPLE_INSPECTED → FIVE_CONCEPTS_READY → FIVE_PROMPTS_SAVED
-STATUS: FIVE_PREVIEWS_READY / AWAITING_LEO_SELECTION
+STATUS: FINAL_RENDER_PENDING / SELECTED_VARIANT_5
 
 ## KB-LINT
 SOURCE, SCOPE, REFERENCES, VERSION HYGIENE: PASS. Full production prompts and reference traces preserved; no dynamic claims promoted to permanent rules. Five actual renders and QA still pending.
@@ -295,9 +295,15 @@ FINAL PRODUCTION RENDER: Use the supplied image as the chosen preview's composit
 ## Completion provenance and lint
 
 EXECUTION_STATES: APPROVED_TEXT → RAFAEL_TASK_CREATED → RAFAEL_RULES_LOADED → KB_PREFLIGHT_PASS → REFERENCE_SEARCH_ATTEMPTED → EX-01_INSPECTED → FIVE_CONCEPTS_READY → FIVE_PROMPTS_SAVED → RENDERER_EXECUTED_5_OF_5 → LOCAL_MARGIN_REPAIRS → PREVIEW_QA_COMPLETE → FIVE_PREVIEWS_READY
-STATUS: AWAITING_LEO_SELECTION
-SELECTED_VARIANT_ID: NONE
+STATUS: FINAL_RENDER_PENDING
+SELECTED_VARIANT_ID: 5
 FINAL_VISUAL_READY: NO
 PUBLICATION_PACKAGE_READY: NO
 PUBLISHED: NO
 KB-LINT: PASS — approved content preserved; full per-variant generation and final prompts saved; only used reference cards listed; no permanent rules altered; sources and scope explicit.
+
+## Leo selection — 2026-10-14
+
+Leo: «Берем пятый номер, но сгенерирую её здесь на экране.»
+SELECTED_VARIANT_ID: 5
+Full FINAL_VARIANT_5 production prompt freshly read from the canonical session before renderer invocation. Selected preview is used as composition/identity reference. Separate final render started; no publication authorization implied.
