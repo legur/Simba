@@ -1,0 +1,3 @@
+# Optional tools; install in a dedicated virtual environment.
+xberg==1.3.9
+ru-humanizer==3.31.4

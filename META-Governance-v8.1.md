@@ -1,8 +1,8 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 8.4 · 07.10.2026 · Drive убран из рабочих процессов: Session Log, Audit и правки модулей идут через GitHub; канонический путь сохранён
-Дата: 07.10.2026
+Версия: 9.0 · 15.10.2026 · технические адаптеры Xberg / humanizer-ru / BulkPublish; канонический путь сохранён
+Дата: 15.10.2026
 
 
 Это не модуль генерации контента. Это слой правил для ЛЮБОГО изменения архитектуры:
@@ -84,20 +84,21 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 10.2 · 05.10.2026 | ✅ активен — HARD DEFAULT + Source Resolution + Execution/Provenance gates + PROCESS_OWNER + Internal Critic |
+| Router | ROUTER_v10.1.md | 11.0 · 15.10.2026 | ✅ активен — HARD DEFAULT + Source Resolution + Execution/Provenance gates + PROCESS_OWNER + Internal Critic |
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 5.0 + amendment rev.4 04.10 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; external marketing angle mining |
 | Simba | Simba-v5.0.md | 5.0 + amendment 04.10 | ✅ активен — KB PREFLIGHT + Internal Critic repair-loop + controlled colloquial hyperbole in sales copy |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
 | Travel | Travel-v1.3.md | 1.3 | ✅ активен |
 | Leo | Leo-v1.3.md | 1.3 | ✅ активен |
 | News | News-v1.2.md | 1.2 | ✅ активен |
-| Humanizer | Humanizer-v1.4.md | 1.4 | ✅ активен |
+| Humanizer | Humanizer-v1.4.md | 2.0 · 15.10.2026 | ✅ активен |
 | Critic | Critic-3.7.md | 3.7 + amendment 08.09 · 07.10 (Session Log → GitHub) | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo |
 | Rafael (Architecture / System / Styles / Routing) | см. RAFAEL_Architecture_v5.0.md | 5.0 / 6.2 / 3.3 / 3.3 | ✅ активен; GPT Image 2.5 Protocol + Visual Example Library; Archivarius trusted-first + blocklist + YouMind |
 | Archivarius | Archivarius-System-v2.7.md + `01_Изображения` | 2.7 | ✅ внешняя библиотека; Rafael ищет trusted-first, затем по релевантным active visual cards вне blocklist |
 | YouMind AI Image Prompts | GitHub `YouMind-OpenLab/ai-image-prompts-skill` / `references/*` | external live | ✅ активен; постоянный reference-source Rafael, external failure non-blocking |
 | Audit | Audit-v1.2.md | 1.3 (внутри файла; путь прежний) | ✅ активен — Session Log и правки модулей через GitHub; см. раздел AUDIT ниже |
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.0 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
+| AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 1.0 · 15.10.2026 | Адаптеры подготовлены; внешние smoke-тесты отдельно; не новые контентные модули |
 | SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | runtime | ✅ обязательный общий контекст |
 
 
@@ -844,3 +845,16 @@ Runtime modes: FAST / DEEP / STRICT.
 Граница: проценты, точная сумма экономии, история цены и сравнения, поданные как буквальные рыночные facts, требуют подтверждения. Сравнение с реальным объектом может оставаться RHETORICAL_HYPERBOLE, если в контексте оно очевидно образное; пример Leo — «дешевле двух ужинов в Тель-Авиве». Внешний эксперт не отменяет факты, прямые решения Leo и канонические правила.
 
 Затронуто: AI-Marketer-Simba-by-Bon-Tours-v5.0.md, Симба (Писатель)/Simba-v5.0.md, 01_BRAND/STYLE_LEO.md, 05_OPERATIONAL_RULES/FACTS_FRESHNESS_PRICING.md, 07_LEARNINGS/PATTERN_WATCH.md, 07_LEARNINGS/DECISION_LOG.md.
+
+
+
+### 9.0 — 15.10.2026
+Тип: структурное изменение технических зависимостей.
+Что изменено: добавлены исполняемые адаптеры Xberg, humanizer-ru, BulkPublish draft
+и контракт AI_PLUGIN_TOOLS. Router 11.0, Humanizer 2.0, Content Pipeline 2.0,
+Knowledge Map 1.4 синхронизированы на прежних путях. Наличие bridge не означает
+установку/авторизацию. Чужие SKILL.md не заменяют канонические правила.
+Причина: прямое решение Leo интегрировать выбранные инструменты в legur/Simba.
+Граница: финальные утверждения Leo, Internal Critic и процесс Rafael сохранены;
+автопубликация/расписание и запись цен в Wix не добавлены. Для источников сохраняется
+проверка оригинала, для текста приоритет существующего Humanizer и голоса Leo.

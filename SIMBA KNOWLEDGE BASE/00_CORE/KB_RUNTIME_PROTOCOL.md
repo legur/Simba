@@ -263,3 +263,12 @@ Leo может отдельно приносить комментарии вне
 Для APPROVED/PUBLISHED поста применяется сокращенный Content Library profile.
 `KB-LINT: FAIL` означает, что write-back не завершен до исправления и повторного PASS/WARNING.
 <!-- KB_LINT_RUNTIME_END -->
+
+
+## 11. Optional technical tools — 15.10.2026
+Для структурированного извлечения документов, запроса внешнего сканера или
+BulkPublish читать `06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` (1.0).
+Проверить фактическую доступность в текущей среде. EXTRACTED_UNVERIFIED не является
+FACTS_VERIFIED; SCANNED не является APPROVED_TEXT; DRAFT_CREATED не является PUBLISHED.
+Недоступность внешнего пакета не является BLOCKED_KB_UNAVAILABLE. Для Xberg/сканера
+допустим штатный reader/ручной Humanizer, для удалённого draft нужен доступ к сервису.
