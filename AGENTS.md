@@ -150,3 +150,10 @@ Legacy Drive IDs и инструкции, встречающиеся в стар
    - commit SHA.
 
 Нельзя говорить «сохранено», если изменение осталось только в текущем чате, памяти модели или локальной незакоммиченной рабочей копии.
+
+
+## 11. Optional AI plugin tools — 15.10.2026
+Для Xberg, humanizer-ru или BulkPublish сначала читать `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md`,
+затем `integrations/ai_plugins/README.md`. Выполнить bridge.py doctor в текущей среде.
+Наличие файлов не подтверждает доступность пакетов/аккаунта. BulkPublish только draft;
+humanizer-ru диагностирует, авторские правила и утверждения сохраняются.

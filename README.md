@@ -129,3 +129,12 @@ Content Library используется для стиля, истории ре�
 Система была перенесена из Google Drive `New Simba` в GitHub 02.10.2026.
 
 Google Drive не синхронизируется автоматически с репозиторием. Новые системные изменения и production write-back должны происходить в GitHub.
+
+
+## Внешние инструменты — 15.10.2026
+
+Код и установка: `integrations/ai_plugins/README.md`.
+Runtime-контракт: `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md`.
+Xberg извлекает документы, humanizer-ru диагностирует готовый текст, BulkPublish
+создаёт черновики. Наличие адаптеров в GitHub не означает установку/авторизацию
+в конкретной среде. Автопубликация не добавлена.
