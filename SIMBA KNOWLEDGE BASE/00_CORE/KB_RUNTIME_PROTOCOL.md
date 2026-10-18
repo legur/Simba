@@ -1,7 +1,8 @@
 # KB RUNTIME PROTOCOL — SIMBA KNOWLEDGE BASE
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Дата: 06.10.2026 · GitHub migration + PATTERN_WATCH canonical learning runtime  
+Редакция: runtime 2.0 · 18.10.2026
+Дата: 18.10.2026 · pre-approval Humanizer gate + approval invalidation
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
 ## 1. Назначение
@@ -142,7 +143,21 @@ Critic имеет два runtime-режима.
 - `_INDEX.md` и последние релевантные APPROVED/PUBLISHED посты, если доступны;
 - `07_LEARNINGS/STYLE_FEEDBACK_MINING.md`.
 
-Critic оценивает повторяемость не только внутри текущего текста, но и относительно последних материалов. Архив не используется для проверки текущих цен и фактов. Внутренний Critic не показывает Leo промежуточные баллы/таблицы; финальный текст после `PASS` выдает Simba.
+Critic оценивает повторяемость не только внутри текущего текста, но и относительно последних материалов. Архив не используется для проверки текущих цен и фактов. Внутренний Critic не показывает Leo промежуточные баллы/таблицы; после `PASS` Simba выполняет финальную авторскую редакцию и передаёт пост в Humanizer, а готовый результат показывается Leo только после `HUMANIZER_PASS`.
+
+### Humanizer
+Humanizer является обязательной runtime-зависимостью готовых постов Simba, Info, Travel, Leo и News до первого `LEO_APPROVAL` либо `POLICY_APPROVED_FOR_VISUAL`. Wix-форматтер, клиентские письма/документы, JSON и визуальные результаты этим правилом автоматически не охватываются.
+
+Обязательно:
+- `Симба (Писатель)/Humanizer-v1.4.md`;
+- актуальный файл профильного автора и его завершённая редакция;
+- выбранные релевантные KB-сигналы, уже применённые автором;
+- `06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md`;
+- `06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` для проверки доступности опционального `humanizer-ru`.
+
+Недоступность внешнего сканера не блокирует маршрут: выполнить ручной Humanizer по каноническому файлу. Недоступность самого канонического Humanizer или его обязательных внутренних KB-зависимостей даёт `BLOCKED_KB_UNAVAILABLE`.
+
+Для Simba вход в Humanizer разрешён только после `INTERNAL_CRITIC_PASS → SIMBA_FINALIZE`. Для Info, Travel, Leo и News Internal Critic автоматически не добавляется. Смысловая правка возвращает текст профильному автору; Simba повторяет Internal Critic, другие авторы — собственную проверку. `HUMANIZER_PASS` обязателен до ready-state и approval/policy-trigger.
 
 ### Rafael
 Обязательно:
@@ -228,6 +243,8 @@ EXCLUDED_AS_CURRENT_FACTS:
 ### Утвержденный текст
 После `APPROVED_TEXT` сохранить полный текст в `03_CONTENT_LIBRARY` со статусом `APPROVED` и обновить `_INDEX.md`.
 
+Любое изменение утверждённой редакции снимает `APPROVED_TEXT` либо `POLICY_APPROVED_FOR_VISUAL`. Предыдущую редакцию сохранить как историческую, без разрушительного перезаписывания. Новая редакция повторяет авторскую проверку, Internal Critic для Simba, Humanizer и новое утверждение/policy-trigger. Зависимые visual/package ready-states снимаются до QA затронутых визуалов и нового render, когда изменены exact text или другие visual inputs.
+
 ### Подтверждение фактической публикации
 Только после явного подтверждения публикации изменить статус на `PUBLISHED`.
 
@@ -272,3 +289,9 @@ BulkPublish читать `06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` (1.0).
 FACTS_VERIFIED; SCANNED не является APPROVED_TEXT; DRAFT_CREATED не является PUBLISHED.
 Недоступность внешнего пакета не является BLOCKED_KB_UNAVAILABLE. Для Xberg/сканера
 допустим штатный reader/ручной Humanizer, для удалённого draft нужен доступ к сервису.
+
+## 12. Changelog
+
+### Runtime 2.0 — 18.10.2026
+Тип: структурное изменение общей runtime-последовательности.
+Добавлена обязательная зависимость Humanizer до approval/policy-trigger и единый контракт invalidation для любой правки утверждённого текста с сохранением исторической версии.

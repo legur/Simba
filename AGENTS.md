@@ -67,6 +67,8 @@ Rafael является `VISUAL_EXECUTOR`; конкретный image generator 
 
 `SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE → [REVISE → SIMBA_REPAIR]* → INTERNAL_CRITIC_PASS → SIMBA_FINALIZE`.
 
+Готовые посты Simba, Info, Travel, Leo и News до финальной выдачи/утверждения проходят `HUMANIZER_EXECUTED → HUMANIZER_PASS` по `Симба (Писатель)/Humanizer-v1.4.md`. Для Simba этот этап следует после финализации автором и Internal Critic; другим авторам Internal Critic не добавляется. Смысловые правки возвращаются автору и повторяют применимые проверки. Изменение уже утверждённого текста снимает прежнее утверждение/policy и готовность зависимого пакета до нового approval и visual QA по `CONTENT_PIPELINE.md` / `RAFAEL_TRIGGER.md`.
+
 Промежуточные внутренние оценки Critic не показывать Leo без отдельного запроса.
 
 ## 5. Knowledge Base

@@ -2,7 +2,7 @@
 
 ## Выполнено
 
-- Python unit-tests: 14 PASS. Draft dry-run не вызывает сеть; запрет schedule/publish;
+- Исходная проверка Python unit-tests 15.10.2026: 14 PASS. Draft dry-run не вызывает сеть; запрет schedule/publish;
   проверка approval/visual status; валидация ID; отсутствие credentials; обработка
   сканера; отключение redirects; извлечение таблиц и source hash.
 - Установка в отдельный venv: xberg 1.3.9, ru-humanizer 3.31.4 успешна.
@@ -15,6 +15,21 @@
   сетевой запрос не выполнялся. Doctor сообщает отсутствие credentials.
 - Runtime links: AGENTS, Router, META, core, Humanizer и pipeline ссылаются на
   существующий AI_PLUGIN_TOOLS.md. Изменены существующие канонические пути.
+
+## Повторная офлайн-проверка · 18.10.2026
+
+- Python 3.14.3: 17/17 unit-tests PASS. Добавлены регрессии для структурированного
+  `BLOCKED` при JSON package с корнем не-объектом и для отклонения каталогов в
+  аргументах `scan file` / `--before` до запуска внешнего сканера.
+- Полный набор выполнен вне ограниченного sandbox, потому что в sandbox даже
+  минимальный `asyncio.run(asyncio.sleep(0))` блокируется при создании локального
+  Windows socketpair. В тестах Xberg, scanner и BulkPublish остаются подменёнными;
+  внешняя сеть и платные сервисы не вызывались.
+- Тестовые временные файлы создавались внутри `integrations/ai_plugins`, чтобы не
+  зависеть от запрещённой для записи sandbox Temp. После тестов временные каталоги
+  удалены.
+- Текущий `doctor`: `xberg` и `ru-humanizer` — `NOT_INSTALLED`, scanner executable —
+  `false`, BulkPublish credentials — `false`, publication supported — `false`.
 
 ## KB-LINT
 

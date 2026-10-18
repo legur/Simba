@@ -27,6 +27,8 @@ def positive_ids(values):
 
 def draft_payload(package):
     """Allowlist the documented API fields; never forward workflow controls."""
+    if not isinstance(package, dict):
+        raise IntegrationError("Package JSON must be an object")
     if package.get("status", "draft") != "draft":
         raise IntegrationError("Only draft status is supported")
     forbidden = {"scheduledAt", "scheduled_at", "repeatSchedule", "publishWhenApproved",
@@ -89,9 +91,14 @@ def scan(path, before=None, genre=None):
     if not executable:
         raise IntegrationError("HUMANIZER_SCANNER_UNAVAILABLE: install optional requirements; use canonical Humanizer manually")
     target = Path(path).resolve(strict=True)
+    if not target.is_file():
+        raise IntegrationError("Input must be a local regular file")
     command = [executable, str(target), "--json"]
     if before:
-        command.extend(["--before", str(Path(before).resolve(strict=True))])
+        before_path = Path(before).resolve(strict=True)
+        if not before_path.is_file():
+            raise IntegrationError("before must be a local regular file")
+        command.extend(["--before", str(before_path)])
     if genre:
         command.extend(["--genre", genre])
     result = subprocess.run(command, capture_output=True, text=True, timeout=120)

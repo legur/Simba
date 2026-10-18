@@ -1,7 +1,10 @@
 import asyncio
+import io
+import json
 from pathlib import Path
 import tempfile
 import unittest
+from contextlib import redirect_stderr
 from unittest.mock import patch, Mock
 
 import bridge
@@ -18,6 +21,19 @@ class BridgeTests(unittest.TestCase):
         api.assert_not_called()
         self.assertEqual(result["request"]["status"], "draft")
         self.assertEqual(result["request"]["content"], self.package()["content"])
+
+    def test_non_object_package_is_structured_blocked_error(self):
+        with tempfile.TemporaryDirectory(dir=Path(__file__).parent) as directory:
+            package = Path(directory) / "package.json"
+            package.write_text("[]", encoding="utf-8")
+            stderr = io.StringIO()
+            with redirect_stderr(stderr):
+                exit_code = bridge.main(["draft", str(package)])
+        self.assertEqual(exit_code, 1)
+        self.assertEqual(json.loads(stderr.getvalue()), {
+            "status": "BLOCKED",
+            "reason": "Package JSON must be an object",
+        })
 
     def test_send_creates_only_draft(self):
         with patch.object(bridge, "api_request", return_value={"id": 77}) as api:
@@ -72,8 +88,27 @@ class BridgeTests(unittest.TestCase):
             with self.assertRaisesRegex(bridge.IntegrationError, "SCANNER_UNAVAILABLE"):
                 bridge.scan("not-used.txt")
 
+    def test_scan_rejects_directory_input_before_starting_scanner(self):
+        with tempfile.TemporaryDirectory(dir=Path(__file__).parent) as directory, patch.object(
+            bridge.shutil, "which", return_value="scanner"
+        ), patch.object(bridge.subprocess, "run") as run:
+            with self.assertRaisesRegex(bridge.IntegrationError, "local regular file"):
+                bridge.scan(directory)
+        run.assert_not_called()
+
+    def test_scan_rejects_directory_before_file_before_starting_scanner(self):
+        with tempfile.TemporaryDirectory(dir=Path(__file__).parent) as directory:
+            target = Path(directory) / "draft.txt"
+            target.write_text("Текст", encoding="utf-8")
+            with patch.object(bridge.shutil, "which", return_value="scanner"), patch.object(
+                bridge.subprocess, "run"
+            ) as run:
+                with self.assertRaisesRegex(bridge.IntegrationError, "before must be a local regular file"):
+                    bridge.scan(target, before=directory)
+        run.assert_not_called()
+
     def test_scan_preserves_findings_without_rewriting(self):
-        with tempfile.TemporaryDirectory() as directory:
+        with tempfile.TemporaryDirectory(dir=Path(__file__).parent) as directory:
             path = Path(directory) / "draft.txt"
             path.write_text("Данный текст", encoding="utf-8")
             with patch.object(bridge.shutil, "which", return_value="/bin/ru-humanizer"), patch.object(
@@ -86,12 +121,14 @@ class BridgeTests(unittest.TestCase):
             self.assertEqual(path.read_text(encoding="utf-8"), "Данный текст")
 
     def test_invalid_scanner_report_is_failure(self):
-        with tempfile.NamedTemporaryFile() as source:
+        with tempfile.TemporaryDirectory(dir=Path(__file__).parent) as directory:
+            source = Path(directory) / "draft.txt"
+            source.write_text("Текст", encoding="utf-8")
             with patch.object(bridge.shutil, "which", return_value="scanner"), patch.object(
                 bridge.subprocess, "run", return_value=Mock(returncode=2, stdout="traceback")
             ):
                 with self.assertRaisesRegex(bridge.IntegrationError, "INVALID_REPORT"):
-                    bridge.scan(source.name)
+                    bridge.scan(source)
 
     def test_redirects_disabled(self):
         handler = bridge.NoRedirect()
@@ -105,10 +142,11 @@ class BridgeTests(unittest.TestCase):
         async def extract(*args):
             return Mock(summary=Mock(errors=0), results=[document])
         module = types.SimpleNamespace(ExtractInput=Mock(), ExtractionConfig=Mock(), OcrConfig=Mock(), extract=extract)
-        with tempfile.NamedTemporaryFile() as source:
-            source.write(b"source"); source.flush()
+        with tempfile.TemporaryDirectory(dir=Path(__file__).parent) as directory:
+            source = Path(directory) / "source.html"
+            source.write_bytes(b"source")
             with patch.dict(sys.modules, {"xberg": module}), patch.object(bridge.importlib.metadata, "version", return_value="test"):
-                result = asyncio.run(bridge.extract_document(source.name))
+                result = asyncio.run(bridge.extract_document(source))
         self.assertEqual(result["sha256"], hashlib.sha256(b"source").hexdigest())
         self.assertEqual(result["status"], "EXTRACTED_UNVERIFIED")
         self.assertEqual(result["documents"][0]["tables"][0]["cells"], [["Цена"]])

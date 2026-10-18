@@ -50,10 +50,11 @@ AI-Маркетолог (если нужна стратегия)
   → Simba
   → INTERNAL_CRITIC_MODE
   → Simba repair/finalize
+  → Humanizer (HUMANIZER_PASS)
   → TEXT_READY_FOR_LEO
 ```
 
-После утверждения текста:
+Для Info, Travel, Leo и News готовый пост также проходит Humanizer до выдачи Leo; обязательный Internal Critic им не добавляется. После утверждения именно этой редакции текста:
 
 ```text
 LEO_APPROVAL

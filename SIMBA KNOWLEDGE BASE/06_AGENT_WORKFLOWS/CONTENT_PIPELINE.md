@@ -1,10 +1,10 @@
 # CONTENT PIPELINE
 
-Версия: 2.0 · 15.10.2026
+Версия: 3.0 · 18.10.2026
 
 ## Полнота смешанного запроса
 
-Перед production-маршрутом применять раздел «Главная цель и полный результат» из канонического `ROUTER_v10.1.md` (внутренняя версия 10.2).
+Перед production-маршрутом применять раздел «Главная цель и полный результат» из канонического `ROUTER_v10.1.md`; актуальная внутренняя версия указана в META-карте системы.
 
 PROCESS_OWNER сохраняет перечень всех явно запрошенных результатов, зависимости этапов и критерий завершения. Для каждого результата подтверждаются исполнение профильного модуля и его проверка. Главная цель не отменяет вторичные запросы.
 
@@ -24,6 +24,7 @@ SOURCE_ONLY_INPUT
   → EXECUTOR_RULES_LOADED
   → PROFILE_MODULE_EXECUTED
   → EXECUTOR_RESULT_VALIDATED
+  → [ДЛЯ ПОСТОВ SIMBA/INFO/TRAVEL/LEO/NEWS: AUTHOR_FINALIZE → HUMANIZER_EXECUTED → HUMANIZER_PASS]
   → RESULT_TO_LEO
 ```
 
@@ -68,6 +69,8 @@ NEW_SOURCE
   → [REVISE → SIMBA_REPAIR → INTERNAL_CRITIC_MODE]*
   → INTERNAL_CRITIC_PASS
   → SIMBA_FINALIZE
+  → HUMANIZER_EXECUTED
+  → HUMANIZER_PASS
   → TEXT_READY_FOR_LEO
   → LEO_APPROVAL
   → APPROVED_TEXT
@@ -98,6 +101,9 @@ SOURCE_RESOLVED
   → NEWS_RULES_LOADED
   → NEWS_EXECUTED
   → NEWS_RESULT_VALIDATED
+  → NEWS_FINALIZE
+  → HUMANIZER_EXECUTED
+  → HUMANIZER_PASS
   → NEWS_TEXT_READY
   → [LEO_APPROVAL | POLICY_APPROVED_FOR_VISUAL]
   → RAFAEL_TASK_CREATED
@@ -112,7 +118,7 @@ News, а не Router/Маркетолог, является текстовым �
 
 ## AUTOMATION_CONTINUOUS_MODE
 
-Для конкретной scheduled-задачи, где Leo заранее разрешил не останавливаться между текстом и постером, `NEWS_TEXT_READY` или финальный результат Simba получает `POLICY_APPROVED_FOR_VISUAL` без интерактивного подтверждения. Это разрешает только переход к Rafael; **автопубликация запрещена**.
+Для конкретной scheduled-задачи, где Leo заранее разрешил не останавливаться между текстом и постером, только результат с `HUMANIZER_PASS` и статусом `NEWS_TEXT_READY` либо `TEXT_READY_FOR_LEO` получает `POLICY_APPROVED_FOR_VISUAL` без интерактивного подтверждения. Это разрешает только переход к Rafael; **автопубликация запрещена**.
 
 Rafael остается владельцем визуального решения. Image generator — renderer и работает только после Rafael-process; Router/Маркетолог не составляют за Rafael визуальные prompts.
 
@@ -123,9 +129,9 @@ Rafael остается владельцем визуального решени
 ## Critic: internal gate и внешний review
 
 ### Internal Critic
-`INTERNAL_CRITIC_MODE` — обязательный скрытый production-gate **только для Simba**. Он запускается после черновой редакции Simba и до `TEXT_READY_FOR_LEO`.
+`INTERNAL_CRITIC_MODE` — обязательный скрытый production-gate **только для Simba**. Он запускается после черновой редакции Simba и до `SIMBA_FINALIZE`; после финализации текст обязательно проходит Humanizer до `TEXT_READY_FOR_LEO`.
 
-- `PASS` → Simba финализирует текст и только затем результат показывается Leo;
+- `PASS` → Simba финализирует текст и передаёт его в Humanizer; результат показывается Leo только после `HUMANIZER_PASS`;
 - `REVISE` → замечания возвращаются Simba, который сам переписывает текст и снова проходит Critic;
 - Critic не переписывает пост и не заменяет Simba как финального автора;
 - промежуточные оценки и итерации пользователю не показываются.
@@ -134,6 +140,21 @@ Rafael остается владельцем визуального решени
 Leo по-прежнему может отдельно запускать Critic или приносить комментарии любого внешнего критика. Это evidence для текущей доработки, а не самостоятельный production-PASS. Принятые замечания идут обратно Simba, и новая версия снова проходит Internal Critic.
 
 Внешняя критика не заменяет решение Leo и не становится постоянным правилом автоматически.
+
+## Humanizer: обязательный pre-approval gate
+
+Для готовых постов Simba, Info, Travel, Leo и News действует порядок: автор завершает собственную редакцию и проверки → `HUMANIZER_EXECUTED → HUMANIZER_PASS` → соответствующий ready-state → approval/policy-trigger. Этот gate не распространяется автоматически на Wix-форматтер, клиентские письма/документы, JSON или визуальные результаты.
+
+- Simba до Humanizer обязательно получает `INTERNAL_CRITIC_PASS` и выполняет `SIMBA_FINALIZE`;
+- Info, Travel, Leo и News проходят собственную финальную проверку и Humanizer без автоматического Internal Critic;
+- смысловая правка Humanizer возвращает текст профильному автору; Simba после такой правки повторяет Internal Critic, остальные авторы — только собственную проверку;
+- оставшийся Humanizer hard blocker даёт `BLOCKED_HUMANIZER`; ready-state, approval и визуальный маршрут запрещены.
+
+## Изменение утверждённого текста
+
+Любое изменение `APPROVED_TEXT` или текста с `POLICY_APPROVED_FOR_VISUAL`, включая пунктуацию и оформление, немедленно снимает этот статус. Предыдущая редакция сохраняется в Content Library как историческая и не перезаписывается.
+
+Изменённая редакция повторяет авторскую проверку, для Simba — Internal Critic, затем Humanizer и новое `LEO_APPROVAL` либо новый policy-trigger. Все зависимые `FINAL_VISUAL_READY` и `PUBLICATION_PACKAGE_READY` снимаются. До нового package readiness выполнить QA затронутых визуалов и новый render, если изменены exact text или иные visual inputs.
 
 ## KB PREFLIGHT
 Каждый этап читает только свои обязательные KB-слои по `00_CORE/KB_RUNTIME_PROTOCOL.md`. Если внутренний обязательный KB-файл недоступен, маршрут останавливается как `BLOCKED_KB_UNAVAILABLE`; память о старой версии не используется как замена. Внешние reference-библиотеки Archivarius/YouMind не являются KB-файлами: их недоступность переводит Rafael в degraded mode и не останавливает визуальную генерацию.
@@ -168,6 +189,10 @@ Leo по-прежнему может отдельно запускать Critic 
 
 
 ## Changelog
+
+### 3.0 — 18.10.2026
+Тип: структурное изменение production-workflow.
+Humanizer добавлен как обязательный gate после завершения автора и до первого approval/policy-trigger. Любое изменение утверждённой версии теперь снимает approval и зависимые visual/package states с сохранением старой редакции как истории.
 
 ### 1.6 — 05.10.2026
 Уточнена полнота смешанного запроса: цель, все результаты, зависимости, проверка завершения и конкретное сообщение о блокировке. Существующие роли и approval/preview gates сохранены.

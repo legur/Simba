@@ -601,9 +601,13 @@
       "drive_id": "1dj95UMr-PipQidhQyELdrq3UcQ4RvrpBJsAdMUy_E2Q",
       "source_url": "https://docs.google.com/document/d/1dj95UMr-PipQidhQyELdrq3UcQ4RvrpBJsAdMUy_E2Q/edit?usp=drivesdk",
       "mime_type": "application/vnd.google-apps.document",
-      "path": "Archivarius/01_Изображения/06_Коллажи_и_двойная_экспозиция/AR-20260723-050 — Двойная экспозиция с молодым военнослужащим в полный рост",
+      "source_path": "Archivarius/01_Изображения/06_Коллажи_и_двойная_экспозиция/AR-20260723-050 — Двойная экспозиция с молодым военнослужащим в полный рост",
+      "path": "Archivarius/99_ТРЕБУЕТ_ПРОВЕРКИ/1dj95UMr-PipQidhQyELdrq3UcQ4RvrpBJsAdMUy_E2Q/AR-20260723-050 — Двойная экспозиция с молодым военнослужащим в полный рост.source-extensionless",
       "github_blob_sha": "005aa9f1a6b59cde325ca1d633077e89562a8d83",
-      "verification": "exact_readable_text_readback"
+      "verification": "exact_readable_text_readback",
+      "runtime_path": "Archivarius/01_Изображения/06_Коллажи_и_двойная_экспозиция/AR-20260723-050 — Двойная экспозиция с молодым военнослужащим в полный рост.md",
+      "runtime_github_blob_sha": "005aa9f1a6b59cde325ca1d633077e89562a8d83",
+      "runtime_note": "byte-identical md copy retained; source card still requires schema normalization"
     },
     {
       "drive_id": "1aNsPhBIzACZ9LL4Zam3k3ek6lpx4BDcn",
@@ -2273,9 +2277,11 @@
       "drive_id": "1shoSEnggfcAj1zovenJhCnM_zhVC5Vpb",
       "source_url": "https://drive.google.com/file/d/1shoSEnggfcAj1zovenJhCnM_zhVC5Vpb/view?usp=drivesdk",
       "mime_type": "text/markdown",
-      "path": "Archivarius/08_Обучение_и_продуктивность/04_Саморазвитие_и_мышление/AR-20260808-001 — 5 промтов для полезных ответов ChatGPT.md",
-      "github_blob_sha": "a82d6ace8bae139b89855e5fad345389da34c5d4",
-      "verification": "exact_readable_text_readback"
+      "source_path": "Archivarius/08_Обучение_и_продуктивность/04_Саморазвитие_и_мышление/AR-20260808-001 — 5 промтов для полезных ответов ChatGPT.md",
+      "source_github_blob_sha": "a82d6ace8bae139b89855e5fad345389da34c5d4",
+      "path": "Archivarius/08_Обучение_и_продуктивность/05_Системные_генераторы/AR-20260808-001 — 5 промтов для полезных ответов ChatGPT.md",
+      "github_blob_sha": "3d00b0df1ae6d0eead2307b2fe1edb6fc66e2b2e",
+      "verification": "normalized_path_collision_repair"
     },
     {
       "drive_id": "1nn1N4WA-Q8sDLs7GdpbJ7aT40E3spvdv",
@@ -6145,7 +6151,8 @@
       "drive_id": "1U3g8iNEv07c9B5ZznI2edM6t6_jqFFYV",
       "source_url": "https://drive.google.com/file/d/1U3g8iNEv07c9B5ZznI2edM6t6_jqFFYV/view?usp=drivesdk",
       "mime_type": "text/markdown",
-      "path": "Archivarius/08_Обучение_и_продуктивность/05_Системные_генераторы/AR-20260808-001 — 5 промтов для полезных ответов ChatGPT.md",
+      "source_path": "Archivarius/08_Обучение_и_продуктивность/05_Системные_генераторы/AR-20260808-001 — 5 промтов для полезных ответов ChatGPT.md",
+      "path": "Archivarius/99_ТРЕБУЕТ_ПРОВЕРКИ/1U3g8iNEv07c9B5ZznI2edM6t6_jqFFYV/AR-20260808-001 — 5 промтов для полезных ответов ChatGPT.source-escaped.md",
       "github_blob_sha": "f3e9e6e1916b2a7f96659f854ff0540ba4ce34dc",
       "verification": "exact_readable_text_readback"
     },
@@ -12073,9 +12080,13 @@
       "drive_id": "1S6wtbttGo_F0C_L3QuUetc8_pjrGmITa",
       "source_url": "https://drive.google.com/file/d/1S6wtbttGo_F0C_L3QuUetc8_pjrGmITa/view?usp=drivesdk",
       "mime_type": "text/markdown",
-      "path": "Archivarius/01_Изображения/02_Стилизация_фотографий/02_Киноэпохи_и_жанровые_образы/AR-20260919-005_v1 — Джокер — мрачный кинематографичный портрет по фотографии.md",
-      "github_blob_sha": "5926780132b197b8cbb84d14b0ad58e725326dd1",
-      "verification": "exact_readable_text_readback"
+      "source_path": "Archivarius/01_Изображения/02_Стилизация_фотографий/02_Киноэпохи_и_жанровые_образы/AR-20260919-005_v1 — Джокер — мрачный кинематографичный портрет по фотографии.md",
+      "source_github_blob_sha": "5926780132b197b8cbb84d14b0ad58e725326dd1",
+      "path": "Archivarius/01_Изображения/02_Стилизация_фотографий/02_Киноэпохи_и_жанровые_образы/AR-20260919-006_v1 — Джокер — мрачный кинематографичный портрет по фотографии.md",
+      "github_blob_sha": "53381cab4a5d2af4ac8522cc180cead0483f8315",
+      "verification": "normalized_id_collision_repair",
+      "source_id": "AR-20260919-005",
+      "runtime_id": "AR-20260919-006"
     },
     {
       "drive_id": "1syZRMN_-FmKZkTOTghxu0x0X7JxL9kgc",
@@ -17249,9 +17260,13 @@
       "drive_id": "13nmjq4gH9LQIR98Plkfe37rQ7F4ceXcj",
       "source_url": "https://drive.google.com/file/d/13nmjq4gH9LQIR98Plkfe37rQ7F4ceXcj/view?usp=drivesdk",
       "mime_type": "text/markdown",
-      "path": "Archivarius/01_Изображения/01_Портреты_и_фотосессии/03_Уличные_и_путевые_фотосессии/AR-20260723-011 — Женщина в белом летнем платье на деревянном пирсе в золотой час.md",
-      "github_blob_sha": "0d438cffb4e0c04df6c53b3710b309b48e637f26",
-      "verification": "exact_readable_text_readback"
+      "source_path": "Archivarius/01_Изображения/01_Портреты_и_фотосессии/03_Уличные_и_путевые_фотосессии/AR-20260723-011 — Женщина в белом летнем платье на деревянном пирсе в золотой час.md",
+      "source_github_blob_sha": "0d438cffb4e0c04df6c53b3710b309b48e637f26",
+      "path": "Archivarius/01_Изображения/01_Портреты_и_фотосессии/03_Уличные_и_путевые_фотосессии/AR-20260723-056 — Женщина в белом летнем платье на деревянном пирсе в золотой час.md",
+      "github_blob_sha": "a8f5bdfe62b113ed93bc629aa900054a65e7b6f6",
+      "verification": "normalized_id_collision_repair",
+      "source_id": "AR-20260723-011",
+      "runtime_id": "AR-20260723-056"
     },
     {
       "drive_id": "1rPWFJbjB_twXZ7PRWg3ttKNwHq3BFVjA",
@@ -22721,9 +22736,15 @@
       "drive_id": "1kv-yvLHtRcqslIWG79yWTMYtfqiaub-q",
       "source_url": "https://drive.google.com/file/d/1kv-yvLHtRcqslIWG79yWTMYtfqiaub-q/view?usp=drivesdk",
       "mime_type": "text/plain",
-      "path": "Archivarius/TIA/TIA-023.txt",
+      "source_path": "Archivarius/TIA/TIA-023.txt",
+      "path": "Archivarius/TIA/99_ТРЕБУЕТ_ПРОВЕРКИ/1kv-yvLHtRcqslIWG79yWTMYtfqiaub-q/TIA-023.raw.txt",
       "github_blob_sha": "4041ed39fa29c614ad338c55d45937f1814b6948",
-      "verification": "raw_bytes_git_sha1"
+      "verification": "raw_bytes_git_sha1",
+      "source_size_bytes": 18013,
+      "source_sha256": "82a6ef58fb69915e4e307ede3fe16facab1c7f2a234ad25cd87e36a439704727",
+      "runtime_path": "Archivarius/TIA/TIA-023.txt",
+      "runtime_github_blob_sha": "063de5cda5ee706e38f984e72cdc094ee6120465",
+      "runtime_status": "SOURCE_BLOCKED_CORRUPT_PARTIAL_EVIDENCE"
     },
     {
       "drive_id": "1K0mvs3Wh3Bd6Hp6cFOQe19_JdSioGKq2",

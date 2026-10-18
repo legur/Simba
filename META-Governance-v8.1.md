@@ -1,8 +1,8 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 9.0 · 15.10.2026 · технические адаптеры Xberg / humanizer-ru / BulkPublish; канонический путь сохранён
-Дата: 15.10.2026
+Версия: 10.0 · 18.10.2026 · согласованы финализация текста, фактологические правила и внешний Audit; канонический путь сохранён
+Дата: 18.10.2026
 
 
 Это не модуль генерации контента. Это слой правил для ЛЮБОГО изменения архитектуры:
@@ -84,22 +84,24 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 11.0 · 15.10.2026 | ✅ активен — HARD DEFAULT + Source Resolution + Execution/Provenance gates + PROCESS_OWNER + Internal Critic |
-| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 5.0 + amendment rev.4 04.10 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; external marketing angle mining |
-| Simba | Simba-v5.0.md | 5.0 + amendment 04.10 | ✅ активен — KB PREFLIGHT + Internal Critic repair-loop + controlled colloquial hyperbole in sales copy |
+| Router | ROUTER_v10.1.md | 12.0 · 18.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic и Humanizer до утверждения |
+| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
+| Simba | Simba-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
 | Travel | Travel-v1.3.md | 1.3 | ✅ активен |
 | Leo | Leo-v1.3.md | 1.3 | ✅ активен |
 | News | News-v1.2.md | 1.2 | ✅ активен |
-| Humanizer | Humanizer-v1.4.md | 2.0 · 15.10.2026 | ✅ активен |
-| Critic | Critic-3.7.md | 3.7 + amendment 08.09 · 07.10 (Session Log → GitHub) | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo |
+| Humanizer | Humanizer-v1.4.md | 3.0 · 18.10.2026 | ✅ активен — обязательная чистка постов до approval; hard blocker не допускает финализацию |
+| Critic | Critic-3.7.md | 4.7 · 18.10.2026 | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo; критерии оценки сохранены |
 | Rafael (Architecture / System / Styles / Routing) | см. RAFAEL_Architecture_v5.0.md | 5.0 / 6.2 / 3.3 / 3.3 | ✅ активен; GPT Image 2.5 Protocol + Visual Example Library; Archivarius trusted-first + blocklist + YouMind |
 | Archivarius | Archivarius-System-v2.7.md + `01_Изображения` | 2.7 | ✅ внешняя библиотека; Rafael ищет trusted-first, затем по релевантным active visual cards вне blocklist |
 | YouMind AI Image Prompts | GitHub `YouMind-OpenLab/ai-image-prompts-skill` / `references/*` | external live | ✅ активен; постоянный reference-source Rafael, external failure non-blocking |
-| Audit | Audit-v1.2.md | 1.3 (внутри файла; путь прежний) | ✅ активен — Session Log и правки модулей через GitHub; см. раздел AUDIT ниже |
+| Audit | Audit-v1.2.md | 2.3 · 18.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.0 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 1.0 · 15.10.2026 | Адаптеры подготовлены; внешние smoke-тесты отдельно; не новые контентные модули |
-| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | runtime | ✅ обязательный общий контекст |
+| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.4 / runtime 2.0 | ✅ обязательный общий контекст |
+| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 3.0 · 18.10.2026 | Humanizer до approval, повторные проверки изменённого текста |
+| Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 2.3 · 18.10.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
 
 Эта таблица — источник правды о текущем состоянии. Если файл изменён, а таблица не обновлена —
@@ -137,9 +139,9 @@ AI-Маркетолог не заменяет существующие моду�
 - Simba, Info, Travel, Leo и News сохраняют собственные правила голоса, структуры, TIA и финальной проверки. Исключение: каждый результат Simba до выдачи Leo проходит обязательный скрытый `INTERNAL_CRITIC_MODE`; для Info/Travel/Leo/News этот gate автоматически не вводится. Внешний review Critic остается отдельным вызовом по инициативе Leo.
 - Rafael и Люмьер сохраняют собственные визуальные и технические процессы; маркетинговый бриф задаёт задачу, но не формат реализации.
 - Перед каждым вызовом Rafael Router и AI-Маркетолог обязаны потребовать, чтобы Rafael сначала полностью перечитал актуальные правила и все обязательные зависимости, а затем выполнил предусмотренное ими количество вариантов, проверки и формат выдачи. Сокращённый результат не принимается как финальный.
-- Humanizer применяется после генерации текста и не имеет права удалить ключевую ценность, proof или CTA из утверждённого брифа.
+- Humanizer применяется к готовому посту до первой финальной выдачи и утверждения Leo: `AUTHOR_FINALIZED → HUMANIZER_EXECUTED → HUMANIZER_PASS → TEXT_READY_FOR_LEO`. Он не имеет права удалить ключевую ценность, proof или CTA из утверждённого брифа. Авторство сохраняется у профильного модуля. Для остальных авторов Internal Critic автоматически не добавляется.
 - Для Facebook-результата Router/Маркетолог обязаны загрузить `07_LEARNINGS/PATTERN_WATCH.md` и передать исполнителю только релевантные learning-сигналы.
-- Фактологическая верификация обязательна до verdict и повторяется исполнительным модулем для изменяемых деталей, если между этапами появилась новая информация.
+- Фактологическая верификация обязательна до verdict. Текущий прямой рабочий источник поставщика достаточен для фактов собственного оффера с указанным моментом получения; второе независимое подтверждение не требуется автоматически. При новых данных исполнитель проверяет противоречия. Неподтверждённые claims нельзя легализовать оговоркой или выдуманным диапазоном; существенный пробел/конфликт возвращается на уточнение по правилам точности.
 
 
 Маршрут по умолчанию:
@@ -165,7 +167,9 @@ AI-Маркетолог не заменяет существующие моду�
 AI-Маркетолог не подменяет Simba, Critic, Rafael и другие модули, но остается владельцем маркетингового workflow от нормализации источника до предусмотренного конечного state. Handoff другому модулю не считается завершением задачи.
 
 
-Для Simba обязательна последовательность: `SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE → [REVISE → SIMBA_REPAIR]* → INTERNAL_CRITIC_PASS → SIMBA_FINALIZE → TEXT_READY_FOR_LEO`. После одобрения Leo финального текста запускается установленный Rafael trigger без дополнительного вопроса.
+Для Simba обязательна последовательность: `SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE → [REVISE → SIMBA_REPAIR]* → INTERNAL_CRITIC_PASS → SIMBA_FINALIZE → HUMANIZER_EXECUTED → HUMANIZER_PASS → TEXT_READY_FOR_LEO`. После одобрения Leo именно этой редакции запускается установленный Rafael trigger без дополнительного вопроса.
+
+Смысловая правка возвращается профильному автору; для Simba повторяются Internal Critic и Humanizer, для остальных постов — собственные проверки автора и Humanizer. Оставшийся hard blocker Humanizer означает `BLOCKED_HUMANIZER`, без финальной выдачи. Любое изменение утверждённой редакции снимает `APPROVED_TEXT` / `POLICY_APPROVED_FOR_VISUAL` и готовность зависимого пакета; предыдущая редакция сохраняется как история. Новая редакция требует повторного разрешённого approval-trigger и QA зависимых визуалов, при необходимости нового рендера. Сокращённые цепочки выдачи поста подразумевают этот финальный этап.
 
 
 Если Leo приносит замечания внешнего критика, это evidence текущей доработки: Маркетолог фильтрует их на применимость, передает Simba, и новая редакция снова проходит Internal Critic.
@@ -630,6 +634,12 @@ ACTIVE RULE CANDIDATE и требует изменения Router/модуля, 
 
 
 ## CHANGELOG
+
+### 10.0 — 18.10.2026
+Тип: исправление согласованности runtime по прямой команде Leo «справь» после аудита.
+Что изменено: Humanizer закреплён до утверждения, архива и Rafael; сохранены авторство, повторный Internal Critic только для смысловых правок Simba и повторное утверждение изменённой редакции. Audit описывает только добровольный внешний review. Router согласован с действующим приоритетом текущего рабочего источника и запретом неподтверждённых обещаний. Исправления адаптера и архивных неоднозначностей фиксируются в собственных validation/migration evidence.
+Причина: расходящиеся инструкции позволяли пропустить финальную чистку, принять внешний вердикт за production-PASS или по-разному обработать один источник.
+Затронуто: Router, Marketer, Simba, Critic, Humanizer, Audit, KB_RUNTIME_PROTOCOL, CONTENT_PIPELINE, RAFAEL_TRIGGER, ARCHIVARIUS_RUNTIME_BLOCKLIST, DECISION_LOG. Карантин исходников и повреждённые записи исключены из автоматического reference runtime. Канонические пути, утверждения Leo и запрет автопубликации сохранены.
 
 ### 8.4 — 07.10.2026
 Тип: точечная правка хранилища и процесса (прямое решение Leo: «сохранять всё на GitHub, про Drive убираем»).
