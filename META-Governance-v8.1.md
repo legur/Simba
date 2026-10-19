@@ -1,8 +1,8 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 10.0 · 18.10.2026 · согласованы финализация текста, фактологические правила и внешний Audit; канонический путь сохранён
-Дата: 18.10.2026
+Версия: 11.0 · 19.10.2026 · Zernio CLI draft workflow; канонический путь сохранён
+Дата: 19.10.2026
 
 
 Это не модуль генерации контента. Это слой правил для ЛЮБОГО изменения архитектуры:
@@ -84,7 +84,7 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 12.0 · 18.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic и Humanizer до утверждения |
+| Router | ROUTER_v10.1.md | 13.0 · 19.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft routing |
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
 | Simba | Simba-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
@@ -98,9 +98,9 @@ Knowledge Base не хранит текущую цену/наличие как �
 | YouMind AI Image Prompts | GitHub `YouMind-OpenLab/ai-image-prompts-skill` / `references/*` | external live | ✅ активен; постоянный reference-source Rafael, external failure non-blocking |
 | Audit | Audit-v1.2.md | 2.3 · 18.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.0 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
-| AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 1.0 · 15.10.2026 | Адаптеры подготовлены; внешние smoke-тесты отдельно; не новые контентные модули |
+| AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
 | SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.4 / runtime 2.0 | ✅ обязательный общий контекст |
-| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 3.0 · 18.10.2026 | Humanizer до approval, повторные проверки изменённого текста |
+| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 4.0 · 19.10.2026 | Humanizer до approval; Zernio draft с выбором страницы и readback |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 2.3 · 18.10.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
 
@@ -868,3 +868,16 @@ Knowledge Map 1.4 синхронизированы на прежних путя�
 Граница: финальные утверждения Leo, Internal Critic и процесс Rafael сохранены;
 автопубликация/расписание и запись цен в Wix не добавлены. Для источников сохраняется
 проверка оригинала, для текста приоритет существующего Humanizer и голоса Leo.
+
+### 11.0 — 19.10.2026 — Zernio CLI
+Тип: структурное изменение технического workflow по прямой задаче Leo.
+Router 13.0 и Content Pipeline 4.0 передают утверждённый пакет PROCESS_OWNER в
+Zernio через существующую CLI-авторизацию. AI_PLUGIN_TOOLS 2.0 и
+integrations/ai_plugins/ZERNIO.md задают точный выбор страницы Leo's Travel Tips
+или Simba World Travel, draft-only адаптер, загрузку финальной картинки,
+проверку exact text/media/status через posts:get и защиту повторов.
+Публикация/расписание требуют отдельной явной команды Leo для конкретного ID;
+draft/approval не являются разрешением. CLI не обеспечивает межмашинную атомарную
+idempotency: один исполнитель, журнал до записи, UNKNOWN блокирует повтор.
+Ключи не читаются адаптером, не выводятся и не коммитятся. Авторы и Rafael gates
+сохранены. Новые платные зависимости не добавлены.
