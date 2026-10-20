@@ -1,4 +1,13 @@
-STATUS: PROMPTS_READY
+STATUS: FIVE_PREVIEWS_READY
+EXECUTION_STATES: RAFAEL_RULES_LOADED → REFERENCE_SEARCH_ATTEMPT → CONCEPTS_AND_PROMPTS_READY → RENDERER_EXECUTED → FIVE_PREVIEWS_READY
+QA: All five square previews rendered and visually inspected; headline, date, EUR1399/EUR1499 and EUR100 correct; Simba visible; no contacts, QR or extra slogan. Refine safe margins during selected final render. No final variant selected, no publication.
+PREVIEW_ORDER: tools returned 2,1,3,4,5; IDs remain original concept numbers.
+PREVIEW_FILES:
+1: generated_images/exec-55dafd86-3bcf-4cb8-823b-8442c97d190d.png
+2: generated_images/exec-4783e8a1-0cab-4599-9f07-7b53983b6762.png
+3: generated_images/exec-6552ef0b-acab-494e-b26e-98de4164c5da.png
+4: generated_images/exec-e796b992-9f3e-43e3-ace2-c5e26b30b4dd.png
+5: generated_images/exec-e8162539-bc47-44f5-b4fd-0846375a93fc.png
 DATE: 2026-10-20
 APPROVED_TEXT: 2026-10-20__SELLING__PIEDMONT-LOMBARDY-100EUR__APPROVED.md
 VISUAL_EXECUTOR: Rafael/RAFAEL_System_v6.2.md
