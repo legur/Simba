@@ -1,6 +1,6 @@
 # Costa Fascinosa visual session
 
-Status: FIVE_PREVIEWS_READY; awaiting Leo selection; FINAL_VISUAL_READY=false
+Status: PUBLICATION_PACKAGE_READY; SELECTED_VARIANT_ID=4; FINAL_VISUAL_READY=true; publication pending explicit Facebook page choice
 APPROVED_TEXT: 2026-10-20__SELLING__COSTA-FASCINOSA-CLIENT-BOOKING__APPROVED.md
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen
@@ -63,3 +63,11 @@ KB-LINT L01/L03/L04/L05/L07/L08/L09: PASS for visual session. No publication.
 Five standalone square previews generated and shown inline. All five: Cyrillic headline, correct ship name, 1492$ / человек, date 17-25 мая 2027, inclusions and brand present. Map reference used in all five. Variant 2 initially omitted dates and was repaired by local image edit; corrected preview shown. Character overlaps peripheral map edges in several previews but port labels and route remain visible. No publication or final selection.
 REFERENCE_TRACE: no external Archivarius/YouMind cards used; only Rafael Styles and user's supplied map. Built-in image_gen used.
 KB-LINT: PASS. Approved full text and index verified by readback. Dynamic facts remain historical offer context.
+
+## Final variant 4
+Selected by Leo: «берем 4 вариант. делай пост на фб».
+Saved full variant 4 prompt reloaded before separate final image_gen render. Selected preview used as composition/character reference, original user map as authoritative map reference.
+Final QA: PASS — square, correct ship, date, price/unit, inclusions, Cyrillic, brand; all map labels and port route readable; no new claims or contacts. Peripheral map edge overlapped by character as in selected preview.
+Final artifact: generated image exec-67e04cc6-c1cd-42e8-a7f1-4157a157504a.png (inline image_gen output, automatically persisted by platform).
+Facebook accounts read successfully: Leo's Travel Tips / Simba World Travel, both connected. No page selected; no external post created or published.
+KB-LINT: PASS, no approved text changes.
