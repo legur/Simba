@@ -1,8 +1,8 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 11.0 · 19.10.2026 · Zernio CLI draft workflow; канонический путь сохранён
-Дата: 19.10.2026
+Версия: 11.1 · 20.10.2026 · Critic 5.7: оптика читателя во внешнем review; канонический путь сохранён
+Дата: 20.10.2026
 
 
 Это не модуль генерации контента. Это слой правил для ЛЮБОГО изменения архитектуры:
@@ -92,7 +92,7 @@ Knowledge Base не хранит текущую цену/наличие как �
 | Leo | Leo-v1.3.md | 1.3 | ✅ активен |
 | News | News-v1.2.md | 1.2 | ✅ активен |
 | Humanizer | Humanizer-v1.4.md | 3.0 · 18.10.2026 | ✅ активен — обязательная чистка постов до approval; hard blocker не допускает финализацию |
-| Critic | Critic-3.7.md | 4.7 · 18.10.2026 | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo; критерии оценки сохранены |
+| Critic | Critic-3.7.md | 5.7 · 20.10.2026 | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo с блоком «Оптика читателя» (механизм, читатель и цель, прогноз, динамика серии, визуал, углы); критерии оценки сохранены |
 | Rafael (Architecture / System / Styles / Routing) | см. RAFAEL_Architecture_v5.0.md | 5.0 / 6.2 / 3.3 / 3.3 | ✅ активен; GPT Image 2.5 Protocol + Visual Example Library; Archivarius trusted-first + blocklist + YouMind |
 | Archivarius | Archivarius-System-v2.7.md + `01_Изображения` | 2.7 | ✅ внешняя библиотека; Rafael ищет trusted-first, затем по релевантным active visual cards вне blocklist |
 | YouMind AI Image Prompts | GitHub `YouMind-OpenLab/ai-image-prompts-skill` / `references/*` | external live | ✅ активен; постоянный reference-source Rafael, external failure non-blocking |
@@ -634,6 +634,12 @@ ACTIVE RULE CANDIDATE и требует изменения Router/модуля, 
 
 
 ## CHANGELOG
+
+### 11.1 — 20.10.2026
+Тип: структурное изменение одного модуля (внешний review Critic) без изменения оценки.
+Что изменено: Critic 5.7 в `EXTERNAL_REVIEW_MODE` после verdict и рекомендаций выдаёт блок «Оптика читателя»: механизм поста, читатель и цель, прогноз по осям с уверенностью, динамика серии, связка текст и визуал, углы, три вещи; добавлены правила разбора отчёта внешнего критика и сверки прогноза с фактическими показателями.
+Причина: прямое указание Leo 20.10.2026. Разборы Critic сводились к шлифовке текста и формальным проверкам, тогда как внешний разбор того же поста дал стратегические выводы, которых в разборе Critic не было.
+Затронуто: Critic-3.7.md (5.7), DECISION_LOG.md. Формула, веса, пороги, гейты, C3, `INTERNAL_CRITIC_MODE`, Router, Simba и PATTERN_WATCH не менялись.
 
 ### 10.0 — 18.10.2026
 Тип: исправление согласованности runtime по прямой команде Leo «справь» после аудита.
