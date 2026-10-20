@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-20 | [Пьемонт и Ломбардия — скидка €100](2026-10-20__SELLING__PIEDMONT-LOMBARDY-100EUR__APPROVED.md) | APPROVED | sales | Eshet / Piedmont + Lombardy / departure 15 December 2026 | Italy plans become dates, concrete route and transparent inclusions | «отлично» | high |
 | 2026-10-20 | [Что заказывают мои клиенты — Costa Fascinosa](2026-10-20__SELLING__COSTA-FASCINOSA-CLIENT-BOOKING__APPROVED.md) | APPROVED | sales | Costa Fascinosa / Italy + France / 17–25 May 2027 | real client booking, evening scenic passages, cabin choice | «отлично» | high |
 | 2026-10-19 | [Двое по цене одного — два тур-круиза](2026-10-19__SELLING__CRUISE-TWO-FOR-ONE__APPROVED.md) | APPROVED | sales | Mediterranean / Europe tour-cruises | suitcase scene, pair pricing, balcony | «отлично» | high |
 | 2026-10-18 | [Два греческих острова — круиз из Хайфы](2026-10-18__SELLING__CROWN-IRIS-GREEK-ISLANDS__APPROVED.md) | APPROVED | sales | Crown Iris / Rhodes + Crete from Haifa | два греческих острова с посадкой на лайнер в Хайфе | выбран вариант 1 | high |
