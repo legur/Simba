@@ -1,6 +1,6 @@
 # Costa Fascinosa visual session
 
-Status: PREVIEWS_PENDING
+Status: FIVE_PREVIEWS_READY; awaiting Leo selection; FINAL_VISUAL_READY=false
 APPROVED_TEXT: 2026-10-20__SELLING__COSTA-FASCINOSA-CLIENT-BOOKING__APPROVED.md
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen
@@ -58,3 +58,8 @@ STYLE / COMPOSITION: Classic Mediterranean cruise poster with midcentury cream, 
 REFERENCE_TRACE: {"archivarius":"UNAVAILABLE: GitHub search found no retrievable cards","youmind":"UNAVAILABLE: manifest retrieved; category returned empty content","oai_example":"EX-01 exact text contract, indexed mechanics; image pair unavailable"}
 
 KB-LINT L01/L03/L04/L05/L07/L08/L09: PASS for visual session. No publication.
+
+## Preview QA — 20.10.2026
+Five standalone square previews generated and shown inline. All five: Cyrillic headline, correct ship name, 1492$ / человек, date 17-25 мая 2027, inclusions and brand present. Map reference used in all five. Variant 2 initially omitted dates and was repaired by local image edit; corrected preview shown. Character overlaps peripheral map edges in several previews but port labels and route remain visible. No publication or final selection.
+REFERENCE_TRACE: no external Archivarius/YouMind cards used; only Rafael Styles and user's supplied map. Built-in image_gen used.
+KB-LINT: PASS. Approved full text and index verified by readback. Dynamic facts remain historical offer context.
