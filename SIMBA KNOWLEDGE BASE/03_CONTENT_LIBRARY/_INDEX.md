@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-20 | [Что заказывают мои клиенты — Costa Fascinosa](2026-10-20__SELLING__COSTA-FASCINOSA-CLIENT-BOOKING__APPROVED.md) | APPROVED | sales | Costa Fascinosa / Italy + France / 17–25 May 2027 | real client booking, evening scenic passages, cabin choice | «отлично» | high |
 | 2026-10-19 | [Двое по цене одного — два тур-круиза](2026-10-19__SELLING__CRUISE-TWO-FOR-ONE__APPROVED.md) | APPROVED | sales | Mediterranean / Europe tour-cruises | suitcase scene, pair pricing, balcony | «отлично» | high |
 | 2026-10-18 | [Два греческих острова — круиз из Хайфы](2026-10-18__SELLING__CROWN-IRIS-GREEK-ISLANDS__APPROVED.md) | APPROVED | sales | Crown Iris / Rhodes + Crete from Haifa | два греческих острова с посадкой на лайнер в Хайфе | выбран вариант 1 | high |
 | 2026-10-14 | [Norwegian Cruise Line — World Cruise Awards 2026](2026-10-14__NEWS__NCL-WORLD-CRUISE-AWARDS__APPROVED.md) | PUBLICATION_PACKAGE_READY | news | Norwegian Cruise Line / World Cruise Awards 2026 | награда, механизм голосования и свободное время ужина | «Отлично»; выбран визуал 5, финальный render выполнен | high |
