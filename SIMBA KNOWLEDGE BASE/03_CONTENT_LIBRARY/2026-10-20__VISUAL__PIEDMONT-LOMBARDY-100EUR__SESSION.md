@@ -1,4 +1,10 @@
-STATUS: FIVE_PREVIEWS_READY
+STATUS: PUBLICATION_PACKAGE_READY
+SELECTED_VARIANT_ID: 1
+SELECTION_SOURCE: Leo «1», 2026-10-20
+FINAL_VISUAL: generated_images/exec-b2a1eff0-73d4-4fe5-a78f-8fd416fc4a35.png
+FINAL_RENDER: separate image_gen call from reread saved Variant 1 prompt with selected preview as identity/composition reference
+FINAL_QA: PASS; square, exact headline/discount/date/prices/occupancy, Simba identity retained, no forbidden contacts or QR. Final publication approval pending; nothing published.
+FINAL_EXECUTION: PREVIEW_SELECTED → SELECTED_PROMPT_RELOADED → FINAL_RENDER_EXECUTED → FINAL_VISUAL_READY → PUBLICATION_PACKAGE_READY
 EXECUTION_STATES: RAFAEL_RULES_LOADED → REFERENCE_SEARCH_ATTEMPT → CONCEPTS_AND_PROMPTS_READY → RENDERER_EXECUTED → FIVE_PREVIEWS_READY
 QA: All five square previews rendered and visually inspected; headline, date, EUR1399/EUR1499 and EUR100 correct; Simba visible; no contacts, QR or extra slogan. Refine safe margins during selected final render. No final variant selected, no publication.
 PREVIEW_ORDER: tools returned 2,1,3,4,5; IDs remain original concept numbers.
