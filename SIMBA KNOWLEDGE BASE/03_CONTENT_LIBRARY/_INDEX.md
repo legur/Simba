@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-21 | [Норвежские фьорды — Costa Diadema](2026-10-21__SELLING__COSTA-DIADEMA-FJORDS__APPROVED.md) | APPROVED | sales | Costa Diadema / Norway / April–September 2027 | scenery and monthly starting fare comparison | «берем» | high |
 | 2026-10-20 | [Пьемонт и Ломбардия — скидка €100](2026-10-20__SELLING__PIEDMONT-LOMBARDY-100EUR__APPROVED.md) | APPROVED | sales | Eshet / Piedmont + Lombardy / departure 15 December 2026 | Italy plans become dates, concrete route and transparent inclusions | «отлично» | high |
 | 2026-10-20 | [Что заказывают мои клиенты — Costa Fascinosa](2026-10-20__SELLING__COSTA-FASCINOSA-CLIENT-BOOKING__APPROVED.md) | APPROVED | sales | Costa Fascinosa / Italy + France / 17–25 May 2027 | real client booking, evening scenic passages, cabin choice | «отлично» | high |
 | 2026-10-19 | [Двое по цене одного — два тур-круиза](2026-10-19__SELLING__CRUISE-TWO-FOR-ONE__APPROVED.md) | APPROVED | sales | Mediterranean / Europe tour-cruises | suitcase scene, pair pricing, balcony | «отлично» | high |
