@@ -1,6 +1,6 @@
 # Costa Diadema — visual session
 
-STATUS: PROMPTS_READY / awaiting preview selection
+STATUS: FIVE_PREVIEWS_READY / awaiting preview selection
 VISUAL_EXECUTOR: Rafael
 RENDERER: image_gen
 SOURCE: approved post 2026-10-21__SELLING__COSTA-DIADEMA-FJORDS__APPROVED.md
@@ -48,3 +48,17 @@ Use case: ads-marketing. Create ONE square 1:1 polished Russian travel advertise
 
 ### REFERENCE_TRACE
 {"Archivarius":"UNAVAILABLE: repository search returned no cards; trusted list reviewed, no external card used","YouMind":"UNAVAILABLE: manifest read; poster-flyer category response truncated, JSON incomplete; no template used","OAI_EXAMPLE_ID":"EX-01 mechanics"}
+
+## Route correction and preview QA — 2026-10-21
+
+Leo confirmed route replacement («да меняем»), then instructed «делай постер» after revised text. Current route: Kiel → Copenhagen → Aarhus → Flåm → Bergen → Kiel. Monthly prices carried from current source. Earlier route in archived first text is historical and superseded for current production. No specific ports or route names appear in these previews; general fjord imagery and exact offer text remain applicable.
+
+PREVIEW_QA: five square images inspected; headline, ship label, duration, season, from USD price and cabin qualifier present; no contacts or QR. Renderer: image_gen. All remain preview candidates; final render required after selection.
+
+1. Кинофьорд — exec-d2c5db22-dd8f-4c78-8d0c-5a2635d2ce21.png
+2. Ретро-путешествие — exec-50ccc515-6184-49e5-802d-21427dc37c5d.png
+3. Двойная экспозиция — exec-794001a2-0fa2-4c42-9fba-579c386febda.png
+4. Журнал о путешествиях — exec-23bc7d3a-63d6-4f2f-834d-b2f6f1352613.png
+5. Геометрия Севера — exec-ac782b16-3853-4e86-a0f2-07e5dde9c5cf.png
+
+REFERENCE_TRACE unchanged: no external Archivarius/YouMind templates used. KB-LINT: PASS for visual-session update; no evergreen rule changes.
