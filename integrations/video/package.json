@@ -1,0 +1,10 @@
+{
+  "name": "simba-video",
+  "private": true,
+  "type": "module",
+  "description": "Simba photo-story renderer: a page drawn frame by frame in headless Chromium (engine from lemo-opuscar, MIT).",
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "playwright-core": "^1.63.0"
+  }
+}

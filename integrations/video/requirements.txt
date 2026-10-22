@@ -1,0 +1,7 @@
+numpy
+scipy
+soundfile
+soxr
+pillow
+edge-tts
+faster-whisper

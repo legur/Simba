@@ -1,0 +1,5 @@
+node_modules/
+.venv/
+jobs/
+__pycache__/
+.omc/
