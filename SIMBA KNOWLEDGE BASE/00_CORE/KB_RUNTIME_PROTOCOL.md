@@ -1,8 +1,8 @@
 # KB RUNTIME PROTOCOL — SIMBA KNOWLEDGE BASE
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Редакция: runtime 2.0 · 18.10.2026
-Дата: 18.10.2026 · pre-approval Humanizer gate + approval invalidation
+Редакция: runtime 3.0 · 22.10.2026
+Дата: 22.10.2026 · Сценарист: preflight и производственная выдача по сценам
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
 ## 1. Назначение
@@ -159,6 +159,19 @@ Humanizer является обязательной runtime-зависимост
 
 Для Simba вход в Humanizer разрешён только после `INTERNAL_CRITIC_PASS → SIMBA_FINALIZE`. Для Info, Travel, Leo и News Internal Critic автоматически не добавляется. Смысловая правка возвращает текст профильному автору; Simba повторяет Internal Critic, другие авторы — собственную проверку. `HUMANIZER_PASS` обязателен до ready-state и approval/policy-trigger.
 
+### Сценарист / разговорные короткие видео
+Обязательно:
+- `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` (внутри 2.0);
+- `01_BRAND/STYLE_LEO.md`, `01_BRAND/ANTI_STYLE.md`, `01_BRAND/BRAND_RULES.md`;
+- релевантные `02_AUDIENCE`;
+- `05_OPERATIONAL_RULES/FACTS_FRESHNESS_PRICING.md`;
+- `06_AGENT_WORKFLOWS/AGENT_ROLES.md`, `06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md`;
+- текущий бриф, исходный/утверждённый материал и доступные кадры.
+
+Для контроля повторов: `03_CONTENT_LIBRARY/_INDEX.md` и `_PATTERN_TRACKER.md`, затем релевантные полные материалы при необходимости. PATTERN_WATCH применять только к явно релевантному видеоформату/каналу, не переносить правила Facebook-постов механически.
+
+Результат: живая речь → таблица сцен по умолчанию, кроме просьбы только о репликах; промпты анимации — по запросу. Сценарист выполняет собственный аудит. Internal Critic/Humanizer постов на сценарии автоматически не распространяются. Новые визуалы требуют Rafael preflight. Факты утверждённого материала сохраняются; устная адаптация утверждается как сценарий.
+
 ### Rafael
 Обязательно:
 - `01_BRAND/BRAND_RULES.md`
@@ -295,3 +308,6 @@ FACTS_VERIFIED; SCANNED не является APPROVED_TEXT; DRAFT_CREATED не 
 ### Runtime 2.0 — 18.10.2026
 Тип: структурное изменение общей runtime-последовательности.
 Добавлена обязательная зависимость Humanizer до approval/policy-trigger и единый контракт invalidation для любой правки утверждённого текста с сохранением исторической версии.
+
+### Runtime 3.0 — 22.10.2026
+Структурное изменение: добавлен preflight Сценариста и граница речь/таблица/промпты/Rafael. Правила готовых постов и их approval gates сохранены.

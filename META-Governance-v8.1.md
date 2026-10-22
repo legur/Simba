@@ -1,8 +1,8 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 11.1 · 20.10.2026 · Critic 5.7: оптика читателя во внешнем review; канонический путь сохранён
-Дата: 20.10.2026
+Версия: 12.0 · 22.10.2026 · Сценарист 2.0: производственная разбивка по сценам
+Дата: 22.10.2026
 
 
 Это не модуль генерации контента. Это слой правил для ЛЮБОГО изменения архитектуры:
@@ -84,7 +84,8 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 13.0 · 19.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft routing |
+| Router | ROUTER_v10.1.md | 14.0 · 22.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft и сценарный routing |
+| Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 2.0 · 22.10.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу |
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
 | Simba | Simba-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
@@ -99,8 +100,8 @@ Knowledge Base не хранит текущую цену/наличие как �
 | Audit | Audit-v1.2.md | 2.3 · 18.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.0 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
-| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.4 / runtime 2.0 | ✅ обязательный общий контекст |
-| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 4.0 · 19.10.2026 | Humanizer до approval; Zernio draft с выбором страницы и readback |
+| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.4 / runtime 3.0 | ✅ обязательный общий контекст |
+| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 5.0 · 22.10.2026 | Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 2.3 · 18.10.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
 
@@ -887,3 +888,10 @@ draft/approval не являются разрешением. CLI не обесп
 idempotency: один исполнитель, журнал до записи, UNKNOWN блокирует повтор.
 Ключи не читаются адаптером, не выводятся и не коммитятся. Авторы и Rafael gates
 сохранены. Новые платные зависимости не добавлены.
+
+
+### 12.0 — 22.10.2026
+Тип: структурное изменение существующего Сценариста и routing.
+Что изменено: Сценарист 2.0 — естественная речь и таблица сцен; промпты анимации по запросу. Router 14.0 различает разговорные Reels и JSON Люмьера; KB runtime 3.0, AGENT_ROLES 2.0 и CONTENT_PIPELINE 5.0 синхронизированы. Пять внутренних хуков и гибкая драматургия сохранены, число сцен не фиксировано; проверяются тайминг и совпадение реплик. Rafael и применимые approval gates сохранены.
+Причина: Leo поручил интегрировать присланный шаблон как формат производства с сохранением голоса Сценариста.
+Затронуто: Сценарист, Router, KB_RUNTIME_PROTOCOL, AGENT_ROLES, CONTENT_PIPELINE, DECISION_LOG. Канонические пути сохранены.
