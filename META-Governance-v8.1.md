@@ -1,7 +1,7 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 12.0 · 22.10.2026 · Сценарист 2.0: производственная разбивка по сценам
+Версия: 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
 Дата: 22.10.2026
 
 
@@ -84,8 +84,9 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 14.0 · 22.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft и сценарный routing |
-| Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 2.0 · 22.10.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу |
+| Router | ROUTER_v10.1.md | 15.0 · 22.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft, сценарный routing и Монтажер Клод |
+| Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 2.1 · 22.10.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
+| Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 1.0 · 22.10.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
 | Simba | Simba-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
@@ -100,8 +101,9 @@ Knowledge Base не хранит текущую цену/наличие как �
 | Audit | Audit-v1.2.md | 2.3 · 18.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.0 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
-| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.4 / runtime 3.0 | ✅ обязательный общий контекст |
-| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 5.0 · 22.10.2026 | Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен |
+| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.5 / runtime 3.1 | ✅ обязательный общий контекст |
+| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 6.0 · 22.10.2026 | Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
+| Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 1.0 · 22.10.2026 | Пост → сценарий и таблица сцен → визуал → Монтажер Клод → QA → Leo; публикация отдельно |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 2.3 · 18.10.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
 
@@ -895,3 +897,10 @@ idempotency: один исполнитель, журнал до записи, UN
 Что изменено: Сценарист 2.0 — естественная речь и таблица сцен; промпты анимации по запросу. Router 14.0 различает разговорные Reels и JSON Люмьера; KB runtime 3.0, AGENT_ROLES 2.0 и CONTENT_PIPELINE 5.0 синхронизированы. Пять внутренних хуков и гибкая драматургия сохранены, число сцен не фиксировано; проверяются тайминг и совпадение реплик. Rafael и применимые approval gates сохранены.
 Причина: Leo поручил интегрировать присланный шаблон как формат производства с сохранением голоса Сценариста.
 Затронуто: Сценарист, Router, KB_RUNTIME_PROTOCOL, AGENT_ROLES, CONTENT_PIPELINE, DECISION_LOG. Канонические пути сохранены.
+
+
+### 13.0 — 22.10.2026
+Тип: новый модуль.
+Что изменено: в карту системы добавлены Монтажер Клод (🔧) и Video Pipeline. Модуль собран по АЛГОРИТМУ СОЗДАНИЯ НОВОГО МОДУЛЯ: Шаг 0 — не вариант Люмьера (другой вход и выход) и не часть Сценариста (тот выдаёт речь, таблицу и промпты, но не монтирует; Сценарист 2.0 прямо отделяет таблицу/промпты от готового ролика); Шаг 2 — границы в Router; Шаг 4 — Internal Critic не подключается (не текстовый модуль); Шаг 6 — тестовые прогоны 21–22.10.2026 выполнены, статус 🔧 до утверждения Leo на реальном утверждённом посте.
+Причина: прямая задача Leo — сохранить систему сборки видео как оператора Simba; имя «Монтажер Клод» выбрано Leo.
+Затронуто: Router 15.0, AGENTS.md, VIDEO_PIPELINE 1.0, CONTENT_PIPELINE 6.0, AGENT_ROLES 2.1, KB_RUNTIME_PROTOCOL 3.1, KNOWLEDGE_MAP 1.5, Сценарист 2.1 (§34), DECISION_LOG.

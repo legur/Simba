@@ -1,7 +1,7 @@
 # KB RUNTIME PROTOCOL — SIMBA KNOWLEDGE BASE
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Редакция: runtime 3.0 · 22.10.2026
+Редакция: runtime 3.1 · 22.10.2026
 Дата: 22.10.2026 · Сценарист: preflight и производственная выдача по сценам
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
@@ -172,6 +172,16 @@ Humanizer является обязательной runtime-зависимост
 
 Результат: живая речь → таблица сцен по умолчанию, кроме просьбы только о репликах; промпты анимации — по запросу. Сценарист выполняет собственный аудит. Internal Critic/Humanizer постов на сценарии автоматически не распространяются. Новые визуалы требуют Rafael preflight. Факты утверждённого материала сохраняются; устная адаптация утверждается как сценарий.
 
+### Монтажер Клод (сборка ролика к посту)
+Обязательно:
+- утвержденный `APPROVED_TEXT` (или явная команда Leo на черновик);
+- утверждённый сценарий и таблица сцен Сценариста (§44), промпты анимации — если ролик из клипов;
+- `01_BRAND/BRAND_RULES.md`, `01_BRAND/VISUAL_RULES.md`;
+- `05_OPERATIONAL_RULES/FACTS_FRESHNESS_PRICING.md`;
+- `06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md`.
+
+Монтажер Клод не использует Archivarius/YouMind. Недоступность голосового сервиса или модели Whisper — техническая блокировка инструмента, не `BLOCKED_KB_UNAVAILABLE`.
+
 ### Rafael
 Обязательно:
 - `01_BRAND/BRAND_RULES.md`
@@ -311,3 +321,6 @@ FACTS_VERIFIED; SCANNED не является APPROVED_TEXT; DRAFT_CREATED не 
 
 ### Runtime 3.0 — 22.10.2026
 Структурное изменение: добавлен preflight Сценариста и граница речь/таблица/промпты/Rafael. Правила готовых постов и их approval gates сохранены.
+
+### Runtime 3.1 — 22.10.2026
+Добавлен набор контекста Монтажера Клода (VIDEO_PIPELINE). Общая runtime-последовательность и preflight Сценариста не менялись.

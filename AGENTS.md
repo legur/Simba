@@ -53,6 +53,7 @@
 | Rafael styles | `Rafael/RAFAEL_Styles_v3.3.md` |
 | Wix Formatter | `Wix-Formatter/Wix-TourFormatter-v1.5.md` |
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` |
+| Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` (инструмент `integrations/video/`) |
 
 ## 4. Runtime invariant
 
