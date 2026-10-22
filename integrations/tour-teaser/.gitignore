@@ -1,0 +1,7 @@
+node_modules/
+out/
+.omc/
+# a working file for one tour (dynamic prices and dates); the schema lives in tour-data.example.json
+tour-data.json
+# stock music is downloaded by Leo (mixkit.co) and stays local
+public/audio/*.mp3

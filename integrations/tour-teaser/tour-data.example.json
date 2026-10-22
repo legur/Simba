@@ -1,0 +1,22 @@
+{
+  "destination": "Тур Южная Италия",
+  "cities": [
+    { "name": "Бари", "photoQuery": "Bari Italy old town" },
+    { "name": "Остуни", "photoQuery": "Ostuni white city Italy" },
+    { "name": "Лечче", "photoQuery": "Lecce Italy baroque" },
+    { "name": "Альберобелло", "photoQuery": "Alberobello trulli" },
+    { "name": "Конверсано", "photoQuery": "Conversano Italy castle" },
+    { "name": "Мартина-Франка", "photoQuery": "Martina Franca Italy" },
+    { "name": "Сант-Агата-де-Готи", "photoQuery": "Sant Agata de Goti Italy" },
+    { "name": "Беневенто", "photoQuery": "Benevento Italy" },
+    { "name": "Неаполь", "photoQuery": "Naples Italy bay" },
+    { "name": "Капри", "photoQuery": "Capri island Italy" }
+  ],
+  "dates": "12–19 сентября",
+  "price": 1290,
+  "currency": "$",
+  "operator": "Метрополь",
+  "boardType": "HB",
+  "seatsStatus": "few_seats",
+  "musicMood": "cultural"
+}
