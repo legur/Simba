@@ -56,3 +56,20 @@ EXECUTION_STATES: RAFAEL_RULES_LOADED → REFERENCE_SEARCH_ATTEMPT → RAFAEL_CO
 
 SELECTED_VARIANT: pending Leo choice. Separate final render required.
 KB-LINT: PASS. Exact approved text and index read back; references active and not blocklisted; only dated historical facts retained; no publication claimed.
+
+## Final renders — all five authorized by Leo
+
+Leo instruction: «Генерируй все». Full original prompts reloaded from this file before separate new generation. No preview substituted as final.
+
+Variant 1: FINAL_RENDER_EXECUTED → FINAL_VISUAL_READY. QA: PASS (Russian text, date, time, brand, 1:1, no unsupported claims). Result: /workspace/scratch/e23c40b9dbb4/generated_images/exec-62c54100-8130-4dcc-b1d8-4f67e8aeee2d.png
+
+Variant 2: FINAL_RENDER_EXECUTED → FINAL_VISUAL_READY. QA: PASS (Russian text, date, time, brand, 1:1, no unsupported claims). Result: /workspace/scratch/e23c40b9dbb4/generated_images/exec-35da8305-4724-458b-877b-1f0a3ff8abfa.png
+
+Variant 3: FINAL_RENDER_EXECUTED → FINAL_VISUAL_READY. QA: PASS (Russian text, date, time, brand, 1:1, no unsupported claims). Result: /workspace/scratch/e23c40b9dbb4/generated_images/exec-1305c5e6-2d5e-4cd1-be2f-71dfe3c78dc2.png
+
+Variant 4: FINAL_RENDER_EXECUTED → FINAL_VISUAL_READY. QA: PASS (Russian text, date, time, brand, 1:1, no unsupported claims). Result: /workspace/scratch/e23c40b9dbb4/generated_images/exec-dc021ba7-a90f-4522-b28f-06d5f602a6b1.png
+
+Variant 5: FINAL_RENDER_EXECUTED → FINAL_VISUAL_READY. QA: PASS (Russian text, date, time, brand, 1:1, no unsupported claims). Result: /workspace/scratch/e23c40b9dbb4/generated_images/exec-e04a5de1-eb93-4499-8da7-7dbcc28798ee.png
+
+All five rendered with image_gen; REFERENCE_TRACE unchanged: AR-20260720-004 — Графический постер в Behance-стиле. Ready for Leo review. No publication authorized or performed.
+KB-LINT: PASS (dated content artifact; exact approved text unchanged; final outputs distinguished from previews).
