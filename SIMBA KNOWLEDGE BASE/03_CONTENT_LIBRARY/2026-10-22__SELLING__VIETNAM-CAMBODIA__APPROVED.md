@@ -39,7 +39,8 @@ Simba by Bon Tours - отдых со смыслом!
 #Вьетнам #Камбоджа #ТурыИзИзраиля
 
 ## Visual session
-STATUS: PROMPTS_READY
+STATUS: FIVE_PREVIEWS_GENERATED
+QA: all five square, readable destination/date/brand, no price or contact details; some typography safe margins require correction in selected final render. Not FINAL_VISUAL_READY.
 Pricing omitted from previews while fee basis unresolved.
 ARCHIVARIUS: search performed in GitHub and Drive; original active cards not retrieved; no card counted as used.
 YOUMIND: manifest 2026-10-22 read; two full templates and sample images inspected.
@@ -92,3 +93,14 @@ SCENE / COMPOSITION: RETRO TRAVEL JOURNAL. Square collectible travel-art poster 
 ```
 
 KB-LINT: WARNING. L01/L02/L03/L04/L06/L08/L09 checked. Full approved text archived; dynamic prices scoped; unresolved price basis explicitly retained; no publication readiness claimed.
+
+
+## Generated preview mapping
+1: /workspace/scratch/0a492b0408ac/generated_images/exec-558eecaf-df5d-46c5-946e-fb86e3c64102.png
+2: /workspace/scratch/0a492b0408ac/generated_images/exec-f4628fdb-a4a1-41af-8f96-ed8e0675e960.png
+3: /workspace/scratch/0a492b0408ac/generated_images/exec-4fde10b5-fef8-4676-ad61-a41c3292b445.png
+4: /workspace/scratch/0a492b0408ac/generated_images/exec-eea6f864-a9f6-4d36-99b5-ae04d5412a3c.png
+5: /workspace/scratch/0a492b0408ac/generated_images/exec-492ede51-dc32-4109-b3fa-67858cd6166b.png
+
+REFERENCE_TRACE confirmed: YouMind templates 32985 for 1/5 and 33923 for 2/3; 4 Rafael Double Exposure. No original Archivarius card used. Templates adapted, no external claims copied.
+KB-LINT: WARNING (price basis unresolved; selected final render and margins QA pending).
