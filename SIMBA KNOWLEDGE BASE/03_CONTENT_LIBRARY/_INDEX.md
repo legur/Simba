@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-22 | [Вьетнам и Камбоджа — январь 2027](2026-10-22__SELLING__VIETNAM-CAMBODIA__APPROVED.md) | APPROVED | sales | Ophir Tours / 12–29 January 2027 | Ha Long overnight, Angkor and Russian-speaking guide; fee verification pending | «отлично» | high |
 | 2026-10-21 | [Норвежские фьорды — Costa Diadema](2026-10-21__SELLING__COSTA-DIADEMA-FJORDS__APPROVED.md) | APPROVED | sales | Costa Diadema / Norway / April–September 2027 | scenery and monthly starting fare comparison | «берем» | high |
 | 2026-10-20 | [Пьемонт и Ломбардия — скидка €100](2026-10-20__SELLING__PIEDMONT-LOMBARDY-100EUR__APPROVED.md) | APPROVED | sales | Eshet / Piedmont + Lombardy / departure 15 December 2026 | Italy plans become dates, concrete route and transparent inclusions | «отлично» | high |
 | 2026-10-20 | [Что заказывают мои клиенты — Costa Fascinosa](2026-10-20__SELLING__COSTA-FASCINOSA-CLIENT-BOOKING__APPROVED.md) | APPROVED | sales | Costa Fascinosa / Italy + France / 17–25 May 2027 | real client booking, evening scenic passages, cabin choice | «отлично» | high |
