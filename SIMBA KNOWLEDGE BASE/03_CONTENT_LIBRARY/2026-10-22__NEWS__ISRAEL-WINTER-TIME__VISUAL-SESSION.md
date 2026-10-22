@@ -1,7 +1,7 @@
 # Winter time poster preview session
 
 TEXT: SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-10-22__NEWS__ISRAEL-WINTER-TIME__APPROVED.md
-STATUS: PROMPTS_READY
+STATUS: FIVE_PREVIEWS_READY
 VISUAL_EXECUTOR: Rafael v6.2
 RENDERER: image_gen
 Format: 1:1
@@ -39,3 +39,20 @@ REFERENCE_TRACE: AR-20260720-004, modern hierarchy and one dominant device.
 Create one finished square 1:1 Russian social media poster, full bleed, professionally art directed, legible for adults 55+ on phone. News service notice for Israel switching to winter time. Adult anthropomorphic photorealistic lion traveler Simba, natural detailed mane, intelligent warm face, wearing tasteful navy travel jacket; integrate into scene, never cartoon or costume. Clear limited typography and abundant negative space. Brand text exactly once "Simba by Bon Tours" bottom. No phone numbers, addresses, QR codes, extra wording, invented signage, watermarks, snow or misleading travel claims. All text horizontal inside 6% margins. Exact visible text only as listed. Not an infographic. CONCEPT 5: Close cinematic service-story editorial, airport-bound unbranded taxi at night seen through open passenger door. Simba with natural realistic fur and navy jacket calmly checks a phone beside suitcase, warm amber cabin light and deep navy exterior. One clear screen with "01:30" only, and a subtle reflection of that same screen showing "01:30" again as a visual metaphor. Top 45% calm dark space for large ivory headline. EXACT TEXT: "01:30 НАСТУПИТ ДВАЖДЫ" once as dominant headline; "ТАКСИ В АЭРОПОРТ?" once smaller; "УТОЧНИТЕ: ДО ПЕРЕВОДА ИЛИ ПОСЛЕ" once in 2 legible lines; "25.10.2026 · ИЗРАИЛЬ" once; "Simba by Bon Tours" once bottom. In addition screen 01:30 and reflection 01:30 permitted. No other text. Tasteful clear magazine art direction, no decorative infographic.
 
 REFERENCE_TRACE: AR-20260720-004, modern hierarchy and one dominant device.
+
+## Preview results and QA
+
+Variant 1: GENERATED; QA PASS for date, Russian text, main time, brand and square format. Local preview: /workspace/scratch/e23c40b9dbb4/generated_images/exec-4fb07f70-4ef5-4809-848f-33866c89d637.png
+
+Variant 2: GENERATED; QA PASS for date, Russian text, main time, brand and square format. Local preview: /workspace/scratch/e23c40b9dbb4/generated_images/exec-79f4c194-46bc-4855-829d-c159bead91bc.png
+
+Variant 3: GENERATED; QA PASS for date, Russian text, main time, brand and square format. Local preview: /workspace/scratch/e23c40b9dbb4/generated_images/exec-1bb143b7-a31c-4c5f-b665-dd348747bf6b.png
+
+Variant 4: GENERATED; QA PASS for date, Russian text, main time, brand and square format. Local preview: /workspace/scratch/e23c40b9dbb4/generated_images/exec-83dd7e7f-325f-4c2b-8ab2-bb42ce7ae1ca.png
+
+Variant 5: GENERATED; QA PASS for date, Russian text, main time, brand and square format. Local preview: /workspace/scratch/e23c40b9dbb4/generated_images/exec-2bf6f994-564e-4c99-b775-066ef23de763.png
+
+EXECUTION_STATES: RAFAEL_RULES_LOADED → REFERENCE_SEARCH_ATTEMPT → RAFAEL_CONCEPTS_AND_PROMPTS_READY → RENDERER_EXECUTED → FIVE_PREVIEWS_READY → REFERENCE_TRACE_SAVED
+
+SELECTED_VARIANT: pending Leo choice. Separate final render required.
+KB-LINT: PASS. Exact approved text and index read back; references active and not blocklisted; only dated historical facts retained; no publication claimed.
