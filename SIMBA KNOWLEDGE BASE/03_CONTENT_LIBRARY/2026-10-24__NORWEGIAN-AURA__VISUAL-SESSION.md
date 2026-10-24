@@ -1,6 +1,6 @@
 # Norwegian Aura visual session
 
-STATUS: PROMPTS_READY
+STATUS: FIVE_PREVIEWS_GENERATED_SELECTION_PENDING
 TEXT: 2026-10-24__SELLING__NORWEGIAN-AURA__APPROVED.md
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen.imagegen
@@ -39,3 +39,14 @@ Create ONE square 1:1 Russian travel advertising poster preview for Facebook mob
 5. Artistic double exposure. Large three-quarter photoreal Simba portrait center-right, dark brown mane, cream jacket shoulder, deep navy background. LOWER torso silhouette blends with Mediterranean sea and distant white Greek island houses. Face, eyes and mane around face MUST stay fully opaque and photoreal. No water over face. Large airy cream headline left exactly "Май. Море." then "Norwegian Aura" as second headline line, once only. Secondary "Май 2027". Bottom brand. Sophisticated conceptual portrait, fine subtle grain, warm golden horizon light, no ship.
 
 QA: pending previews. Content-library quick lint PASS for scope, source and prompt preservation.
+
+
+## Generated results / QA 2026-10-24
+
+- Variant 1: /workspace/scratch/cf471d4bea57/generated_images/exec-da3f1cea-bfd9-44b5-8047-16eb20910434.png
+- Variant 2: /workspace/scratch/cf471d4bea57/generated_images/exec-5f1cbef8-c641-4b18-9fb6-80b84eb3f633.png
+- Variant 3: /workspace/scratch/cf471d4bea57/generated_images/exec-7e92c46c-8a10-44f4-a966-bfa2078ece8b.png
+- Variant 4: /workspace/scratch/cf471d4bea57/generated_images/exec-a3657124-fab1-4916-bdde-e7980ce4d895.png
+- Variant 5: /workspace/scratch/cf471d4bea57/generated_images/exec-a62fc13b-10a4-45bb-8dcc-19d4393fec90.png
+
+All five previews actually generated and visually inspected. Square format, readable main copy, brand, adult Simba continuity and no price/contact blocks verified. No final image selected; FINAL_VISUAL_READY is not assigned. Preview warnings: renderer did not consistently honor 7% text margins (particularly 2,3,4); variant 5 capitalizes month. Variant 4 right-side old-town architecture is conceptual and must not be treated as a documentary image of Rhodes; replace with verified reference if selected. Resolve applicable warnings in separate selected final render. Text archive readback matches exact approved text. External template names: none used. KB-LINT content-library profile: PASS with preview QA warnings explicitly preserved.
