@@ -12,7 +12,7 @@ TEXT_EXECUTOR: News-v1.2
 TEXT_STATES: AUTHOR_FINALIZED → HUMANIZER_EXECUTED → HUMANIZER_PASS → LEO_APPROVAL
 VISUAL_EXECUTOR: Rafael/RAFAEL_System_v6.2
 RENDERER: image_gen.imagegen
-VISUAL_STATUS: PROMPTS_READY
+VISUAL_STATUS: FIVE_PREVIEWS_READY / SELECTION_PENDING
 PUBLICATION: not requested, not published
 
 ## APPROVED_TEXT
@@ -79,3 +79,10 @@ PRODUCTION_PROMPT:
 Use case: ads-marketing. Create ONE square 1:1 standalone Russian tourism NEWS poster preview, variant 5. PURPOSE: illustrate a verified Israeli MFA caution advisory for France dated 23 October 2026. SCENE / STYLE / SUBJECT: Premium conceptual travel editorial poster, midnight navy tabletop, one folded paper map with a single amber route line and small recognizable Paris architectural silhouette rising from the fold, on right adult realistic anthropomorphic lion traveler in charcoal jacket leaning slightly over the map studying route. Strong diagonal visual, soft spotlight on map, clean upper-left large typography. No invented transport disruptions depicted. COMPOSITION: unified single image, not a grid. Safe margins minimum 6 percent. Serious adult audience, clean mobile readability. Simba must be a sophisticated adult anthropomorphic lion, natural lion face and mane with human standing posture, no mascot costume, no childish cartoon. EXACT TEXT: render "ФРАНЦИЯ" once as the largest headline top, "Проверьте транспорт перед поездкой" once as the secondary line, "Обновление 24.10.2026" once in small but readable lower information line, "Simba by Bon Tours" once at bottom. Keep each text horizontal with perfect Cyrillic spelling and ample contrast. NO EXTRA TEXT. DO NOT: fires, riots, police, weapons, distressed crowds, flags burning, sensationalism, fake documentary evidence, curfew claims, airport closure claims, phone numbers, QR codes, addresses, prices, extra logos, watermarks, slogans, random readable signage, multiple panels, duplicate words. REFERENCES: adapted visual mechanics from AR-20260720-004 only; no borrowed claims, text or brands. Exact text contract follows Rafael EX-01. Renderer chooses maximum available square resolution.
 
 KB-LINT: PASS (L01/L03/L04/L08/L09; historical dynamic facts dated, approved text exact; index to be updated).
+
+
+## Preview QA
+
+All five standalone square previews rendered with image_gen.imagegen; Cyrillic text, date and brand checked visually. No fake unrest imagery, no commercial contacts. Generation display order: V2, V1, V4, V5, V3. Numbering for selection remains concept IDs V1–V5 above. Preview files are not FINAL_VISUAL_READY. A selected variant requires re-reading saved full prompt and separate final render.
+
+KB-LINT: PASS. Exact approved text read back successfully. Index updated; visual traces and prompts saved.
