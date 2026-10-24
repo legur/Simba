@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-24 | [Norwegian Aura — майские круизы](2026-10-24__SELLING__NORWEGIAN-AURA__APPROVED.md) | APPROVED | sales | NCL / Norwegian Aura / May 2027 | Dubrovnik versus Rhodes and Zadar; pricing on request; anticipated early delivery | «отлично» | high |
 | 2026-10-24 | [Франция: рекомендации путешественникам](2026-10-24__NEWS__FRANCE-TRAVEL-ADVISORY__APPROVED.md) | APPROVED | news | France / Israeli MFA advisory | caution, transport checks and emergency contacts | «Отлично» | high |
 | 2026-10-22 | [Израиль переходит на зимнее время](2026-10-22__NEWS__ISRAEL-WINTER-TIME__APPROVED.md) | PUBLICATION_PACKAGE_READY | news | Israel / winter time / 25 October 2026 | repeated 01:30 and airport transfer coordination | «Отлично»; выбран финальный визуал 4 | high |
 | 2026-10-22 | [Вьетнам и Камбоджа — январь 2027](2026-10-22__SELLING__VIETNAM-CAMBODIA__APPROVED.md) | APPROVED | sales | Ophir Tours / 12–29 January 2027 | Ha Long overnight, Angkor and Russian-speaking guide; fee verification pending | «отлично» | high |
