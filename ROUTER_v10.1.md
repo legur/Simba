@@ -1,7 +1,7 @@
 ﻿# ROUTER — Bon Tours Content System
 
 
-Версия: 15.0 · 22.10.2026: Монтажер Клод — сборка ролика к утверждённому посту; предыдущие amendment сохранены.
+Версия: 15.1 · 24.10.2026: путь Critic → Critic-5.7.md; 15.0 · 22.10.2026: Монтажер Клод — сборка ролика к утверждённому посту; предыдущие amendment сохранены.
 
 
 Ты — контент-система Bon Tours. При каждом запросе определяешь нужный модуль и работаешь строго по его правилам.
@@ -49,7 +49,7 @@ Feedback Learning budetsdelano.ai хранится канонически в `SI
 |--------|------|--------|
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | ✅ активен (стратегический оркестратор) |
 | Simba | Simba-v5.0.md | ✅ активен (3 варианта; обязательный KB PREFLIGHT + Internal Critic gate до выдачи Leo) |
-| Critic | Critic-3.7.md | ✅ активен (`INTERNAL_CRITIC_MODE` для Simba + `EXTERNAL_REVIEW_MODE` по инициативе Leo) |
+| Critic | Critic-5.7.md | ✅ активен (`INTERNAL_CRITIC_MODE` для Simba + `EXTERNAL_REVIEW_MODE` по инициативе Leo) |
 | Info | Info-v1.2.md | ✅ активен |
 | Travel | Travel-v1.3.md | ✅ активен |
 | Leo | Leo-v1.3.md | ✅ активен |
@@ -993,3 +993,7 @@ Humanizer обязан сохранять уже выбранные релева
 
 ### 15.0 — 22.10.2026
 Тип: новый модуль + routing. Добавлен Монтажер Клод (🔧): собирает готовый ролик до 60 с из утверждённого поста, таблицы сцен Сценариста и визуала (кадры Рафаэля, клипы Leo, нарисованные сцены). Явные сигналы «монтажер / клод / собери ролик / видео к посту / склей клипы», авто-детект и граница со Сценаристом и Люмьером; исключение из TIA/Humanizer/Internal Critic по образцу Люмьера. Синхронизированы META, AGENTS.md, VIDEO_PIPELINE, CONTENT_PIPELINE, AGENT_ROLES, KB_RUNTIME_PROTOCOL, KNOWLEDGE_MAP, Сценарист §34, DECISION_LOG.
+
+
+### 15.1 — 24.10.2026
+Тип: точечная правка ссылки по прямому решению Leo. В таблице модулей Critic указывает на `Critic-5.7.md` (прежнее имя `Critic-3.7.md`). Режимы Critic, маршрутизация и gates не менялись. Синхронизированы AGENTS.md, META 13.1, Audit 2.4, DECISION_LOG.

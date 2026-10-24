@@ -1,8 +1,8 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
-Дата: 22.10.2026
+Версия: 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
+Дата: 24.10.2026
 
 
 Это не модуль генерации контента. Это слой правил для ЛЮБОГО изменения архитектуры:
@@ -94,11 +94,11 @@ Knowledge Base не хранит текущую цену/наличие как �
 | Leo | Leo-v1.3.md | 1.3 | ✅ активен |
 | News | News-v1.2.md | 1.2 | ✅ активен |
 | Humanizer | Humanizer-v1.4.md | 3.0 · 18.10.2026 | ✅ активен — обязательная чистка постов до approval; hard blocker не допускает финализацию |
-| Critic | Critic-3.7.md | 5.7 · 20.10.2026 | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo с блоком «Оптика читателя» (механизм, читатель и цель, прогноз, динамика серии, визуал, углы); критерии оценки сохранены |
+| Critic | Critic-5.7.md | 5.7 · 20.10.2026 (путь 24.10.2026) | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo с блоком «Оптика читателя» (механизм, читатель и цель, прогноз, динамика серии, визуал, углы); критерии оценки сохранены |
 | Rafael (Architecture / System / Styles / Routing) | см. RAFAEL_Architecture_v5.0.md | 5.0 / 6.2 / 3.3 / 3.3 | ✅ активен; GPT Image 2.5 Protocol + Visual Example Library; Archivarius trusted-first + blocklist + YouMind |
 | Archivarius | Archivarius-System-v2.7.md + `01_Изображения` | 2.7 | ✅ внешняя библиотека; Rafael ищет trusted-first, затем по релевантным active visual cards вне blocklist |
 | YouMind AI Image Prompts | GitHub `YouMind-OpenLab/ai-image-prompts-skill` / `references/*` | external live | ✅ активен; постоянный reference-source Rafael, external failure non-blocking |
-| Audit | Audit-v1.2.md | 2.3 · 18.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
+| Audit | Audit-v1.2.md | 2.4 · 24.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.0 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
 | SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.5 / runtime 3.1 | ✅ обязательный общий контекст |
@@ -904,3 +904,10 @@ idempotency: один исполнитель, журнал до записи, UN
 Что изменено: в карту системы добавлены Монтажер Клод (🔧) и Video Pipeline. Модуль собран по АЛГОРИТМУ СОЗДАНИЯ НОВОГО МОДУЛЯ: Шаг 0 — не вариант Люмьера (другой вход и выход) и не часть Сценариста (тот выдаёт речь, таблицу и промпты, но не монтирует; Сценарист 2.0 прямо отделяет таблицу/промпты от готового ролика); Шаг 2 — границы в Router; Шаг 4 — Internal Critic не подключается (не текстовый модуль); Шаг 6 — тестовые прогоны 21–22.10.2026 выполнены, статус 🔧 до утверждения Leo на реальном утверждённом посте.
 Причина: прямая задача Leo — сохранить систему сборки видео как оператора Simba; имя «Монтажер Клод» выбрано Leo.
 Затронуто: Router 15.0, AGENTS.md, VIDEO_PIPELINE 1.0, CONTENT_PIPELINE 6.0, AGENT_ROLES 2.1, KB_RUNTIME_PROTOCOL 3.1, KNOWLEDGE_MAP 1.5, Сценарист 2.1 (§34), DECISION_LOG.
+
+
+### 13.1 — 24.10.2026
+Тип: точечная правка (координированное переименование файла).
+Что изменено: `Critic/Critic-3.7.md` → `Critic/Critic-5.7.md`; карта системы, AGENTS.md, Router (таблица модулей), Audit и RAFAEL_Routing указывают на новый путь. Версия Critic остаётся 5.7, содержание не менялось.
+Причина: прямое решение Leo — Critic 5.7 должен читаться сразу и быть единственной рабочей версией; имя файла не должно вводить в заблуждение. Переименование выполнено по правилу ВЕРСИОНИРОВАНИЯ: допустимо только вместе с обновлением всех ссылок.
+Затронуто: Critic 5.7 (путь, changelog), Router 15.1, Audit 2.4, RAFAEL_Routing (ссылка), AGENTS.md, DECISION_LOG 1.18. Исторические записи (старые changelog и Decision Log, Session Log, Archivarius) не переписывались.

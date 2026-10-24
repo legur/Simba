@@ -46,7 +46,7 @@
 | Info | `Симба (Писатель)/Info-v1.2.md` |
 | Leo | `Симба (Писатель)/Leo-v1.3.md` |
 | Lumiere | `Симба (Писатель)/Lumiere-v1.1.md` |
-| Critic | `Critic/Critic-3.7.md` |
+| Critic | `Critic/Critic-5.7.md` |
 | Audit | `Critic/Audit-v1.2.md` |
 | Rafael | `Rafael/RAFAEL_System_v6.2.md` |
 | Rafael routing | `Rafael/RAFAEL_Routing_v3.3.md` |
