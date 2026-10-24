@@ -54,7 +54,7 @@ Variant 5: GENERATED; QA PASS for date, Russian text, main time, brand and squar
 
 EXECUTION_STATES: RAFAEL_RULES_LOADED → REFERENCE_SEARCH_ATTEMPT → RAFAEL_CONCEPTS_AND_PROMPTS_READY → RENDERER_EXECUTED → FIVE_PREVIEWS_READY → REFERENCE_TRACE_SAVED
 
-SELECTED_VARIANT: pending Leo choice. Separate final render required.
+SELECTED_VARIANT: 4. Leo selected the already generated final render on 2026-10-24: «4 вариант». FINAL_VISUAL_READY; PUBLICATION_PACKAGE_READY. No further generation needed; publication not authorized.
 KB-LINT: PASS. Exact approved text and index read back; references active and not blocklisted; only dated historical facts retained; no publication claimed.
 
 ## Final renders — all five authorized by Leo
@@ -73,3 +73,7 @@ Variant 5: FINAL_RENDER_EXECUTED → FINAL_VISUAL_READY. QA: PASS (Russian text,
 
 All five rendered with image_gen; REFERENCE_TRACE unchanged: AR-20260720-004 — Графический постер в Behance-стиле. Ready for Leo review. No publication authorized or performed.
 KB-LINT: PASS (dated content artifact; exact approved text unchanged; final outputs distinguished from previews).
+
+## Final selection
+
+2026-10-24: Leo selected final variant 4, «Час проживём дважды». Approved text unchanged. KB-LINT L09: PASS. Publication has not been performed.
