@@ -4,7 +4,7 @@
 TEXT_EXECUTOR: Leo-v1.3
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen
-STATUS: PREVIEWS_RENDERING
+STATUS: FIVE_PREVIEWS_READY; AWAITING_LEO_SELECTION
 Hero: Leo; identity reference supplied by Leo in current conversation (Kaunas selfie).
 Reference trace: AR-20260720-004 — Графический постер в Behance-стиле (visual hierarchy and independent graphic direction). OAI_EXAMPLE_ID: EX-01 / EX-02. YouMind manifest checked 2026-10-25; poster-flyer category unavailable through connector (oversized); no templates claimed as used.
 
@@ -81,3 +81,8 @@ Status: APPROVED (Leo requested poster for current wording on 2026-10-25). Chann
 ## KB-LINT
 
 PASS: L01 source is current user brief and visual request; L02 no rule promotion; L03 no dynamic offer claims; L04 content library; L05 no rule conflicts; L06 current post only; L07 active reference with no borrowed claims; L08 single visual-session record; L09 exact text included and index entry added.
+
+
+## Preview QA
+
+All five generated and visually inspected: square 1:1; Russian headline readable; identity recognizably preserved from supplied reference; no contacts; no new offer claims; branding present; five concepts span typographic portrait, robot-assisted office, backstage metaphor, phone conversation, geometric editorial portrait. Final render pending selected variant. KB-LINT: PASS; index and full approved text saved. No publication.
