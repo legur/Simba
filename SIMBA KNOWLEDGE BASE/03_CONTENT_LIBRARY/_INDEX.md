@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-25 | [Боты работают, Лео на связи](2026-10-25_LEO_BOTS_VISUAL_SESSION.md) | APPROVED | personal_expert | internal bot assistants | human conversation supported by search and document preparation | запрос постера к текущему тексту | high |
 | 2026-10-24 | [Norwegian Aura — майские круизы](2026-10-24__SELLING__NORWEGIAN-AURA__APPROVED.md) | APPROVED | sales | NCL / Norwegian Aura / May 2027 | Dubrovnik versus Rhodes and Zadar; pricing on request; anticipated early delivery | «отлично» | high |
 | 2026-10-24 | [Франция: рекомендации путешественникам](2026-10-24__NEWS__FRANCE-TRAVEL-ADVISORY__APPROVED.md) | APPROVED | news | France / Israeli MFA advisory | caution, transport checks and emergency contacts | «Отлично» | high |
 | 2026-10-22 | [Израиль переходит на зимнее время](2026-10-22__NEWS__ISRAEL-WINTER-TIME__APPROVED.md) | PUBLICATION_PACKAGE_READY | news | Israel / winter time / 25 October 2026 | repeated 01:30 and airport transfer coordination | «Отлично»; выбран финальный визуал 4 | high |
