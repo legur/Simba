@@ -1,7 +1,9 @@
 # Election day outings — five preview prompts
 
 DATE: 2026-10-26
-STATUS: PROMPTS_READY
+STATUS: FIVE_PREVIEWS_READY
+PREVIEW_QA: all five inspected visually; square format, readable correct headline/date, Leo recognizable. Variants 3 and 5 are imagined illustrative scenes. No political party imagery. Final render awaits Leo selection.
+KB-LINT: PASS — provenance, source reference, all production prompts and reference trace saved; preview status does not imply final approval.
 TEXT: 2026-10-26__INFO__ELECTION-DAY-OUTINGS__APPROVED.md
 TEXT_EXECUTOR: Info
 VISUAL_EXECUTOR: Rafael
