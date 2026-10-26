@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-26 | [Проголосуем. А дальше куда?](2026-10-26__INFO__ELECTION-DAY-OUTINGS__APPROVED.md) | APPROVED | info | Israel / 27 October election-day outings | weather and distance guide choices | «Отлично» | high |
 | 2026-10-25 | [Боты работают, Лео на связи](2026-10-25_LEO_BOTS_VISUAL_SESSION.md) | APPROVED | personal_expert | internal bot assistants | human conversation supported by search and document preparation | запрос постера к текущему тексту | high |
 | 2026-10-24 | [Norwegian Aura — майские круизы](2026-10-24__SELLING__NORWEGIAN-AURA__APPROVED.md) | APPROVED | sales | NCL / Norwegian Aura / May 2027 | Dubrovnik versus Rhodes and Zadar; pricing on request; anticipated early delivery | «отлично» | high |
 | 2026-10-24 | [Франция: рекомендации путешественникам](2026-10-24__NEWS__FRANCE-TRAVEL-ADVISORY__APPROVED.md) | APPROVED | news | France / Israeli MFA advisory | caution, transport checks and emergency contacts | «Отлично» | high |
