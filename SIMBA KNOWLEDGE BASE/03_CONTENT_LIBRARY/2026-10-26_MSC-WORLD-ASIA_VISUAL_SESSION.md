@@ -1,6 +1,6 @@
 # MSC World Asia — visual session
 
-STATUS: REVISION_PROMPTS_READY
+STATUS: REVISED_FIVE_VISUALS_READY
 TEXT: 2026-10-26__LEO__MSC-WORLD-ASIA-HORIZON__APPROVED.md
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen
@@ -82,3 +82,13 @@ Create ONE square 1:1 conceptual Russian editorial travel poster. This is a stor
 
 ### Full production prompt
 Create ONE square 1:1 conceptual Russian editorial travel poster. This is a story about confidence in the future and planning a holiday two years ahead. The VISUAL METAPHOR must carry the idea even with all text hidden. NOT an ordinary hero cruise-ship advertisement; ship is secondary, only 10–20 percent of image. No large ship photograph dominating composition. Attached official MSC World Asia photo is only a subject identity reference: retain recognizable exact hull, bridge, layered decks and funnel of that vessel when depicted. No Leo, no lion, no mascot, no human portrait, no sci-fi, no black hole, no apocalyptic dark future, no prices, no QR, no generic travel collage. Premium sophisticated advertising art for adults, mobile readable exact Cyrillic, 6% safe margins. Render the specified HEADLINE exactly once, plus these exact footer strings once each: "MSC WORLD ASIA", "22–29.09.2028", "Simba by Bon Tours". Additional year labels may appear ONLY as explicitly requested. No other text. HEADLINE: "А ВАШ ГОРИЗОНТ ПЛАНИРОВАНИЯ?". A premium minimalist conceptual photographic scene: a giant folded nautical chart emerges from foreground, its paper folding naturally into a calm blue sea at the horizon. A single elegant red pencil line traces a confident route through three successive simple waypoint markers labeled "2026", "2027", "2028" in that order, leading FAR out toward the bright horizon. At the last waypoint sits the small accurate MSC World Asia, destination already selected. The foreground pencil has just completed a hand-drawn red circle around final 2028, connecting present choice to distant future. Do not show geographic outlines or any real map routes; this is a symbolic map of time, no factual itinerary graphic. Warm cream paper, coral line, azure sea, sophisticated editorial art, uncluttered. Headline upper sky, exact small footer.
+
+## Revised preview results
+
+- Revised variant 1: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-7b425de5-ef57-40c4-ab5d-2c017a7c5b0b.png
+- Revised variant 2: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-44f81dce-0d89-4d30-980e-dc39dd36aa18.png
+- Revised variant 3: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-ed17a571-7759-4fb9-a34e-f2e31cabbc46.png
+- Revised variant 4: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-cc9fad09-b9b9-4499-b1b3-0000a0fd7ad9.png
+- Revised variant 5: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-d332e1fa-61f8-4856-9ade-1e783f4f01cd.png
+
+QA: All five square revised previews inspected; metaphor of future planning is the dominant subject. Calendar years run 2026 → 2027 → 2028 where applicable. Headline/date/brand readable. No pricing or additional factual claims. Official ship subject reference provided for all five. Conceptual scenes are not literal ports or ship infrastructure. Selection pending. KB-LINT: PASS.
