@@ -84,3 +84,12 @@ Scope: только текущий материал, не изменение о�
 Evidence level: единичное прямое указание текущей задачи.
 Действие: запущены 5 локальных edits героя.
 KB-LINT: PASS — источник явный, scope ограничен, нет promotion постоянного правила.
+
+
+## 2026-10-26 — MSC World Asia planning horizon posters
+
+Source: direct correction by Leo: «Ни один из них не показывает, что у человека есть уверенность в будущем ... горизонт планирования ... обыграй это».
+Scope: current material only; one direct correction, not a universal visual rule.
+Correction: previous five ship-led posters were rejected; show confidence in the future and long planning horizon through the visual concept itself, not just a caption on a ship photograph.
+Action: five revised concepts created: calendar ribbon 2026→2028, telescope focused on September 2028, open planner with future cruise, monumental 2028 on the horizon, symbolic time chart leading to 2028. Ship is secondary; official vessel reference retained. No approved variant yet.
+KB-LINT: PASS — source explicit, scope limited, no dynamic facts promoted, correct learning layer.
