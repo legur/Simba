@@ -1,6 +1,6 @@
 # MSC World Asia — visual session
 
-STATUS: PROMPTS_READY
+STATUS: FIVE_VISUALS_READY
 TEXT: 2026-10-26__LEO__MSC-WORLD-ASIA-HORIZON__APPROVED.md
 VISUAL_EXECUTOR: RAFAEL_System_v6.2
 RENDERER: image_gen
@@ -41,3 +41,13 @@ REFERENCE_TRACE: official MSC World Asia subject photo; YouMind 36686 Photo to H
 
 ### Full production prompt
 Create ONE square 1:1 Russian Facebook cruise poster preview, not a grid. Use attached official MSC photo as SUBJECT identity reference for the actual MSC World Asia ship. Preserve exact vessel exterior silhouette, bow, bridge, windows, funnel, deck structure, lifeboats and proportions. No generic cruise ship. Relight and recomposite sensitively, no redesign. No people, no Leo, no lion, no mascot, no QR, no invented price or claims. Large perfectly legible Cyrillic typography, premium editorial design, 6% safe margins, not a brochure. Render exactly once each of these text strings only: HEADLINE (specified below); "MSC WORLD ASIA"; "22–29.09.2028"; "Simba by Bon Tours". Ship name already on hull is permitted. No extra copy, no fake labels, no contact details. HEADLINE: "ГОРИЗОНТ ПЛАНИРОВАНИЯ". Artful travel scrapbook poster on ivory textured stock. Two carefully aligned but slightly offset image panels: upper wider panel is the actual official ship photograph beautifully graded Mediterranean blue; lower inset panel is the SAME ship silhouette and exact recognizable exterior translated into delicate mid-century colored pencil and wax-crayon illustration over azure water, no redesign. A single paper edge and muted terracotta small accent. Headline in large dark navy lettering with premium editorial hierarchy, ship name and date beneath. Photo-to-illustration story inspired by a restrained two-panel art poster, not a chaotic collage. No person, no face, no foreign brand.
+
+## Preview render results
+
+- Variant 1: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-dfc0041d-8b0a-43a9-951d-b6cf5a67750b.png
+- Variant 2: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-f6a2f0a1-e03d-4b30-a72d-e0edfac01442.png
+- Variant 3: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-4c9f2185-2a86-4119-8e7c-8d27ff27dd42.png
+- Variant 4: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-0319805e-3552-44e9-9185-7666c789ccae.png
+- Variant 5: /workspace/scratch/7a32bf1fcbb5/generated_images/exec-476f2d2f-7d50-4abd-8db7-8b1c477a7546.png
+
+QA: Five square previews inspected. Headline, ship name, date and brand readable; no price claims, people, Leo or Simba. Official ship subject reference used in all five. Variant 5 photo/illustration is conceptual Mediterranean artwork, not documentation of a specific port. No final render selected yet. KB-LINT Content Library quick check: PASS.
