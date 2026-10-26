@@ -93,3 +93,13 @@ Scope: current material only; one direct correction, not a universal visual rule
 Correction: previous five ship-led posters were rejected; show confidence in the future and long planning horizon through the visual concept itself, not just a caption on a ship photograph.
 Action: five revised concepts created: calendar ribbon 2026→2028, telescope focused on September 2028, open planner with future cruise, monumental 2028 on the horizon, symbolic time chart leading to 2028. Ship is secondary; official vessel reference retained. No approved variant yet.
 KB-LINT: PASS — source explicit, scope limited, no dynamic facts promoted, correct learning layer.
+
+
+## 2026-10-26 — Mein Schiff 3: новость и разговор
+
+Источник: разбор, переданный Leo в текущем чате; автор разбора не указан. Не считать budetsdelano-evidence.
+Scope: текущий неутверждённый пост, единичное замечание; без promotion постоянных правил News.
+Замечания: убрать три оценочных заключительных абзаца; закончить вопросом об опыте сорванной поездки и её исходе, не вопросом о страхе круизов. Контактный блок для этого материала поставить после вопроса в одну строку через |. Не выдумывать личный опыт Leo ради конкретики.
+Ограничения evidence: утверждение о весе комментариев в алгоритме Facebook и прогноз числа ответов не проверены, не становятся фактами/правилами. Утверждение об обязательности контактов ограничено данным материалом; News по умолчанию контактов не требует.
+Действие: подготовлена редакция с фактической новостью, одним кратким переходом к вопросу и контактами; ожидает Leo.
+KB-LINT: PASS. L01 источник обозначен; L02 единичное evidence; L03 динамические факты не закреплены; L04 learning layer; L05 конфликт контактов ограничен текущей задачей; L06 scope текущего поста; L07/L09 не применимы; L08 обновление на месте.
