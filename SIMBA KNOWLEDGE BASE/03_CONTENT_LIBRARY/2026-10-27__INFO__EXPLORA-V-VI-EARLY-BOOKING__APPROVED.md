@@ -14,7 +14,7 @@ TEXT_EXECUTOR: Info-v1.2 (expert/practical analysis evolved from News brief)
 TEXT_STATES: EXECUTOR_SELECTED → EXECUTOR_RULES_LOADED → EXECUTOR_EXECUTED → EXECUTOR_RESULT_VALIDATED → AUTHOR_FINALIZED → HUMANIZER_EXECUTED → HUMANIZER_PASS → LEO_APPROVAL
 VISUAL_EXECUTOR: Rafael/RAFAEL_System_v6.2 (preflight pending)
 RENDERER: not run
-VISUAL_STATUS: PENDING_IDENTITY_REFERENCE (Info hero: Leo; no suitable Leo identity photograph available in current generation context)
+VISUAL_STATUS: SOURCE_PHOTOS_IDENTIFIED / VISUAL_SELECTION_PENDING (Leo requested actual documentary photography of the event; no AI-generated depictions of specific ships. Direct Leo instruction overrides default Info portrait hero for this visual.)
 PUBLICATION: not requested, not published
 
 ## APPROVED_TEXT
@@ -55,4 +55,4 @@ WhatsApp 058-677-8492 | офис 08-996-1127
 
 ## Visual session
 
-Trigger: LEO_APPROVAL → Rafael; hero identity policy: Info → Leo. No suitable Leo photo in current image-generation context; the identity-sensitive preview render must not substitute a generic likeness. PREVIEWS_PENDING_IDENTITY_REFERENCE. No final visual and no publication.
+Trigger: LEO_APPROVAL → Rafael. User instruction 2026-10-27: use real photographs of the actual Explora V float-out and Explora VI coin ceremony, not invented AI vessel images or photos of Explora IV. Event gallery: https://www.fincantieri.com/en/newsroom/press-releases/2026/explora-journeys-and-fincantieri-mark-two-major-milestones-in-sestri-ponente-explora-v-float-out-and-explora-vi-coin-ceremony ; event images credited Explora Journeys: https://www.cruiseandferry.net/articles/explora-journeys-celebrates-construction-milestones-for-two-ships-at-fincantieri-yard . This direct visual choice overrides the default Info portrait hero in this material. PREVIEWS_PENDING_PHOTO_RIGHTS_AND_ASSETS; no final visual and no publication.
