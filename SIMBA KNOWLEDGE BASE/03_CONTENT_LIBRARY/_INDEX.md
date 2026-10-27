@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-27 | [Круизные признания](2026-10-27__INFO__CRUISE-EXCURSION-CONFESSIONS__APPROVED.md) | APPROVED | discussion / personal cruise experience | Mano / Cyprus / historical shore excursion | personal confession invites one-line experiences; no selling CTA | «Отлично» | high |
 | 2026-10-26 | [Уверенность в завтрашнем дне](2026-10-26__LEO__MSC-WORLD-ASIA-HORIZON__APPROVED.md) | APPROVED | personal / commercial CTA | MSC World Asia / September 2028 + 2027 | client booking nearly two years ahead; planning horizon | «Отлично» | high |
 | 2026-10-26 | [Проголосуем. А дальше куда?](2026-10-26__INFO__ELECTION-DAY-OUTINGS__APPROVED.md) | APPROVED | info | Israel / 27 October election-day outings | weather and distance guide choices | «Отлично» | high |
 | 2026-10-25 | [Боты работают, Лео на связи](2026-10-25_LEO_BOTS_VISUAL_SESSION.md) | APPROVED | personal_expert | internal bot assistants | human conversation supported by search and document preparation | запрос постера к текущему тексту | high |
