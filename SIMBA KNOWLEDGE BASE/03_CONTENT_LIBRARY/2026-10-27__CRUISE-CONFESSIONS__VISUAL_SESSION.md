@@ -1,7 +1,7 @@
 # Cruise confessions — visual session
 
 Date: 2026-10-27
-STATUS: FIVE_PREVIEWS_IN_PROGRESS
+STATUS: FIVE_PREVIEWS_READY → AWAITING_LEO_SELECTION
 APPROVED_TEXT: 2026-10-27__INFO__CRUISE-EXCURSION-CONFESSIONS__APPROVED.md
 VISUAL_EXECUTOR: Rafael_System_v6.2
 RENDERER: built-in image_gen
@@ -59,5 +59,15 @@ Create one square 1:1 Facebook editorial poster preview, NOT a grid. Use case: i
 CONCEPT 5 — Minimal typographic editorial cover. Deep charcoal square with fine subtle paper texture, high-contrast black and white photographic cutout portrait of Leo enlarged on right, shoulders merge naturally into background; no park, sea, landmarks or props. Keep face anatomy and identity exactly, retain glasses, hairstyle, facial hair, age and original neutral slightly warm expression. Huge off-white condensed editorial type left in stacked two-line headline: "КРУИЗНЫЕ ПРИЗНАНИЯ". One small muted orange underline only. Brand small at bottom left. Lots of controlled breathing room, sophisticated adult magazine cover, no other text. CHANGE ONLY monochrome treatment, background and crop; PRESERVE EXACTLY Leo's face and clothing.
 ```
 
+## Renderer outputs
+
+- Variant 1: /workspace/scratch/3db6a9cc457b/generated_images/exec-66d3853c-48b5-40e5-92df-441d76cf1932.png
+- Variant 2: /workspace/scratch/3db6a9cc457b/generated_images/exec-a7183561-354a-4b97-a15a-18670074b54d.png
+- Variant 3: /workspace/scratch/3db6a9cc457b/generated_images/exec-4bfb53b7-2ddf-43db-8b5a-2578f10499e8.png
+- Variant 4: /workspace/scratch/3db6a9cc457b/generated_images/exec-7df40f48-143e-4416-9bd4-11337e24cebe.png
+- Variant 5: /workspace/scratch/3db6a9cc457b/generated_images/exec-8d75fb44-dd8d-42ce-bd91-50ebb2d7c407.png
+
 ## QA
-Pending renderer outputs. LINT: source, layer, scope and reference provenance checked; text remains APPROVED, publication unconfirmed.
+All five separate square previews visually inspected: Russian headlines and brand legible, no duplicate text, no pricing/new claims, recognizable Leo retained, no extra people or mascot. Distinct portrait, retro-collage, graphic ticket, cinematic pier and monochrome typographic approaches. Illustrative seaside backgrounds not claimed as authentic historical Cyprus imagery. Mild generated texture/lighting adaptation; final identity QA will be repeated for selected render. No final selection or publication yet.
+
+KB-LINT: PASS — source, content layer, limited scope and actually-used reference provenance verified; full prompts retained, no persistent rule change, approved text unchanged. FIVE_PREVIEWS_READY does not mean FINAL_VISUAL_READY.
