@@ -12,10 +12,10 @@
 - STRATEGIST: none
 - TEXT_EXECUTOR: Info-v1.2 (редактура в диалоге)
 - HUMANIZER: HUMANIZER_EXECUTED → HUMANIZER_PASS
-- VISUAL_EXECUTOR: Rafael_System_v6.2; task created, awaiting identity reference
-- RENDERER: NOT_RUN
+- VISUAL_EXECUTOR: Rafael_System_v6.2; five previews generated; visual session: 2026-10-27__CRUISE-CONFESSIONS__VISUAL_SESSION.md
+- RENDERER: built-in image_gen; five independent preview calls
 - EXECUTION_STATES: EXECUTOR_SELECTED → EXECUTOR_RULES_LOADED → EXECUTOR_EXECUTED → EXECUTOR_RESULT_VALIDATED → HUMANIZER_PASS → APPROVED_TEXT → RAFAEL_TASK_CREATED
-- VISUAL_STATUS: AWAITING_LEO_PHOTO; HERO_IDENTITY_OVERRIDE=LEO per Info provenance; suitable identity photo is absent from current image context.
+- VISUAL_STATUS: FIVE_PREVIEWS_READY; AWAITING_LEO_SELECTION; HERO_IDENTITY_OVERRIDE=LEO; identity reference user supplied 1000392835.jpg.
 - PUBLICATION: NOT_CONFIRMED
 
 ## Утверждённый текст
