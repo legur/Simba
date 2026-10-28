@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-10-28 | [Шопинг тоже путешествие](2026-10-28__NEWS__SHOPPING-TRAVEL__PUBLISHED.md) | PUBLISHED (text only); FIVE_PREVIEWS_READY | news-led discussion / viral | shopping and travel | shopping as a journey; simple purchase question | «Публикуй», личная страница; visual selection pending | high; original execution provenance gap recorded |
 | 2026-10-27 | [Лайнер еще строят, а круизы уже продают](2026-10-27__INFO__EXPLORA-V-VI-EARLY-BOOKING__APPROVED.md) | APPROVED | info / expert news | Explora Journeys / EXPLORA V + VI / 2027–2028 | early booking while ships under construction; suite choice versus uncertain pricing; revised routes | «Готово» после внешнего «Публикуемо» | high |
 | 2026-10-27 | [Круизные признания](2026-10-27__INFO__CRUISE-EXCURSION-CONFESSIONS__APPROVED.md) | APPROVED | discussion / personal cruise experience | Mano / Cyprus / historical shore excursion | personal confession invites one-line experiences; no selling CTA | «Отлично» | high |
 | 2026-10-26 | [Уверенность в завтрашнем дне](2026-10-26__LEO__MSC-WORLD-ASIA-HORIZON__APPROVED.md) | APPROVED | personal / commercial CTA | MSC World Asia / September 2028 + 2027 | client booking nearly two years ahead; planning horizon | «Отлично» | high |
