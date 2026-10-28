@@ -79,3 +79,14 @@ Five independently generated concepts, then five margin correction edits. All co
 
 ## KB-LINT Content Library profile
 L01 SOURCE PASS; L03 dynamic facts kept historical; L04 proper content layer; L06 scope limited to current task; L07 active visual references used, no unsupported YouMind claims; L08 no parallel system rules created. L09 visual session only; full approved text archived in companion record and index. Historical provenance gap explicitly retained.
+
+
+## Selected final · 2026-10-28
+SELECTED_VARIANT_ID: 1
+Leo selection: «1».
+Full stored variant 1 prompt reread before separate final renderer call. Original master identity references reused. Separate final production render completed, followed by one safe-margin correction edit.
+FINAL_VISUAL_READY: PASS
+Final image: exec-de57cfe5-ece4-459f-b2ae-d613508c98d5.png (built-in generated image; automatically retained with conversation).
+QA: square 1:1, exact Russian headline and brand, Simba recognizable, two arms/two legs, no extra claims/contact data, text inset more than 6% after correction. Renderer resolution is maximum available through tool; 2048 size cannot be forced by exposed parameters.
+REFERENCE_TRACE: AR-20260720-004 — Графический постер в Behance-стиле; EX-01 exact-text mechanics; Simba master FRONT/FULL_BODY. YouMind not used.
+KB-LINT: PASS, Content Library visual record; no new persistent rules. Final visual not posted to Facebook; existing publication remains text-only.
