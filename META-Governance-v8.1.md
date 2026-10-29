@@ -1,8 +1,8 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
-Дата: 27.10.2026
+Версия: 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
+Дата: 29.10.2026
 
 
 Это не модуль генерации контента. Это слой правил для ЛЮБОГО изменения архитектуры:
@@ -84,11 +84,11 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 15.0 · 22.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft, сценарный routing и Монтажер Клод |
+| Router | ROUTER_v10.1.md | 16.0 · 29.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft, сценарный routing и Монтажер Клод |
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 2.1 · 22.10.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
 | Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 1.0 · 22.10.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
-| Simba | Simba-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
+| Simba | Simba-v5.0.md | 7.0 · 29.10.2026 | ✅ активен — проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
 | Travel | Travel-v1.3.md | 1.3 | ✅ активен |
 | Leo | Leo-v1.3.md | 1.3 | ✅ активен |
@@ -101,7 +101,7 @@ Knowledge Base не хранит текущую цену/наличие как �
 | Audit | Audit-v1.2.md | 2.5 · 27.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.0 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
-| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.5 / runtime 3.1 | ✅ обязательный общий контекст |
+| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.5 / runtime 4.0 | ✅ обязательный общий контекст |
 | Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 6.0 · 22.10.2026 | Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
 | Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 1.0 · 22.10.2026 | Пост → сценарий и таблица сцен → визуал → Монтажер Клод → QA → Leo; публикация отдельно |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 2.3 · 18.10.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
@@ -929,3 +929,6 @@ idempotency: один исполнитель, журнал до записи, UN
 Что изменено: `Critic/Critic-3.7.md` → `Critic/Critic-5.7.md`; карта системы, AGENTS.md, Router (таблица модулей), Audit и RAFAEL_Routing указывают на новый путь. Версия Critic остаётся 5.7, содержание не менялось.
 Причина: прямое решение Leo — Critic 5.7 должен читаться сразу и быть единственной рабочей версией; имя файла не должно вводить в заблуждение. Переименование выполнено по правилу ВЕРСИОНИРОВАНИЯ: допустимо только вместе с обновлением всех ссылок.
 Затронуто: Critic 5.7 (путь, changelog), Router 15.1, Audit 2.4, RAFAEL_Routing (ссылка), AGENTS.md, DECISION_LOG 1.18. Исторические записи (старые changelog и Decision Log, Session Log, Archivarius) не переписывались.
+
+### 14.0 — 29.10.2026
+Тип: структурное изменение. Прямое решение Leo: перед написанием/содержательной переработкой постов обязательно проверять TIA и сообщать выбранные прочитанные карточки с назначением; при неприменении — конкретную причину. Общий контракт Router 16.0 / KB Runtime 4.0 имеет приоритет над скрытием TIA-отчетов; Simba 7.0 синхронизирован. Ограничения авторов (включая News), факты, Internal Critic и Humanizer сохранены. Затронуто: Router, Simba, KB_RUNTIME_PROTOCOL, DECISION_LOG. Канонические пути не менялись.
