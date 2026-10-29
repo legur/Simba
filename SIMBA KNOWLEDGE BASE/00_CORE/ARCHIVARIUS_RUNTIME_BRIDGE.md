@@ -26,9 +26,10 @@ Marketer, Simba, Critic и этот Bridge не выполняют паралл�
 Archivarius в таком маршруте может только предоставить исходную карточку/референс, если TIA его запрашивает.
 
 ## TIA canonical source
-- TIA base folder: `16csKaDroWVEEykG12Y78zhX3ghodyi_X`
-- Current registry observed at integration: `INDEX_v14` (`1K_ZHpIX2r5mPCbjAjiwIv7H2ZqCEXDhQ`)
-- Legacy TIA protocol reference (NOT runtime-authoritative): `SIMBA-TIA-ИНСТРУКЦИЯ_v1.0` (`1k0esuxbViQ5-0l8GHks7Gb_DDQIMi8HK`)
+- TIA canonical storage: `legur/Simba@main`, папка `Archivarius/TIA/` (карточки `TIA-0XX.txt`, реестр - текущий `INDEX_v*.txt`, система - `TIA_v1_PROMPT.md`)
+- Current registry (на 29.10.2026): `Archivarius/TIA/INDEX_v15.txt`; номер новой карточки определяется по текущему реестру в репозитории
+- Новые карточки и версии реестра пишутся в эту папку (решение Leo 29.10.2026); Google Drive папка `16csKaDroWVEEykG12Y78zhX3ghodyi_X` - архив миграции, не runtime
+- Legacy TIA protocol reference (NOT runtime-authoritative): `Archivarius/TIA/SIMBA-TIA-ИНСТРУКЦИЯ_v1.0`
 
 TIA является отдельной базой анализов чужих текстов. Bridge не копирует её методику в Knowledge Base и не заменяет её собственные правила.
 

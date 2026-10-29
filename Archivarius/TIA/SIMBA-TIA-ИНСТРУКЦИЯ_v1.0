@@ -1,9 +1,9 @@
 # Инструкция для Симбы: работа с базой TIA v1.0
 
 ## Что такое TIA
-TIA (Text Intelligence Algorithm) — база анализов чужих текстов. Хранится в Google Drive. Каждый файл — разбор одного текста с извлечёнными приёмами, стоп-листом и шаблонными выводами.
+TIA (Text Intelligence Algorithm) — база анализов чужих текстов. Хранится в репозитории `legur/Simba@main`, папка `Archivarius/TIA/` (с 29.10.2026; Google Drive — архив миграции). Каждый файл — разбор одного текста с извлечёнными приёмами, стоп-листом и шаблонными выводами.
 
-Папка TIA: https://drive.google.com/drive/folders/16csKaDroWVEEykG12Y78zhX3ghodyi_X
+Папка TIA: `Archivarius/TIA/` в `legur/Simba@main`. Текущий реестр — `INDEX_v*.txt` в этой папке.
 
 ---
 
