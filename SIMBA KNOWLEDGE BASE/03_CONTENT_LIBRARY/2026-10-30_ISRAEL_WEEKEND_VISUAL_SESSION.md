@@ -55,3 +55,16 @@ All five rendered and visually inspected. Square format, numbered 1–5, headlin
 5: Swiss style personality collage poster (AR-20260307-072).
 YouMind category retrieval unavailable, no template used.
 KB-LINT: WARNING — illustrative architecture requires final-render correction as above; no claim of FINAL_VISUAL_READY.
+
+## Selected final — 2026-10-30
+SELECTED_VARIANT_ID: 2 (Leo: «2»)
+SELECTED_PROMPT_RELOADED: yes, read canonical session before render
+FINAL_RENDER_EXECUTED: image_gen, separate render with preview layout + original identity photo
+FINAL_VISUAL_READY: yes
+PUBLICATION_PACKAGE_READY: yes, awaiting final Leo approval; not published
+QA: PASS — square, exact Russian headline/date, number 2, brand readable, identity consistent; ornate invented castle replaced with simple illustrative stone ruins, no named documentary-location claim.
+FINAL_PRODUCTION_PROMPT:
+Create ONE square 1:1 Russian editorial travel poster preview, not a multi-panel comparison. Use the attached photo solely as IDENTITY reference for Leo: preserve exact recognizable face, age about 51, round thin dark glasses, high dark hair, salt-and-pepper beard, stocky build, light textured polo. Keep his gentle closed-eye smiling expression from the reference, don't invent different eyes. Remove car interior and seatbelt; no lion mascot. Clearly an editorial illustration/composite announcing a guide, not evidence he visited. Main headline exactly once at TOP: "СУББОТА ОДНА". Secondary line exactly once: "ПЛАНОВ ЧЕТЫРЕ". Date exactly once: "31 октября". Small brand exactly once bottom-right "Simba by Bon Tours". No slogan, no phones, no prices, no other text, no fake signage. Include small preview number in top left as specified. All Cyrillic correct, high mobile legibility, 6% safe margins. Topic day trips in Israel, historic stone architecture, museums and forts.
+Cinematic editorial photographic scene, Leo chest-up foreground left by weathered limestone fortress archway, sunlit Western Galilee hills beyond, natural amber afternoon side light and rich olive shadows. Immersive single scene, restrained fine grain, title in large elegant ivory typography against dark upper stone. Number "2".
+FINAL RENDER of selected variant 2. Image 1 is the approved layout/style preview; Image 2 is identity authority. Preserve the selected layout, exact face, closed-eye smile, warm light, clothing, typography and small number 2. Produce polished full-size square poster, 2048x2048 if supported. Correct only the invented ornate castle in distant background: replace it with simple low weathered limestone fortress ruins and open rolling Galilee hills, no fantasy European castle, no new landmark claims, no minaret, no extra text. Keep foreground stone arch and cinematic composition. This is an illustrative editorial poster.
+KB-LINT: PASS; reference trace unchanged; no publication claim.
