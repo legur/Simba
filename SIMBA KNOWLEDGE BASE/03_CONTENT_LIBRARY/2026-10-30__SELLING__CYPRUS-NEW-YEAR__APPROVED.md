@@ -1,6 +1,7 @@
 # Новый год на Кипре — Four Seasons и AMARA
 
-Статус: APPROVED_TEXT; публикация не подтверждена.
+Статус: PUBLISHED, Facebook Simba World Travel, 30.10.2026. https://www.facebook.com/274476275740324_122359832282226739
+Фото: Atlantic Ambience / Pexels, https://www.pexels.com/photo/aerial-view-of-limassol-marina-at-sunset-30563630/
 Условия обязательного новогоднего ужина и цена с учетом обязательных доплат требуют подтверждения у оператора до публикации.
 Источник: предложение поставщика, переданное Leo в чате. TIA: не использована; индекс не найден при проверке в ходе сессии.
 EXECUTOR: Simba; внутренний Critic и Humanizer — выполнены в рамках редакционной работы.
