@@ -4,7 +4,7 @@ APPROVED_TEXT: 2026-10-30__INFO__ISRAEL-WEEKEND-OCT31__APPROVED.md
 VISUAL_EXECUTOR: Rafael
 RENDERER: image_gen
 IDENTITY: user attached image-1793347140124.jpg
-STATUS: PROMPTS_READY
+STATUS: FIVE_PREVIEWS_READY; pending Leo selection
 OAI_EXAMPLE_ID: EX-01, EX-02 (mechanics reviewed; image pairs unavailable in current context)
 YouMind: current manifest read; poster-flyer.json retrieval failed: oversized/unsupported. No template used.
 REFERENCE_TRACE: Archivarius cards active and read in full. Only visual composition adapted; invented stats, claims and text omitted.
@@ -44,3 +44,14 @@ FULL_PRODUCTION_PROMPT:
 
 Create ONE square 1:1 Russian editorial travel poster preview, not a multi-panel comparison. Use the attached photo solely as IDENTITY reference for Leo: preserve exact recognizable face, age about 51, round thin dark glasses, high dark hair, salt-and-pepper beard, stocky build, light textured polo. Keep his gentle closed-eye smiling expression from the reference, don't invent different eyes. Remove car interior and seatbelt; no lion mascot. Clearly an editorial illustration/composite announcing a guide, not evidence he visited. Main headline exactly once at TOP: "СУББОТА ОДНА". Secondary line exactly once: "ПЛАНОВ ЧЕТЫРЕ". Date exactly once: "31 октября". Small brand exactly once bottom-right "Simba by Bon Tours". No slogan, no phones, no prices, no other text, no fake signage. Include small preview number in top left as specified. All Cyrillic correct, high mobile legibility, 6% safe margins. Topic day trips in Israel, historic stone architecture, museums and forts.
 Swiss editorial magazine cover, rigid asymmetric grid with one large black-and-white Leo portrait occupying right half, two smaller rectangular architectural detail crops on left (weathered fortress stone and museum arch), cobalt blue rectangular accents, offwhite paper, refined halftone. Large black title at top, no invented stats or extra text. Number "5".
+
+## Preview QA
+All five rendered and visually inspected. Square format, numbered 1–5, headline/date readable, identity based on supplied reference. Architectural backgrounds are illustrative composites and not documentary views of the named venues. Final render must remove generic/unrelated architectural embellishments and use an explicitly illustrative setting or verified venue reference. No prices or new service claims. Number selection triggers reread of stored full production prompt and separate final render. No publication performed.
+
+## Reference names shown to Leo
+1–2: Графический постер в Behance-стиле (AR-20260720-004).
+3: Винтажный векторный постер города (AR-20260720-005).
+4: Городской постер с радиальной архитектурной композицией (AR-20260902-005).
+5: Swiss style personality collage poster (AR-20260307-072).
+YouMind category retrieval unavailable, no template used.
+KB-LINT: WARNING — illustrative architecture requires final-render correction as above; no claim of FINAL_VISUAL_READY.
