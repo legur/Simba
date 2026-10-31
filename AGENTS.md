@@ -57,6 +57,9 @@
 
 ## 4. Runtime invariant
 
+Для создания/содержательной переработки постов до написания загрузить `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/INTRIGAN.md`. После цели/основной мысли/фактов выполнить `INTRIGAN_CHECK → [INTRIGUE_PLAN_READY | INTRIGAN_SKIPPED(reason)]`, затем действующие TIA/авторские проверки. Интриган не автор; News/оперативные инструкции сохраняют FACT_FIRST. Недоступность внешнего skill допускает исполнение канонического протокола.
+
+
 После выбора исполнителя обязательны состояния:
 
 `EXECUTOR_SELECTED → EXECUTOR_RULES_LOADED → EXECUTOR_EXECUTED → EXECUTOR_RESULT_VALIDATED`.
@@ -160,3 +163,4 @@ Legacy Drive IDs и инструкции, встречающиеся в стар
 затем `integrations/ai_plugins/README.md`. Выполнить bridge.py doctor в текущей среде.
 Наличие файлов не подтверждает доступность пакетов/аккаунта. BulkPublish только draft;
 humanizer-ru диагностирует, авторские правила и утверждения сохраняются.
+
