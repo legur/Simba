@@ -1,7 +1,7 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
+Версия: 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
 Дата: 31.10.2026
 
 
@@ -17,6 +17,10 @@
 
 
 <!-- SIMBA_KB_RUNTIME_START -->
+## COPYWRITER_TEST_MODE — 31.10.2026
+
+По прямому решению Leo включен тестовый дополнительный вариант «Копирайтер-универсал» внутри существующего процесса Simba. Канонический контракт: `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/COPYWRITER_TEST.md` (1.0). При новом обычном задании Simba сохраняет три штатных варианта и добавляет один явно подписанный тестовый вариант на том же брифе; это не новый самостоятельный production-автор. При явном запросе только дополнительной версии выдавать только ее, не повторять прежние три. Длина и структура соответствуют задаче; Intrigan/TIA, факты, Internal Critic и Humanizer сохраняются. GROK_ADS_MODE, точечная правка и запрос одного выбранного текста автоматически не получают четвертого варианта. Тест не меняет права публикации. При недоступности skill сообщить причину пропуска, не имитировать его исполнение. Команда Leo «выключи тест копирайтера» отключает режим.
+
 ## GROK_ADS_MODE — 30.10.2026
 Режим существующего Simba по прямому решению Leo. Полный канонический контракт: `Симба (Писатель)/Simba-v5.0.md`, раздел с идентификатором GROK_ADS_MODE. Только рекламные задания от Грока, принятые явно от Leo или через отдельно настроенный им канал. Один пост вместо трех; после обычного KB/TIA/факт-контроля, Internal Critic и Humanizer — POLICY_AUTHORIZED_FOR_PUBLICATION и публикация только в Facebook Simba World Travel. PROCESS_OWNER выполняет lookup страницы, журнал/dedupe, публикацию, readback и write-back. Нерекламное задание — BLOCKED_SCOPE без публикации через другой модуль.
 В этом режиме прямое разрешение Leo заменяет выбор текста и отдельную команду «публикуй» для каждого ID; текстовый пост по умолчанию без обязательного Rafael-trigger. Новый визуал при явном запросе сохраняет процесс Rafael. Эти исключения имеют приоритет над общими approval/draft-only/default-page формулировками данного файла только в названном scope. Ограничения инструментов/среды не отменяются: требование подтверждения exact text конкретного publisher означает BLOCKED_PUBLISH_APPROVAL_REQUIRED до его выполнения. zernio.py остается draft-only. Режим не создает канал приема Grok, расписание или работающую интеграцию; их готовность и remote smoke не подтверждены. Обычный AUTOMATION_CONTINUOUS_MODE не получает права публикации.
@@ -88,12 +92,13 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 18.0 · 31.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft, сценарный routing и Монтажер Клод |
+| Router | ROUTER_v10.1.md | 19.0 · 31.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft, сценарный routing и Монтажер Клод |
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 2.1 · 22.10.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
 | Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 1.0 · 22.10.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
-| Simba | Simba-v5.0.md | 9.0 · 31.10.2026 | ✅ активен — точные пути TIA; проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
-| Интриган | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/INTRIGAN.md` | 1.0 · 31.10.2026 | ✅ редакторский этап до черновика; не самостоятельный автор; AGENT_ROLES 3.0 |
+| Simba | Simba-v5.0.md | 10.0 · 31.10.2026 | ✅ активен — точные пути TIA; проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
+| Копирайтер-универсал (тест) | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/COPYWRITER_TEST.md` | 1.0 · 31.10.2026 | TEST — дополнительный кандидат внутри Simba; не новый автор; META Шаг 0 |
+| Интриган | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/INTRIGAN.md` | 1.0 · 31.10.2026 | ✅ редакторский этап до черновика; не самостоятельный автор; AGENT_ROLES 4.0 |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
 | Travel | Travel-v1.3.md | 1.3 | ✅ активен |
 | Leo | Leo-v1.3.md | 1.3 | ✅ активен |
@@ -106,8 +111,8 @@ Knowledge Base не хранит текущую цену/наличие как �
 | Audit | Audit-v1.2.md | 2.5 · 27.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.0 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
-| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.6 / runtime 6.0 | ✅ обязательный общий контекст |
-| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 8.0 · 31.10.2026 | GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
+| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.7 / runtime 7.0 | ✅ обязательный общий контекст |
+| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 9.0 · 31.10.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
 | Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 1.0 · 22.10.2026 | Пост → сценарий и таблица сцен → визуал → Монтажер Клод → QA → Leo; публикация отдельно |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 2.3 · 18.10.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
@@ -947,3 +952,6 @@ idempotency: один исполнитель, журнал до записи, UN
 
 ### 16.0 — 31.10.2026
 Тип: структурное изменение workflow по прямой команде Leo. Интриган встроен после цели, основной мысли и фактов, до авторских вариантов; не новый автор (META Шаг 0). Проверка уместности, fact-first обход и канонический fallback; связка с TIA и действующими критериями Critic 5.8. Симба 9.0, Router 18.0, Runtime 6.0, Pipeline 8.0, Map 1.6 и Roles 3.0 синхронизированы. Formula/weights/gates Critic, Humanizer, утверждения и публикационные полномочия не изменены. Пример анонса Эйлата уже разобран с Leo; дополнительные проверки и границы отражены в `docs/validation/2026-10-31-intrigan-integration.md`.
+
+### 17.0 — 31.10.2026
+Структурное изменение существующего Simba по прямому решению Leo: дополнительный тестовый кандидат по skill Копирайтера-универсала, без замены трех штатных вариантов. Не отдельный production-модуль (META Шаг 0): тот же бренд, аудитория и цель текущего брифа. Router 19.0, Simba 10.0, Runtime 7.0, Pipeline 9.0, Map 1.7 и Roles 4.0 синхронизированы. GROK_ADS_MODE остается однопостовым; факты, проверки, approval и публикационные полномочия сохранены.
