@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-11-01 | [Новый год в Праге](2026-11-01__SELLING__PRAGUE-NEW-YEAR__APPROVED.md) | APPROVED | sales | Ophir Tours / Prague / Hotel Opera | четыре дня и три ночи, расписание | «берем» | high |
 | 2026-10-30 | [Суббота одна, а планов на нее четыре](2026-10-30__INFO__ISRAEL-WEEKEND-OCT31__APPROVED.md) | APPROVED; visual pending identity reference | info / weekend guide | Israel / day trips / 31 October | four choices; Tel Afek mystery | «Отлично» after external review 8.0/10 | high |
 | 2026-10-30 | [Новый год на Кипре](2026-10-30__SELLING__CYPRUS-NEW-YEAR__APPROVED.md) | PUBLISHED; условия ужина требуют уточнения | sales | Кипр / Four Seasons + AMARA | цена с перелетом, три ночи, выбор отеля | «Отлично» | high |
 | 2026-10-28 | [Шопинг тоже путешествие](2026-10-28__NEWS__SHOPPING-TRAVEL__PUBLISHED.md) | PUBLISHED (text only); FIVE_PREVIEWS_READY | news-led discussion / viral | shopping and travel | shopping as a journey; simple purchase question | «Публикуй», личная страница; visual selection pending | high; original execution provenance gap recorded |
