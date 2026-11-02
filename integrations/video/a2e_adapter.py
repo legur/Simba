@@ -72,12 +72,41 @@ def write_json(path: Path, data: dict) -> None:
     temp.replace(path)
 
 
+def upload_image(path: Path) -> str:
+    types = {".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg",
+             ".webp": "image/webp"}
+    mime = types.get(path.suffix.lower())
+    if not mime or not path.is_file():
+        raise BridgeError("Provide a local PNG, JPEG or WebP image")
+    size = path.stat().st_size
+    if size < 1 or size > 10 * 1024 * 1024:
+        raise BridgeError("Image size must be 1 byte to 10 MB")
+    signed = call_gateway({"action": "presign", "content_type": mime,
+                           "file_size": size})
+    url, cdn = signed.get("upload_url"), signed.get("cdn_url")
+    if not isinstance(url, str) or not isinstance(cdn, str):
+        raise BridgeError("Incomplete upload signature")
+    safe_video_url(url)
+    safe_video_url(cdn)
+    # The presigned URL authenticates the PUT: NEVER send the Simba/Wix token.
+    request = Request(url, data=path.read_bytes(), method="PUT",
+                      headers={"Content-Type": mime, "Content-Length": str(size)})
+    try:
+        with urlopen(request, timeout=90) as response:
+            if not 200 <= response.status < 300:
+                raise BridgeError("A2E image upload rejected")
+    except (HTTPError, URLError, TimeoutError, OSError) as ex:
+        raise BridgeError("Presigned upload failed; request a new signature") from ex
+    return cdn
+
+
 def quote_body(args: argparse.Namespace) -> dict:
-    if not args.image_url.startswith("https://"):
+    image_url = upload_image(args.image_file) if args.image_file else args.image_url
+    if not image_url.startswith("https://"):
         raise BridgeError("Provide a publicly accessible HTTPS image URL")
     if not 0 < len(args.prompt) <= 2000:
         raise BridgeError("Prompt must be 1-2000 characters")
-    return {"name": args.name, "image_url": args.image_url, "prompt": args.prompt,
+    return {"name": args.name, "image_url": image_url, "prompt": args.prompt,
             "model_version": "a2e", "video_time": 5}
 
 
@@ -158,7 +187,9 @@ def parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="action", required=True)
     sub.add_parser("doctor", help="Read-only A2E token/quote check; no generation")
     q = sub.add_parser("quote", help="Free credit quote; saves request body")
-    q.add_argument("--image-url", required=True)
+    images = q.add_mutually_exclusive_group(required=True)
+    images.add_argument("--image-url")
+    images.add_argument("--image-file", type=Path)
     q.add_argument("--prompt", required=True)
     q.add_argument("--name", default="Simba A2E clip")
     q.add_argument("--out", type=Path, required=True)
