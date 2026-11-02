@@ -107,3 +107,17 @@ integrations\video\.venv\Scripts\python integrations\video\make_video.py integra
 - Музыка и звуки синтезируются кодом (`audio.py`), сэмплов нет.
 - Голос — нейронные голоса Microsoft через edge-tts (неофициальный клиент онлайн-сервиса). Для коммерческого использования
   условия Microsoft проверяет Leo; официальная замена с теми же голосами — Azure Speech.
+
+
+## A2E (Wix-backed) — 02.11.2026
+
+Отдельный внешний генератор клипов (не заменяет Монтажера Клода):
+`integrations/video/a2e_adapter.py`. Полный setup, CLI, условия оплаты,
+передача clips в video-spec.json и статус Wix-deploy:
+[A2E.md](A2E.md).
+
+A2E_Key остается только в Wix Secrets Manager. Старт генерации оплачиваемый
+и требует сначала бесплатный quote, затем явные `--send` + `--max-credits`.
+Результат A2E — внешний MP4-клип для существующего `scenes[].clip`.
+Статус интеграции: CODE_READY, REMOTE_DEPLOY_PENDING. Не считать удаленные
+smoke-тесты или публикацию сайта выполненными до фактического подтверждения.
