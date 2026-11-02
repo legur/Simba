@@ -1,3 +1,12 @@
+## Коррекция источника Wix Studio — 02.11.2026
+
+Канонический проект разработки сайта — legur/site-update-system, папка ReDesign/.
+Текущий gateway подготовлен в draft PR https://github.com/legur/site-update-system/pull/84
+Инструкция: ReDesign/docs/simba-a2e-wix-deployment.md.
+Старый PR legur/travel#1 закрыт как устаревший; ветку legur/travel НЕ публиковать.
+GitHub PR не равен Wix Studio deployment. Только после Studio read-back существующих
+HTTP routes, additive merge и функциональных проверок можно делать публикацию.
+
 # A2E video generator (Wix-backed bridge) — 02.11.2026
 
 **Status: CODE_READY / REMOTE_DEPLOY_PENDING.** The A2E token remains in the Wix
@@ -21,9 +30,7 @@ starts and no automatic Facebook publication.
 
 ## Deployment blocker / site safety
 
-The Wix site is linked to GitHub `legur/travel` (wix.config.json, exact
-siteId 489d3aa0-caf3-400e-bdc3-7c9510d86236). The backend gateway is in
-feature branch `feature/simba-a2e-wix-gateway-20261102`.
+The Wix Studio gateway source is now in `legur/site-update-system` (ReDesign/) draft PR #84. `legur/travel` is a historical Wix Git Integration snapshot and must not be used to publish.
 
 IMPORTANT: that repository currently tracks no `src/backend/http-functions.js`,
 but production may have existing HTTP functions outside this Git snapshot
