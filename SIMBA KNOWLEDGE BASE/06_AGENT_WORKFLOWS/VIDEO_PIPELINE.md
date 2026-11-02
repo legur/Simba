@@ -82,7 +82,7 @@ Rafael → A2E (Wix backend, ключ `A2E_Key`) → MP4 → Монтажер К
 повторный POST запрещён до сверки A2E tasks/billing. Запрещена автоматическая
 публикация. Полный runbook: `integrations/video/A2E.md`.
 
-**Состояние на 02.11.2026:** gateway-код подготовлен в ветке сайта,
+**Состояние на 02.11.2026:** gateway-код подготовлен в legur/site-update-system PR #84,
 код адаптера есть в Simba, но публикация Wix и production smoke не подтверждены.
 Не назначать VIDEO_READY_FOR_LEO до фактического MP4 + действующего QA.
 
