@@ -13,7 +13,7 @@ jobs:
     if: >-
       github.event_name == 'issues' &&
       github.event.action == 'labeled' &&
-      github.event.label.name == 'a2e-reconcile-20261103' &&
+      github.event.label.name == 'a2e-reconcile-schema-20261103' &&
       github.event.issue.number == 8 &&
       github.event.issue.user.login == 'legur'
     runs-on: ubuntu-latest
@@ -76,13 +76,13 @@ jobs:
                   "Simba winter traveller", "Prague Astronomical Clock",
                   "Vintage Prague tram", "Prague New Year skyline"
               }
-              data, err = fetch("/v1/userImage2Video/allRecords")
+              data, err = fetch("/v1/userImage2Video/allRecords?pageNum=1&pageSize=100")
               if err:
                   out.append("Tasks API ERROR: " + err)
-              elif not isinstance(data, dict) or not isinstance(data.get("all_records"), list):
+              elif not isinstance(data, dict) or not isinstance(data.get("rows"), list):
                   out.append("Tasks API returned unexpected schema; cannot conclude no task was created.")
               else:
-                  records = data["all_records"]
+                  records = data["rows"]
                   selected = [x for x in records if isinstance(x, dict)
                               and x.get("name") in names and recent(x.get("createdAt"))]
                   out.append("Matching recent Prague tasks: " + str(len(selected)))
