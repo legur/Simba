@@ -1,0 +1,95 @@
+name: Simba A2E read-only staged image verification
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    name: Inspect A2E staged image HTTP and credit history
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-stage-recheck' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    timeout-minutes: 3
+    steps:
+      - name: GET images and credit history only (NO billed operations)
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json,os,urllib.request,urllib.error
+          from pathlib import Path
+          urls={
+             "A2E staged image": "https://7days-apac.downloadaivideo.com/adam2eve/stable/user/695cf6da60588c00590a9ad6/simba-prague-scene1-9ba9f6050eb841d0aa84d6b43b760d69.jpg",
+             "Original Wix image": "https://static.wixstatic.com/media/7fd7b8_377e66bfa46b4a87a0223b02bec5d6f0~mv2.jpg"
+          }
+          lines=["### A2E staged asset and credits — read-only recheck", "",
+                 "GET/HEAD only. No second upload or generation attempted.", ""]
+          for title,url in urls.items():
+              lines.append("**"+title+"**")
+              for method in ("HEAD","GET"):
+                  try:
+                      req=urllib.request.Request(
+                          url,method=method,headers={"Range":"bytes=0-1023",
+                                                  "Accept":"image/jpeg"})
+                      with urllib.request.urlopen(req,timeout=24) as r:
+                          typ=r.headers.get("Content-Type","unknown")
+                          data=r.read(1024) if method=="GET" else b""
+                          lines.append(method+": HTTP "+str(r.status)+", mime="+typ+
+                                       (", JPEG="+str(data.startswith(bytes.fromhex("ffd8"))) if method=="GET" else ""))
+                  except urllib.error.HTTPError as ex:
+                      lines.append(method+": HTTP "+str(ex.code))
+                  except Exception as ex:
+                      lines.append(method+": error="+type(ex).__name__)
+              lines.append("")
+          key=os.environ.get("A2E_API_KEY","")
+          if key.startswith("sk_"):
+              url="https://api.a2e.ai/v1/transactionRecord/creditsHistory?pageNum=1&pageSize=100&is_consumption=true&startDate=2026-11-03T20%3A09%3A00Z"
+              try:
+                  req=urllib.request.Request(url,method="GET",headers={
+                      "Authorization":"Bearer "+key,"Accept":"application/json"})
+                  with urllib.request.urlopen(req,timeout=24) as resp:
+                      result=json.load(resp)
+                  data=result.get("data") if isinstance(result,dict) else None
+                  if result.get("code")==0 and isinstance(data,dict) and isinstance(data.get("rows"),list):
+                      rows=data["rows"]
+                      lines.append("**A2E credit consumption since 20:09 UTC:** "+str(len(rows))+" transaction(s)")
+                      for row in rows[:12]:
+                          amount=row.get("amount")
+                          created=row.get("createdAt")
+                          if isinstance(amount,(int,float)) and isinstance(created,str):
+                              lines.append("- "+created+": "+str(amount)+" credit(s)")
+                  else:
+                      lines.append("Credit history not verified.")
+              except urllib.error.HTTPError as e:
+                  lines.append("Credit history HTTP "+str(e.code))
+              except Exception as e:
+                  lines.append("Credit history error "+type(e).__name__)
+          else:
+              lines.append("Cannot read A2E credit ledger: key missing.")
+          lines.append("")
+          lines.append("No credit-bearing presign or paid video start requests were made.")
+          Path(os.environ["RUNNER_TEMP"],"a2e-stage-recheck.md").write_text(
+              "\n".join(lines),encoding="utf-8")
+          print("READONLY_STAGING_CHECK_COMPLETE")
+          PY
+      - name: Comment on issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-stage-recheck.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/a2e-stage-recheck.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body "A2E stage recheck did not complete; no paid actions taken."
+          fi
