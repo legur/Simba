@@ -63,8 +63,15 @@ credit limit and a separately configured/validated runner.
 
 SOURCE_PREPARED_ONLY. No repository Action secret has been configured by
 ChatGPT; no workflow has been merged into default and no live quote completed.
-The Wix endpoint's production status was reported by HomeBook but direct
-requests through the Wix ChatGPT connector fail with a tool egress 403.
+
+Independent GitHub Actions CI on 03.11.2026: 7/7 offline safety tests passed.
+A real no-token POST from GitHub Actions to Wix responded with HTTP 403
+and application error FORBIDDEN (WIX_ENDPOINT_REACHABLE), proving the
+GitHub runner can reach the published protected A2E HTTP function.
+This does NOT prove the Bearer secret works or that credits can be quoted.
+The Wix ChatGPT connector itself still cannot call the custom domain.
+
+Run: https://github.com/legur/Simba/actions/runs/41706867831
 
 Personal ChatGPT plans cannot currently create a new arbitrary custom MCP
 write plugin. This Github workflow is a workaround using a **connected**
