@@ -1,0 +1,67 @@
+name: Simba A2E check image source availability
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Read-only check six Wix CDN source images
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-media-check-20261103' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: read
+    timeout-minutes: 3
+    steps:
+      - name: Verify image URLs by requesting only first bytes
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os, urllib.request, urllib.error
+          urls=[
+          "https://static.wixstatic.com/media/7fd7b8_377e66bfa46b4a87a0223b02bec5d6f0~mv2.jpg",
+          "https://static.wixstatic.com/media/7fd7b8_2eb605400d914b6da8f84ff0700b40e0~mv2.jpg",
+          "https://static.wixstatic.com/media/7fd7b8_f208d7e3ca3b4a06b1e4d9fca4ccb969~mv2.jpg",
+          "https://static.wixstatic.com/media/7fd7b8_f203b5cc44ab4f4a99db77cc8fec717c~mv2.jpg",
+          "https://static.wixstatic.com/media/7fd7b8_76f420f19600473d8f7739da27e85b1c~mv2.jpg",
+          "https://static.wixstatic.com/media/7fd7b8_60d4cd52cae94899982832c7cc30a670~mv2.jpg"
+          ]
+          lines=["### A2E: доступность шести исходных изображений Праги", "",
+                 "Проверка без API-ключа и без генерации видео.", ""]
+          for i,url in enumerate(urls,1):
+              try:
+                  req=urllib.request.Request(url,headers={"Range":"bytes=0-1023"})
+                  with urllib.request.urlopen(req,timeout=18) as response:
+                      content=response.read(1024)
+                      status=response.status
+                      mimetype=response.headers.get("Content-Type","")
+                  valid=(status in (200,206) and content.startswith(bytes.fromhex("ffd8"))
+                         and mimetype.startswith("image/"))
+                  lines.append(f"{i}. HTTP {status}, MIME {mimetype}, JPEG={valid}")
+              except urllib.error.HTTPError as e:
+                  lines.append(f"{i}. HTTP {e.code}, source inaccessible")
+              except Exception as e:
+                  lines.append(f"{i}. Network error: {type(e).__name__}")
+          lines += ["", "A valid public source does not prove that the A2E account can start generation."]
+          Path(os.environ["RUNNER_TEMP"],"media-check.md").write_text("\n".join(lines),encoding="utf-8")
+          print("CHECK_FINISHED")
+          PY
+      - name: Post results to source issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/media-check.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/media-check.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body "Read-only media check failed to complete."
+          fi
