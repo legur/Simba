@@ -23,6 +23,38 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m unittest integrations/video/test_github_a2e_issue_bridge.py -v
+      - name: Anonymous Wix A2E endpoint smoke (no token, no charge)
+        continue-on-error: true
+        run: |
+          python - <<'PY'
+          import json
+          import urllib.request
+          import urllib.error
+          request = urllib.request.Request(
+              "https://www.letsgo-world.co.il/_functions/simbaA2e",
+              method="POST",
+              data=b'{"action":"doctor"}',
+              headers={"Content-Type": "application/json"}
+          )
+          try:
+              with urllib.request.urlopen(request, timeout=18) as response:
+                  print("WIX_ENDPOINT_UNEXPECTED_HTTP", response.status)
+                  raise SystemExit(1)
+          except urllib.error.HTTPError as ex:
+              raw = ex.read(512)
+              try:
+                  payload = json.loads(raw)
+              except ValueError:
+                  payload = {}
+              if ex.code == 403 and payload.get("error") == "FORBIDDEN":
+                  print("WIX_ENDPOINT_REACHABLE: authenticated request required")
+              else:
+                  print("WIX_ENDPOINT_UNVERIFIED:", ex.code)
+                  raise SystemExit(1)
+          except Exception as ex:
+              print("WIX_ENDPOINT_NETWORK_UNAVAILABLE:", type(ex).__name__)
+              raise SystemExit(1)
+          PY
 
   quote:
     name: A2E no-charge quote via Wix
