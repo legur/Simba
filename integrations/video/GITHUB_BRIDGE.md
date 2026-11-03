@@ -1,81 +1,75 @@
-# Simba A2E: ChatGPT -> GitHub Actions -> Wix -> A2E
+# Simba A2E: ChatGPT -> GitHub Actions -> A2E (no Wix)
 
-## Why this bridge
+## Purpose
 
-The Wix ChatGPT connector cannot make HTTP POST requests to the site's custom
-domain. GitHub is already connected in ChatGPT, so an ISSUE with the label
-"a2e-quote" can trigger a GitHub Actions runner, which performs the request to
-the existing Wix Velo backend from GitHub's network.
+The connected ChatGPT GitHub app can open an issue. A GitHub Actions workflow
+then contacts the official A2E developer API directly using A2E_API_KEY from
+Actions repository secrets. No API key ever appears in the issue or chat.
+This workflow is FREE QUOTE ONLY and cannot create paid tasks.
 
-This is a **free quote-only** bridge. It is NOT an installed MCP plugin.
-It does NOT let ChatGPT directly call an arbitrary HTTPS endpoint. It does NOT
-create paid A2E tasks. Paid generation still requires an explicitly approved
-credit limit and a separately configured/validated runner.
+## One-time setup
 
-## One-time setup by the account owner
+1. Review and merge this PR into default branch main.
+2. In repository legur/Simba, Settings > Secrets and variables > Actions,
+   add secret A2E_API_KEY with the API token from A2E Account > API Token.
+   A2E API tokens start with sk_. No Wix secret needed for direct mode.
+3. Make sure GitHub Actions runs and issue comment permissions are available.
+4. Create an issue authored by legur containing raw JSON:
+   {
+     "kind": "simba_a2e_quote",
+     "scenes": [
+       {
+         "name": "Prague Charles Bridge",
+         "image_url": "https://static.wixstatic.com/media/ACTUAL_IMAGE_ID.jpg",
+         "prompt": "Slow cinematic camera push, snowfall, no text"
+       }
+     ]
+   }
+5. Add the label a2e-quote to the issue. The workflow comments the result.
 
-1. Review and merge the approved PR containing:
-   - .github/workflows/simba-a2e-quote.yml
-   - integrations/video/github_a2e_issue_bridge.py
-   - integrations/video/test_github_a2e_issue_bridge.py
-2. Go to the **private** GitHub repository legur/Simba:
-   Settings > Secrets and variables > Actions > New repository secret.
-3. Create secret name **SIMBA_A2E_GATEWAY_TOKEN** using the existing
-   **Simba_Session_Key** from Wix Secrets Manager. Configure it in GitHub
-   Settings **only**. Never copy the value to ChatGPT, GitHub issues,
-   comments or source files.
-4. Verify GitHub Actions is enabled for the repository; issue workflows
-   execute only from the repository's default branch after merge.
-5. Create a GitHub issue with a JSON body such as:
+The ready test issue for six Prague Rafael frames is legur/Simba#8.
 
-    {
-      "kind": "simba_a2e_quote",
-      "scenes": [
-        {
-          "name": "Prague bridge",
-          "image_url": "https://static.wixstatic.com/media/<actual-upload-id>.jpg",
-          "prompt": "Slow cinematic push toward Charles Bridge, no text"
-        }
-      ]
-    }
+## Direct A2E API
 
-6. Add the label **a2e-quote** to trigger. ChatGPT can create issues and add
-   this label using its existing GitHub connector. The workflow comments
-   back with the exact current A2E credits or a safe error.
+POST https://api.a2e.ai/v1/generation/quote
 
-## Security design
+The body is:
+   {
+     "endpoint": "/api/v1/userImage2Video/start",
+     "requestBody": {
+       "name": "Prague",
+       "image_url": "https://static.wixstatic.com/media/ACTUAL_IMAGE_ID.jpg",
+       "prompt": "Slow push",
+       "model_version": "a2e",
+       "video_time": 5,
+       "auto_add_audio": false,
+       "number_of_images": 1
+     }
+   }
 
-- Only label events for issues created by GitHub user legur are allowed.
-- Input is validated as strict JSON, maximum six scenes, images restricted to
-  HTTPS Wix Media Manager. All model/duration settings are forced to
-  model_version=a2e and video_time=5.
-- The issue cannot specify gateway action, A2E key, billable start, or headers.
-- The runner uses its secret as Bearer over HTTPS, and a2e_adapter.py accesses
-  Wix. Actual A2E_Key remains in the Wix Secrets Manager, not GitHub.
-- No charged start and no automatic retry. The workflow writes one safe
-  comment with price estimates; the token is not printed.
-- The runner has read-only repository content scope and permission to comment
-  on issues. The job timeout is five minutes. No CMS or Wix site mutation.
-- When the quote is unavailable, report SETUP_REQUIRED or QUOTE_FAILED;
-  DO NOT guess a cost or launch paid generation.
+Authorization: Bearer A2E_API_KEY (from Actions secret ONLY).
+Accept response only if code=0, data.available=true, data.exact=true
+and data.coins is nonnegative and finite.
 
-## Preconditions / current status
+Official sources:
+https://video.a2e.ai/dev
+https://video.a2e.ai/dev/openapi-spec
 
-SOURCE_PREPARED_ONLY. No repository Action secret has been configured by
-ChatGPT; no workflow has been merged into default and no live quote completed.
+## Safeguards
 
-Independent GitHub Actions CI on 03.11.2026: 7/7 offline safety tests passed.
-A real no-token POST from GitHub Actions to Wix responded with HTTP 403
-and application error FORBIDDEN (WIX_ENDPOINT_REACHABLE), proving the
-GitHub runner can reach the published protected A2E HTTP function.
-This does NOT prove the Bearer secret works or that credits can be quoted.
-The Wix ChatGPT connector itself still cannot call the custom domain.
+- Only issue label a2e-quote for issues authored by legur.
+- Only HTTPS Wix CDN images, up to six per issue.
+- Force one a2e, five-second, no-audio quote per image.
+- No chargeable /v1/userImage2Video/start, no automatic retries.
+- GitHub token needs contents read and issues write only.
+- No raw API bodies, secrets or headers in logs.
+- Quote does not reserve credits, prove model entitlement or start videos.
+- No approval to spend credits follows from setting an API key.
+- A paid workflow would need a separate user-approved exact credit ceiling,
+  fresh quote, single-attempt safeguards and monitoring.
 
-Run: https://github.com/legur/Simba/actions/runs/41706867831
+## Status
 
-Personal ChatGPT plans cannot currently create a new arbitrary custom MCP
-write plugin. This Github workflow is a workaround using a **connected**
-GitHub connector, subject to owner approval and secrets setup.
-
-The connector's first direct proof will be an issue comment containing
-QUOTED_NO_CHARGE with exact credits from the deployed Wix gateway.
+Code and tests should pass before merge. After merge, adding the a2e-quote
+label to issue #8 triggers the real free quote. Report VERIFIED only after
+GitHub Actions succeeds and issue comment includes real quoted credits.
