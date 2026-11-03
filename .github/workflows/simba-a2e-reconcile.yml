@@ -1,0 +1,128 @@
+name: Simba A2E read-only charge reconciliation
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  reconcile:
+    name: A2E read-only task and credit history
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-reconcile-20261103' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 3
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Read A2E task and credit ledgers (no POST, no charges)
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import urllib.request
+          import urllib.error
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          key = os.environ.get("A2E_API_KEY", "")
+          out = ["### A2E reconciliation — issue #8", "",
+                 "Only GET queries performed; NO paid generation, NO retries.", ""]
+          if len(key) < 15 or not key.startswith("sk_"):
+              out.append("ERROR: A2E_API_KEY unavailable")
+          else:
+              def fetch(path):
+                  request = urllib.request.Request(
+                      "https://api.a2e.ai" + path,
+                      method="GET",
+                      headers={"Authorization": "Bearer " + key,
+                               "Accept": "application/json"})
+                  try:
+                      with urllib.request.urlopen(request, timeout=35) as response:
+                          payload = json.load(response)
+                          if payload.get("code") != 0:
+                              return None, "API_CODE_" + str(payload.get("code"))
+                          return payload.get("data"), None
+                  except urllib.error.HTTPError as e:
+                      return None, "HTTP_" + str(e.code)
+                  except Exception as e:
+                      return None, type(e).__name__
+
+              def recent(value):
+                  if not isinstance(value, str):
+                      return False
+                  try:
+                      parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+                      if parsed.tzinfo is None:
+                          parsed = parsed.replace(tzinfo=timezone.utc)
+                      return parsed >= datetime(2026, 11, 3, 20, 9, tzinfo=timezone.utc)
+                  except (ValueError, TypeError):
+                      return False
+
+              names = {
+                  "Prague Charles Bridge", "Prague Old Town Market",
+                  "Simba winter traveller", "Prague Astronomical Clock",
+                  "Vintage Prague tram", "Prague New Year skyline"
+              }
+              data, err = fetch("/v1/userImage2Video/allRecords")
+              if err:
+                  out.append("Tasks API ERROR: " + err)
+              elif not isinstance(data, dict) or not isinstance(data.get("all_records"), list):
+                  out.append("Tasks API returned unexpected schema; cannot conclude no task was created.")
+              else:
+                  records = data["all_records"]
+                  selected = [x for x in records if isinstance(x, dict)
+                              and x.get("name") in names and recent(x.get("createdAt"))]
+                  out.append("Matching recent Prague tasks: " + str(len(selected)))
+                  for record in selected:
+                      out.append("- " + str(record.get("name")) + 
+                                 ": ID " + str(record.get("_id")) +
+                                 ", state " + str(record.get("current_status")) +
+                                 ", coins " + str(record.get("coins")) +
+                                 ", refunded " + str(record.get("hasRefundCoin")))
+
+              tx, err = fetch("/v1/transactionRecord/creditsHistory?pageNum=1&pageSize=100&is_consumption=true&startDate=2026-11-03T20%3A09%3A00Z")
+              if err:
+                  out.append("Credit history API ERROR: " + err)
+              elif not isinstance(tx, dict) or not isinstance(tx.get("rows"), list):
+                  out.append("Credit history returned unexpected schema; cannot confirm charges.")
+              else:
+                  selected = [x for x in tx["rows"] if isinstance(x, dict)
+                              and recent(x.get("createdAt"))]
+                  amount = sum(float(x.get("amount", 0)) for x in selected
+                               if isinstance(x.get("amount"), (int, float)))
+                  out.append("")
+                  out.append("All recent consumption transactions (may include unrelated tasks): " +
+                             str(len(selected)) + ", sum " + str(amount) + " credits.")
+                  for row in selected[:12]:
+                      out.append("- " + str(row.get("createdAt")) + ": " +
+                                 str(row.get("amount")) + " credits; transaction " +
+                                 str(row.get("_id"))[:30])
+
+          out += ["", "Paid starts remain blocked until this evidence is reconciled."]
+          Path(os.environ["RUNNER_TEMP"], "reconcile.md").write_text(
+              "\n".join(out), encoding="utf-8")
+          print("A2E_RECONCILIATION_REPORT_CREATED")
+          PY
+      - name: Comment safe reconciliation results
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/reconcile.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/reconcile.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body "A2E reconciliation job did not finish. No paid action occurred in this read-only workflow."
+          fi
