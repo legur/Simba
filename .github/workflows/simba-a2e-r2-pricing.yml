@@ -13,7 +13,7 @@ jobs:
     if: >-
       github.event_name == 'issues' &&
       github.event.action == 'labeled' &&
-      github.event.label.name == 'a2e-r2-price-check' &&
+      github.event.label.name == 'a2e-r2-price-check-v2' &&
       github.event.issue.number == 8 &&
       github.event.issue.user.login == 'legur'
     runs-on: ubuntu-latest
@@ -47,18 +47,28 @@ jobs:
                       data=payload.get("data")
                       if isinstance(data,dict):
                           lines.append("Response data top-level keys: "+", ".join(sorted(data.keys())[:35]))
-                          r2=data.get("r2")
-                          if r2 is None:
-                              lines.append("r2 field not at data root; pricing is not established.")
-                          elif isinstance(r2,(int,float)):
-                              lines.append("r2 presign price: "+str(r2)+" credits per successfully issued URL.")
-                          elif isinstance(r2,dict):
-                              safe={k:v for k,v in r2.items() if k.lower() in
-                                {"coins","credit","credits","price","cost","value","perurl","unit","amount"}
-                                and isinstance(v,(int,float,str)) and len(str(v))<90}
-                              lines.append("r2 pricing object: "+json.dumps(safe,ensure_ascii=False))
+                          catalog=data.get("prices")
+                          lines.append("prices field kind: "+type(catalog).__name__)
+                          if isinstance(catalog,dict):
+                              lines.append("Available price keys containing r2: "+", ".join(k for k in sorted(catalog) if "r2" in k.lower()))
+                              r2=catalog.get("r2")
+                              if isinstance(r2,(int,float)):
+                                  lines.append("R2_UPLOAD_PRICE="+str(r2))
+                              elif isinstance(r2,dict):
+                                  safe={k:v for k,v in r2.items()
+                                      if k.lower() in {"coins","credits","price","cost","value","amount","unitcost","perurl"} and
+                                        isinstance(v,(str,int,float)) and len(str(v))<70}
+                                  lines.append("R2_UPLOAD_PRICE_DETAILS="+json.dumps(safe,ensure_ascii=False))
+                              else:
+                                  lines.append("R2_UPLOAD_PRICE_UNKNOWN; do not upload.")
+                          elif isinstance(catalog,list):
+                              lines.append("Price catalog list length: "+str(len(catalog)))
+                              for record in catalog:
+                                  if isinstance(record,dict) and "r2" in str(record.get("key",record.get("name",record.get("type","")))).lower():
+                                      safe={k:v for k,v in record.items() if k in ("key","name","type","coins","credits","price","cost","amount") and isinstance(v,(int,float,str))}
+                                      lines.append("R2_UPLOAD_PRICE_DETAILS="+json.dumps(safe,ensure_ascii=False))
                           else:
-                              lines.append("r2 pricing field type: "+type(r2).__name__)
+                              lines.append("Price catalog unknown; no upload.")
                       elif isinstance(data,list):
                           lines.append("Data is a list of "+str(len(data))+" entries")
                           for row in data:
