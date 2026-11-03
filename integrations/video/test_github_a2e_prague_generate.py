@@ -13,7 +13,7 @@ def event():
     scenes = []
     for i, url in enumerate(paid.EXPECTED_URLS, 1):
         scenes.append({"name": "Prague %d" % i, "image_url": url, "prompt": "Camera glide"})
-    return {"action": "labeled", "label": {"name": "a2e-generate-180"},
+    return {"action": "labeled", "label": {"name": "a2e-recover-180"},
             "repository": {"full_name": "legur/Simba"},
             "issue": {"number": 8, "user": {"login": "legur"},
                       "body": json.dumps({"kind": "simba_a2e_quote", "scenes": scenes})}}
@@ -94,6 +94,7 @@ class GuardTests(unittest.TestCase):
             patch.dict(paid.os.environ, {"A2E_API_KEY": "sk_test_fake_token_0123456789"})), (
             patch.object(paid, "priced_within_cap", side_effect=traced_quote)), (
             patch.object(paid, "claim_start", side_effect=traced_claim)), (
+            patch.object(paid, "verify_no_paid_effect_since_first_attempt", return_value=None)), (
             patch.object(paid, "a2e_start", side_effect=traced_start)), (
             patch.object(paid, "a2e_status", side_effect=traced_status)):
             outcome = paid.run(event(), Path(d), cap=180)
@@ -104,12 +105,28 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(sequence[1], "journal")
         self.assertTrue(sequence.index("journal") < sequence.index("start"))
 
+    def test_recovery_requires_zero_tasks_and_zero_credit_consumption(self):
+        with patch.object(paid, "read_json", side_effect=[
+            {"code": 0, "data": {"rows": [], "count": 0}},
+            {"code": 0, "data": {"rows": [], "count": 0}},
+        ]):
+            paid.verify_no_paid_effect_since_first_attempt("sk_fake")
+        with patch.object(paid, "read_json", side_effect=[
+            {"code": 0, "data": {"rows": [], "count": 0}},
+            {"code": 0, "data": {"rows": [
+                {"createdAt": "2026-11-03T20:12:00Z", "amount": -30}
+            ], "count": 1}},
+        ]):
+            with self.assertRaises(paid.StopGeneration):
+                paid.verify_no_paid_effect_since_first_attempt("sk_fake")
+
     def test_start_error_never_retried(self):
         submissions = []
         with tempfile.TemporaryDirectory() as d, (
             patch.dict(paid.os.environ, {"A2E_API_KEY": "sk_test_fake_token_0123456789"})), (
             patch.object(paid, "priced_within_cap", side_effect=lambda bodies, key: [30.0 for _ in bodies])), (
             patch.object(paid, "claim_start", return_value=None)), (
+            patch.object(paid, "verify_no_paid_effect_since_first_attempt", return_value=None)), (
             patch.object(paid, "a2e_start", side_effect=lambda body, key: (
                 submissions.append(body) or (_ for _ in ()).throw(paid.StopGeneration("Ambiguous request"))))):
             outcome = paid.run(event(), Path(d), cap=180)

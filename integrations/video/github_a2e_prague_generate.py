@@ -12,6 +12,7 @@ import json
 import math
 import os
 from pathlib import Path
+from datetime import datetime, timezone
 import re
 import time
 from urllib.error import HTTPError, URLError
@@ -23,8 +24,8 @@ from github_a2e_issue_bridge import build_bodies, request_quote
 APPROVED_ISSUE = 8
 APPROVED_CAP = 180
 PER_SCENE_LIMIT = 30
-TRIGGER_LABEL = "a2e-generate-180"
-JOURNAL_MARKER = "A2E_PRAGUE_PAID_START_INTENT_20261103_ISSUE8"
+TRIGGER_LABEL = "a2e-recover-180"
+JOURNAL_MARKER = "A2E_PRAGUE_RECOVERY_VERIFIED_ZERO_START_20261103_ISSUE8"
 API_BASE = "https://api.a2e.ai"
 GITHUB_COMMENTS = "https://api.github.com/repos/legur/Simba/issues/8/comments"
 EXPECTED_MEDIA_SUFFIXES = [
@@ -48,7 +49,9 @@ class StopGeneration(Exception):
 
 def checked_api(response: object) -> dict:
     if not isinstance(response, dict) or response.get("code") != 0:
-        raise StopGeneration("A2E rejected request; no automatic retry")
+        code = response.get("code") if isinstance(response, dict) else None
+        safe_code = str(code) if type(code) in (int, str) and len(str(code)) <= 28 and str(code).replace("_", "").isalnum() else "UNKNOWN"
+        raise StopGeneration("A2E_REJECTED_CODE_" + safe_code + "; no automatic retry")
     data = response.get("data")
     if not isinstance(data, dict):
         raise StopGeneration("A2E returned an invalid data envelope")
@@ -76,7 +79,28 @@ def a2e_start(body: dict, key: str) -> dict:
         data=json.dumps(body).encode("utf-8"),
         headers={"Authorization": "Bearer " + key, "Content-Type": "application/json"}
     )
-    return read_json(req, timeout=40)
+    try:
+        with urlopen(req, timeout=40) as response:
+            if response.status != 200:
+                raise StopGeneration("A2E_START_HTTP_" + str(response.status))
+            payload = json.load(response)
+            if not isinstance(payload, dict):
+                raise StopGeneration("A2E_START_INVALID_RESPONSE")
+            return payload
+    except HTTPError as ex:
+        # The numeric HTTP status and documented business code are safe to report.
+        # Never show raw response bodies or request headers.
+        code = ""
+        try:
+            payload = json.load(ex)
+            value = payload.get("code") if isinstance(payload, dict) else None
+            if type(value) in (int, str) and len(str(value)) <= 28 and str(value).replace("_", "").isalnum():
+                code = "_CODE_" + str(value)
+        except (ValueError, OSError, TypeError):
+            pass
+        raise StopGeneration("A2E_START_HTTP_" + str(ex.code) + code + "; no automatic retry") from None
+    except (URLError, TimeoutError, OSError, ValueError):
+        raise StopGeneration("A2E_START_NETWORK_AMBIGUOUS; do not retry automatically") from None
 
 
 def a2e_status(task_id: str, key: str) -> dict:
@@ -168,6 +192,38 @@ def priced_within_cap(bodies: list[dict], key: str, quote_fn=request_quote) -> l
     return quotes
 
 
+def _recent(value: object) -> bool:
+    if not isinstance(value, str):
+        return False
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed >= datetime(2026, 11, 3, 20, 9, tzinfo=timezone.utc)
+    except (ValueError, TypeError):
+        return False
+
+
+def verify_no_paid_effect_since_first_attempt(key: str) -> None:
+    """Fail closed unless BOTH the task ledger and the credits ledger show zero."""
+    api = [
+        ("/v1/userImage2Video/allRecords?pageNum=1&pageSize=100", "rows"),
+        ("/v1/transactionRecord/creditsHistory?pageNum=1&pageSize=100&is_consumption=true&startDate=2026-11-03T20%3A09%3A00Z", "rows"),
+    ]
+    for endpoint, field in api:
+        req = Request(
+            API_BASE + endpoint,
+            method="GET",
+            headers={"Authorization": "Bearer " + key, "Accept": "application/json"}
+        )
+        data = checked_api(read_json(req, timeout=30))
+        rows = data.get(field)
+        if not isinstance(rows, list) or len(rows) >= 100 or (isinstance(data.get("count"), int) and data["count"] > 100):
+            raise StopGeneration("Reconciliation incomplete; no paid retry")
+        if any(not isinstance(x, dict) or _recent(x.get("createdAt")) for x in rows):
+            raise StopGeneration("A2E shows a recent task or charge; no paid retry")
+
+
 def download_video(result_url: str, target: Path) -> None:
     url = urlsplit(result_url)
     if url.scheme != "https" or not url.hostname or url.username or url.password:
@@ -214,7 +270,8 @@ def run(event: dict, workdir: Path, *, cap: int = 180) -> dict:
         output["status"] = "QUOTED_AND_UNDER_CAP"
         persist()
 
-        claim_start()  # DURABLE JOURNAL BEFORE FIRST BILLABLE API POST.
+        verify_no_paid_effect_since_first_attempt(key)
+        claim_start()  # NEW DURABLE JOURNAL AFTER VERIFIED ZERO; BEFORE FIRST PAID POST.
         output["status"] = "PAID_START_JOURNALED"
         persist()
 
