@@ -1,0 +1,67 @@
+name: Simba A2E direct free-quote bridge
+
+on:
+  issues:
+    types: [labeled]
+  pull_request:
+    paths:
+      - ".github/workflows/simba-a2e-quote.yml"
+      - "integrations/video/github_a2e_issue_bridge.py"
+      - "integrations/video/test_github_a2e_issue_bridge.py"
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    name: Offline safety tests
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest integrations/video/test_github_a2e_issue_bridge.py -v
+
+  quote:
+    name: A2E direct no-charge quote
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-quote' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    concurrency:
+      group: a2e-quote-${{ github.event.issue.number }}
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Free A2E price quote only; no paid start
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+        run: |
+          python integrations/video/github_a2e_issue_bridge.py \
+            --event "$GITHUB_EVENT_PATH" \
+            --out "$RUNNER_TEMP/a2e-report.md"
+      - name: Post cost estimate
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-report.md" ]; then
+            gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/a2e-report.md"
+          else
+            gh issue comment "$ISSUE_NUMBER" --body "A2E_CHECK_FAILED: no quote, no paid generation attempted."
+          fi
