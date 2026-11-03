@@ -1,4 +1,4 @@
-name: Simba A2E free-quote bridge
+name: Simba A2E direct free-quote bridge
 
 on:
   issues:
@@ -23,41 +23,9 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m unittest integrations/video/test_github_a2e_issue_bridge.py -v
-      - name: Anonymous Wix A2E endpoint smoke (no token, no charge)
-        continue-on-error: true
-        run: |
-          python - <<'PY'
-          import json
-          import urllib.request
-          import urllib.error
-          request = urllib.request.Request(
-              "https://www.letsgo-world.co.il/_functions/simbaA2e",
-              method="POST",
-              data=b'{"action":"doctor"}',
-              headers={"Content-Type": "application/json"}
-          )
-          try:
-              with urllib.request.urlopen(request, timeout=18) as response:
-                  print("WIX_ENDPOINT_UNEXPECTED_HTTP", response.status)
-                  raise SystemExit(1)
-          except urllib.error.HTTPError as ex:
-              raw = ex.read(512)
-              try:
-                  payload = json.loads(raw)
-              except ValueError:
-                  payload = {}
-              if ex.code == 403 and payload.get("error") == "FORBIDDEN":
-                  print("WIX_ENDPOINT_REACHABLE: authenticated request required")
-              else:
-                  print("WIX_ENDPOINT_UNVERIFIED:", ex.code)
-                  raise SystemExit(1)
-          except Exception as ex:
-              print("WIX_ENDPOINT_NETWORK_UNAVAILABLE:", type(ex).__name__)
-              raise SystemExit(1)
-          PY
 
   quote:
-    name: A2E no-charge quote via Wix
+    name: A2E direct no-charge quote
     if: >-
       github.event_name == 'issues' &&
       github.event.action == 'labeled' &&
@@ -79,14 +47,14 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Quote-only (six clips maximum, no paid calls)
+      - name: Free A2E price quote only; no paid start
         env:
-          SIMBA_A2E_GATEWAY_TOKEN: ${{ secrets.SIMBA_A2E_GATEWAY_TOKEN }}
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
         run: |
           python integrations/video/github_a2e_issue_bridge.py \
             --event "$GITHUB_EVENT_PATH" \
             --out "$RUNNER_TEMP/a2e-report.md"
-      - name: Comment on issue with safe result
+      - name: Post cost estimate
         if: always()
         env:
           GH_TOKEN: ${{ github.token }}
@@ -95,5 +63,5 @@ jobs:
           if [ -f "$RUNNER_TEMP/a2e-report.md" ]; then
             gh issue comment "$ISSUE_NUMBER" --body-file "$RUNNER_TEMP/a2e-report.md"
           else
-            gh issue comment "$ISSUE_NUMBER" --body "A2E_CHECK_FAILED: no result, no paid generation attempted."
+            gh issue comment "$ISSUE_NUMBER" --body "A2E_CHECK_FAILED: no quote, no paid generation attempted."
           fi
