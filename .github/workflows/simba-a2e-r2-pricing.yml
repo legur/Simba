@@ -1,0 +1,90 @@
+name: Simba A2E upload credit price (read-only)
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  price:
+    name: Read live A2E r2 upload-presign price
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-r2-price-check' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 3
+    steps:
+      - name: GET pricing only — no upload, no credit spending
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json,os,urllib.request,urllib.error
+          from pathlib import Path
+          lines=["### Simba A2E r2 upload credit price","",
+                 "Read-only GET /v1/feature-pricing. No presign, no upload, no generation.",""]
+          token=os.environ.get("A2E_API_KEY","")
+          if not token.startswith("sk_") or len(token)<15:
+              lines.append("ERROR: A2E_API_KEY is unavailable.")
+          else:
+              req=urllib.request.Request(
+                  "https://api.a2e.ai/v1/feature-pricing",
+                  headers={"Authorization":"Bearer "+token,"Accept":"application/json"},method="GET")
+              try:
+                  with urllib.request.urlopen(req,timeout=30) as r:
+                      payload=json.load(r)
+                  if not isinstance(payload,dict) or payload.get("code")!=0:
+                      lines.append("PRICE_CHECK_FAILED: A2E response did not report code=0.")
+                  else:
+                      data=payload.get("data")
+                      if isinstance(data,dict):
+                          lines.append("Response data top-level keys: "+", ".join(sorted(data.keys())[:35]))
+                          r2=data.get("r2")
+                          if r2 is None:
+                              lines.append("r2 field not at data root; pricing is not established.")
+                          elif isinstance(r2,(int,float)):
+                              lines.append("r2 presign price: "+str(r2)+" credits per successfully issued URL.")
+                          elif isinstance(r2,dict):
+                              safe={k:v for k,v in r2.items() if k.lower() in
+                                {"coins","credit","credits","price","cost","value","perurl","unit","amount"}
+                                and isinstance(v,(int,float,str)) and len(str(v))<90}
+                              lines.append("r2 pricing object: "+json.dumps(safe,ensure_ascii=False))
+                          else:
+                              lines.append("r2 pricing field type: "+type(r2).__name__)
+                      elif isinstance(data,list):
+                          lines.append("Data is a list of "+str(len(data))+" entries")
+                          for row in data:
+                              if isinstance(row,dict) and "r2" in str(row.get("key",row.get("name",row.get("type","")))).lower():
+                                  safe={k:v for k,v in row.items() if isinstance(v,(str,int,float))
+                                      and len(str(v))<100}
+                                  lines.append("r2 entry: "+json.dumps(safe,ensure_ascii=False))
+                      else:
+                          lines.append("Unexpected pricing schema; price unverified.")
+              except urllib.error.HTTPError as e:
+                  lines.append("PRICE_CHECK_HTTP_"+str(e.code))
+              except Exception as e:
+                  lines.append("PRICE_CHECK_ERROR_"+type(e).__name__)
+          lines.append("")
+          lines.append("No API upload or generation call was executed.")
+          Path(os.environ["RUNNER_TEMP"],"a2e-r2-price.md").write_text(
+             "\n".join(lines),encoding="utf-8")
+          print("A2E_R2_PRICE_READONLY_DONE")
+          PY
+      - name: Report price without secrets
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-r2-price.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/a2e-r2-price.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body "A2E r2 pricing read failed. No paid actions attempted."
+          fi
