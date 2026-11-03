@@ -1,0 +1,79 @@
+name: Simba A2E Prague 180-credit video generation
+
+on:
+  issues:
+    types: [labeled]
+  pull_request:
+    paths:
+      - ".github/workflows/simba-a2e-prague-generate.yml"
+      - "integrations/video/github_a2e_prague_generate.py"
+      - "integrations/video/test_github_a2e_prague_generate.py"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Offline spending safeguards
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest integrations/video/test_github_a2e_prague_generate.py -v
+      - run: python -m unittest integrations/video/test_github_a2e_issue_bridge.py -v
+
+  generate:
+    name: One-time authorized A2E generation (max 180 credits)
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-generate-180' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    concurrency:
+      group: a2e-issue-8-paid-start
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Paid generation, one attempt per scene, stop at 180 credits
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python integrations/video/github_a2e_prague_generate.py \
+            --event "$GITHUB_EVENT_PATH" \
+            --dir "$RUNNER_TEMP/a2e-prague-result" \
+            --cap 180
+      - name: Attach video clips and safe task IDs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a2e-prague-issue8-videos
+          path: ${{ runner.temp }}/a2e-prague-result
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Report generation outcome to issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-prague-result/report.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/a2e-prague-result/report.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body \
+              "A2E generation outcome is unknown. DO NOT RESTART: inspect the GitHub workflow run and A2E billing first."
+          fi
