@@ -1,0 +1,77 @@
+name: Simba A2E direct staging upload — Prague scene 1, max 1 credit
+
+on:
+  issues:
+    types: [labeled]
+  pull_request:
+    paths:
+      - ".github/workflows/simba-a2e-prague-direct-upload1.yml"
+      - "integrations/video/github_a2e_prague_upload_one.py"
+      - "integrations/video/test_github_a2e_prague_upload_one.py"
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Offline staging and billing safety tests
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest integrations/video/test_github_a2e_prague_upload_one.py -v
+      - run: python -m unittest integrations/video/test_github_a2e_issue_bridge.py -v
+
+  upload_one:
+    name: One approved 1-credit A2E staged image upload
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-upload-one-max1' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    concurrency:
+      group: a2e-prague-scene1-presign-20261103
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate fee then upload one original JPEG into A2E storage, free quote only
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python integrations/video/github_a2e_prague_upload_one.py \
+            --event "$GITHUB_EVENT_PATH" \
+            --out "$RUNNER_TEMP/a2e-prague-upload1"
+      - name: Preserve unsigned results, never upload signed PUT URL
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a2e-prague-scene1-staging-test
+          path: ${{ runner.temp }}/a2e-prague-upload1
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Post safe status to issue 8
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-prague-upload1/report.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/a2e-prague-upload1/report.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body               "A2E direct staging outcome uncertain. Do not retry presign before checking the journal and credits."
+          fi
