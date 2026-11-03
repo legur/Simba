@@ -1,4 +1,4 @@
-name: Simba A2E Prague 180-credit video generation
+name: Simba A2E Prague authorized recovery after zero-charge reconciliation
 
 on:
   issues:
@@ -26,11 +26,11 @@ jobs:
       - run: python -m unittest integrations/video/test_github_a2e_issue_bridge.py -v
 
   generate:
-    name: One-time authorized A2E generation (max 180 credits)
+    name: One-time reconciled A2E recovery (max 180 credits)
     if: >-
       github.event_name == 'issues' &&
       github.event.action == 'labeled' &&
-      github.event.label.name == 'a2e-generate-180' &&
+      github.event.label.name == 'a2e-recover-180' &&
       github.event.issue.number == 8 &&
       github.event.issue.user.login == 'legur' &&
       github.event.issue.pull_request == null
