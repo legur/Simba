@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import sys
 import tempfile
+from contextlib import ExitStack
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -54,7 +55,7 @@ class OneClipTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp, patch.dict(
             m.os.environ, {"A2E_API_KEY": "sk_test_dummy_00000000"}
         ):
-            with unittest.mock.ExitStack() as stack:
+            with ExitStack() as stack:
                 for name, fake in helpers.items():
                     stack.enter_context(patch.object(m, name, side_effect=fake))
                 output = m.run(event(), Path(temp), max_new=31, pause=lambda sec: None)
@@ -74,7 +75,7 @@ class OneClipTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp, patch.dict(
             m.os.environ, {"A2E_API_KEY": "sk_test_dummy_00000000"}
         ):
-            with unittest.mock.ExitStack() as stack:
+            with ExitStack() as stack:
                 for name, fake in helpers.items():
                     stack.enter_context(patch.object(m, name, side_effect=fake))
                 output = m.run(event(), Path(temp))
@@ -88,7 +89,7 @@ class OneClipTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp, patch.dict(
             m.os.environ, {"A2E_API_KEY": "sk_test_dummy_00000000"}
         ):
-            with unittest.mock.ExitStack() as stack:
+            with ExitStack() as stack:
                 for name, fake in helpers.items():
                     stack.enter_context(patch.object(m, name, side_effect=fake))
                 output = m.run(event(), Path(temp))
@@ -159,7 +160,7 @@ class OneClipTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp, patch.dict(
             m.os.environ, {"A2E_API_KEY": "sk_test_dummy_00000000"}
         ):
-            with unittest.mock.ExitStack() as stack:
+            with ExitStack() as stack:
                 for name, fake in helpers.items():
                     stack.enter_context(patch.object(m, name, side_effect=fake))
                 result = m.run(event(), Path(temp))
