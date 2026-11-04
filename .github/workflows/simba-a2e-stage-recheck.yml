@@ -13,7 +13,7 @@ jobs:
     if: >-
       github.event_name == 'issues' &&
       github.event.action == 'labeled' &&
-      github.event.label.name == 'a2e-stage-recheck' &&
+      github.event.label.name == 'a2e-cdn-diagnostic-20261104' &&
       github.event.issue.number == 8 &&
       github.event.issue.user.login == 'legur'
     runs-on: ubuntu-latest
@@ -27,14 +27,14 @@ jobs:
           A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
         run: |
           python - <<'PY'
-          import json,os,urllib.request,urllib.error
+          import json,os,urllib.request,urllib.error,xml.etree.ElementTree as ET
           from pathlib import Path
           urls={
              "A2E staged image": "https://7days-apac.downloadaivideo.com/adam2eve/stable/user/695cf6da60588c00590a9ad6/simba-prague-scene1-9ba9f6050eb841d0aa84d6b43b760d69.jpg",
              "Original Wix image": "https://static.wixstatic.com/media/7fd7b8_377e66bfa46b4a87a0223b02bec5d6f0~mv2.jpg"
           }
           lines=["### A2E staged asset and credits — read-only recheck", "",
-                 "GET/HEAD only. No second upload or generation attempted.", ""]
+                 "GET/HEAD only. No second upload or generation attempted. HTTP error_code is extracted from public CDN response (if present).", ""]
           for title,url in urls.items():
               lines.append("**"+title+"**")
               for method in ("HEAD","GET"):
@@ -48,7 +48,28 @@ jobs:
                           lines.append(method+": HTTP "+str(r.status)+", mime="+typ+
                                        (", JPEG="+str(data.startswith(bytes.fromhex("ffd8"))) if method=="GET" else ""))
                   except urllib.error.HTTPError as ex:
-                      lines.append(method+": HTTP "+str(ex.code))
+                      # Read only public error metadata; never print CDN error bodies or tokens.
+                      reason = "UNSPECIFIED"
+                      typ = ex.headers.get("Content-Type", "") if ex.headers else ""
+                      try:
+                          raw = ex.read(1536)
+                          if "xml" in typ or raw.lstrip().startswith(b"<"):
+                              node = ET.fromstring(raw)
+                              child = node.find(".//Code")
+                              candidate = child.text if child is not None else None
+                              if isinstance(candidate,str) and candidate.replace("_","").isalnum() and len(candidate) <= 35:
+                                  reason = candidate
+                          elif "json" in typ:
+                              obj=json.loads(raw)
+                              candidate=obj.get("code") if isinstance(obj,dict) else None
+                              if isinstance(candidate,(int,str)) and len(str(candidate)) <= 35 and str(candidate).replace("_","").isalnum():
+                                  reason = str(candidate)
+                      except Exception:
+                          pass
+                      cdn_server = ex.headers.get("Server", "unknown") if ex.headers else "unknown"
+                      if not (isinstance(cdn_server,str) and len(cdn_server)<40 and all(c.isalnum() or c in " _.-/" for c in cdn_server)):
+                          cdn_server = "unknown"
+                      lines.append(method+": HTTP "+str(ex.code)+", error_code="+reason+", server="+cdn_server)
                   except Exception as ex:
                       lines.append(method+": error="+type(ex).__name__)
               lines.append("")
