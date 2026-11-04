@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-11-04 | [Arkia: багаж и новые цены](2026-11-04__NEWS__ARKIA-BAGGAGE__APPROVED.md) | APPROVED; факт-проверка условий Arkia не завершена | news / commercial CTA | Arkia / baggage | 23 кг, расчет для пары | «готово» | high |
 | 2026-11-02 | [MSC Black Friday](2026-11-02__SELLING__MSC-BLACK-FRIDAY__APPROVED.md) | APPROVED | sales | MSC Cruises | Black Friday, четыре примера | «Берём» | high |
 | 2026-11-01 | [Новый год в Праге](2026-11-01__SELLING__PRAGUE-NEW-YEAR__APPROVED.md) | APPROVED | sales | Ophir Tours / Prague / Hotel Opera | четыре дня и три ночи, расписание | «берем» | high |
 | 2026-10-30 | [Суббота одна, а планов на нее четыре](2026-10-30__INFO__ISRAEL-WEEKEND-OCT31__APPROVED.md) | APPROVED; visual pending identity reference | info / weekend guide | Israel / day trips / 31 October | four choices; Tel Afek mystery | «Отлично» after external review 8.0/10 | high |
