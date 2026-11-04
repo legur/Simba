@@ -1,0 +1,80 @@
+name: Simba A2E Prague 3days one-clip test (max 31 credits)
+
+on:
+  issues:
+    types: [labeled]
+  pull_request:
+    paths:
+      - ".github/workflows/simba-a2e-prague-one-clip-3days.yml"
+      - "integrations/video/github_a2e_prague_one_clip_3days.py"
+      - "integrations/video/test_github_a2e_prague_one_clip_3days.py"
+      - "integrations/video/github_a2e_prague_upload_one.py"
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Offline single-payment and budget safeguards
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest integrations/video/test_github_a2e_prague_one_clip_3days.py -v
+      - run: python -m unittest integrations/video/test_github_a2e_prague_upload_one.py -v
+      - run: python -m unittest integrations/video/test_github_a2e_prague_generate.py -v
+
+  run_once:
+    name: One 3days upload and optionally one paid 5-second clip
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-one-clip-3days-31' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    concurrency:
+      group: simba-a2e-prague-3days-20261104-no-retry
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: One staged 3days JPEG, verify CDN, exact quote, max one paid video POST
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python integrations/video/github_a2e_prague_one_clip_3days.py \
+            --event "$GITHUB_EVENT_PATH" \
+            --out "$RUNNER_TEMP/a2e-prague-one-clip" \
+            --max-new 31
+      - name: Preserve clip or error result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simba-prague-3days-one-clip
+          path: ${{ runner.temp }}/a2e-prague-one-clip
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Report accurate status and task ID
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-prague-one-clip/report.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/a2e-prague-one-clip/report.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body "The one-clip test did not produce a report. Do not rerun a credit-bearing workflow: inspect task and billing history first."
+          fi
