@@ -120,6 +120,28 @@ class GuardTests(unittest.TestCase):
             with self.assertRaises(paid.StopGeneration):
                 paid.verify_no_paid_effect_since_first_attempt("sk_fake")
 
+    def test_http_400_support_trace_id_is_safely_preserved(self):
+        import io
+        from urllib.error import HTTPError
+        good_trace = "3f2c9a1e-8b7d-4c6a-9e15-2d4b7f0a6c81"
+        def fake_http_error(req, timeout):
+            raw = json.dumps({"code": 400, "msg": "Request failed",
+                              "trace_id": good_trace}).encode("utf-8")
+            raise HTTPError(req.full_url, 400, "Bad Request", {}, io.BytesIO(raw))
+        with patch.object(paid, "urlopen", side_effect=fake_http_error):
+            with self.assertRaises(paid.StopGeneration) as ctx:
+                paid.a2e_start({"name": "Prague", "image_url": paid.EXPECTED_URLS[0]}, "sk_dummy_for_test")
+        self.assertIn("HTTP_400_CODE_400", str(ctx.exception))
+        self.assertIn("TRACE_" + good_trace, str(ctx.exception))
+        self.assertNotIn("Request failed", str(ctx.exception))
+
+    def test_business_error_trace_is_safely_preserved(self):
+        token = "sample_trace_20261104"
+        with self.assertRaises(paid.StopGeneration) as ctx:
+            paid.checked_api({"code": 400, "msg": "secret error detail", "trace_id": token})
+        self.assertIn("TRACE_" + token, str(ctx.exception))
+        self.assertNotIn("secret error detail", str(ctx.exception))
+
     def test_start_error_never_retried(self):
         submissions = []
         with tempfile.TemporaryDirectory() as d, (
