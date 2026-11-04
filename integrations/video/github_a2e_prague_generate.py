@@ -51,7 +51,9 @@ def checked_api(response: object) -> dict:
     if not isinstance(response, dict) or response.get("code") != 0:
         code = response.get("code") if isinstance(response, dict) else None
         safe_code = str(code) if type(code) in (int, str) and len(str(code)) <= 28 and str(code).replace("_", "").isalnum() else "UNKNOWN"
-        raise StopGeneration("A2E_REJECTED_CODE_" + safe_code + "; no automatic retry")
+        trace = response.get("trace_id") if isinstance(response, dict) else None
+        safe_trace = ("_TRACE_" + trace) if isinstance(trace, str) and re.fullmatch(r"[A-Za-z0-9_-]{8,80}", trace) else ""
+        raise StopGeneration("A2E_REJECTED_CODE_" + safe_code + safe_trace + "; no automatic retry")
     data = response.get("data")
     if not isinstance(data, dict):
         raise StopGeneration("A2E returned an invalid data envelope")
@@ -91,14 +93,20 @@ def a2e_start(body: dict, key: str) -> dict:
         # The numeric HTTP status and documented business code are safe to report.
         # Never show raw response bodies or request headers.
         code = ""
+        trace = ""
         try:
             payload = json.load(ex)
             value = payload.get("code") if isinstance(payload, dict) else None
             if type(value) in (int, str) and len(str(value)) <= 28 and str(value).replace("_", "").isalnum():
                 code = "_CODE_" + str(value)
+            # Official A2E docs: trace_id identifies the rejected request for
+            # support. Whitelist characters and length; never publish raw bodies.
+            trace_value = payload.get("trace_id") if isinstance(payload, dict) else None
+            if isinstance(trace_value, str) and re.fullmatch(r"[A-Za-z0-9_-]{8,80}", trace_value):
+                trace = "_TRACE_" + trace_value
         except (ValueError, OSError, TypeError):
             pass
-        raise StopGeneration("A2E_START_HTTP_" + str(ex.code) + code + "; no automatic retry") from None
+        raise StopGeneration("A2E_START_HTTP_" + str(ex.code) + code + trace + "; no automatic retry") from None
     except (URLError, TimeoutError, OSError, ValueError):
         raise StopGeneration("A2E_START_NETWORK_AMBIGUOUS; do not retry automatically") from None
 

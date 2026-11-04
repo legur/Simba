@@ -105,3 +105,36 @@ References:
 - https://video.a2e.ai/dev
 - https://video.a2e.ai/dev/image-to-video-api
 - https://dev.wix.com/docs/develop-websites/articles/coding-with-velo/integrations/exposing-services/write-an-http-function
+
+
+## A2E API documentation alignment — 04.11.2026
+
+The account's image-to-video API documentation was provided in the project chat
+on 04.11.2026. For POST /v1/userImage2Video/start it documents:
+- image_url, prompt, name, model_version, video_time, number_of_images;
+- model_type=GENERAL and model_version=a2e-v2-flash in its dynamic
+  "Current Parameters" example. These are **not documented mandatory
+  settings for the original a2e model**. Do not silently change approved model
+  or pricing based on the example alone.
+- HTTP 400 means invalid parameters, but exact failing field is unknown.
+- error envelope may include trace_id; save a strictly sanitized trace_id
+  for technical support (not the raw response, request or token).
+- asynchronous success requires later task-status read-back.
+
+R2 presigned upload:
+- Official A2E OpenAPI says the image upload's default bucket is 3days-apac.
+- In the original test on 03.11 the A2E presign response supplied a
+  7days-apac.downloadaivideo.com CDN URL; PUT succeeded but GET/HEAD
+  returned Cloudflare HTTP 403. That proves the URL was inaccessible from
+  the GitHub runner, **not** that all A2E customers or all A2E-origin fetchers
+  are blocked.
+- The direct-upload client now explicitly requests bucket=3days-apac,
+  rather than sending the undocumented purpose=STAGING field.
+- One successful presign was charged 1 credit; no video tasks were created.
+- **No paid rerun has been made after this fix.** Before any further paid
+  presign or generation, perform read-only status and transaction checks,
+  and obtain approval for any new/changed total credit ceiling.
+
+Primary references:
+https://video.a2e.ai/dev/image-to-video-api
+https://video.a2e.ai/dev/openapi-spec

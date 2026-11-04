@@ -91,6 +91,26 @@ class UploadOneTests(unittest.TestCase):
             upload.claim_once(1)
         self.assertEqual(methods, ["GET", "POST"])
 
+    def test_presign_uses_documented_3days_image_bucket(self):
+        calls = []
+        class Response:
+            def __enter__(self): return self
+            def __exit__(self, *a): pass
+            def read(self, *a): return b'{"code":0,"data":{"uploadUrl":"https://storage.example.com/put","cdnUrl":"https://3days-apac.makefun.ai/media.jpg"}}'
+        def fake_urlopen(req, timeout):
+            calls.append(req)
+            return Response()
+        with patch.object(upload, "urlopen", side_effect=fake_urlopen):
+            signed, cdn = upload.charged_presign("sk_dummy_fake_key_for_testing", 1026)
+        self.assertEqual(len(calls), 1)
+        payload = json.loads(calls[0].data)
+        self.assertEqual(payload["bucket"], "3days-apac")
+        self.assertNotIn("purpose", payload)
+        self.assertEqual(payload["contentType"], "image/jpeg")
+        self.assertEqual(payload["fileSize"], 1026)
+        self.assertEqual(cdn, "https://3days-apac.makefun.ai/media.jpg")
+        self.assertEqual(calls[0].get_method(), "POST")
+
     def test_signed_put_has_no_authorization(self):
         calls = []
         class FakeResponse:
