@@ -113,7 +113,9 @@ def charged_presign(key: str, count: int) -> tuple[str, str]:
     # This action costs A2E credits once a signed URL is issued.
     payload = {
         "key": "simba-prague-scene1-" + uuid.uuid4().hex + ".jpg",
-        "purpose": "STAGING",
+        # Official A2E image-to-video documentation uses the 3days-apac
+        # image bucket. Do not rely on a deployment-specific default.
+        "bucket": "3days-apac",
         "contentType": "image/jpeg",
         "fileSize": count,
         "expiresIn": 300
