@@ -22,6 +22,30 @@ def quote_ok(body, key):
     return {"code": 0, "data": {"available": True, "exact": True, "coins": 30}}
 
 class GuardTests(unittest.TestCase):
+    def test_video_download_uses_explicit_genjutsu_user_agent(self):
+        calls = []
+        class Response:
+            def __init__(self):
+                self.read_count = 0
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def geturl(self): return "https://video.cdn.example/ready.mp4"
+            def read(self, size):
+                self.read_count += 1
+                return b"x" * 1024 if self.read_count == 1 else b""
+        def fake_open(request, timeout):
+            calls.append(request)
+            return Response()
+        with tempfile.TemporaryDirectory() as temp:
+            dest = Path(temp) / "video.mp4"
+            with patch.object(paid, "urlopen", side_effect=fake_open):
+                paid.download_video("https://video.cdn.example/ready.mp4", dest)
+            self.assertEqual(dest.stat().st_size, 1024)
+        self.assertEqual(len(calls), 1)
+        headers = {k.lower(): v for k, v in calls[0].headers.items()}
+        self.assertEqual(headers.get("user-agent"), "Genjutsu")
+        self.assertNotIn("authorization", headers)
+
     def test_exact_approved_scenes(self):
         bodies = paid.validated_request(event(), 180)
         self.assertEqual(len(bodies), 6)
