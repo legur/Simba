@@ -1,6 +1,6 @@
 # VIDEO PIPELINE — ролик к утверждённому посту
 
-Версия: 1.2 · 05.11.2026: Музыкальный редактор; 1.1 · 02.11.2026 · исполнитель сборки: Монтажер Клод (🔧 в разработке до утверждения теста Leo)
+Версия: 1.3 · 05.11.2026: сохранение A2E в Drive; 1.2 · 05.11.2026: Музыкальный редактор; 1.1 · 02.11.2026 · исполнитель сборки: Монтажер Клод (🔧 в разработке до утверждения теста Leo)
 
 Workflow превращает **утверждённый пост** в вертикальный ролик до 60 секунд (Reels / Shorts / TikTok / Facebook)
 с голосом, субтитрами, карточкой оффера и финальным призывом. Роли:
@@ -100,3 +100,21 @@ Rafael → A2E (Wix backend, ключ `A2E_Key`) → MP4 → Монтажер К
 
 ## Changelog 1.2 — 05.11.2026
 Добавлен Музыкальный редактор между визуалом и Монтажером. License gate, аудиофайл и music-handoff; MP3 import реализован и прошел автономные тесты; пилотный полный MP4/утверждение Leo остаются обязательными.
+
+## 6. Media preservation gate — 05.11.2026
+
+After A2E completed, immediately fetch its MP4; A2E-origin files are assumed available for only ~3 days after creation, not a permanent archive. **Before generating any new clip**, search for prior MP4 in Google Drive / GitHub Actions artifacts / local video jobs and reconcile task IDs. Reuse existing clips; no paid A2E re-generation without a fresh quote + Leo's approval.
+
+New states:
+```text
+A2E_TASK_COMPLETED → MP4_DOWNLOADED → MEDIA_ARCHIVE_DRIVE_UPLOAD
+ → MEDIA_ARCHIVED_DRIVE_VERIFIED → MONTAGE_INPUT_READY
+```
+Record source frame, animated MP4, track/license, final reel, A2E task ID, created_at, SHA-256 and Drive file ID. Archive Google Drive objects privately, verify file listing/read-back and keep a copy of originals; GitHub Actions artifacts are a temporary fallback only. On failure `BACKUP_PENDING`: don't delete local/GitHub assets and don't regenerate. A background uploader from GitHub Actions to Google Drive is **not yet configured**; a completed archival handoff must occur explicitly with connected Drive/Leo until it is operational.
+
+Prague A2E 2027 archive confirmed on 05.11.2026:
+https://drive.google.com/drive/folders/1UEY7O26bwHdVlQh2lg82c5WgGDEPlmUP
+(all six 5s animations stored as ZIP artifacts, plus six Rafael images, Mixkit MP3 and prior static edit). The archive and the later approved/published reel are distinct states.
+
+## Changelog 1.3 — 05.11.2026
+По прямой корректировке Leo введен gate сохранения A2E MP4 в Google Drive сразу после получения и запрет платного повторного запуска без проверки имеющихся архивов. Подтверждено архивирование шести клипов Праги. Реальная фоновая автоматизация Drive из GitHub Actions пока не настроена.
