@@ -217,7 +217,9 @@ not re-trigger old labels.
 - Project folder: https://drive.google.com/drive/folders/1UEY7O26bwHdVlQh2lg82c5WgGDEPlmUP
 - `01_Rafael_Source_Images` — six original JPGs and source prompts ZIP
 - `02_A2E_Animated_MP4` — ZIPs containing all six finished A2E MP4s
-- `03_Final_Reels` — previous **static** test MP4 (not misrepresented as A2E animation)
+- `03_Final_Reels` — previous **static** test MP4 and separate **animated** 30.375s 6×5s A2E + Mixkit draft (no captions, not approved)
 - `04_Audio_License_QA` — original Mixkit MP3 and music QA ZIP
 
-**Archive read-back:** 7 source objects, 2 A2E video ZIP objects, 1 prior static test reel, 2 audio/QA objects. The videos inside the archive were verified by ZIP entry listings, including scene_01.mp4 through scene_06.mp4. The Drive files have explicit IDs and verified parent folder; no billable A2E operation was made for this archival step.
+**Archive read-back:** 7 source objects, 2 A2E video ZIP objects, 2 draft reels (static and animated), 2 audio/QA objects. The videos inside the archive were verified by ZIP entry listings, including scene_01.mp4 through scene_06.mp4. The Drive files have explicit IDs and verified parent folder; no billable A2E operation was made for this archival step.
+
+**Animated Prague review draft:** https://drive.google.com/file/d/15OAazKjBeT4_ZhD9fKFX1_8bcpqUcWGc/view?usp=drivesdk (30.375 sec, 1080×1920, original six A2E MP4 scenes, Mixkit Tinsel and Mistletoe; no voice/captions, unpublished). Drive upload and metadata read-back verified on 05.11.2026. This does not upgrade the video to `VIDEO_READY_FOR_LEO` before standard QA and Leo approval.
