@@ -16,7 +16,9 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import Request, urlopen
 
-from github_a2e_issue_bridge import request_quote
+from github_a2e_issue_bridge import (
+    request_quote, DEFAULT_NEGATIVE_PROMPT, validate_generation_body,
+)
 
 GITHUB_COMMENTS = "https://api.github.com/repos/legur/Simba/issues/8/comments"
 SOURCE_IMAGE = (
@@ -181,10 +183,12 @@ def quote_uploaded(cdn_url: str, key: str) -> float | None:
         "image_url": cdn_url,
         "prompt": ("Slow cinematic dolly toward Charles Bridge, realistic winter snowfall, "
                    "gold reflections in the Vltava; preserve buildings; no text."),
+        "negative_prompt": DEFAULT_NEGATIVE_PROMPT,
         "model_version": "a2e", "video_time": 5,
         "auto_add_audio": False, "number_of_images": 1
     }
     try:
+        validate_generation_body(body)
         response = request_quote(body, key)
         data = response.get("data") if isinstance(response, dict) else None
         price = data.get("coins") if isinstance(data, dict) else None
