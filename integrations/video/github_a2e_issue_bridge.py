@@ -135,6 +135,7 @@ def format_report(status: str, lines: list[str]) -> str:
         "",
         *lines,
         "",
+        "Точный расчет цены не подтверждает валидность запроса генерации (generationRequestValidated может быть false).",
         "Платная генерация не запускалась. Ключ API не выводится.",
         ""
     ])
