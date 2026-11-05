@@ -197,3 +197,27 @@ Previous one-time paid-start journal markers still prohibit automatic
 retries. Repeating the paid 30-credit video test requires a fresh, explicit
 authorization, a new uniquely scoped no-retry workflow and preflight; do
 not re-trigger old labels.
+
+
+## Durable media archive after A2E completion — 05.11.2026
+
+**Leo's operational correction:** A2E retains generated animated assets for about **3 days** from creation. Treat the expiry as a hard risk; the exact deletion schedule and access to a specific URL must be rechecked. Preserve finished MP4 **immediately when task.status == completed**, not at the end of editing; never rely on A2E CDN as a long-term library.
+
+**Sequence (non-billable):**
+1. Before any paid generation, search existing completed A2E task IDs, GitHub Actions artifacts, existing MP4s, and Google Drive. If the asset exists, reuse it instead of issuing a new billable start.
+2. When A2E reports completed, download source/result with `User-Agent: Genjutsu`; validate MP4 magic/decoding, exact task ID, duration and SHA-256. Save to an immediate intermediate 30-day GitHub Actions artifact (not permanent storage).
+3. Copy original Rafael JPG/PNG, generated MP4, source audio, final reel, metadata (A2E task ID, creation timestamp, prompt, model, SHA-256, origin, license evidence) to the connected **private Google Drive media archive**. Verify file IDs, sizes and folder listing after upload before marking `MEDIA_ARCHIVED_DRIVE_VERIFIED`.
+4. Only after verification may a downstream assembly depend on the Drive copy as durable source. If archive fails, state `BACKUP_PENDING`, keep GitHub artifact, notify Leo; do **not** regenerate or repeat a paid POST.
+5. A2E CDN may expire in ~72 h, and GitHub Actions artifacts also expire. Neither is a replacement for a persistent Drive archive. Google Drive storage is not Git's canonical text/KB source of truth.
+6. **No autonomous background Drive upload is currently deployed** for GitHub Actions; while it is not configured, ChatGPT/Leo must explicitly archive completed assets with the connected Drive connector. Do not advertise continuous monitoring or automatic upload without a real running deployment.
+
+**Project archived on 05.11.2026:** Six A2E Prague New Year 2027 5-second MP4s are preserved in GitHub Actions artifacts 13411260869 (scene 01) and 13412554383 (six-scene archive) and copied, without any new A2E generation, to:
+- Google Drive account with project archive: `eskvlg@gmail.com`;
+- `Simba Media Archive / Prague_New_Year_2027_A2E_2026-11-05`
+- Project folder: https://drive.google.com/drive/folders/1UEY7O26bwHdVlQh2lg82c5WgGDEPlmUP
+- `01_Rafael_Source_Images` — six original JPGs and source prompts ZIP
+- `02_A2E_Animated_MP4` — ZIPs containing all six finished A2E MP4s
+- `03_Final_Reels` — previous **static** test MP4 (not misrepresented as A2E animation)
+- `04_Audio_License_QA` — original Mixkit MP3 and music QA ZIP
+
+**Archive read-back:** 7 source objects, 2 A2E video ZIP objects, 1 prior static test reel, 2 audio/QA objects. The videos inside the archive were verified by ZIP entry listings, including scene_01.mp4 through scene_06.mp4. The Drive files have explicit IDs and verified parent folder; no billable A2E operation was made for this archival step.
