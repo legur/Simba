@@ -138,3 +138,22 @@ R2 presigned upload:
 Primary references:
 https://video.a2e.ai/dev/image-to-video-api
 https://video.a2e.ai/dev/openapi-spec
+
+
+## A2E CDN User-Agent fix — 05.11.2026
+
+A2E support asked for an explicit, nonempty `User-Agent` header in outbound
+read-only requests, suggesting `User-Agent: Genjutsu`. A GitHub Actions
+read-only retest of both previously inaccessible A2E images used precisely
+that header and succeeded: HEAD/GET returned HTTP 206 with `image/jpeg`,
+including verified JPEG magic bytes on GET for both `3days-apac` and
+`7days-apac`. The control Wix image also passed. Prior tests from GitHub
+Actions without the explicit header had returned Cloudflare HTTP 403.
+Reference: legur/Simba issue #8 (05.11.2026), workflow
+`.github/workflows/simba-a2e-user-agent-genjutsu-check.yml`.
+
+Production integration now sends `User-Agent: Genjutsu` on A2E CDN staged
+image GET checks and completed MP4 downloads. These requests are read-only
+and do not spend credits. This change does NOT prove the video generation
+POST will succeed; further credit-bearing tests require independent
+authorization and the existing no-retry rules.
