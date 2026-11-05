@@ -1,0 +1,56 @@
+name: Simba Prague 2027 — stage verified rendered MP4 in PR
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - "campaigns/prague-new-year-2027/**"
+      - ".github/workflows/simba-prague-2027-stage-reel.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  stage_render:
+    name: Verify Adobe-rendered MP4 SHA256 and commit to PR branch
+    if: >-
+      github.event.pull_request.head.repo.full_name == 'legur/Simba' &&
+      github.head_ref == 'codex/prague-2027-video-delivery-20261105'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: prague-2027-video-stage-once-20261105
+      cancel-in-progress: false
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          persist-credentials: true
+      - name: Check prior artifact or fetch the exact finished render
+        shell: bash
+        run: |
+          set -euo pipefail
+          file="campaigns/prague-new-year-2027/simba_prague_new_year_full_reel_2027.mp4"
+          expected="05f4d6a9ee01ebbac57b04b11b28f32fd23d5745ab6011d95c37d53b16190c99"
+          if [ -f "$file" ]; then
+            echo "$expected  $file" | sha256sum --check --status
+            echo "Finished video exists and checksum matches."
+            exit 0
+          fi
+          tmp="$(mktemp)"
+          trap 'rm -f "$tmp"' EXIT
+          curl --fail --location --silent --show-error --max-time 150 \
+            --retry 0 \
+            --user-agent "Genjutsu" \
+            "https://at.adobe.com/xLTgP6CIAIq8Hv1W" \
+            --output "$tmp"
+          echo "$expected  $tmp" | sha256sum --check
+          mkdir -p "$(dirname "$file")"
+          mv "$tmp" "$file"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "$file"
+          git commit -m "assets(prague-2027): add SHA256-verified final promo MP4"
+          git push origin "HEAD:${{ github.head_ref }}"
+          echo "Verified MP4 committed to PR branch."
