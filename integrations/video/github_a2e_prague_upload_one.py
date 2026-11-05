@@ -159,7 +159,11 @@ def upload_bytes(upload_url: str, raw: bytes) -> None:
 
 def verify_staged_image(cdn_url: str) -> bool:
     for _ in range(3):
-        req = Request(cdn_url, method="GET", headers={"Range": "bytes=0-1023"})
+        req = Request(cdn_url, method="GET", headers={
+            "Range": "bytes=0-1023",
+            "User-Agent": "Genjutsu",  # Required by A2E/CDN support for outbound reads.
+            "Accept": "image/jpeg",
+        })
         try:
             with urlopen(req, timeout=20) as res:
                 sample = res.read(1024)
