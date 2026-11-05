@@ -54,6 +54,7 @@
 | Wix Formatter | `Wix-Formatter/Wix-TourFormatter-v1.5.md` |
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` |
 | Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` (инструмент `integrations/video/`) |
+| Музыкальный редактор | `Музыкальный редактор/MUSIC_EDITOR_v1.0.md` (🔧 до теста; music selection/license gate) |
 
 ## 4. Runtime invariant
 
