@@ -62,7 +62,7 @@ jobs:
                           typ = response.headers.get("Content-Type", "unspecified")
                           cf_ray = response.headers.get("CF-Ray")
                           preview = response.read(1024) if method == "GET" else b""
-                          jpeg = preview[:2] == b"\\xff\\xd8" if method == "GET" else None
+                          jpeg = preview[:2] == bytes.fromhex("ffd8") if method == "GET" else None
                           lines.append(
                               method + ": HTTP " + str(response.status)
                               + ", content-type=" + typ
