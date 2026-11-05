@@ -5,9 +5,11 @@ from contextlib import ExitStack
 import json
 from pathlib import Path
 import tempfile
+import sys
 import unittest
 from unittest.mock import patch
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import github_a2e_prague_existing_cdn_one_video as m
 from github_a2e_prague_one_clip_3days import Stopped
 
