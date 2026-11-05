@@ -111,6 +111,27 @@ class UploadOneTests(unittest.TestCase):
         self.assertEqual(cdn, "https://3days-apac.makefun.ai/media.jpg")
         self.assertEqual(calls[0].get_method(), "POST")
 
+    def test_staged_cdn_get_sends_explicit_support_user_agent(self):
+        calls = []
+        class Response:
+            status = 206
+            def __enter__(self): return self
+            def __exit__(self, *args): pass
+            def read(self, count):
+                return bytes.fromhex("ffd8") + b"x" * 1022
+        def fake_open(req, timeout):
+            calls.append(req)
+            return Response()
+        with patch.object(upload, "urlopen", side_effect=fake_open):
+            self.assertTrue(upload.verify_staged_image(
+                "https://3days-apac.downloadaivideo.com/test-image.jpg"))
+        self.assertEqual(len(calls), 1)
+        headers = {k.lower(): v for k, v in calls[0].headers.items()}
+        self.assertEqual(calls[0].get_method(), "GET")
+        self.assertEqual(headers.get("user-agent"), "Genjutsu")
+        self.assertEqual(headers.get("range"), "bytes=0-1023")
+        self.assertNotIn("authorization", headers)
+
     def test_signed_put_has_no_authorization(self):
         calls = []
         class FakeResponse:
