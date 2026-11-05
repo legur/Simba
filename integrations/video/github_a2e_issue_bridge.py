@@ -20,6 +20,24 @@ A2E_GENERATION_ENDPOINT = "/api/v1/userImage2Video/start"
 ALLOWED_OWNER = "legur"
 TRIGGER_LABEL = "a2e-quote"
 MAX_SCENES = 6
+DEFAULT_NEGATIVE_PROMPT = "blurry, distorted, static"
+
+
+def validate_generation_body(body: dict) -> None:
+    """Local A2E validation: exact price quotes do NOT validate all fields.
+
+    Support confirmed that POST /v1/userImage2Video/start rejects requests
+    without a nonempty prompt AND negative_prompt unless lora is supplied.
+    These Simba workflows do not use lora, so both fields are mandatory here.
+    """
+    if not isinstance(body, dict) or body.get("lora"):
+        raise ValueError("Simba I2V requires a JSON body without Lora")
+    for key in ("prompt", "negative_prompt"):
+        value = body.get(key)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("A2E generation requires nonempty " + key)
+
+
 
 
 class QuoteError(RuntimeError):
@@ -71,6 +89,7 @@ def build_bodies(event: dict) -> list[dict]:
             "name": name,
             "image_url": url,
             "prompt": prompt,
+            "negative_prompt": DEFAULT_NEGATIVE_PROMPT,
             "model_version": "a2e",
             "video_time": 5,
             "auto_add_audio": False,
@@ -116,6 +135,7 @@ def format_report(status: str, lines: list[str]) -> str:
         "",
         *lines,
         "",
+        "Точный расчет цены не подтверждает валидность запроса генерации (generationRequestValidated может быть false).",
         "Платная генерация не запускалась. Ключ API не выводится.",
         ""
     ])

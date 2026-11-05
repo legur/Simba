@@ -100,6 +100,7 @@ class OneClipTests(unittest.TestCase):
     def test_exact_quote_validation(self):
         body = m.build_body("https://3days-apac.makefun.ai/image.jpg")
         self.assertEqual(body["model_version"], "a2e")
+        self.assertEqual(body["negative_prompt"], "blurry, distorted, static")
         self.assertFalse(body["auto_add_audio"])
         self.assertEqual(body["video_time"], 5)
         with patch.object(m, "request_quote", return_value={

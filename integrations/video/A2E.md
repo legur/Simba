@@ -157,3 +157,43 @@ image GET checks and completed MP4 downloads. These requests are read-only
 and do not spend credits. This change does NOT prove the video generation
 POST will succeed; further credit-bearing tests require independent
 authorization and the existing no-retry rules.
+
+
+
+## A2E support diagnosis — 05.11.2026
+
+A2E support investigated rejected POST /v1/userImage2Video/start using
+`trace_id=aa4531f0-27e8-4216-8ae1-e85dcc617c68`.
+
+Confirmed server validation error:
+`prompt and negative_prompt must required when lora is not set`.
+
+**Required fix:** Every Simba a2e image-to-video request MUST include both a
+nonempty `prompt` and nonempty `negative_prompt`; use
+`negative_prompt="blurry, distorted, static"` by default.
+`model_type` is optional (default `GENERAL`). These workflows never enable
+`lora`, so they enforce both prompts locally before quoting or submitting.
+
+**Important:** An A2E generation price quote may have
+`exact: true` while `generationRequestValidated: false`; a quotation does
+NOT prove the request is valid for the paid generation endpoint. Local
+required-field preflight runs independently of the quote.
+
+**Credit ledger correction:** A2E support identified the separate 30-credit
+consumption at ~05:22 UTC (Nov 05) as a **completed, manual website** task:
+- Task ID: `6aec12790dbde9022f6af0b2`
+- Task name: `11-04-2026 23:05:12` (date-like name)
+- Model: `a2e-v2-flash`; 5 seconds; audio on
+- Completed ~05:23:38 UTC.
+- This operation was **not** a Simba Prague generation.
+- The failed 07:18 UTC API request produced no task and no additional charge.
+
+The original reconciliation incorrectly filtered the task list for the
+six named Prague scenes and would omit unrelated date-named or web UI tasks.
+It now reports all recent image-to-video tasks and separates named Prague
+tasks, explicitly warning when task pagination makes results incomplete.
+
+Previous one-time paid-start journal markers still prohibit automatic
+retries. Repeating the paid 30-credit video test requires a fresh, explicit
+authorization, a new uniquely scoped no-retry workflow and preflight; do
+not re-trigger old labels.

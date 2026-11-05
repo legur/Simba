@@ -21,7 +21,9 @@ from github_a2e_prague_upload_one import (
     SOURCE_IMAGE, UploadStopped, api_get_pricing, read_source_image,
     charged_presign, upload_bytes, verify_staged_image, gh_request,
 )
-from github_a2e_issue_bridge import request_quote
+from github_a2e_issue_bridge import (
+    request_quote, DEFAULT_NEGATIVE_PROMPT, validate_generation_body,
+)
 from github_a2e_prague_generate import a2e_start, a2e_status, checked_api, download_video, StopGeneration
 
 ISSUE = 8
@@ -89,6 +91,7 @@ def build_body(cdn_url: str) -> dict:
         "name": NAME,
         "image_url": cdn_url,
         "prompt": PROMPT,
+        "negative_prompt": DEFAULT_NEGATIVE_PROMPT,
         "model_version": "a2e",
         "video_time": 5,
         "number_of_images": 1,
@@ -97,6 +100,11 @@ def build_body(cdn_url: str) -> dict:
 
 
 def exact_quote(body: dict, key: str) -> float:
+    # Price quote does not validate required prompt fields.
+    try:
+        validate_generation_body(body)
+    except ValueError as exc:
+        raise Stopped(str(exc)) from None
     try:
         reply = request_quote(body, key)
     except Exception:

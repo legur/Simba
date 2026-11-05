@@ -19,7 +19,7 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlsplit
 from urllib.request import Request, urlopen
 
-from github_a2e_issue_bridge import build_bodies, request_quote
+from github_a2e_issue_bridge import build_bodies, request_quote, validate_generation_body
 
 APPROVED_ISSUE = 8
 APPROVED_CAP = 180
@@ -75,6 +75,12 @@ def read_json(req: Request, *, timeout: int = 30) -> dict:
 
 
 def a2e_start(body: dict, key: str) -> dict:
+    # Quote exact=True is a price guarantee only; A2E may set
+    # generationRequestValidated=false and reject incomplete starts.
+    try:
+        validate_generation_body(body)
+    except ValueError as exc:
+        raise StopGeneration(str(exc)) from None
     req = Request(
         API_BASE + "/v1/userImage2Video/start",
         method="POST",
@@ -188,6 +194,10 @@ def validated_request(event: dict, cap: int) -> list[dict]:
 def priced_within_cap(bodies: list[dict], key: str, quote_fn=request_quote) -> list[float]:
     quotes = []
     for body in bodies:
+        try:
+            validate_generation_body(body)
+        except ValueError as exc:
+            raise StopGeneration(str(exc)) from None
         data = checked_api(quote_fn(body, key))
         available = data.get("available") is True and data.get("exact") is True
         price = data.get("coins")
