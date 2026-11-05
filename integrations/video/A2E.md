@@ -223,3 +223,16 @@ not re-trigger old labels.
 **Archive read-back:** 7 source objects, 2 A2E video ZIP objects, 2 draft reels (static and animated), 2 audio/QA objects. The videos inside the archive were verified by ZIP entry listings, including scene_01.mp4 through scene_06.mp4. The Drive files have explicit IDs and verified parent folder; no billable A2E operation was made for this archival step.
 
 **Animated Prague review draft:** https://drive.google.com/file/d/15OAazKjBeT4_ZhD9fKFX1_8bcpqUcWGc/view?usp=drivesdk (30.375 sec, 1080×1920, original six A2E MP4 scenes, Mixkit Tinsel and Mistletoe; no voice/captions, unpublished). Drive upload and metadata read-back verified on 05.11.2026. This does not upgrade the video to `VIDEO_READY_FOR_LEO` before standard QA and Leo approval.
+
+
+## Prague A2E animated offer video — title layers & music QA — 05.11.2026
+
+**New review version (not published):** [Prague_2027_A2E_Animated_Reel_Titles_Mixkit_REVIEW.mp4](https://drive.google.com/file/d/15zgVCXp_KBM02sGogYgzIRfK-xXZx5UD/view?usp=drivesdk).
+
+- Source is the **six completed A2E motion clips**, already archived on Drive; do not substitute still photos for motion or regenerate any A2E scene. No new A2E credits were used.
+- A 30.375-second, 1080×1920, 16-fps H.264/AAC film is assembled with six readable, fade-animated overlays: title, travel dates and duration, Opera Prague hotel and breakfast, Smartwings flight and luggage, atmosphere, price and WhatsApp CTA.
+- Audio: previously archived licensed Mixkit **Tinsel and Mistletoe** (Ahjay Stelino), no artificial narrator; final track attenuated by 2 dB and remuxed.
+- Measured technical QA: MP4 full decode OK; 486 video frames; zero black events; integrated loudness −14.1 LUFS, true peak −4.4 dBFS; SHA-256 `7ec84e9ce61b333894476544e995e410f562a374cddc8e9d2c45e52a33e37b37`; file size 29,430,993 bytes. Drive read-back confirmed parent folder and byte size.
+- [QA report](https://drive.google.com/file/d/1uHDhS3-fA01VF2iVVWFCFaSKIrg_eLPq/view?usp=drivesdk), [reusable JSON manifest](https://drive.google.com/file/d/1sILGUKvWUkEVAhnYQJ8EBp2moGw1HxG_/view?usp=drivesdk) and [editable overlay/source ZIP](https://drive.google.com/file/d/1h6Z4VwLyl8XcfuYdCXAOszZQHCmz-D8v/view?usp=drivesdk) are archived and verified.
+- **Status: `TECH_QA_PASS / LEO_EDITORIAL_REVIEW_REQUIRED / NOT_PUBLISHED`.** Price and availability of the 899 EUR Prague package must be rechecked before use, and Leo must approve the actual video. The external Google Drive upload here was an explicit one-time operation. No unattended auto-archive from GitHub Actions has been deployed.
+
