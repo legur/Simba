@@ -1,0 +1,111 @@
+name: Simba A2E CDN read-only User-Agent retest
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+jobs:
+  retest:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-ua-genjutsu-check' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 3
+    steps:
+      - name: HEAD and GET existing A2E images with explicit User-Agent Genjutsu
+        run: |
+          python - <<'PY'
+          from datetime import datetime, timezone
+          from pathlib import Path
+          import os
+          import urllib.request
+          import urllib.error
+          import xml.etree.ElementTree as ET
+
+          URLs = {
+              "A2E 3days uploaded image": "https://3days-apac.downloadaivideo.com/adam2eve/stable/user/695cf6da60588c00590a9ad6/simba-prague-scene1-362e1a29e9e146cabd53ba7027b1a03c.jpg",
+              "A2E 7days uploaded image": "https://7days-apac.downloadaivideo.com/adam2eve/stable/user/695cf6da60588c00590a9ad6/simba-prague-scene1-9ba9f6050eb841d0aa84d6b43b760d69.jpg",
+              "Control Wix image": "https://static.wixstatic.com/media/7fd7b8_377e66bfa46b4a87a0223b02bec5d6f0~mv2.jpg",
+          }
+          lines = [
+              "### Simba A2E — User-Agent: Genjutsu read-only CDN test",
+              "",
+              "**UTC:** " + datetime.now(timezone.utc).isoformat(),
+              "**Explicit header:** User-Agent: Genjutsu",
+              "**Method:** HEAD and GET (Range: bytes=0-1023) of EXISTING files only.",
+              "**Credit-bearing requests:** NONE. No upload, presign or video generation.",
+              "",
+          ]
+          for label, url in URLs.items():
+              lines.append("**" + label + "**")
+              for method in ("HEAD", "GET"):
+                  req = urllib.request.Request(
+                      url, method=method,
+                      headers={
+                          "User-Agent": "Genjutsu",
+                          "Range": "bytes=0-1023",
+                          "Accept": "image/jpeg",
+                      }
+                  )
+                  try:
+                      with urllib.request.urlopen(req, timeout=20) as response:
+                          typ = response.headers.get("Content-Type", "unspecified")
+                          cf_ray = response.headers.get("CF-Ray")
+                          preview = response.read(1024) if method == "GET" else b""
+                          jpeg = preview[:2] == b"\\xff\\xd8" if method == "GET" else None
+                          lines.append(
+                              method + ": HTTP " + str(response.status)
+                              + ", content-type=" + typ
+                              + (", JPEG=" + str(jpeg) if method == "GET" else "")
+                              + (", cf-ray=" + cf_ray if cf_ray else "")
+                          )
+                  except urllib.error.HTTPError as exc:
+                      typ = exc.headers.get("Content-Type", "unspecified")
+                      cf_ray = exc.headers.get("CF-Ray")
+                      code = ""
+                      try:
+                          data = exc.read(1400)
+                          if data.lstrip().startswith(b"<"):
+                              root = ET.fromstring(data)
+                              found = root.find(".//Code")
+                              if found is not None and found.text:
+                                  value = found.text
+                                  if len(value) < 40 and value.replace("_","").isalnum():
+                                      code = value
+                      except Exception:
+                          pass
+                      lines.append(
+                          method + ": HTTP " + str(exc.code)
+                          + ", content-type=" + typ
+                          + (", error_code=" + code if code else "")
+                          + (", cf-ray=" + cf_ray if cf_ray else "")
+                      )
+                  except Exception as exc:
+                      lines.append(method + ": " + type(exc).__name__)
+              lines.append("")
+          lines.append("This run does not make any credit-bearing A2E API requests.")
+          Path(os.environ["RUNNER_TEMP"], "ua-check.md").write_text(
+              "\n".join(lines), encoding="utf-8"
+          )
+          print("A2E_UA_GENJUTSU_READONLY_TEST_COMPLETE")
+          PY
+      - name: Post HTTP result to issue 8
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/ua-check.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/ua-check.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body "A2E User-Agent GET/HEAD check did not finish; no credit-bearing operations ran."
+          fi
