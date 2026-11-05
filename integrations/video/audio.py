@@ -5,6 +5,7 @@ from pathlib import Path
 import numpy as np
 import soundfile as sf
 import soxr
+import music_input  # validated local MP3/WAV soundtrack, prepared by make_video.py
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / 'engine'))
 import sfx  # noqa: E402
@@ -122,7 +123,9 @@ def foley(tl, n):
 def mix(job: Path, tl: dict) -> Path:
     n = int(tl['dur'] * SR) + SR
     style = tl.get('music', {}).get('style', 'calm')
-    music = lounge(tl, n, tl['music'].get('bpm', 100)) if style == 'lounge' else score(tl, n)
+    music = (music_input.external_music_bed(job, tl['music'], tl['dur'], n, SR)
+             if tl['music'].get('file') else
+             (lounge(tl, n, tl['music'].get('bpm', 100)) if style == 'lounge' else score(tl, n)))
     fol, voice = foley(tl, n), np.zeros((n, 2))
     duck = np.zeros(n)
     def voiced(path):
@@ -138,7 +141,11 @@ def mix(job: Path, tl: dict) -> Path:
         duck[max(0, s):s + len(y) + int(.5 * SR)] = 1
     for c in tl.get('clipAudio', []):                            # a clip's own sound (its voice, lip-synced)
         place(voice, voiced(job / c['file']), c['t0'])
-    k = int(.15 * SR); duck = np.convolve(duck, np.ones(k) / k, 'same')
+    if duck.any():
+        # O(n) smoothing rather than an O(n × 7200) convolution on full-length Reels.
+        k = int(.15 * SR)
+        cumulative = np.cumsum(np.pad(duck, (k // 2, k - k // 2)), dtype=np.float64)
+        duck = (cumulative[k:] - cumulative[:-k]) / k
     music *= (1 - .65 * duck)[:, None]; fol *= (1 - .4 * duck)[:, None]          # music ≈0.35× under the voice
     bed = music * .5 + fol * .5
     under = duck > .5

@@ -80,6 +80,13 @@ def load_spec(job: Path):
     e.setdefault('brand', 'Simba by Bon Tours')
     w, h = map(int, s.get('size', '1080x1920').split('x')); s['size'] = f'{w}x{h}'
     need(w % 2 == 0 and h % 2 == 0, 'size: even numbers')
+    # Fail before rendering when the chosen local soundtrack is absent, unsafe or
+    # lacks an explicit rights attestation from the Music Editor.
+    import music_input
+    try:
+        music_input.validate_music(job, s.get('music'))
+    except ValueError as exc:
+        raise Stop('video-spec.json: ' + str(exc)) from exc
     return s
 
 
@@ -426,11 +433,26 @@ def main():
         qa.append('- Reading-time check (readcheck.mjs): PASS')
         if a.plan_only:
             print('\n'.join(qa)); print(f'plan ready: {tl["dur"]:.1f} s; preview with engine/render/still.mjs'); return 0
+        # Decode actual external MP3/WAV before expensive Chromium frame render.
+        if tl['music'].get('file'):
+            import music_input
+            try:
+                prepared = music_input.prepare_music(job, tl['music'], tl['dur'], FFMPEG)
+            except ValueError as exc:
+                raise Stop('external soundtrack: ' + str(exc)) from exc
+            log('external music', prepared.name)
+            qa.append(f'- Music: external recording `{tl["music"]["file"]}` (48 kHz stereo); rights_confirmed is a Music Editor attestation, not an automatic license check')
+        else:
+            qa.append('- Music: synthesized soundtrack (legacy default)')
         log('rendering frames…')
         code, out = node('video.mjs', job, '--size', spec['size'], '--fps', a.fps, '--workers', a.workers, '--out', job / 'out' / 'video.mp4')
         if code != 0: raise Stop('render failed:\n' + out[-1500:])
         sys.path.insert(0, str(HERE)); import audio
-        wav = audio.mix(job, tl); log('mix', wav.name)
+        try:
+            wav = audio.mix(job, tl)
+        except ValueError as exc:
+            raise Stop('audio mix: ' + str(exc)) from exc
+        log('mix', wav.name)
         final = job / f'{spec["packageId"]}.mp4'; mux(job / 'out' / 'video.mp4', wav, final, a.fps)
         srt(tl['lines'], final.with_suffix('.srt'))
         cover_t = min(tl['scenes'][0]['t0'] + 1.6, tl['scenes'][0]['t1'])

@@ -1,7 +1,7 @@
 ﻿# META — Управление обновлениями системы Bon Tours
 
 
-Версия: 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
+Версия: 17.3 · 05.11.2026: Музыкальный редактор (draft); 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
 Дата: 31.10.2026
 
 
@@ -95,6 +95,7 @@ Knowledge Base не хранит текущую цену/наличие как �
 | Router | ROUTER_v10.1.md | 19.1 · 31.10.2026 | ✅ активен — Source Resolution, executor provenance, Internal Critic, Humanizer, Zernio draft, сценарный routing и Монтажер Клод |
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 2.1 · 22.10.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
 | Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 1.0 · 22.10.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
+| Музыкальный редактор | `Музыкальный редактор/MUSIC_EDITOR_v1.0.md` | 1.0 · 05.11.2026 | 🔧 в разработке — бесплатные треки, проверка коммерческих лицензий, music-handoff → Монтажер Клод |
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
 | Simba | Simba-v5.0.md | 10.1 · 31.10.2026 | ✅ активен — точные пути TIA; проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Копирайтер-универсал (тест) | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/COPYWRITER_TEST.md` | 1.0 · 31.10.2026 | TEST — дополнительный кандидат внутри Simba; не новый автор; META Шаг 0 |
@@ -113,7 +114,7 @@ Knowledge Base не хранит текущую цену/наличие как �
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
 | SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 1.8 / runtime 7.1 | ✅ обязательный общий контекст |
 | Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 9.1 · 31.10.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
-| Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 1.1 · 02.11.2026 | Пост → сценарий → визуал (optional A2E via Wix) → Монтажер Клод → QA → Leo; публикация отдельно |
+| Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 1.2 · 05.11.2026 | Пост → сценарий → визуал (optional A2E via Wix) → Монтажер Клод → QA → Leo; публикация отдельно |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 2.3 · 18.10.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
 
