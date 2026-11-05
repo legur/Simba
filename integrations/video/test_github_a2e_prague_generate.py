@@ -144,6 +144,17 @@ class GuardTests(unittest.TestCase):
             with self.assertRaises(paid.StopGeneration):
                 paid.verify_no_paid_effect_since_first_attempt("sk_fake")
 
+    def test_missing_negative_prompt_blocks_before_any_paid_http_post(self):
+        with patch.object(paid, "urlopen", side_effect=AssertionError(
+                "A2E paid POST must not be attempted")) as network:
+            with self.assertRaisesRegex(paid.StopGeneration, "negative_prompt"):
+                paid.a2e_start({
+                    "name": "Prague", "image_url": paid.EXPECTED_URLS[0],
+                    "prompt": "Slow camera glide", "model_version": "a2e",
+                    "video_time": 5, "number_of_images": 1
+                }, "sk_fake_test_token")
+        network.assert_not_called()
+
     def test_http_400_support_trace_id_is_safely_preserved(self):
         import io
         from urllib.error import HTTPError
