@@ -1,0 +1,81 @@
+name: Simba A2E Prague full reel — five remaining videos (max 155 credits)
+
+on:
+  issues:
+    types: [labeled]
+  pull_request:
+    paths:
+      - ".github/workflows/simba-a2e-prague-full-reel-five.yml"
+      - "integrations/video/github_a2e_prague_full_reel_five.py"
+      - "integrations/video/test_github_a2e_prague_full_reel_five.py"
+
+permissions:
+  contents: read
+
+jobs:
+  offline_tests:
+    name: Verify cap, prompts and no-paid-retry safeguards
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest integrations/video/test_github_a2e_prague_full_reel_five.py -v
+      - run: python -m unittest integrations/video/test_github_a2e_prague_generate.py -v
+      - run: python -m unittest integrations/video/test_github_a2e_issue_bridge.py -v
+
+  five_scenes:
+    name: Five videos, per-scene durable journal and artifact
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-prague-five-scenes-full-reel-155-20261105' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    concurrency:
+      group: simba-prague-reel-scene2to6-once-20261105
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 70
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Stage only scenes 2-6 and generate five 5-second clips (max 155 credits)
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python integrations/video/github_a2e_prague_full_reel_five.py \
+            --event "$GITHUB_EVENT_PATH" \
+            --out "$RUNNER_TEMP/prague-full-reel-scenes" \
+            --max-new 155
+      - name: Preserve all created MP4 scenes and state even if interrupted
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simba-a2e-prague-full-six-scenes
+          path: ${{ runner.temp }}/prague-full-reel-scenes/
+          if-no-files-found: warn
+          retention-days: 30
+          compression-level: 0
+      - name: Log results to task issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/prague-full-reel-scenes/report.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/prague-full-reel-scenes/report.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body "Five-scene generation did not produce final report. DO NOT retry any paid request; inspect Actions artifact, issue markers, task history and credit ledger first."
+          fi
