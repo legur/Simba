@@ -25,6 +25,21 @@ def success_quote(body, key):
                                 "perOutputCoins": 30, "exact": True}}
 
 class QuoteOnlySafetyTests(unittest.TestCase):
+    def test_a2e_requires_two_nonempty_prompts_even_when_quote_is_exact(self):
+        body = bridge.build_bodies(event())[0]
+        self.assertEqual(body["negative_prompt"], "blurry, distorted, static")
+        bridge.validate_generation_body(body)
+        for invalid in (dict(body, negative_prompt=""), dict(body, negative_prompt="   "),
+                        dict(body, prompt=""), {k: v for k, v in body.items()
+                                                if k != "negative_prompt"}):
+            with self.assertRaisesRegex(ValueError, "requires nonempty"):
+                bridge.validate_generation_body(invalid)
+
+    def test_a2e_rejects_lora_in_simba_locked_request(self):
+        body = bridge.build_bodies(event())[0]
+        with self.assertRaises(ValueError):
+            bridge.validate_generation_body(dict(body, lora="some_other_model"))
+
     def test_uses_direct_quote_and_never_paid_start(self):
         calls = []
         def fn(body, key):
