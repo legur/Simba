@@ -1,4 +1,4 @@
-name: Simba A2E read-only charge reconciliation
+name: Simba A2E read-only all-task reconciliation
 
 on:
   issues:
@@ -13,7 +13,7 @@ jobs:
     if: >-
       github.event_name == 'issues' &&
       github.event.action == 'labeled' &&
-      github.event.label.name == 'a2e-reconcile-schema-20261103' &&
+      github.event.label.name == 'a2e-reconcile-all-tasks-20261105' &&
       github.event.issue.number == 8 &&
       github.event.issue.user.login == 'legur'
     runs-on: ubuntu-latest
@@ -74,8 +74,10 @@ jobs:
               names = {
                   "Prague Charles Bridge", "Prague Old Town Market",
                   "Simba winter traveller", "Prague Astronomical Clock",
-                  "Vintage Prague tram", "Prague New Year skyline"
+                  "Vintage Prague tram", "Prague New Year skyline",
+                  "Prague Charles Bridge - Simba proof 20261104"
               }
+              known_site_task = "6aec12790dbde9022f6af0b2"
               data, err = fetch("/v1/userImage2Video/allRecords?pageNum=1&pageSize=100")
               if err:
                   out.append("Tasks API ERROR: " + err)
@@ -84,14 +86,28 @@ jobs:
               else:
                   records = data["rows"]
                   selected = [x for x in records if isinstance(x, dict)
-                              and x.get("name") in names and recent(x.get("createdAt"))]
-                  out.append("Matching recent Prague tasks: " + str(len(selected)))
-                  for record in selected:
-                      out.append("- " + str(record.get("name")) + 
-                                 ": ID " + str(record.get("_id")) +
-                                 ", state " + str(record.get("current_status")) +
-                                 ", coins " + str(record.get("coins")) +
+                              and recent(x.get("createdAt"))]
+                  prague = [x for x in selected if x.get("name") in names]
+                  out.append("All recent image-to-video tasks (including web UI): " + str(len(selected)))
+                  out.append("Matching named Prague tasks: " + str(len(prague)))
+                  # A2E support identified a completed 30-credit web UI task with
+                  # a timestamp-style name, excluded by the old Prague-only filter.
+                  known = next((x for x in records if isinstance(x, dict)
+                                and x.get("_id") == known_site_task), None)
+                  out.append("Known A2E web UI task " + known_site_task +
+                             ": " + (str(known.get("current_status")) if known else "not on first page"))
+                  count = data.get("count")
+                  if len(records) >= 100 or (type(count) is int and count > 100):
+                      out.append("WARNING: Task-list first page may be incomplete; zero matches do NOT prove zero tasks.")
+                  for record in selected[:30]:
+                      safe_name = str(record.get("name", ""))[:90].replace("\n", " ")
+                      out.append("- " + safe_name +
+                                 ": ID " + str(record.get("_id"))[:48] +
+                                 ", state " + str(record.get("current_status"))[:35] +
+                                 ", coins " + str(record.get("coins"))[:20] +
                                  ", refunded " + str(record.get("hasRefundCoin")))
+                  if len(selected) > 30:
+                      out.append("Report truncated to first 30 recent tasks.")
 
               tx, err = fetch("/v1/transactionRecord/creditsHistory?pageNum=1&pageSize=100&is_consumption=true&startDate=2026-11-03T20%3A09%3A00Z")
               if err:
@@ -111,7 +127,7 @@ jobs:
                                  str(row.get("amount")) + " credits; transaction " +
                                  str(row.get("_id"))[:30])
 
-          out += ["", "Paid starts remain blocked until this evidence is reconciled."]
+          out += ["", "A2E spending safety: use both complete task history and credit ledger before any new paid attempt."]
           Path(os.environ["RUNNER_TEMP"], "reconcile.md").write_text(
               "\n".join(out), encoding="utf-8")
           print("A2E_RECONCILIATION_REPORT_CREATED")
