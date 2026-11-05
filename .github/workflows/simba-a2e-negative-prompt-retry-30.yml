@@ -1,0 +1,79 @@
+name: Simba A2E fixed negative_prompt retry — one 5s video max 30
+
+on:
+  issues:
+    types: [labeled]
+  pull_request:
+    paths:
+      - ".github/workflows/simba-a2e-negative-prompt-retry-30.yml"
+      - "integrations/video/github_a2e_prague_retry_negative_prompt_30.py"
+      - "integrations/video/test_github_a2e_prague_retry_negative_prompt_30.py"
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Test credit cap and one paid POST
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m unittest integrations/video/test_github_a2e_prague_retry_negative_prompt_30.py -v
+      - run: python -m unittest integrations/video/test_github_a2e_prague_generate.py -v
+      - run: python -m unittest integrations/video/test_github_a2e_prague_upload_one.py -v
+
+  generate_once:
+    name: One support-corrected 5-second Charles Bridge video (max 30 credits)
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-negative-prompt-one-video-30-20261105' &&
+      github.event.issue.number == 8 &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    concurrency:
+      group: simba-a2e-issue8-negative-prompt-retry-20261105-once
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 13
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Preflight negative_prompt, existing image, exact free quote, one paid POST
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python integrations/video/github_a2e_prague_retry_negative_prompt_30.py \
+            --event "$GITHUB_EVENT_PATH" \
+            --out "$RUNNER_TEMP/a2e-prague-negative-prompt-retry" \
+            --max-new 30
+      - name: Preserve result video, task details and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simba-prague-charles-bridge-negative-prompt-retry
+          path: ${{ runner.temp }}/a2e-prague-negative-prompt-retry
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Report status to original issue
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-prague-negative-prompt-retry/report.md" ]; then
+            gh issue comment 8 --repo legur/Simba --body-file "$RUNNER_TEMP/a2e-prague-negative-prompt-retry/report.md"
+          else
+            gh issue comment 8 --repo legur/Simba --body "A2E negative_prompt retry outcome unknown. Do not retry a paid POST before reconciling task and ledger."
+          fi
