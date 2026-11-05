@@ -154,7 +154,7 @@ class GuardTests(unittest.TestCase):
             raise HTTPError(req.full_url, 400, "Bad Request", {}, io.BytesIO(raw))
         with patch.object(paid, "urlopen", side_effect=fake_http_error):
             with self.assertRaises(paid.StopGeneration) as ctx:
-                paid.a2e_start({"name": "Prague", "image_url": paid.EXPECTED_URLS[0]}, "sk_dummy_for_test")
+                paid.a2e_start({"name": "Prague", "image_url": paid.EXPECTED_URLS[0], "prompt": "Slow camera glide", "negative_prompt": "blurry, distorted, static"}, "sk_dummy_for_test")
         self.assertIn("HTTP_400_CODE_400", str(ctx.exception))
         self.assertIn("TRACE_" + good_trace, str(ctx.exception))
         self.assertNotIn("Request failed", str(ctx.exception))
