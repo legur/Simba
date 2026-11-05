@@ -36,6 +36,7 @@ class QuoteOnlySafetyTests(unittest.TestCase):
         self.assertEqual(len(calls), 1)
         self.assertEqual(calls[0][0]["video_time"], 5)
         self.assertEqual(calls[0][0]["model_version"], "a2e")
+        self.assertEqual(calls[0][0]["negative_prompt"], "blurry, distorted, static")
         self.assertEqual(calls[0][0]["number_of_images"], 1)
         self.assertNotIn("start", repr(calls[0][0]))
         self.assertEqual(bridge.A2E_QUOTE_URL, "https://api.a2e.ai/v1/generation/quote")
