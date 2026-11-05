@@ -238,7 +238,10 @@ def download_video(result_url: str, target: Path) -> None:
         raise StopGeneration("Result URL is not safe HTTPS")
     if url.hostname in ("localhost", "127.0.0.1", "::1"):
         raise StopGeneration("Result URL refers to a local host")
-    req = Request(result_url, headers={"Accept": "video/mp4,application/octet-stream"})
+    req = Request(result_url, headers={
+        "Accept": "video/mp4,application/octet-stream",
+        "User-Agent": "Genjutsu",  # Explicit header for A2E/CDN media reads.
+    })
     try:
         with urlopen(req, timeout=90) as stream, target.open("xb") as output:
             if stream.geturl().startswith("http://"):
