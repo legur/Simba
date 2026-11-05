@@ -124,6 +124,7 @@ class OneExistingAssetTests(unittest.TestCase):
         self.assertEqual(body["video_time"], 5)
         self.assertEqual(body["number_of_images"], 1)
         self.assertEqual(body["model_version"], "a2e")
+        self.assertEqual(body["negative_prompt"], "blurry, distorted, static")
         self.assertFalse(body["auto_add_audio"])
 
 if __name__ == "__main__":
