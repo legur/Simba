@@ -1,0 +1,82 @@
+name: Simba A2E — automatic Google Drive backup (read-only A2E)
+
+on:
+  schedule:
+    - cron: "*/20 * * * *"
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - ".github/workflows/simba-a2e-drive-archive.yml"
+      - "integrations/video/a2e_drive_archiver.py"
+      - "integrations/video/test_a2e_drive_archiver.py"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-a2e-drive-auto-archive
+  cancel-in-progress: false
+
+jobs:
+  offline_tests:
+    name: Archive safety + no-paid-A2E tests
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Test read-only polling and Drive integrity guards
+        run: python -m unittest integrations/video/test_a2e_drive_archiver.py -v
+
+  archive:
+    name: Detect completed A2E tasks and preserve MP4 in Drive
+    if: github.event_name != 'pull_request' && vars.SIMBA_A2E_DRIVE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install official Google Drive API clients
+        run: python -m pip install "google-api-python-client>=2.140,<3" "google-auth>=2.30,<3" "google-auth-httplib2>=0.2,<1"
+      - name: Ensure MP4 probe available
+        run: ffprobe -version | head -n 1
+      - name: Read A2E tasks and upload missing completed MP4s (NO A2E paid calls)
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+          GDRIVE_A2E_FOLDER_ID: 1oMtSCcUOMVU6f2yiS72cevr0NQF58EAj
+        run: |
+          python integrations/video/a2e_drive_archiver.py \
+            --report "$RUNNER_TEMP/a2e-drive-archive-report.json"
+      - name: Summarize without credentials or signed URLs
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-drive-archive-report.json" ]; then
+            echo '### A2E automatic Drive backup' >> "$GITHUB_STEP_SUMMARY"
+            python - "$RUNNER_TEMP/a2e-drive-archive-report.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          data=json.load(open(sys.argv[1],encoding="utf-8"))
+          print("Status:", data.get("status"))
+          print("Uploaded:", len(data.get("uploaded",[])))
+          print("Already verified:", len(data.get("already_archived",[])))
+          print("Expired:", len(data.get("expired",[])))
+          print("Errors:", len(data.get("errors",[])))
+          PY
+          fi
+      - name: Keep verification reports for audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simba-a2e-drive-backup-report
+          path: ${{ runner.temp }}/a2e-drive-archive-report.json
+          if-no-files-found: warn
+          retention-days: 14
