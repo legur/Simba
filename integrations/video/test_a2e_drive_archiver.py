@@ -110,7 +110,8 @@ class ArchiveTests(TestCase):
         def download(_, target):
             target.write_bytes(b"\x00\x00\x00\x18ftyp" + b"x" * 3000)
             return "a" * 64, "b" * 32, len(target.read_bytes())
-        with mock.patch.object(archiver, "detail_for_task", return_value=detail), \
+        with mock.patch.object(archiver, "already_verified_on_drive", return_value=None), \
+             mock.patch.object(archiver, "detail_for_task", return_value=detail), \
              mock.patch.object(archiver, "download_mp4", side_effect=download), \
              mock.patch.object(archiver, "verify_mp4", return_value=5.0), \
              mock.patch.object(archiver, "archive_mp4", return_value=("uploaded", "drive123")) as upload:
@@ -118,6 +119,17 @@ class ArchiveTests(TestCase):
         self.assertEqual(result["status"], "OK")
         self.assertEqual(len(result["uploaded"]), 1)
         self.assertEqual(upload.call_count, 1)
+
+
+    def test_already_archived_does_not_redownload(self):
+        rows = [{"_id": TASK_A, "current_status": "completed",
+                 "createdAt": datetime.now(timezone.utc).isoformat()}]
+        record = {"task_id": TASK_A, "file_id": "abc", "bytes": 1234, "sha256": "a" * 64}
+        with mock.patch.object(archiver, "already_verified_on_drive", return_value=record), \
+             mock.patch.object(archiver, "detail_for_task") as detail:
+            report = archiver.run("sk_fake", FOLDER, scan_rows=rows, client=object())
+        self.assertEqual(len(report["already_archived"]), 1)
+        detail.assert_not_called()
 
     def test_missing_oauth_never_silently_reports_success(self):
         with mock.patch.dict(archiver.os.environ, {}, clear=True):
