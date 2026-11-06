@@ -236,3 +236,86 @@ not re-trigger old labels.
 - [QA report](https://drive.google.com/file/d/1uHDhS3-fA01VF2iVVWFCFaSKIrg_eLPq/view?usp=drivesdk), [reusable JSON manifest](https://drive.google.com/file/d/1sILGUKvWUkEVAhnYQJ8EBp2moGw1HxG_/view?usp=drivesdk) and [editable overlay/source ZIP](https://drive.google.com/file/d/1h6Z4VwLyl8XcfuYdCXAOszZQHCmz-D8v/view?usp=drivesdk) are archived and verified.
 - **Status: `TECH_QA_PASS / LEO_EDITORIAL_REVIEW_REQUIRED / NOT_PUBLISHED`.** Price and availability of the 899 EUR Prague package must be rechecked before use, and Leo must approve the actual video. The external Google Drive upload here was an explicit one-time operation. No unattended auto-archive from GitHub Actions has been deployed.
 
+
+## Automatic A2E → Google Drive archiving — 06.11.2026 (requires OAuth enrollment)
+
+**Implementation:** \`integrations/video/a2e_drive_archiver.py\` and
+\`.github/workflows/simba-a2e-drive-archive.yml\`; local enrollment helper
+\`integrations/video/setup_drive_oauth.py\`.
+
+**Operating model:** every 20 minutes GitHub Actions checks A2E's existing
+image-to-video tasks using **GET only**. It scans paginated
+\`GET /v1/userImage2Video/allRecords\`, confirms each recent completed task via
+\`GET /v1/userImage2Video/{taskId}\`, downloads the unexpired MP4 from A2E
+(with User-Agent: Genjutsu), validates the MP4 container and ffprobe video/duration,
+and saves it to a **private** Google Drive folder with a resumable upload.
+It reads the resulting Drive file ID, parent, length, MD5 and SHA-256 metadata
+before considering that video archived. It never invokes A2E generation
+\`/start\`, presign, quote, charged upload or retries those paid operations.
+
+**Private archive:** \`Simba Media Archive / A2E_Auto_Archive\` in the existing
+Google Drive account \`eskvlg@gmail.com\`.
+Folder ID: \`1oMtSCcUOMVU6f2yiS72cevr0NQF58EAj\`.
+Folder: https://drive.google.com/drive/folders/1oMtSCcUOMVU6f2yiS72cevr0NQF58EAj
+
+**Deduplication:** one \`A2E_<taskId>.mp4\` per A2E task ID.
+After a verified upload, subsequent scheduled scans check metadata first
+and do not re-download the same video. A different object with the same
+name or inconsistent size/hash is an error, not an overwrite.
+Completed jobs are scanned for the last seven days (up to 2,000 history
+records / 75 recent completed jobs) so a missed schedule can be caught up.
+Older/expired media are NOT automatically regenerated. The Google Drive
+archive is separate from curated individual campaign folders.
+
+**IMPORTANT: activation is not automatic on Git merge.** The GitHub
+workflow job is gated by repository **Actions variable**
+\`SIMBA_A2E_DRIVE_ENABLED=true\`, intentionally unset until credentials exist.
+This deployment uses Google Drive **OAuth for the actual account**;
+the installed ChatGPT Google Drive connector cannot implicitly authorize
+GitHub-hosted code. Never copy its access tokens into Git or chat.
+
+### One-time onboarding on Leo's own computer
+
+1. In Google Cloud Console, enable the Google Drive API and configure an
+   OAuth consent screen and a **Desktop app** OAuth client.
+   Download the resulting JSON locally (never commit it or upload to chat).
+   Consent requires the Google Drive scope
+   \`https://www.googleapis.com/auth/drive\`; this is broad access to the account,
+   not a folder-only token. GitHub Actions code intentionally reads/writes
+   only the designated archive folder. Consider a separate Google account
+   if full Drive scope is not acceptable. A Google OAuth app left in
+   Testing status may have refresh tokens that expire in about seven days,
+   so configure production consent appropriately for unattended use.
+2. Install \`gh\` (GitHub CLI), authenticate using \`gh auth login\` as the
+   user with repository-secret write permission. Install local Python
+   packages: \`python -m pip install google-auth-oauthlib google-api-python-client google-auth-httplib2\`.
+3. From the \`legur/Simba\` repo on that computer, run:
+   \`\`\`powershell
+   py integrations/video/setup_drive_oauth.py --client-json "C:\path\to\desktop-oauth.json" --expected-account eskvlg@gmail.com --repo legur/Simba
+   \`\`\`
+   This opens Google's official local browser authorization, checks the account
+   and actual private target folder, and writes three encrypted GitHub Actions
+   repository secrets **via stdin**, without printing credential values:
+   \`GDRIVE_OAUTH_CLIENT_ID\`,
+   \`GDRIVE_OAUTH_CLIENT_SECRET\`,
+   \`GDRIVE_OAUTH_REFRESH_TOKEN\`.
+   The existing \`A2E_API_KEY\` Actions secret is also required.
+4. After checking all secrets exist, enable the GitHub Actions repository
+   variable \`SIMBA_A2E_DRIVE_ENABLED\` with value \`true\` (Settings →
+   Secrets and variables → Actions → Variables). Or run the setup helper
+   with \`--enable\` if you want it to toggle the variable immediately.
+   Run \`gh workflow run simba-a2e-drive-archive.yml -R legur/Simba\` for
+   the first **read-only-A2E** integration test.
+5. Verify \`simba-a2e-drive-backup-report\` in GitHub Actions and the
+   actual archived files/MD5 in Google Drive. If a task is expired,
+   Drive auth is revoked, an upload is ambiguous or A2E CDN becomes
+   inaccessible, the job reports ATTENTION_REQUIRED or CONFIG_OR_SCAN_ERROR.
+   Preserve any GitHub Actions artifact or Drive file already present;
+   **do not regenerate paid videos** to solve archival errors.
+
+**Status at initial code commit: CODE_READY / TESTS_PENDING /
+GITHUB_OAUTH_NOT_ENROLLED / SCHEDULE_GATED.**
+No live Google OAuth credentials are assumed, and no unattended upload is
+claimed before the first verified scheduled run. GitHub cron may be delayed
+or skipped; the seven-day read-back is a safety net, not a guarantee
+against A2E's short media expiration.
