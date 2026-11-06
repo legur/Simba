@@ -2,7 +2,7 @@ name: Simba TTS preflight (no credits)
 
 on:
   issues:
-    types: [opened]
+    types: [opened, edited]
 
 permissions:
   contents: read
