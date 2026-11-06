@@ -227,7 +227,7 @@ def drive_matches(drive, folder: str, name: str) -> list[dict]:
     try:
         response = drive.files().list(
             q=query, fields="nextPageToken,files(id,name,size,md5Checksum,parents,appProperties)",
-            page_size=100).execute(num_retries=2)
+            pageSize=100).execute(num_retries=2)
     except Exception:
         raise ArchiveError("Google Drive duplicate check failed") from None
     if response.get("nextPageToken"):
