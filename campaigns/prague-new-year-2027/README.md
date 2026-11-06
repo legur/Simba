@@ -37,3 +37,16 @@
 ## Версионирование
 
 PR создан по запросу «пуш и мерж на git». Ветка с роликом и карточкой кампании должна быть объединена с `main` после проверки бинарного файла по SHA-256. Повторных платных вызовов A2E нет.
+
+
+## Анимированная версия A2E с титрами — 05.11.2026
+
+Это **новый отдельный черновик**, а не замена ранее закоммиченного MP4:
+[Prague A2E animated Reel / review](https://drive.google.com/file/d/15zgVCXp_KBM02sGogYgzIRfK-xXZx5UD/view?usp=drivesdk).
+
+- Шесть реальных анимированных A2E-видеосцен (не фото с эффектом движения) + шесть читаемых плашек с данными оффера и WhatsApp.
+- 30,375 с, 1080×1920, H.264/AAC, 16 кадр/с; Mixkit «Tinsel and Mistletoe», без искусственного диктора.
+- Технический контроль: −14,1 LUFS / true peak −4,4 dBFS / черных интервалов 0; SHA-256 `7ec84e9ce61b333894476544e995e410f562a374cddc8e9d2c45e52a33e37b37`.
+- В Google Drive сохранены [отчет QA](https://drive.google.com/file/d/1uHDhS3-fA01VF2iVVWFCFaSKIrg_eLPq/view?usp=drivesdk), [манифест](https://drive.google.com/file/d/1sILGUKvWUkEVAhnYQJ8EBp2moGw1HxG_/view?usp=drivesdk), [проект плашек ZIP](https://drive.google.com/file/d/1h6Z4VwLyl8XcfuYdCXAOszZQHCmz-D8v/view?usp=drivesdk) и оригинальные клипы; повторная генерация A2E не требуется.
+- **Публикация не выполнена.** Нужны проверка актуальности 899 € / мест и визуальное утверждение Leo. Статус: `TECH_QA_PASS / LEO_EDITORIAL_REVIEW_REQUIRED`.
+
