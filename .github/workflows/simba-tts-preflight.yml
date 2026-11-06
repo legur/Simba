@@ -1,0 +1,51 @@
+name: Simba TTS preflight (no credits)
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    if: >-
+      github.event.issue.title == 'Simba TTS preflight 2026-11-06 (read-only)' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check catalog and model access only (no synthesize)
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          TTS_PREFLIGHT_OUT: ${{ runner.temp }}/tts-preflight.md
+        run: python integrations/tts/preflight.py
+      - name: Save preflight report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simba-tts-prague-preflight
+          path: ${{ runner.temp }}/tts-preflight.md
+          if-no-files-found: warn
+          retention-days: 7
+      - name: Post sanitized outcome
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -s "$RUNNER_TEMP/tts-preflight.md" ]; then
+            gh issue comment "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --body-file "$RUNNER_TEMP/tts-preflight.md"
+          else
+            gh issue comment "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --body "Read-only TTS preflight failed before producing a report. No synthesis requested."
+          fi
