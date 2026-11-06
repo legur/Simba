@@ -319,3 +319,30 @@ No live Google OAuth credentials are assumed, and no unattended upload is
 claimed before the first verified scheduled run. GitHub cron may be delayed
 or skipped; the seven-day read-back is a safety net, not a guarantee
 against A2E's short media expiration.
+
+### Windows guided activation (06.11.2026)
+
+A guarded PowerShell wrapper is available at
+`integrations/video/activate_a2e_drive_windows.ps1`.
+After creating and downloading the OAuth **Desktop app** JSON locally from
+Google Cloud Console (Drive API enabled, correct OAuth consent settings),
+and installing Python 3 / GitHub CLI on the same Windows PC:
+
+```powershell
+cd <local-directory-of-legur-Simba>
+gh auth login
+powershell -File .\integrations\video\activate_a2e_drive_windows.ps1 -ClientJson "C:\path\to\client_secret.json"
+```
+
+The wrapper validates local prerequisites, installs Google Python OAuth
+dependencies, launches the official Google browser consent, verifies account
+`eskvlg@gmail.com` and the archive folder, writes the three OAuth secrets
+to GitHub securely, sets the archive enable variable, and asks GitHub Actions
+to run its first **read-only-A2E** archival scan.
+
+**Credentials are never requested in chat.** Do not commit the downloaded
+Google OAuth client JSON. This helper cannot bypass the personal Google
+consent step, and cannot make the initial connection automatically from
+ChatGPT's separately connected Google Drive plugin. Verify the first
+GitHub Actions archive job and Google Drive file metadata before changing
+the status to `AUTO_ARCHIVE_ACTIVE`.
