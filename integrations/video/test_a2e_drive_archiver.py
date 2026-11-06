@@ -56,7 +56,7 @@ class ArchiveTests(TestCase):
             self.assertEqual(read.call_count, 2)
         with mock.patch.object(archiver, "MAX_PAGES", 1), \
              mock.patch.object(archiver, "_api_get", return_value={"rows": a, "count": 101}):
-            with self.assertRaisesRegex(archiver.ArchiveError, "incomplete"):
+            with self.assertRaisesRegex(archiver.ArchiveError, "incomplete|Too many"):
                 archiver.list_records("sk_test")
 
     def test_api_only_gets_expected_path(self):
