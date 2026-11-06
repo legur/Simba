@@ -47,7 +47,7 @@ else:
             if voices:
                 lines += ["", "  First system voices (ID and rate; verify speaker before synthesis):"]
                 for v in voices[:12]:
-                    vid = safe(v.get("tts_id") or v.get("ttsId") or v.get("_id") or "-")
+                    vid = safe(v.get("tts_id") or v.get("ttsId") or v.get("_id") or v.get("value") or "-")
                     rate = safe(v.get("ttsRate", "unknown"))
                     name = safe(v.get("name") or v.get("label") or v.get("voiceName") or "unnamed")
                     lines.append(f"  - \`{vid}\` | {name} | rate {rate} credits/10s")
