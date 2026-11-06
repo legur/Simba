@@ -2,7 +2,8 @@ name: Simba A2E — automatic Google Drive backup (read-only A2E)
 
 on:
   schedule:
-    - cron: "*/20 * * * *"
+    # Once daily at 06:00 UTC (08:00/09:00 Israel depending on DST).
+    - cron: "0 6 * * *"
   workflow_dispatch:
   pull_request:
     paths:
