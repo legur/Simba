@@ -41,7 +41,10 @@ def _safe_a2e_error(message: str) -> ArchiveError:
 
 
 def _api_get(url: str, key: str) -> dict:
-    if not url.startswith(A2E_BASE + "/v1/userImage2Video/"):
+    parts = urlsplit(url)
+    if (parts.scheme != "https" or parts.netloc != "api.a2e.ai" or
+            (parts.path != "/v1/userImage2Video/allRecords" and
+             not re.fullmatch(r"/v1/userImage2Video/[A-Za-z0-9_-]{8,96}", parts.path))):
         raise _safe_a2e_error("A2E endpoint not on the approved read-only API")
     req = Request(url, method="GET", headers={
         "Authorization": "Bearer " + key,
@@ -243,6 +246,29 @@ def verify_existing(row: dict, *, folder: str, size: int, md5: str, sha: str) ->
     return str(row["id"])
 
 
+def already_verified_on_drive(drive, folder: str, task_id: str) -> dict | None:
+    """Skip repeated CDN downloads once a previously uploaded object has checksums."""
+    filename = f"A2E_{task_id}.mp4"
+    matches = drive_matches(drive, folder, filename)
+    if len(matches) > 1:
+        raise ArchiveError("Duplicate archived A2E task IDs on Drive")
+    if not matches:
+        return None
+    row = matches[0]
+    props = row.get("appProperties") or {}
+    sha = props.get("sha256")
+    md5 = row.get("md5Checksum")
+    size = row.get("size")
+    if (props.get("task_id") != task_id or props.get("source") != "A2E"
+            or not isinstance(sha, str) or not re.fullmatch(r"[a-f0-9]{64}", sha)
+            or not isinstance(md5, str) or not re.fullmatch(r"[a-f0-9]{32}", md5)
+            or not isinstance(size, str) or not size.isdigit() or int(size) < 1024
+            or folder not in row.get("parents", [])):
+        raise ArchiveError("Previously archived Drive media is missing verified metadata")
+    return {"task_id": task_id, "file_id": row["id"], "bytes": int(size),
+            "sha256": sha}
+
+
 def archive_mp4(drive, folder: str, task_id: str, source: Path,
                 sha: str, md5: str, size: int, detail: dict, duration: float) -> tuple[str, str]:
     if not VALID_TASK.fullmatch(task_id) or not VALID_FOLDER.fullmatch(folder):
@@ -305,11 +331,13 @@ def run(a2e_key: str, folder_id: str, *, scan_rows=None, client=None) -> dict:
     ids = recent_completed_ids(rows)
     report = {"status": "OK", "scanned_records": len(rows), "completed_recent": len(ids),
               "uploaded": [], "already_archived": [], "expired": [], "errors": []}
-    if not ids:
-        return report
     drive = client if client is not None else oauth_drive_client()
     for task_id in ids:
         try:
+            existing = already_verified_on_drive(drive, folder_id, task_id)
+            if existing is not None:
+                report["already_archived"].append(existing)
+                continue
             detail = detail_for_task(a2e_key, task_id)
             if detail.get("current_status") != "completed":
                 continue
