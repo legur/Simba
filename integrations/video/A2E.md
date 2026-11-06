@@ -243,7 +243,8 @@ not re-trigger old labels.
 `.github/workflows/simba-a2e-drive-archive.yml`; local enrollment helper
 `integrations/video/setup_drive_oauth.py`.
 
-**Operating model:** every 20 minutes GitHub Actions checks A2E's existing
+**Operating model:** once per day at **06:00 UTC** (08:00 winter / 09:00 summer
+in Israel), GitHub Actions checks A2E's existing
 image-to-video tasks using **GET only**. It scans paginated
 `GET /v1/userImage2Video/allRecords`, confirms each recent completed task via
 `GET /v1/userImage2Video/{taskId}`, downloads the unexpired MP4 from A2E
@@ -346,3 +347,12 @@ consent step, and cannot make the initial connection automatically from
 ChatGPT's separately connected Google Drive plugin. Verify the first
 GitHub Actions archive job and Google Drive file metadata before changing
 the status to `AUTO_ARCHIVE_ACTIVE`.
+
+
+### Live archive verification and revised cadence (06.11.2026)
+
+- Google OAuth was enrolled for `eskvlg@gmail.com`, the enable variable set, and the archive validated through live GitHub Actions run `42164863932` (successful retry/attempt 2).
+- All seven recent completed A2E MP4s were saved to `A2E_Auto_Archive` and verified via Drive metadata. A missing `ffprobe` binary was fixed in PR #33.
+- On user request, **automatic checking was reduced to once daily**, at **06:00 UTC** (`0 6 * * *`), rather than every 20 minutes. Manual `workflow_dispatch` remains available for urgent archiving.
+- A2E-generated assets may expire after about three days. Daily checking reduces GitHub Actions executions but increases the time before backup; delays/skipped runs could still cause loss of unarchived media.
+- Google OAuth app is currently in **Testing**. Its refresh token may expire after approximately seven days; move to a compliant production OAuth setup for uninterrupted long-term archive operation. Scheduled backups cannot be called permanently reliable until that is resolved.
