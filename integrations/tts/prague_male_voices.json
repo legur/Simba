@@ -1,0 +1,74 @@
+{
+  "benchmark_id": "PRAGUE-STORY-01",
+  "language": "ru-RU",
+  "voice_gender": "male_only",
+  "style": "emotional_travel_story",
+  "text": "Представьте: утро в Праге. За окном старинные крыши, впереди четыре дня путешествия, а заботы остались дома. Новый год в Праге, с 31 декабря по 3 января. Перелет, гостиница и завтраки. Стоимость от 899 евро на человека.",
+  "delivery_prompt_en": "A natural, mature male Russian narrator for a cinematic, intimate travel story. Warm, deep but not forced, calm and trustworthy. Begin softly and invitingly, build a gentle sense of discovery, articulate dates and price clearly. Subtle emotional variation. No shouting, announcer tone, dramatic bass, or exaggerated advertising enthusiasm. Read the Russian text exactly as written.",
+  "candidates": {
+    "gemini": {
+      "model": "gemini-3.8-flash-tts",
+      "voice_names": [
+        "Algieba",
+        "Charon",
+        "Orus"
+      ],
+      "gender_verified": "Google Firebase voice list",
+      "speech_prompt": "Warm, intimate Russian travel storytelling, mature and trustworthy male voice, natural phrasing, soft start, slight wonder, precise date and price delivery."
+    },
+    "google_chirp_3_hd": {
+      "voices": [
+        "ru-RU-Chirp3-HD-Charon",
+        "ru-RU-Chirp3-HD-Orus",
+        "ru-RU-Chirp3-HD-Fenrir"
+      ],
+      "language_code": "ru-RU",
+      "note": "Keep raw text for baseline; do not pass unsupported SSML or speaking-rate settings unless verified in active API version."
+    },
+    "elevenlabs": {
+      "voice_id": null,
+      "selection": "Choose and verify native Russian male narrator in voice library; record actual voice_id prior to synthesis.",
+      "model": "check current permitted multilingual model before test"
+    },
+    "minimax": {
+      "model": "speech-2.8-hd",
+      "voice_ids": [
+        "Russian_ReliableMan",
+        "Russian_HandsomeChildhoodFriend",
+        "Russian_AttractiveGuy"
+      ],
+      "language_boost": "Russian",
+      "speed": 0.95,
+      "note": "Preview voice choice in Russian; no paid synthesis until quota approved."
+    },
+    "azure": {
+      "voices": [
+        "ru-RU-Lev:MAI-Voice-2",
+        "ru-RU-DmitryNeural"
+      ],
+      "style_for_lev": "reflective",
+      "style_degree_for_lev": 1.1,
+      "rate": "-5%"
+    },
+    "a2e": {
+      "voices": [
+        {
+          "name": "DmitryNeural",
+          "tts_id": "63a549c1ad2a27fe43d966d2",
+          "credits_per_10_seconds": 1
+        },
+        {
+          "name": "Marat",
+          "tts_id": "66d3f6641e0bc0b16ba9c8bb",
+          "credits_per_10_seconds": 3
+        }
+      ],
+      "note": "IDs and rates returned from authenticated read-only voice_list. This file does not trigger generation."
+    }
+  },
+  "safety": {
+    "no_paid_calls_without_explicit_cap": true,
+    "store_audio_privately": true,
+    "run_status": "not_generated"
+  }
+}
