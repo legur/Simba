@@ -1,0 +1,51 @@
+name: Simba ElevenLabs Stanislav Russian TTS one-shot sample
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-elevenlabs-stanislav-ru-one-shot-20261107
+  cancel-in-progress: false
+
+jobs:
+  once:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba ElevenLabs Stanislav Russian TTS ONE SHOT 2026-11-07' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile production voice safety gates (no paid calls)
+        run: |
+          python -m py_compile integrations/tts/professional_voice_pilot.py
+          python integrations/tts/professional_voice_pilot.py --provider elevenlabs --voice-id ogi2DyUAKJb7CEdqqvlU
+      - name: Install FFmpeg and private Drive clients
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+          python -m pip install "google-api-python-client>=2.140,<3" "google-auth>=2.30,<3" "google-auth-httplib2>=0.2,<1"
+      - name: Generate ONE ElevenLabs sample and save privately; audio only
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+          SIMBA_PRO_TTS_ONE_REQUEST: YES_ONCE
+        run: python integrations/tts/professional_voice_pilot.py --provider elevenlabs --voice-id ogi2DyUAKJb7CEdqqvlU --execute
+      # No GitHub public audio artifact. No video.
