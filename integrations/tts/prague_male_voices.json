@@ -98,5 +98,27 @@
       "Sadaltager"
     ],
     "note": "Google catalog descriptions are not age classifications; actual Russian audio must be auditioned."
+  },
+  "production_voice": {
+    "character": "Simba",
+    "selection_status": "approved_by_user",
+    "selection_date": "2026-11-07",
+    "provider": "Google Gemini Voice Design",
+    "model": "gemini-3.8-flash-tts",
+    "profile": "WarmBaritone",
+    "display_name": "Simba — Теплый баритон",
+    "language_code": "ru-RU",
+    "voice_gender": "male",
+    "persistent_voice_id_storage": {
+      "provider": "private Google Drive",
+      "folder_name": "Simba Private TTS Prague 2026-11-07",
+      "file_name": "SimbaDesign_WarmBaritone.json",
+      "note": "Resolve persistent voice_id from the existing private Drive metadata at runtime. Do not recreate the voice for each clip or commit its ID into the public repository."
+    },
+    "reference_sample": "SIMBA_Design_WarmBaritone_Prague.wav",
+    "approved_for": "Simba character voice in Russian video narration",
+    "delivery_style": "mature warm baritone, natural conversational Russian, subtle huskiness, confident calm and wry humor; no announcer hype",
+    "integration_state": "selection_saved; existing video renderer not yet verified to read this selection",
+    "alternative_profile": "VelvetCharacter — retained as backup, not current default"
   }
 }
