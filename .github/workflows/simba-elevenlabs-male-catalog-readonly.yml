@@ -1,0 +1,36 @@
+name: Simba ElevenLabs Russian male voice catalog (READ ONLY)
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  catalog:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba ElevenLabs Russian male TTS voice catalog 2026-11-07' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Compile script (no audio)
+        run: python -m py_compile integrations/tts/elevenlabs_russian_male_discover.py
+      - name: Find shared Russian male voices (READ ONLY, zero TTS credits)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: python integrations/tts/elevenlabs_russian_male_discover.py
