@@ -147,10 +147,22 @@ def gemini_sample(text, voice):
         "generation_config":{"speech_config":[{"voice":voice}]},
     }
     result=post_json(GEMINI_URL,data,{"x-goog-api-key":key})
-    audio = result.get("output_audio") if isinstance(result,dict) else None
-    if not isinstance(audio,dict) or not isinstance(audio.get("data"),str):
-        raise StopTest("Gemini returned no inline audio. No retry (ambiguous generation).")
-    blob=base64.b64decode(audio["data"],validate=True)
+    # Raw Interactions REST responses place the WAV in steps[].content[].data;
+    # result.output_audio is an SDK convenience property, not a REST field.
+    payloads=[]
+    if isinstance(result,dict):
+        audio=result.get("output_audio")
+        if isinstance(audio,dict) and isinstance(audio.get("data"),str):
+            payloads.append(audio["data"])
+        for step in result.get("steps",[]):
+            if not isinstance(step,dict) or step.get("type")!="model_output":
+                continue
+            for part in step.get("content",[]):
+                if isinstance(part,dict) and part.get("type")=="audio" and isinstance(part.get("data"),str):
+                    payloads.append(part["data"])
+    if not payloads:
+        raise StopTest("Gemini REST response contained no audio parts; never blindly retry.")
+    blob=base64.b64decode(payloads[-1],validate=True)
     duration=assert_wav(blob)
     return blob,duration
 
