@@ -5,6 +5,7 @@
   "description": "Simba photo-story renderer: a page drawn frame by frame in headless Chromium (engine from lemo-opuscar, MIT).",
   "engines": { "node": ">=20" },
   "dependencies": {
+    "animejs": "4.2.2",
     "playwright-core": "^1.63.0"
   }
 }

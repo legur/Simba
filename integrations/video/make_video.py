@@ -51,6 +51,7 @@ def node(script, *args):
 
 # ---------------------------------------------------------------- spec
 MOVES = {'push', 'pull', 'pan-left', 'pan-right', 'rise', 'hold', 'none'}
+MOTIONS = {'anime', 'classic'}
 VIDEO_EXT = ('.mp4', '.mov', '.m4v', '.webm')
 INSERTS = {'route', 'cartoon'}   # code-drawn scenes in template/inserts.js
 
@@ -61,6 +62,9 @@ def load_spec(job: Path):
     need = lambda c, m: None if c else (_ for _ in ()).throw(Stop('video-spec.json: ' + m))
     need(isinstance(s.get('packageId'), str) and re.fullmatch(r'[\w.-]+', s['packageId']), 'packageId: letters, digits, . _ - only')
     need(isinstance(s.get('sourcePost'), str), 'sourcePost: path of the APPROVED post, relative to the repository root')
+    need(isinstance(s.get('motion', 'anime'), str) and s.get('motion', 'anime') in MOTIONS,
+         f'motion must be one of {sorted(MOTIONS)}')
+    s.setdefault('motion', 'anime')
     need(isinstance(s.get('scenes'), list) and 1 <= len(s['scenes']) <= 8, 'scenes: 1–8 scenes')
     for i, sc in enumerate(s['scenes']):
         src = sc.get('clip') or sc.get('image') or ''
@@ -111,16 +115,42 @@ def screen_texts(s):
 
 
 # ---------------------------------------------------------------- gates on the approved source
+APPROVAL_LINE = re.compile(r'^(?:STATUS|Статус):\s*APPROVED(?:\s*$|\s*[·,])', re.M)
+
+
+def parse_approved_source(md):
+    """Return (approved body, approval state) for current and legacy posts.
+
+    Current posts delimit the approved copy with ``## APPROVED_TEXT`` (or the
+    older ``## TEXT`` alias). Legacy Content Library posts put an explicit
+    approval line in their metadata block and start the copy after the next
+    blank line. Free-form mentions of APPROVED elsewhere are not accepted.
+    """
+    approved_match = APPROVAL_LINE.search(md)
+    approved = approved_match is not None
+    section = re.search(r'^## (?:APPROVED_TEXT|TEXT)\s*$(.*?)(?=^## |\Z)', md, re.M | re.S)
+    if section:
+        return section.group(1), approved
+    if not approved_match:
+        return None, False
+
+    tail = md[approved_match.end():]
+    separator = re.search(r'(?:\r?\n)[ \t]*(?:\r?\n)', tail)
+    if not separator:
+        return None, True
+    body = tail[separator.end():]
+    return (body if body.strip() else None), True
+
+
 def approved_text(spec, draft=False):
     """The approved post text. With --draft a not-yet-approved text is accepted (a preview for Leo, never for publication)."""
     p = REPO / spec['sourcePost']
     if not p.is_file(): raise Stop(f'sourcePost not found: {spec["sourcePost"]}')
     md = p.read_text(encoding='utf-8')
-    approved = bool(re.search(r'^STATUS:\s*APPROVED', md, re.M))
+    source, approved = parse_approved_source(md)
     if not approved and not draft: raise Stop(f'{spec["sourcePost"]} is not STATUS: APPROVED; a video is made only from an approved post (--draft makes a preview that is not for publication)')
-    m = re.search(r'^## (?:APPROVED_TEXT|TEXT)\s*$(.*?)(?=^## |\Z)', md, re.M | re.S)
-    if not m: raise Stop(f'{spec["sourcePost"]} has no "## APPROVED_TEXT" section')
-    return m.group(1), approved
+    if source is None: raise Stop(f'{spec["sourcePost"]} has no approved text body')
+    return source, approved
 
 
 NUM = re.compile(r'[$€₪]?\s?\d[\d\s.,:/\-–]*\d|[$€₪]?\d')
@@ -404,7 +434,7 @@ def timeline(spec):
     for k, L in enumerate(lines):                        # hold each subtitle ≥ max(1.8 s, speech + 0.6 s), never into the next line
         nxt = lines[k + 1]['t0'] - .05 if k + 1 < len(lines) else dur - .3
         L['t1'] = round(min(max(L['t0'] + 1.8, L['t0'] + L['dur'] + .6), nxt), 3); L['end'] = round(L['t0'] + L['dur'], 3)
-    return {'size': [w, h], 'dur': dur, 'crossfade': CROSSFADE, 'scenes': scenes, 'offer': offer, 'lines': lines,
+    return {'size': [w, h], 'dur': dur, 'crossfade': CROSSFADE, 'motion': spec.get('motion', 'anime'), 'scenes': scenes, 'offer': offer, 'lines': lines,
             'music': spec.get('music', {'style': 'calm'}), 'plucks': plucks, 'clipAudio': clip_audio,
             'end': {'poster': e.get('poster'), 'bg': still_of(e.get('bg')), 'table': e.get('table'), 'cta': e.get('cta'), 'contact': e.get('contact'), 'brand': e['brand'], 't0': round(t0, 3)}}
 

@@ -90,6 +90,26 @@ class InputValidationTests(unittest.TestCase):
                 with self.subTest(source=source), self.assertRaises(job.JobError):
                     job.validate_source_post(root, spec(sourcePost=source))
 
+    def test_legacy_approved_source_uses_body_after_metadata(self):
+        renderer = job._load_renderer_module()
+        legacy = (
+            "# MSC Black Friday\n\n"
+            "Статус: APPROVED · решение Leo «Берём»\n"
+            "SOURCE: Leo; STATUS: APPROVED, NOT PUBLISHED.\n\n"
+            "Первый абзац рекламы.\n\nВторой абзац.\n"
+        )
+        body, approved = renderer.parse_approved_source(legacy)
+        self.assertTrue(approved)
+        self.assertEqual(body, "Первый абзац рекламы.\n\nВторой абзац.\n")
+
+    def test_approval_mention_without_explicit_status_line_is_rejected(self):
+        renderer = job._load_renderer_module()
+        body, approved = renderer.parse_approved_source(
+            "# Draft\n\nSOURCE: text is APPROVED by someone\n\nDraft copy\n"
+        )
+        self.assertFalse(approved)
+        self.assertIsNone(body)
+
 
 class SecureZipTests(unittest.TestCase):
     def valid_entries(self):

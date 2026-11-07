@@ -265,10 +265,15 @@ def validate_source_post(repo_root: Path, spec: dict) -> Path:
         text = path.read_text(encoding="utf-8")
     except (OSError, UnicodeError):
         raise JobError("sourcePost cannot be read as UTF-8") from None
-    if not re.search(r"^STATUS:\s*APPROVED\s*$", text, re.MULTILINE):
-        raise JobError("sourcePost is not STATUS: APPROVED")
-    if not re.search(r"^## APPROVED_TEXT\s*$", text, re.MULTILINE):
-        raise JobError("sourcePost has no APPROVED_TEXT section")
+    renderer = _load_renderer_module()
+    try:
+        approved_body, approved = renderer.parse_approved_source(text)
+    except Exception:
+        raise JobError("sourcePost approval metadata could not be parsed") from None
+    if not approved:
+        raise JobError("sourcePost is not explicitly APPROVED")
+    if not approved_body:
+        raise JobError("sourcePost has no approved text body")
     return path
 
 

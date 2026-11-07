@@ -1,0 +1,28 @@
+{
+  "dur": 4,
+  "crossfade": 0.2,
+  "scenes": [
+    {
+      "t0": 0,
+      "t1": 1.5,
+      "image": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1080' height='1920'%3E%3Crect width='1080' height='1920' fill='%23233f67'/%3E%3Ccircle cx='760' cy='460' r='320' fill='%234d729e'/%3E%3C/svg%3E",
+      "move": "hold",
+      "title": "Anime reveal"
+    }
+  ],
+  "lines": [],
+  "offer": {
+    "t0": 1.5,
+    "t1": 2.7,
+    "title": "Special offer",
+    "rows": ["Flight and hotel", "Breakfast included"],
+    "price": "899 EUR",
+    "note": "Per person"
+  },
+  "end": {
+    "t0": 2.7,
+    "cta": "Book your journey",
+    "contact": "+000 000 000",
+    "brand": "SIMBA"
+  }
+}
