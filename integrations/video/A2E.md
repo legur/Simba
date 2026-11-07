@@ -55,9 +55,11 @@ python integrations/video/a2e_adapter.py doctor
 python integrations/video/a2e_adapter.py quote --image-file "C:\\myframes\\scene1.png" --prompt "Slow cinematic camera push, stable architecture, no text" --out "integrations/video/jobs/demo/scene1.quote.json"
 ```
 
-`quote --image-file` securely requests a short-lived presigned URL, uploads
+Before `quote --image-file`, obtain explicit approval for possible preparation
+charges: a previous presign was charged one credit. The command requests a short-lived presigned URL, uploads
 PNG/JPEG/WebP bytes straight to A2E without A2E/Wix authorization headers,
-then calls the **free** A2E quote API. Images must be <=10 MB. Alternatively
+then calls the **free** A2E quote API; the whole command is not necessarily free.
+Images must be <=10 MB. Alternatively
 use `--image-url https://.../image.jpg` for publicly available files.
 The returned quote file has the exact request body and credits estimate.
 
