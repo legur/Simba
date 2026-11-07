@@ -1,6 +1,7 @@
 // Simba photo-story: Rafael frames with camera moves, karaoke subtitles, an offer card and an end card.
 // The page reads timeline.json (written by make_video.py) from the job folder; render(t) is a pure function of t.
 import { clamp, lerp, seg, ss, eo, eio } from '/engine/lib.js';
+import { animate } from '/node_modules/animejs/dist/modules/index.js';
 import { makeRoute } from '/template/inserts.js';
 import { makeCartoon } from '/template/cartoon.js';
 
@@ -11,6 +12,8 @@ const ctx = cv.getContext('2d');
 const C = { navy: '#0E1B30', cream: '#F4EBDD', gold: '#E2B65B', dim: 'rgba(244,235,221,.55)' };
 const TITLE = '"Playfair Display"', SANS = 'Montserrat';
 const XF = TL.crossfade;                                  // scene crossfade, seconds
+const MOTION = TL.motion ?? 'anime';                       // old timelines default to the editor-approved Anime.js style
+if (!['anime', 'classic'].includes(MOTION)) throw new Error(`unknown motion style: ${MOTION}`);
 
 // ---------------------------------------------------------------- assets
 const load = src => new Promise((ok, bad) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => bad(new Error('image missing: ' + src)); i.src = src; });
@@ -54,6 +57,21 @@ const POSTER = (() => {
 
 // ---------------------------------------------------------------- text helpers
 let texts = [];
+const REVEAL_MS = 1000;
+const revealState = { opacity: 0, lift: 1, scale: .985 };
+const revealMotion = MOTION === 'anime' ? animate(revealState, {
+  opacity: 1,
+  lift: 0,
+  scale: 1,
+  duration: REVEAL_MS,
+  ease: 'outQuint',
+  autoplay: false,
+}) : null;
+function revealAt(p) {
+  revealMotion.seek(clamp(p) * REVEAL_MS, true);
+  return { ...revealState };
+}
+const revealProgress = p => MOTION === 'classic' ? eo(clamp(p)) : revealAt(p).opacity;
 function wrap(g, words, maxW) {
   const lines = [[]]; let w = 0; const sp = g.measureText(' ').width;
   for (const word of words) {
@@ -63,13 +81,21 @@ function wrap(g, words, maxW) {
   }
   return lines;
 }
-function rise(g, txt, x, y, font, color, p, align = 'center', id) {   // a line that slides up out of a mask
+function rise(g, txt, x, y, font, color, p, align = 'center', id) {   // deterministic editor-selected reveal, derived only from timeline progress
   if (p <= 0) return;
   g.save(); g.font = font; g.textAlign = align; g.textBaseline = 'alphabetic';
   const m = g.measureText(txt), h = m.actualBoundingBoxAscent + m.actualBoundingBoxDescent;
   const x0 = align === 'center' ? x - m.width / 2 : align === 'right' ? x - m.width : x;
-  g.beginPath(); g.rect(x0 - 20, y - m.actualBoundingBoxAscent - 12, m.width + 40, h + 28); g.clip();
-  g.globalAlpha *= clamp(p * 1.6); g.fillStyle = color; g.fillText(txt, x, y + (1 - eo(p)) * h * 1.1);
+  if (MOTION === 'classic') {
+    g.beginPath(); g.rect(x0 - 20, y - m.actualBoundingBoxAscent - 12, m.width + 40, h + 28); g.clip();
+    g.globalAlpha *= clamp(p * 1.6); g.fillStyle = color;
+    g.fillText(txt, x, y + (1 - eo(p)) * h * 1.1);
+  } else {
+    const motion = revealAt(p), top = y - m.actualBoundingBoxAscent - 12, clipH = h + 28;
+    g.beginPath(); g.rect(x0 - 20, top + clipH * (1 - motion.opacity), m.width + 40, clipH * motion.opacity); g.clip();
+    g.globalAlpha *= clamp(motion.opacity * 1.15); g.fillStyle = color;
+    g.translate(x, y); g.scale(motion.scale, motion.scale); g.fillText(txt, 0, motion.lift * h * .48);
+  }
   g.restore();
   texts.push({ id: id ?? txt, text: txt, x0, y0: y - m.actualBoundingBoxAscent, x1: x0 + m.width, y1: y + m.actualBoundingBoxDescent });
 }
@@ -115,7 +141,7 @@ function drawTitle(s, i, t) {
   ctx.save(); ctx.globalAlpha = a; ctx.font = `700 92px ${TITLE}`;
   const lines = wrap(ctx, s.title.split(/\s+/), W - 160);
   lines.forEach((ln, k) => rise(ctx, ln.join(' '), W / 2, 300 + k * 108, `700 92px ${TITLE}`, C.cream, seg(t, s.t0 + .15 + k * .18, s.t0 + .85 + k * .18), 'center', `title${i}-${k}`));
-  const rp = eo(seg(t, s.t0 + .5, s.t0 + 1.1)), ry = 300 + lines.length * 108 - 50;
+  const rp = revealProgress(seg(t, s.t0 + .5, s.t0 + 1.1)), ry = 300 + lines.length * 108 - 50;
   ctx.fillStyle = C.gold; ctx.fillRect(W / 2 - 70 * rp, ry, 140 * rp, 4);
   ctx.restore();
 }
@@ -151,11 +177,11 @@ function drawOffer(t) {
   const tl = wrap(ctx, O.title.split(/\s+/), W - 160);
   tl.forEach((ln, k) => rise(ctx, ln.join(' '), W / 2, 470 + k * 98, `700 84px ${TITLE}`, C.cream, st(0), 'center', `offer-title-${k}`));
   let y = 470 + tl.length * 98 + 40;
-  ctx.fillStyle = C.gold; const rp = eo(st(1)); ctx.fillRect(W / 2 - 80 * rp, y - 30, 160 * rp, 4);
+  ctx.fillStyle = C.gold; const rp = revealProgress(st(1)); ctx.fillRect(W / 2 - 80 * rp, y - 30, 160 * rp, 4);
   O.rows.forEach((r, k) => { rise(ctx, r, W / 2, y + 40 + k * 66, `500 44px ${SANS}`, C.cream, st(1 + k * .5), 'center', `offer-row-${k}`); });
   y += 40 + O.rows.length * 66 + 150;
   const pp = st(1.5 + O.rows.length * .5);
-  ctx.save(); ctx.translate(W / 2, y); const s = pp > 0 ? lerp(.86, 1, eo(pp)) : 1; ctx.scale(s, s); ctx.translate(-W / 2, -y);
+  ctx.save(); ctx.translate(W / 2, y); const s = pp > 0 ? lerp(MOTION === 'classic' ? .86 : .92, 1, revealProgress(pp)) : 1; ctx.scale(s, s); ctx.translate(-W / 2, -y);
   rise(ctx, O.price, W / 2, y, `700 150px ${TITLE}`, C.gold, pp, 'center', 'offer-price'); ctx.restore();
   if (O.note) {
     ctx.font = `500 36px ${SANS}`;
@@ -182,12 +208,12 @@ function drawEnd(t) {
     rise(ctx, T.title, W / 2, y, `700 64px ${TITLE}`, C.cream, st(0), 'center', 'tbl-title');
     if (T.sub) rise(ctx, T.sub, W / 2, y + 70, `500 40px ${SANS}`, 'rgba(244,235,221,.85)', st(.5), 'center', 'tbl-sub');
     y += T.sub ? 150 : 100;
-    ctx.fillStyle = C.gold; const rp = eo(st(1)); ctx.fillRect(W / 2 - 400 * rp, y - 40, 800 * rp, 3);
+    ctx.fillStyle = C.gold; const rp = revealProgress(st(1)); ctx.fillRect(W / 2 - 400 * rp, y - 40, 800 * rp, 3);
     T.rows.forEach(([label, value], k) => {
       const p = st(1.3 + k * .6), yy = y + 50 + k * 112;
       rise(ctx, label, 120, yy, `500 44px ${SANS}`, C.cream, p, 'left', `tbl-l${k}`);
       rise(ctx, value, W - 120, yy + 6, `700 76px ${TITLE}`, C.gold, p, 'right', `tbl-v${k}`);
-      ctx.fillStyle = 'rgba(244,235,221,.18)'; ctx.fillRect(120, yy + 40, (W - 240) * eo(p), 1.5);
+      ctx.fillStyle = 'rgba(244,235,221,.18)'; ctx.fillRect(120, yy + 40, (W - 240) * revealProgress(p), 1.5);
     });
     y += 50 + T.rows.length * 112;
     if (T.note) {
