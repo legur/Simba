@@ -1,0 +1,80 @@
+name: Simba professional TTS audio-only one-shot pilot
+
+on:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+    inputs:
+      check_only:
+        description: 'Offline dry-run only; no provider API calls'
+        required: true
+        default: 'YES'
+        type: choice
+        options:
+          - 'YES'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-professional-tts-one-shot-${{ github.event.issue.number || 'dry-run' }}
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Offline preflight (no API calls or billing)
+        run: |
+          python -m py_compile integrations/tts/professional_voice_pilot.py integrations/tts/run_male_prague.py
+          python integrations/tts/professional_voice_pilot.py --provider elevenlabs --voice-id ABCDEFGHIJKLMNOPQRST
+          python integrations/tts/professional_voice_pilot.py --provider minimax --voice-id Russian_ReliableMan
+          python integrations/tts/professional_voice_pilot.py --provider azure --voice-id 'ru-RU-Lev:MAI-Voice-2'
+
+  one-shot:
+    needs: check
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.user.login == 'legur' &&
+      (github.event.issue.title == 'Simba pro TTS ElevenLabs test ONE SHOT' ||
+       github.event.issue.title == 'Simba pro TTS MiniMax test ONE SHOT' ||
+       github.event.issue.title == 'Simba pro TTS Azure test ONE SHOT') &&
+      vars.SIMBA_PRO_TTS_ONE_REQUEST == 'YES_ONCE'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    permissions:
+      contents: read
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      SIMBA_PRO_TTS_ONE_REQUEST: ${{ vars.SIMBA_PRO_TTS_ONE_REQUEST }}
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+      AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+      AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
+      GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+      GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+      GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+      PROVIDER: ${{ github.event.issue.title == 'Simba pro TTS ElevenLabs test ONE SHOT' && 'elevenlabs' || github.event.issue.title == 'Simba pro TTS MiniMax test ONE SHOT' && 'minimax' || 'azure' }}
+      VOICE_ID: ${{ github.event.issue.title == 'Simba pro TTS ElevenLabs test ONE SHOT' && vars.SIMBA_ELEVENLABS_VOICE_ID || github.event.issue.title == 'Simba pro TTS MiniMax test ONE SHOT' && vars.SIMBA_MINIMAX_VOICE_ID || 'ru-RU-Lev:MAI-Voice-2' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install private Drive and decoding requirements
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+          python -m pip install "google-api-python-client>=2.140,<3" "google-auth>=2.30,<3" "google-auth-httplib2>=0.2,<1"
+      - name: Exactly one professional synthesis to private Drive, no video
+        run: python integrations/tts/professional_voice_pilot.py --provider "$PROVIDER" --voice-id "$VOICE_ID" --execute
