@@ -29,8 +29,18 @@ def main():
                 raise StopTest("Unexpected catalog status")
             obj=json.load(resp)
     except HTTPError as e:
-        post_comment("ElevenLabs Russian male catalog: HTTP "+str(e.code)+". No audio requests made.")
-        raise StopTest("Voice Library lookup failed")
+        # Structured status is safe for diagnostics; never log tokens/response payload.
+        try:
+            details=json.loads(e.read(4096).decode("utf-8",errors="replace"))
+            item=details.get("detail",{}) if isinstance(details,dict) else {}
+            code=item.get("status") if isinstance(item,dict) else "unknown"
+            if not isinstance(code,str) or not re.fullmatch(r"[a-z_]{3,50}",code):
+                code="unknown"
+        except Exception:
+            code="unknown"
+        post_comment("ElevenLabs Russian male catalog: HTTP "+str(e.code)+
+                     ", provider_status="+code+". No audio requests made.")
+        raise StopTest("Voice Library lookup failed: "+code)
     voices=obj.get("voices",[])
     if not isinstance(voices,list):
         raise StopTest("No voice metadata returned")
