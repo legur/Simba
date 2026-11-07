@@ -1,0 +1,38 @@
+name: Simba TTS troubleshoot read-only
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba TTS Prague read-only diagnosis 2026-11-07' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check read-only scripts
+        run: python -m py_compile integrations/tts/diagnose_prague.py
+      - name: Diagnose without generating audio
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python integrations/tts/diagnose_prague.py > "$RUNNER_TEMP/tts-diag.md"
+          gh issue comment "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --body-file "$RUNNER_TEMP/tts-diag.md"
