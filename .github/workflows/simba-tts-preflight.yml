@@ -1,6 +1,7 @@
 name: Simba TTS preflight (no credits)
 
 on:
+  workflow_dispatch:
   issues:
     types: [opened, edited]
 
@@ -10,9 +11,11 @@ permissions:
 jobs:
   inspect:
     if: >-
-      github.event.issue.title == 'Simba TTS preflight 2026-11-06 (read-only)' &&
-      github.event.issue.user.login == 'legur' &&
-      github.event.issue.pull_request == null
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'issues' &&
+       github.event.issue.title == 'Simba TTS preflight 2026-11-06 (read-only)' &&
+       github.event.issue.user.login == 'legur' &&
+       github.event.issue.pull_request == null)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -39,8 +42,8 @@ jobs:
           path: ${{ runner.temp }}/tts-preflight.md
           if-no-files-found: warn
           retention-days: 7
-      - name: Post sanitized outcome
-        if: always()
+      - name: Post sanitized outcome to triggering issue
+        if: always() && github.event_name == 'issues'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
