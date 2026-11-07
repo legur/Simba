@@ -47,27 +47,48 @@
         "Zubenelgenubi"
       ],
       "remaining_oneshot_20261107": [
-        "Achird",
-        "Alnilam",
-        "Enceladus",
         "Fenrir",
         "Puck",
         "Rasalgethi",
         "Sadachbia",
         "Sadaltager",
-        "Schedar",
         "Umbriel",
         "Zubenelgenubi"
       ],
       "previous_ambiguous_do_not_retry": [
         "Algieba",
-        "Charon"
+        "Alnilam",
+        "Charon",
+        "Enceladus",
+        "Schedar"
       ],
       "existing_samples": [
+        "Achird",
         "Algenib",
         "Iapetus",
         "Orus"
-      ]
+      ],
+      "batch_status_20261107": {
+        "state": "paused_due_to_http_429",
+        "successful_new": [
+          "Achird"
+        ],
+        "failed_ambiguous": [
+          "Alnilam",
+          "Enceladus",
+          "Schedar"
+        ],
+        "not_attempted": [
+          "Fenrir",
+          "Puck",
+          "Rasalgethi",
+          "Sadachbia",
+          "Sadaltager",
+          "Umbriel",
+          "Zubenelgenubi"
+        ],
+        "reason": "Gemini HTTP 429 on Schedar diagnostic; do not automatically resubmit paid synthesis or assume failed calls unbilled."
+      }
     },
     "google_chirp_3_hd": {
       "voices": [
@@ -126,7 +147,8 @@
     "no_paid_calls_without_explicit_cap": true,
     "store_audio_privately": true,
     "run_status": "Gemini Orus verified; further male-only Gemini samples planned, A2E excluded per user",
-    "no_more_a2e_requests": true
+    "no_more_a2e_requests": true,
+    "pause_additional_gemini_standard_sample_runs": true
   },
   "character_voice_brief": {
     "role": "Simba — recurring adult male brand character, not a generic travel-announcement narrator",
