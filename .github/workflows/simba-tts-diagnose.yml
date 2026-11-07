@@ -49,5 +49,5 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           python -m py_compile integrations/tts/recover_a2e_prague.py
-          python integrations/tts/recover_a2e_prague.py > "$RUNNER_TEMP/tts-recover.md"
+          python integrations/tts/recover_a2e_prague.py > "$RUNNER_TEMP/tts-recover.md" || echo "Recovery exited unsuccessfully. No new generation was requested." >> "$RUNNER_TEMP/tts-recover.md"
           gh issue comment "${{ github.event.issue.number }}" --repo "${{ github.repository }}" --body-file "$RUNNER_TEMP/tts-recover.md"
