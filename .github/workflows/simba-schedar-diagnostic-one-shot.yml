@@ -1,0 +1,47 @@
+name: Simba single Schedar male voice (one-shot diagnostic)
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-schedar-diagnostic-20261107
+  cancel-in-progress: false
+
+jobs:
+  sample:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba Schedar diagnostic one shot 2026-11-07' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate before possible paid call
+        run: |
+          python -m py_compile integrations/tts/gemini_schedar_diagnostic_once.py integrations/tts/run_male_prague.py
+          python -m json.tool integrations/tts/prague_male_voices.json > /dev/null
+      - name: Install Google Drive clients
+        run: python -m pip install "google-api-python-client>=2.140,<3" "google-auth>=2.30,<3" "google-auth-httplib2>=0.2,<1"
+      - name: One unique Schedar synthesis, no retries, private Drive only
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+        run: python integrations/tts/gemini_schedar_diagnostic_once.py
