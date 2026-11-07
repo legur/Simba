@@ -52,6 +52,7 @@ def node(script, *args):
 # ---------------------------------------------------------------- spec
 MOVES = {'push', 'pull', 'pan-left', 'pan-right', 'rise', 'hold', 'none'}
 MOTIONS = {'anime', 'classic'}
+RENDERERS = {'simba', 'hyperframes'}
 VIDEO_EXT = ('.mp4', '.mov', '.m4v', '.webm')
 INSERTS = {'route', 'cartoon'}   # code-drawn scenes in template/inserts.js
 
@@ -62,6 +63,12 @@ def load_spec(job: Path):
     need = lambda c, m: None if c else (_ for _ in ()).throw(Stop('video-spec.json: ' + m))
     need(isinstance(s.get('packageId'), str) and re.fullmatch(r'[\w.-]+', s['packageId']), 'packageId: letters, digits, . _ - only')
     need(isinstance(s.get('sourcePost'), str), 'sourcePost: path of the APPROVED post, relative to the repository root')
+    need(isinstance(s.get('renderer', 'simba'), str) and s.get('renderer', 'simba') in RENDERERS,
+         f'renderer must be one of {sorted(RENDERERS)}')
+    s.setdefault('renderer', 'simba')
+    if s['renderer'] == 'hyperframes':
+        need((HERE / 'node_modules' / 'hyperframes' / 'bin' / 'hyperframes.mjs').is_file(),
+             'HyperFrames is not installed; run npm ci in integrations/video before rendering')
     need(isinstance(s.get('motion', 'anime'), str) and s.get('motion', 'anime') in MOTIONS,
          f'motion must be one of {sorted(MOTIONS)}')
     s.setdefault('motion', 'anime')
@@ -523,9 +530,16 @@ def main():
             qa.append(f'- Music: external recording `{tl["music"]["file"]}` (48 kHz stereo); rights_confirmed is a Music Editor attestation, not an automatic license check')
         else:
             qa.append('- Music: synthesized soundtrack (legacy default)')
-        log('rendering frames…')
-        code, out = node('video.mjs', job, '--size', spec['size'], '--fps', a.fps, '--workers', a.workers, '--out', job / 'out' / 'video.mp4')
-        if code != 0: raise Stop('render failed:\n' + out[-1500:])
+        log('rendering frames…', spec['renderer'])
+        if spec['renderer'] == 'hyperframes':
+            from hyperframes_backend import render as hyperframes_render
+            try:
+                hyperframes_render(job, tl, a.fps, job / 'out' / 'video.mp4', ffmpeg=FFMPEG)
+            except (RuntimeError, OSError) as exc:
+                raise Stop('HyperFrames render failed: ' + str(exc)) from exc
+        else:
+            code, out = node('video.mjs', job, '--size', spec['size'], '--fps', a.fps, '--workers', a.workers, '--out', job / 'out' / 'video.mp4')
+            if code != 0: raise Stop('render failed:\n' + out[-1500:])
         sys.path.insert(0, str(HERE)); import audio
         try:
             wav = audio.mix(job, tl)
@@ -544,7 +558,7 @@ def main():
             qa.append(f'- Final mix speech check (voice over music, ≥ 0.85): {r:.2f} — «{heard}»')
         ok = d <= MAX_DUR + .05 and abs(I + 14) <= 1 and P <= -1 and black == 0 and heard_ok
         status = ('VIDEO_READY_FOR_LEO' if approved else 'VIDEO_DRAFT_SOURCE_NOT_APPROVED') if ok else 'VIDEO_QA_FAILED'
-        report = [f'# Video QA — {spec["packageId"]}', '', f'STATUS: {status}', f'RENDERER: integrations/video (photo-story), narration={voice_provider(spec)}', '', *qa, '',
+        report = [f'# Video QA — {spec["packageId"]}', '', f'STATUS: {status}', f'RENDERER: {spec["renderer"]}, narration={voice_provider(spec)}', '', *qa, '',
                   f'Files: `{final.name}`, `{final.with_suffix(".srt").name}`, `cover.jpg`.', 'Publication is a separate explicit command of Leo.']
         (job / 'qa-report.md').write_text('\n'.join(report) + '\n', encoding='utf-8')
         print('\n'.join(report))
