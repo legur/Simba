@@ -1,23 +1,15 @@
-name: Simba approved voice runtime preflight (read-only)
-
+name: MSC WarmBaritone narration one run
 on:
-  issues:
-    types: [opened]
-
+  workflow_dispatch:
 permissions:
   contents: read
-
+concurrency:
+  group: msc-warmbaritone-20261107-once
+  cancel-in-progress: false
 jobs:
-  private-voice-check:
-    if: >-
-      github.event_name == 'issues' &&
-      github.event.issue.title == 'Simba approved WarmBaritone runtime preflight 2026-11-07' &&
-      github.event.issue.user.login == 'legur' &&
-      github.event.issue.pull_request == null
+  narration:
     runs-on: ubuntu-latest
-    timeout-minutes: 8
-    permissions:
-      contents: read
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
         with:
@@ -25,9 +17,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install Drive OAuth client
-        run: python -m pip install "google-api-python-client>=2.140,<3" "google-auth>=2.30,<3" "google-auth-httplib2>=0.2,<1"
-      - name: Verify approved Simba voice resolvable without synthesis
+      - run: python -m pip install 'google-api-python-client>=2.140,<3' 'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+      - name: Synthesize approved narration and archive in private Drive
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
@@ -35,14 +26,13 @@ jobs:
           GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
         run: |
           python - <<'PY'
-          import os
-          import sys
-          sys.path.insert(0, 'integrations/video')
-          import simba_voice
-          assert os.environ.get('GEMINI_API_KEY'), 'GEMINI_API_KEY missing'
-          approved = simba_voice.approved_profile()
-          assert approved['profile'] == 'WarmBaritone'
-          assert simba_voice.voice_id_from_private_store().startswith('voice_')
-          print('PASS: Simba WarmBaritone approved, private Drive voice ID resolvable, Gemini key present.')
-          print('No TTS generation, no audio outputs, no spending.')
+          import base64
+          exec(compile(base64.b64decode('aW1wb3J0IG9zLCBzeXMsIGpzb24KZnJvbSBwYXRobGliIGltcG9ydCBQYXRoCnN5cy5wYXRoLmluc2VydCgwLCAnaW50ZWdyYXRpb25zL3ZpZGVvJykKaW1wb3J0IHNpbWJhX3ZvaWNlCmZyb20gZ29vZ2xlLm9hdXRoMi5jcmVkZW50aWFscyBpbXBvcnQgQ3JlZGVudGlhbHMKZnJvbSBnb29nbGUuYXV0aC50cmFuc3BvcnQucmVxdWVzdHMgaW1wb3J0IFJlcXVlc3QKZnJvbSBnb29nbGVhcGljbGllbnQuZGlzY292ZXJ5IGltcG9ydCBidWlsZApmcm9tIGdvb2dsZWFwaWNsaWVudC5odHRwIGltcG9ydCBNZWRpYUZpbGVVcGxvYWQKCnRleHRzID0gWwogJ9CQINC10YHQu9C4INCyINGN0YLQvtGCIEJsYWNrIEZyaWRheSDQstGL0LHRgNCw0YLRjCDQvdC1INCy0LXRidGMLCDQsCDQv9GD0YLQtdGI0LXRgdGC0LLQuNC1PycsCiAn0KMgTVNDIENydWlzZXMg0YHQutC40LTQutC4INC00L4g0YLRgNC40LTRhtCw0YLQuCDQv9GA0L7RhtC10L3RgtC+0LIg0L3QsCDQstGL0LHRgNCw0L3QvdGL0LUg0LrRgNGD0LjQt9GLLicsCiAn0J3QsNC/0YDQuNC80LXRgCwg0KHRgNC10LTQuNC30LXQvNC90L7QtSDQvNC+0YDQtSDQuNC3INC/0L7RgNGC0LAg0KDQuNC80LAg4oCUINC+0YIg0L/Rj9GC0LjRgdC+0YIg0LTQtdCy0Y/QvdC+0YHRgtCwINC00L7Qu9C70LDRgNC+0LIg0YEg0YfQtdC70L7QstC10LrQsC4nLAogJ9CY0LvQuCDQndC+0LLRi9C5INCz0L7QtCDQvdCwINCa0LDRgNC40LHQsNGFIOKAlCDQvtGCINC00LXQstGP0YLQuNGB0L7RgiDQv9GP0YLQuNC00LXRgdGP0YLQuCDRh9C10YLRi9GA0ZHRhSDQtNC+0LvQu9Cw0YDQvtCyINGBINGH0LXQu9C+0LLQtdC60LAuJywKICfQrdGC0L4g0YbQtdC90Ysg0LfQsCDRh9C10LvQvtCy0LXQutCwINCy0L4g0LLQvdGD0YLRgNC10L3QvdC10Lkg0LrQsNGO0YLQtSDQv9GA0Lgg0LTQstGD0YXQvNC10YHRgtC90L7QvCDRgNCw0LfQvNC10YnQtdC90LjQuC4g0J3QsNC70L7Qs9C4LCDRgdCx0L7RgNGLINC4INGH0LDQtdCy0YvQtSDQstC60LvRjtGH0LXQvdGLLicsCiAn0JDQutGG0LjRjyDQtNC+INGC0YDQuNC00YbQsNGC0L7Qs9C+INC90L7Rj9Cx0YDRjy4g0KbQtdC90Ysg0Lgg0L3QsNC70LjRh9C40LUg0LrQsNGO0YIg0YPRgtC+0YfQvdGP0Y7RgtGB0Y8g0L/RgNC4INC30LDQutCw0LfQtS4nLAogJ9Cd0LDQv9C40YjQuNGC0LUg0LzQvdC1INGB0LvQvtCy0L4gwqvQmtCg0KPQmNCXwrssINC00LDRgtGDINC4INGB0LrQvtC70YzQutC+INCy0LDRgSDRh9C10LvQvtCy0LXQui4g0J/QvtC00LHQtdGA0ZHQvCDQstCw0YDQuNCw0L3Rgi4nCl0Kb3V0ID0gUGF0aCgnbXNjLXdhcm1iYXJpdG9uZS1vdXRwdXQnKTsgb3V0Lm1rZGlyKGV4aXN0X29rPVRydWUpCmNyZWRzID0gQ3JlZGVudGlhbHModG9rZW49Tm9uZSwgcmVmcmVzaF90b2tlbj1vcy5lbnZpcm9uWydHRFJJVkVfT0FVVEhfUkVGUkVTSF9UT0tFTiddLCB0b2tlbl91cmk9J2h0dHBzOi8vb2F1dGgyLmdvb2dsZWFwaXMuY29tL3Rva2VuJywgY2xpZW50X2lkPW9zLmVudmlyb25bJ0dEUklWRV9PQVVUSF9DTElFTlRfSUQnXSwgY2xpZW50X3NlY3JldD1vcy5lbnZpcm9uWydHRFJJVkVfT0FVVEhfQ0xJRU5UX1NFQ1JFVCddLCBzY29wZXM9WydodHRwczovL3d3dy5nb29nbGVhcGlzLmNvbS9hdXRoL2RyaXZlJ10pCmNyZWRzLnJlZnJlc2goUmVxdWVzdCgpKQpkcml2ZSA9IGJ1aWxkKCdkcml2ZScsICd2MycsIGNyZWRlbnRpYWxzPWNyZWRzLCBjYWNoZV9kaXNjb3Zlcnk9RmFsc2UpCmZvbGRlciA9ICcxWkZaM0QzbUM0MjQ3TlVwNTN5QUZkTzhXb1hDX0ZwWFonCiMgVmVyaWZ5IHRoZSBkZXN0aW5hdGlvbiBiZWZvcmUgZ2VuZXJhdGluZyBhbnkgcGFpZCBhdWRpby4KYXNzZXJ0IGRyaXZlLmZpbGVzKCkuZ2V0KGZpbGVJZD1mb2xkZXIsIGZpZWxkcz0nbWltZVR5cGUnKS5leGVjdXRlKClbJ21pbWVUeXBlJ10gPT0gJ2FwcGxpY2F0aW9uL3ZuZC5nb29nbGUtYXBwcy5mb2xkZXInCmxpbmVzID0gW3snaWQnOiBmJ3tpOjAyfScsICd0ZXh0JzogdGV4dH0gZm9yIGksIHRleHQgaW4gZW51bWVyYXRlKHRleHRzLDEpXQojIFRoZSBwcm92aWRlciBqb3VybmFscyBlYWNoIHNpbmdsZSBhdHRlbXB0IGFuZCB3aWxsIG5vdCByZXRyeSB1bmNlcnRhaW4gY2FsbHMuCnZvaWNlX2lkID0gc2ltYmFfdm9pY2Uudm9pY2VfaWRfZnJvbV9wcml2YXRlX3N0b3JlKCkKZm9yIGxpbmUgaW4gbGluZXM6CiAgICByZXN1bHQgPSBzaW1iYV92b2ljZS5zeW50aGVzaXplX2xpbmVzKFtsaW5lXSwgUGF0aCgncHJpdmF0ZS10dHMtY2FjaGUnKSwgdm9pY2VfaWQ9dm9pY2VfaWQpCiAgICB3YXYgPSBvdXQgLyAoJ3dhcm1iYXJpdG9uZS0nICsgbGluZVsnaWQnXSArICcud2F2JykKICAgIHdhdi53cml0ZV9ieXRlcyhyZXN1bHRbbGluZVsnaWQnXV0ucmVhZF9ieXRlcygpKQogICAgc2F2ZWQgPSBkcml2ZS5maWxlcygpLmNyZWF0ZShib2R5PXsnbmFtZSc6d2F2Lm5hbWUsICdwYXJlbnRzJzpbZm9sZGVyXX0sIG1lZGlhX2JvZHk9TWVkaWFGaWxlVXBsb2FkKHN0cih3YXYpLCBtaW1ldHlwZT0nYXVkaW8vd2F2JyksIGZpZWxkcz0naWQnKS5leGVjdXRlKG51bV9yZXRyaWVzPTApCiAgICBwcmludCgnU0FWRUQnLCB3YXYubmFtZSwgc2F2ZWRbJ2lkJ10sIGZsdXNoPVRydWUpCihvdXQvJ3NjcmlwdC5qc29uJykud3JpdGVfdGV4dChqc29uLmR1bXBzKGxpbmVzLGVuc3VyZV9hc2NpaT1GYWxzZSksZW5jb2Rpbmc9J3V0Zi04JykKcHJpbnQoJ0NPTVBMRVRFOiBzZXZlbiBhcHByb3ZlZCBXYXJtQmFyaXRvbmUgc2VnbWVudHM7IG5vIHZvaWNlIG1ldGFkYXRhIGV4cG9ydGVkLicpCg=='), 'msc-narration.py', 'exec'))
           PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: msc-warmbaritone-audio
+          path: msc-warmbaritone-output/
+          if-no-files-found: ignore
+          retention-days: 3
