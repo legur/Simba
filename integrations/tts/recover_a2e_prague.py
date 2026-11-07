@@ -6,6 +6,8 @@ import subprocess
 import tempfile
 from pathlib import Path
 from urllib.request import Request, urlopen
+from urllib.error import HTTPError
+from urllib.parse import urlsplit
 
 from run_male_prague import (
     make_drive, save_drive, assert_wav, safe_audio_url,
@@ -51,8 +53,19 @@ def main():
         return
     drive,folder=make_drive()
     direct=safe_audio_url(match[0]["audio_url"])
-    with urlopen(Request(direct,headers={"Accept":"audio/*,application/octet-stream"}),timeout=65) as r:
-        b=r.read(MAX_AUDIO_BYTES+1)
+    host=urlsplit(direct).hostname or ""
+    print("RECOVERY: audio host",host)
+    try:
+        with urlopen(Request(direct,headers={"Accept":"audio/*,application/octet-stream","User-Agent":"Mozilla/5.0"}),timeout=65) as r:
+            b=r.read(MAX_AUDIO_BYTES+1)
+    except HTTPError as ex:
+        print("RECOVERY: preview download HTTP",ex.code)
+        if (host=="api.a2e.ai" or host=="video.a2e.ai") and ex.code in (401,403):
+            print("RECOVERY: retry authenticated GET on first-party host")
+            with urlopen(Request(direct,headers={"Authorization":"Bearer "+token,"Accept":"audio/*,application/octet-stream"}),timeout=65) as r:
+                b=r.read(MAX_AUDIO_BYTES+1)
+        else:
+            raise
     if not 2000<len(b)<=MAX_AUDIO_BYTES:
         print("RECOVERY: preview download invalid; no retry of generation")
         return
