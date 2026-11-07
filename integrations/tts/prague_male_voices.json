@@ -9,14 +9,65 @@
     "gemini": {
       "model": "gemini-3.8-flash-tts",
       "voice_names": [
-        "Orus",
-        "Iapetus",
+        "Achird",
         "Algenib",
+        "Algieba",
+        "Alnilam",
+        "Charon",
+        "Enceladus",
+        "Fenrir",
+        "Iapetus",
+        "Orus",
+        "Puck",
+        "Rasalgethi",
+        "Sadachbia",
+        "Sadaltager",
+        "Schedar",
+        "Umbriel",
+        "Zubenelgenubi"
+      ],
+      "gender_verified": "Google Firebase voice list",
+      "speech_prompt": "Warm, intimate Russian travel storytelling, mature and trustworthy male voice, natural phrasing, soft start, slight wonder, precise date and price delivery.",
+      "standard_male_catalog": [
+        "Achird",
+        "Algenib",
+        "Algieba",
+        "Alnilam",
+        "Charon",
+        "Enceladus",
+        "Fenrir",
+        "Iapetus",
+        "Orus",
+        "Puck",
+        "Rasalgethi",
+        "Sadachbia",
+        "Sadaltager",
+        "Schedar",
+        "Umbriel",
+        "Zubenelgenubi"
+      ],
+      "remaining_oneshot_20261107": [
+        "Achird",
+        "Alnilam",
+        "Enceladus",
+        "Fenrir",
+        "Puck",
+        "Rasalgethi",
+        "Sadachbia",
+        "Sadaltager",
+        "Schedar",
+        "Umbriel",
+        "Zubenelgenubi"
+      ],
+      "previous_ambiguous_do_not_retry": [
         "Algieba",
         "Charon"
       ],
-      "gender_verified": "Google Firebase voice list",
-      "speech_prompt": "Warm, intimate Russian travel storytelling, mature and trustworthy male voice, natural phrasing, soft start, slight wonder, precise date and price delivery."
+      "existing_samples": [
+        "Algenib",
+        "Iapetus",
+        "Orus"
+      ]
     },
     "google_chirp_3_hd": {
       "voices": [
