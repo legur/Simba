@@ -136,36 +136,83 @@ def fact_gate(spec, source):
     return 'PASS'
 
 
-# ---------------------------------------------------------------- voice: edge-tts, then a speech-to-text check
+# ---------------------------------------------------------------- voice: approved Simba Gemini by default; Edge only explicit
+def voice_provider(spec):
+    setting = spec.get('voice') or {}
+    if not isinstance(setting, dict):
+        raise Stop('video-spec.json: voice must be an object')
+    provider = setting.get('provider', 'simba')
+    if provider not in ('simba', 'edge'):
+        raise Stop('video-spec.json: voice.provider must be "simba" or explicit "edge"')
+    return provider
+
+
 def tts(spec, job):
-    import edge_tts, numpy as np, soundfile as sf
+    import numpy as np, soundfile as sf
     vdir = job / 'voice'; (vdir / '.cache').mkdir(parents=True, exist_ok=True)
-    voice, rate = spec.get('voice', {}).get('name', 'ru-RU-DmitryNeural'), spec.get('voice', {}).get('rate', '-4%')
-    for i, L in enumerate(all_lines(spec)):
+    lines = list(all_lines(spec))
+    for i, L in enumerate(lines):
         L['id'] = f'l{i + 1:02d}'
-        if L.get('fromClip'): continue                 # spoken inside a video clip, not synthesized
-        say = L.get('say', L['text']); r = L.get('rate', rate)
-        key = hashlib.sha1(json.dumps([voice, r, say], ensure_ascii=False).encode()).hexdigest()[:16]
-        mp3 = vdir / '.cache' / f'{key}.mp3'
-        if not mp3.is_file() or mp3.stat().st_size == 0:
-            part = mp3.with_suffix('.part')
-            for attempt in range(6):                       # the service drops or throttles a request now and then
-                try:
-                    asyncio.run(edge_tts.Communicate(say, voice, rate=r).save(str(part))); part.replace(mp3); break
-                except Exception as e:
-                    part.unlink(missing_ok=True)
-                    if attempt == 5: raise Stop(f'edge-tts failed for line {L["id"]} ({type(e).__name__}: {str(e)[:160]}); it needs an internet connection')
-                    import time; time.sleep(3 * (attempt + 1))
+    spoken = [L for L in lines if not L.get('fromClip')]
+    if not spoken:
+        return
+    provider = voice_provider(spec)
+    voice_setting = spec.get('voice') or {}
+
+    if provider == 'simba':
+        import simba_voice
+        try:
+            voices = simba_voice.synthesize_lines(spoken, vdir / '.cache')
+        except simba_voice.VoiceError as exc:
+            raise Stop('Simba approved voice: ' + str(exc)) from None
+        for L in spoken:
+            wav = vdir / f'{L["id"]}.wav'
+            ff('-y', '-loglevel', 'error', '-i', str(voices[L['id']]),
+               '-ar', '24000', '-ac', '1', str(wav))
+    else:
+        import edge_tts
+        voice = voice_setting.get('name', 'ru-RU-DmitryNeural')
+        rate = voice_setting.get('rate', '-4%')
+        for L in spoken:
+            say = L.get('say', L['text']); line_rate = L.get('rate', rate)
+            key = hashlib.sha1(json.dumps([voice, line_rate, say], ensure_ascii=False).encode()).hexdigest()[:16]
+            mp3 = vdir / '.cache' / f'{key}.mp3'
+            if not mp3.is_file() or mp3.stat().st_size == 0:
+                part = mp3.with_suffix('.part')
+                for attempt in range(6):
+                    try:
+                        asyncio.run(edge_tts.Communicate(say, voice, rate=line_rate).save(str(part)))
+                        part.replace(mp3)
+                        break
+                    except Exception as e:
+                        part.unlink(missing_ok=True)
+                        if attempt == 5:
+                            raise Stop(f'edge-tts failed for line {L["id"]} ({type(e).__name__}: {str(e)[:160]}); it needs an internet connection')
+                        import time
+                        time.sleep(3 * (attempt + 1))
+            wav = vdir / f'{L["id"]}.wav'
+            ff('-y', '-loglevel', 'error', '-i', str(mp3),
+               '-ar', '24000', '-ac', '1', str(wav))
+
+    for L in spoken:
         wav = vdir / f'{L["id"]}.wav'
-        ff('-y', '-loglevel', 'error', '-i', str(mp3), '-ar', '24000', '-ac', '1', str(wav))
         y, sr = sf.read(wav, dtype='float32')
-        nz = np.where(np.abs(y) > np.abs(y).max() * .02)[0]
-        y = y[max(0, nz[0] - int(.03 * sr)): nz[-1] + int(.1 * sr)]
-        sf.write(wav, y, sr); L['dur'] = round(len(y) / sr, 3)
-        hop = sr // 30; rms = np.array([np.sqrt(np.mean(y[k:k + hop] ** 2)) for k in range(0, len(y), hop)])   # mouth openness, 30 Hz
+        if y.ndim > 1: y = y.mean(axis=1)
+        peak = np.max(np.abs(y)) if len(y) else 0
+        if peak < 1e-6:
+            raise Stop(f'silent speech audio on line {L["id"]}: do not substitute a different voice')
+        nz = np.flatnonzero(np.abs(y) > peak * .02)
+        if len(nz) == 0:
+            raise Stop(f'no audible speech on line {L["id"]}')
+        y = y[max(0, nz[0] - int(.03 * sr)):nz[-1] + int(.1 * sr)]
+        sf.write(wav, y, sr)
+        L['dur'] = round(len(y) / sr, 3)
+        hop = sr // 30
+        rms = np.array([np.sqrt(np.mean(y[k:k + hop] ** 2)) for k in range(0, len(y), hop)])
         rms = np.convolve(rms / (np.percentile(rms, 90) + 1e-9), [.25, .5, .25], 'same')
         L['env'] = [round(float(v), 2) for v in np.clip((rms - .12) * 1.25, 0, 1)]
         log(L['id'], f'{L["dur"]:.2f}s', L['text'])
+
 
 
 def norm_chars(s):
@@ -417,6 +464,7 @@ def main():
         qa.append(f'- Source: `{spec["sourcePost"]}` — ' + ('STATUS: APPROVED' if approved else 'NOT APPROVED (draft preview, not for publication)'))
         qa.append(f'- Fact gate (numbers on screen ⊂ approved text): {fact_gate(spec, source)}')
         prepare_clips(spec, job, a.fps)
+        qa.append('- Narration: ' + ('Simba / Google Gemini Voice Design / WarmBaritone (approved)' if voice_provider(spec) == 'simba' else 'explicit Edge TTS legacy voice'))
         tts(spec, job)
         qa += ['- Speech check (Whisper small, per line):', *[f'  - {r}' for r in asr_check(spec, job)]]
         if any(sc.get('_clip', {}).get('audio') for sc in spec['scenes']):
@@ -465,7 +513,7 @@ def main():
             qa.append(f'- Final mix speech check (voice over music, ≥ 0.85): {r:.2f} — «{heard}»')
         ok = d <= MAX_DUR + .05 and abs(I + 14) <= 1 and P <= -1 and black == 0 and heard_ok
         status = ('VIDEO_READY_FOR_LEO' if approved else 'VIDEO_DRAFT_SOURCE_NOT_APPROVED') if ok else 'VIDEO_QA_FAILED'
-        report = [f'# Video QA — {spec["packageId"]}', '', f'STATUS: {status}', f'RENDERER: integrations/video (photo-story), edge-tts {spec.get("voice", {}).get("name", "ru-RU-DmitryNeural")}', '', *qa, '',
+        report = [f'# Video QA — {spec["packageId"]}', '', f'STATUS: {status}', f'RENDERER: integrations/video (photo-story), narration={voice_provider(spec)}', '', *qa, '',
                   f'Files: `{final.name}`, `{final.with_suffix(".srt").name}`, `cover.jpg`.', 'Publication is a separate explicit command of Leo.']
         (job / 'qa-report.md').write_text('\n'.join(report) + '\n', encoding='utf-8')
         print('\n'.join(report))
