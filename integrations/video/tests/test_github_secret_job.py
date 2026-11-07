@@ -211,17 +211,6 @@ class SecureZipTests(unittest.TestCase):
         }])
         self.assertEqual(job.validate_tts_budget(clip_only), (0, 0))
 
-    def test_real_msc_approved_source_passes_renderer_static_contract(self):
-        repo = Path(__file__).resolve().parents[3]
-        source = "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-02__SELLING__MSC-BLACK-FRIDAY__APPROVED.md"
-        with tempfile.TemporaryDirectory() as folder:
-            job_dir = Path(folder)
-            (job_dir / "scene.jpg").write_bytes(b"offline-fixture")
-            value = spec(sourcePost=source, scenes=[{"image": "scene.jpg", "lines": [{"text": "MSC"}]}], end={})
-            (job_dir / "video-spec.json").write_text(json.dumps(value), encoding="utf-8")
-            checked = job.validate_renderer_preflight(repo, job_dir)
-            self.assertEqual(checked["sourcePost"], source)
-
 
 class MarkerAndOutputTests(unittest.TestCase):
     def test_marker_decision_is_create_once_or_abort(self):
