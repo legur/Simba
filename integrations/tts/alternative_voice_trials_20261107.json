@@ -1,0 +1,73 @@
+{
+  "benchmark": "PRAGUE-STORY-01",
+  "language": "ru-RU",
+  "date": "2026-11-07",
+  "request": "Compare other text-to-speech systems on the same Russian passage. Audio only, never video.",
+  "production_voice": {
+    "profile": "WarmBaritone",
+    "provider": "Google Gemini Voice Design",
+    "unchanged": true
+  },
+  "additional_api_credentials_present": {
+    "ElevenLabs": false,
+    "MiniMax": false,
+    "Azure_Speech": false,
+    "OpenAI_API": false,
+    "Cartesia": false
+  },
+  "new_private_samples": [
+    {
+      "provider": "Piper",
+      "model": "ru_RU-denis-medium",
+      "voice": "denis",
+      "duration_s": 16.5,
+      "filename": "PRAGUE-STORY-01_Piper_denis_EVAL_ONLY.wav",
+      "usage": "evaluation_only; commercial model license review required"
+    },
+    {
+      "provider": "Piper",
+      "model": "ru_RU-dmitri-medium",
+      "voice": "dmitri",
+      "duration_s": 13.8,
+      "filename": "PRAGUE-STORY-01_Piper_dmitri_EVAL_ONLY.wav",
+      "usage": "evaluation_only; commercial model license review required"
+    },
+    {
+      "provider": "Silero",
+      "model": "v5_6_ru",
+      "voice": "aidar",
+      "duration_s": 15.2,
+      "filename": "PRAGUE-STORY-01_Silero_v5_6_ru_aidar_NONCOMMERCIAL.wav",
+      "usage": "NONCOMMERCIAL_ONLY; CC-BY-NC"
+    },
+    {
+      "provider": "Silero",
+      "model": "v5_6_ru",
+      "voice": "eugene",
+      "duration_s": 12.2,
+      "filename": "PRAGUE-STORY-01_Silero_v5_6_ru_eugene_NONCOMMERCIAL.wav",
+      "usage": "NONCOMMERCIAL_ONLY; CC-BY-NC"
+    }
+  ],
+  "storage": {
+    "provider": "Private Google Drive",
+    "folder": "Simba Private TTS Prague 2026-11-07",
+    "public_repo_audio": false
+  },
+  "workflows": [
+    "https://github.com/legur/Simba/actions/runs/42348138252",
+    "https://github.com/legur/Simba/actions/runs/42348208609"
+  ],
+  "restrictions": [
+    "No A2E calls",
+    "No paid API calls",
+    "No video rendering",
+    "Never replace production WarmBaritone without explicit approval",
+    "Silero samples must not be included in promotional/commercial output"
+  ],
+  "references": [
+    "https://github.com/OHF-Voice/piper1-gpl",
+    "https://huggingface.co/rhasspy/piper-voices",
+    "https://github.com/snakers4/silero-models"
+  ]
+}
