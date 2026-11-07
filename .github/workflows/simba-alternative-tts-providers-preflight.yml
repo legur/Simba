@@ -1,0 +1,57 @@
+name: Simba alternative TTS providers readiness (NO audio calls)
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  provider-readiness:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba alternative TTS providers readiness 2026-11-07' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 3
+    steps:
+      - name: Check only presence of GitHub secret values; no outside API requests
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ELEVENLABS_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          ELEVEN_LABS_KEY: ${{ secrets.ELEVEN_LABS_API_KEY }}
+          MINIMAX_KEY: ${{ secrets.MINIMAX_API_KEY }}
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
+          AZURE_TTS_KEY: ${{ secrets.AZURE_TTS_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CARTESIA_API_KEY: ${{ secrets.CARTESIA_API_KEY }}
+        run: |
+          python - <<'PY'
+          import os, json, urllib.request
+          check = {
+            'ElevenLabs': bool(os.environ.get('ELEVENLABS_KEY') or os.environ.get('ELEVEN_LABS_KEY')),
+            'MiniMax': bool(os.environ.get('MINIMAX_KEY')),
+            'Azure_Speech': bool(os.environ.get('AZURE_SPEECH_KEY') or os.environ.get('AZURE_TTS_KEY')) and bool(os.environ.get('AZURE_SPEECH_REGION')),
+            'OpenAI_API': bool(os.environ.get('OPENAI_API_KEY')),
+            'Cartesia': bool(os.environ.get('CARTESIA_API_KEY')),
+          }
+          lines=['READINESS ONLY: no paid TTS calls attempted.']+[
+            name+': '+('KEY_CONFIGURED' if valid else 'NOT_CONFIGURED') for name,valid in check.items()
+          ]
+          comment='\n'.join(lines)
+          req=urllib.request.Request('https://api.github.com/repos/legur/Simba/issues/'+os.environ['ISSUE_NUMBER']+'/comments',
+            json.dumps({'body':comment}).encode(),{
+            'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+            'Accept':'application/vnd.github+json','Content-Type':'application/json'
+            },method='POST')
+          with urllib.request.urlopen(req, timeout=25) as res:
+            print('Readiness note posted, status',res.status)
+          print(comment)
+          PY
