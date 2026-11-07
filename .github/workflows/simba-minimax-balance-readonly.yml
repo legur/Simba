@@ -1,0 +1,36 @@
+name: Simba MiniMax PAYG credit and free voucher check READ ONLY
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba MiniMax free credit and API balance check 2026-11-07' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate script
+        run: python -m py_compile integrations/tts/minimax_balance_readonly.py
+      - name: MiniMax free voucher / PAYG balances (GET only)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          MINIMAX_API_KEY: ${{ secrets.MINIMAX_API_KEY }}
+        run: python integrations/tts/minimax_balance_readonly.py
