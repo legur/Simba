@@ -70,7 +70,8 @@ def load_spec(job: Path):
         need((job / src).is_file(), f'scene {i + 1}: "clip" or "image" file not found in the job folder: {src!r}')
         if sc.get('clip'):
             need(sc['clip'].lower().endswith(VIDEO_EXT), f'scene {i + 1}: clip must be one of {VIDEO_EXT}')
-            sc.setdefault('move', 'none'); sc.setdefault('voice', 'clip')
+            sc.setdefault('move', 'none'); sc.setdefault('voice', 'tts')
+            need(sc['voice'] in ('tts', 'clip'), f'scene {i + 1}: voice must be "tts" or explicit "clip"')
         need(sc.get('move', 'push') in MOVES, f'scene {i + 1}: move must be one of {sorted(MOVES)}')
         need(all(isinstance(l.get('text'), str) and l['text'].strip() for l in sc.get('lines', [])), f'scene {i + 1}: every line needs "text"')
     o = s.get('offer')
