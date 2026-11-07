@@ -1,0 +1,48 @@
+name: Simba ElevenLabs export existing default voice MP3s (no TTS)
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-elevenlabs-default-preview-export-20261107
+  cancel-in-progress: false
+
+jobs:
+  export:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba export existing ElevenLabs male default voice previews 2026-11-07' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate read/download-only ElevenLabs export
+        run: |
+          python -m py_compile integrations/tts/elevenlabs_export_default_preview_mp3.py
+          python -m py_compile integrations/tts/run_male_prague.py
+      - name: Install private Drive OAuth client
+        run: python -m pip install "google-api-python-client>=2.140,<3" "google-auth>=2.30,<3" "google-auth-httplib2>=0.2,<1"
+      - name: Copy existing MP3 previews to private Drive without synthesizing
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+        run: python integrations/tts/elevenlabs_export_default_preview_mp3.py
+      # No upload-artifact; no files saved publicly in this repository.
