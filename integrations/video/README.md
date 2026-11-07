@@ -1,7 +1,7 @@
 # Video: утверждённый пост → вертикальный ролик до 60 секунд
 
 Рендерер фото-историй Simba. Берёт **утверждённый пост** из Content Library, **кадры Рафаэля** и **реплики Сценариста**
-и собирает ролик 1080×1920 (Reels / Shorts / TikTok / Facebook): движение камеры по кадрам, голос (edge-tts),
+и собирает ролик 1080×1920 (Reels / Shorts / TikTok / Facebook): движение камеры по кадрам, утвержденный голос Simba WarmBaritone (Google Gemini Voice Design),
 субтитры с подсветкой произносимого слова, карточка оффера, финальная карточка с постером и контактом, музыка и звуки.
 
 Процесс, роли и gates описаны в `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md`. Этот файл — только про инструмент.
@@ -22,7 +22,7 @@ py -3.12 -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 ```
 
-Голос (edge-tts) и первая загрузка модели Whisper `small` (~480 MB, Hugging Face) требуют интернета.
+Голос Gemini и первая загрузка модели Whisper `small` (~480 MB, Hugging Face) требуют интернета.
 
 ## Задание: папка с `video-spec.json` и картинками
 
@@ -33,7 +33,7 @@ py -3.12 -m venv .venv
 |---|---|
 | `packageId` | id ролика (латиница, цифры, `.-_`), из него имя файла |
 | `sourcePost` | путь к `*__APPROVED.md` от корня репозитория; файл обязан иметь `STATUS: APPROVED` и раздел `## APPROVED_TEXT` |
-| `voice` | `{"name": "ru-RU-DmitryNeural", "rate": "-4%"}` (по умолчанию) |
+| `voice` | `{"provider": "simba"}` (по умолчанию, выбранный постоянный Google Gemini WarmBaritone); Edge TTS только при явном `{"provider": "edge", "name": "ru-RU-DmitryNeural", "rate": "-4%"}` |
 | `scenes[]` | 1–8 сцен: `image`, `move` (`push` / `pull` / `pan-left` / `pan-right` / `rise`), необязательный `title`, `focus` `[x, y]` 0–1, `lines[]` |
 | `offer` | карточка оффера: `title`, `rows[]`, `price`, `note`, `lines[]`, необязательный `bg` (картинка фона) |
 | `end` | финал: `poster`, `cta`, `contact`, `brand`, `lines[]` |
@@ -51,9 +51,9 @@ py -3.12 -m venv .venv
 
 - Клип кадрируется под размер ролика (cover), длина сцены = длина клипа; `in` / `out` (секунды) обрезают его.
   Камера по умолчанию неподвижна (`move: "none"`): клип уже анимирован.
-- **Голос берётся из самого клипа** (`"voice": "clip"`, по умолчанию): губы совпадают с речью. Whisper проверяет, что клип
+- **Голос берётся из самого клипа** (только при явном `"voice": "clip"`): губы совпадают с речью. Whisper проверяет, что клип
   произносит строки сцены (сходство ≥ 0.90 — обрезанная фраза не пройдёт), и даёт тайминги для субтитров.
-  `"voice": "tts"` — клип без звука, строки озвучивает edge-tts, как у картинок.
+  `"voice": "tts"` (новое значение по умолчанию) — речь из исходного клипа не берется, строки озвучивает утвержденный Simba WarmBaritone. `"voice": "clip"` задается явно, если речь должна звучать из исходного клипа.
 - Если у клип-сцены нет `lines`, субтитры берутся из распознанной речи и помечаются в `qa-report.md` для проверки Leo;
   fact gate проверяет и их.
 - Музыка — одна общая **синтезированная** дорожка на весь ролик (`"music": {"style": "lounge", "bpm": 100}` или спокойная по умолчанию),
@@ -91,7 +91,7 @@ integrations\video\.venv\Scripts\python integrations\video\make_video.py integra
 
 1. `STATUS: APPROVED` у исходного поста.
 2. **Fact gate:** каждое число на экране и в субтитрах (цены, даты, телефоны, ночи) должно стоять в `APPROVED_TEXT` буквально.
-3. Голос: edge-tts по каждой реплике (кэш в `voice/.cache`).
+3. Голос: постоянный Google Gemini WarmBaritone по каждой реплике; приватный Voice Design ID считывается из подтвержденного JSON на Drive, WAV кэшируются в `voice/.cache`. Edge TTS только по явному `voice.provider=edge`.
 4. **Speech check:** Whisper слышит каждую реплику обратно (сходство символов ≥ 0.90); заодно даёт тайминги слов для субтитров.
 5. Таймлайн из длительности реплик; ролик длиннее 60 с не собирается.
 6. **Reading check:** каждая надпись держится на экране не меньше «символы ÷ 15 + 1,5 с».
@@ -109,8 +109,7 @@ integrations\video\.venv\Scripts\python integrations\video\make_video.py integra
 - `engine/render/*.mjs`, `engine/lib.js`, `engine/sfx.py` — из [lemo-opuscar](https://github.com/lemomo-ai/lemo-opuscar), MIT (`engine/LICENSE-lemo-opuscar`).
 - Шрифты Montserrat и Playfair Display — SIL OFL 1.1 (`fonts/OFL-*.txt`).
 - Без `music.file` музыка и звуки синтезируются кодом (`audio.py`), как раньше. С `music.file` `make_video.py` через FFmpeg преобразует MP3/WAV/M4A/AAC/FLAC/OGG в 48 кГц stereo WAV, а `audio.py` подставляет эту запись вместо синтезированного фона и сводит с речью и звуковыми эффектами. Реальная коммерческая лицензия подтверждается Музыкальным редактором отдельно; `rights_confirmed=true` — свидетельство проверки, а не автоматическая юридическая экспертиза.
-- Голос — нейронные голоса Microsoft через edge-tts (неофициальный клиент онлайн-сервиса). Для коммерческого использования
-  условия Microsoft проверяет Leo; официальная замена с теми же голосами — Azure Speech.
+- Голос — утвержденный постоянный Google Gemini Voice Design (Simba WarmBaritone). Для коммерческого использования необходимо соблюдать условия Google. Наследуемый Edge TTS доступен только по явному запросу; условия Microsoft проверяются отдельно.
 
 
 ## A2E (Wix-backed) — 02.11.2026
@@ -161,3 +160,34 @@ python -m unittest discover -s integrations/video/tests -p "test_music_input.py"
 ```
 
 Лицензия — неотъемлемая часть workflow Музыкального редактора. Треки не сохраняются в Git: музыка должна находиться только в папке задания `integrations/video/jobs/` (gitignored).
+
+
+## Постоянный голос Simba — Gemini WarmBaritone (07.11.2026)
+
+Голос утвержден пользователем и записан в `integrations/tts/prague_male_voices.json`. В новых роликах `voice.provider` по умолчанию равен `simba`. Старые поля `voice.name` и `voice.rate` без явного `provider=edge` **не включают старый голос**. Для немых анимационных клипов `scenes[].voice` по умолчанию `tts`; собственный голос клипа разрешается только через явное `"voice": "clip"`.
+
+**Доступ к постоянному ID:** голос уже создан. Его ID остается только в приватном Google Drive, в папке `Simba Private TTS Prague 2026-11-07`, файл `SimbaDesign_WarmBaritone.json`. Рендерер ищет именно эту запись, проверяет ее метаданные и приватность и использует один и тот же ID во всех синтезах. ID и ключ **не вносятся в video-spec.json или публичный GitHub**.
+
+В GitHub Actions, где уже настроены `GEMINI_API_KEY` и `GDRIVE_OAUTH_CLIENT_ID`, `GDRIVE_OAUTH_CLIENT_SECRET`, `GDRIVE_OAUTH_REFRESH_TOKEN`, поиск голоса автоматический. Локальный Python на Windows **не видит GitHub Secrets автоматически**. Для локального запуска администратор должен установить `GEMINI_API_KEY` в пользовательском окружении, а также **один** из способов определения голоса:
+
+- `SIMBA_GEMINI_VOICE_METADATA_FILE` — абсолютный путь к локальной приватной копии `SimbaDesign_WarmBaritone.json`, скачанной с Google Drive; не помещать в Git.
+- Или имеющиеся переменные `GDRIVE_OAUTH_CLIENT_ID`, `GDRIVE_OAUTH_CLIENT_SECRET`, `GDRIVE_OAUTH_REFRESH_TOKEN` для автоматического чтения Drive.
+- Или `SIMBA_GEMINI_VOICE_ID` — секретное значение уже созданного голоса (только через менеджер секретов/переменных, не в коммитах).
+
+Пример PowerShell для запуска на локальном ПК **после безопасной установки** необходимых секретов:
+
+```powershell
+$env:SIMBA_GEMINI_VOICE_METADATA_FILE = "C:\\Private\\SimbaDesign_WarmBaritone.json"
+# GEMINI_API_KEY передан через защищенное окружение, не пишите его в консоль/историю.
+integrations\video\.venv\Scripts\python integrations\video\make_video.py integrations\video\jobs\<packageId>
+```
+
+**Платная генерация:** каждый новый текст озвучивается один раз, без автоматических повторов при HTTP/timeout. Перед вызовом создается файл `voice/.cache/<sha>.attempt.json`; если WAV не был корректно получен, повторная попытка блокируется до ручной проверки расходов. Успешный WAV повторно используется из кэша. Лимиты на один рендер: не более 16 новых реплик и 1200 новых символов (по умолчанию). Ключ недоступен или нет утвержденного ID — сборка останавливается и **не переключается незаметно на другой голос**. `--plan-only` также синтезирует отсутствующую речь и может расходовать квоту; для проверки без расходов используйте офлайн-тесты.
+
+Проверка интеграции **без сетевых вызовов и списаний**:
+
+```powershell
+python -m unittest discover -s integrations/video/tests -p test_simba_voice.py -v
+```
+
+Полный MP4 необходимо отдельно прогнать с настоящими кадрами, утвержденным текстом и финальными проверками Whisper и loudness. Изменение голосового профиля не заменяет факт- и лицензийные gates и не дает разрешения на публикацию.

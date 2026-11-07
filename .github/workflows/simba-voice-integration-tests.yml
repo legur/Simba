@@ -1,0 +1,41 @@
+name: Simba WarmBaritone renderer offline tests
+
+on:
+  pull_request:
+    paths:
+      - "integrations/video/make_video.py"
+      - "integrations/video/simba_voice.py"
+      - "integrations/video/tests/test_simba_voice.py"
+      - "integrations/video/tests/test_music_input.py"
+      - "integrations/tts/prague_male_voices.json"
+      - "integrations/video/requirements.txt"
+      - ".github/workflows/simba-voice-integration-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test-only audio dependencies
+        run: python -m pip install "numpy>=1.26,<3" "soundfile>=0.12,<1"
+      - name: Compile renderer and verify selected profile
+        run: |
+          python -m py_compile integrations/video/make_video.py integrations/video/simba_voice.py
+          python -m json.tool integrations/tts/prague_male_voices.json > /dev/null
+      - name: Offline TTS unit tests (NO Gemini requests, NO billing)
+        run: python -m unittest discover -s integrations/video/tests -p 'test_simba_voice.py' -v
+      - name: Offline existing music regression tests
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+          python -m pip install soxr
+          python -m unittest discover -s integrations/video/tests -p 'test_music_input.py' -v
