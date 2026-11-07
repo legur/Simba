@@ -1,0 +1,50 @@
+name: Simba male Russian TTS Prague (private one-shot)
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-tts-prague-male-20261107-once
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba male Russian TTS Prague 2026-11-07 ONE SHOT' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Static validation before any call
+        run: |
+          python -m py_compile integrations/tts/run_male_prague.py
+          python -m json.tool integrations/tts/prague_male_voices.json > /dev/null
+          command -v ffmpeg
+      - name: Install Google Drive clients
+        run: python -m pip install "google-api-python-client>=2.140,<3" "google-auth>=2.30,<3" "google-auth-httplib2>=0.2,<1"
+      - name: Generate one-shot male voices and archive WAV privately
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+        run: python integrations/tts/run_male_prague.py
+      # No upload-artifact: voice recordings saved privately in Google Drive.
