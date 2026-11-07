@@ -1,0 +1,48 @@
+name: Simba Gemini Orus Russian TTS (private one-shot)
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-gemini-orus-prague-20261107-once
+  cancel-in-progress: false
+
+jobs:
+  synth:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba Gemini male Orus Prague 2026-11-07 ONE SHOT' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate before generation
+        run: |
+          python -m py_compile integrations/tts/run_male_prague.py integrations/tts/gemini_orus_once.py
+          python -m json.tool integrations/tts/prague_male_voices.json > /dev/null
+      - name: Install private Drive upload client
+        run: python -m pip install "google-api-python-client>=2.140,<3" "google-auth>=2.30,<3" "google-auth-httplib2>=0.2,<1"
+      - name: Single Gemini Orus sample with private verified Drive upload
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+        run: python integrations/tts/gemini_orus_once.py
+      # No public voiceover artifact; private Drive only.
