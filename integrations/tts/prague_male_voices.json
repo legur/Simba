@@ -9,9 +9,11 @@
     "gemini": {
       "model": "gemini-3.8-flash-tts",
       "voice_names": [
+        "Orus",
+        "Iapetus",
+        "Algenib",
         "Algieba",
-        "Charon",
-        "Orus"
+        "Charon"
       ],
       "gender_verified": "Google Firebase voice list",
       "speech_prompt": "Warm, intimate Russian travel storytelling, mature and trustworthy male voice, natural phrasing, soft start, slight wonder, precise date and price delivery."
@@ -63,12 +65,16 @@
           "credits_per_10_seconds": 3
         }
       ],
-      "note": "IDs and rates returned from authenticated read-only voice_list. This file does not trigger generation."
+      "note": "IDs and rates returned from authenticated read-only voice_list. This file does not trigger generation.",
+      "skipped_by_user": true,
+      "skip_reason": "User already has A2E voice samples; no further A2E generation or previews.",
+      "generate_new_samples": false
     }
   },
   "safety": {
     "no_paid_calls_without_explicit_cap": true,
     "store_audio_privately": true,
-    "run_status": "not_generated"
+    "run_status": "Gemini Orus verified; further male-only Gemini samples planned, A2E excluded per user",
+    "no_more_a2e_requests": true
   }
 }
