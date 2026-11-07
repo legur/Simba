@@ -1,0 +1,36 @@
+name: Simba ElevenLabs credit tier diagnostic READ ONLY
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.issue.title == 'Simba ElevenLabs subscription check 402 2026-11-07' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Validate syntax
+        run: python -m py_compile integrations/tts/elevenlabs_subscription_readonly.py
+      - name: Read workspace plan and remaining credits via GET only
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: python integrations/tts/elevenlabs_subscription_readonly.py
