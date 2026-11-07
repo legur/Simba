@@ -3,9 +3,12 @@
   "private": true,
   "type": "module",
   "description": "Simba photo-story renderer: a page drawn frame by frame in headless Chromium (engine from lemo-opuscar, MIT).",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "animejs": "4.2.2",
+    "hyperframes": "0.8.206",
     "playwright-core": "^1.63.0"
   }
 }
