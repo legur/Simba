@@ -2,8 +2,8 @@
 
 The recurring WarmBaritone voice is stored PRIVATELY on Google Drive. Never commit
 the voice id or Google/API credentials, publish audio, or silently fall back to Edge.
-Each line is generated at most once: an attempt journal is written BEFORE the
-billable request and unresolved attempts are not retried automatically.
+Each line has at most one attempt per model. Primary outages allow one Flash-Lite
+attempt with the same voice; both attempts are journaled before billing.
 """
 from __future__ import annotations
 
@@ -20,6 +20,7 @@ import urllib.request
 import wave
 
 VOICE_NAME = "WarmBaritone"
+FALLBACK_MODEL = "gemini-3.8-flash-lite-tts"
 META_NAME = "SimbaDesign_WarmBaritone.json"
 FOLDER_NAME = "Simba Private TTS Prague 2026-11-07"
 INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
@@ -38,6 +39,13 @@ STYLE = (
 
 class VoiceError(RuntimeError):
     pass
+
+
+class ProviderUnavailable(VoiceError):
+    def __init__(self, reason, *, may_have_been_billed):
+        self.reason = reason
+        self.may_have_been_billed = may_have_been_billed
+        super().__init__("Gemini unavailable (" + reason + "); attempt recorded")
 
 
 def approved_profile():
@@ -207,8 +215,14 @@ def _generate_once(text, voice_id, model):
     try:
         with urllib.request.urlopen(req, timeout=150) as result:
             body = result.read(MAX_RESPONSE_BYTES + 1)
-    except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError):
-        raise VoiceError("Gemini synthesis request failed; attempt recorded, no automatic retry") from None
+    except urllib.error.HTTPError as exc:
+        code = exc.code
+        exc.close()
+        if code == 429 or 500 <= code <= 599:
+            raise ProviderUnavailable("http_" + str(code), may_have_been_billed=code != 429) from None
+        raise VoiceError("Gemini request rejected (HTTP " + str(code) + "); no automatic retry") from None
+    except OSError:
+        raise ProviderUnavailable("network_or_timeout", may_have_been_billed=True) from None
     if len(body) > MAX_RESPONSE_BYTES:
         raise VoiceError("Gemini response exceeds safe limit; do not retry automatically")
     try:
@@ -217,12 +231,51 @@ def _generate_once(text, voice_id, model):
         raise VoiceError("Malformed Gemini JSON response; attempt recorded, no automatic retry") from None
 
 
+def _cache_paths(cache_dir, model, voice_id, text):
+    digest = hashlib.sha256(
+        json.dumps([model, voice_id, STYLE, text], ensure_ascii=False).encode("utf-8")
+    ).hexdigest()
+    return cache_dir / (digest + ".wav"), cache_dir / (digest + ".attempt.json")
+
+
+def _primary_unavailable(attempt):
+    try:
+        return json.loads(attempt.read_text(encoding="utf-8")).get("state") == "provider_unavailable"
+    except (OSError, ValueError, AttributeError):
+        return False
+
+
+def _synthesize_once(text, voice_id, model, dst, attempt, generate):
+    audit = {"state": "attempt_started", "provider": "Gemini", "model": model,
+             "profile": VOICE_NAME, "text_sha256": hashlib.sha256(text.encode()).hexdigest(),
+             "cache_name": dst.name}
+    try:
+        with attempt.open("x", encoding="utf-8") as f:
+            json.dump(audit, f)
+    except FileExistsError:
+        raise VoiceError("Concurrent or previous TTS attempt detected; no request submitted") from None
+    try:
+        blob = generate(text, voice_id, model)
+    except ProviderUnavailable as exc:
+        audit.update(state="provider_unavailable", reason=exc.reason,
+                     may_have_been_billed=exc.may_have_been_billed)
+        attempt.write_text(json.dumps(audit), encoding="utf-8")
+        raise
+    _validated_wav(blob)
+    tmp = dst.with_suffix(".pending")
+    with tmp.open("xb") as f:
+        f.write(blob)
+        f.flush()
+        os.fsync(f.fileno())
+    tmp.replace(dst)
+
+
 def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None):
     """Prepare all non-clip narration lines and return their cached WAV paths.
 
     Fail before ANY paid request if the maximum new lines/chars would be exceeded.
-    A .attempt.json is written BEFORE each request. No billed call can repeat after
-    an uncertain outcome; manual audit/cleanup is required.
+    Primary outages allow one Flash-Lite attempt. A .attempt.json is written
+    BEFORE each model's request. Existing uncertain attempts are never repeated.
     """
     selected = approved_profile()
     if voice_id is None:
@@ -233,26 +286,26 @@ def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None):
     generate = generate or _generate_once
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
-    tasks, new_count, new_chars = [], 0, 0
+    tasks, result, new_count, new_chars = [], {}, 0, 0
     for L in lines:
         if L.get("fromClip"):
             continue
         text = L.get("say", L["text"])
         if not isinstance(text, str) or not text.strip() or len(text) > 450:
             raise VoiceError("Invalid single-line Simba voice text")
-        digest = hashlib.sha256(
-            json.dumps([model, voice_id, STYLE, text], ensure_ascii=False).encode("utf-8")
-        ).hexdigest()
-        dst = cache_dir / (digest + ".wav")
-        attempt = cache_dir / (digest + ".attempt.json")
-        if dst.exists():
-            _validated_wav(dst.read_bytes())  # never reuse corrupt audio
-        else:
-            if attempt.exists():
-                raise VoiceError("Earlier Gemini attempt has no verified WAV: no automatic retry")
-            new_count += 1
-            new_chars += len(text)
-        tasks.append((L, text, dst, attempt))
+        primary = _cache_paths(cache_dir, model, voice_id, text)
+        fallback = _cache_paths(cache_dir, FALLBACK_MODEL, voice_id, text)
+        cached = next((p for p, _ in (primary, fallback) if p.exists()), None)
+        if cached is not None:
+            _validated_wav(cached.read_bytes())
+            result[L["id"]] = cached
+            continue
+        use_fallback = primary[1].exists() and _primary_unavailable(primary[1])
+        if fallback[1].exists() or (primary[1].exists() and not use_fallback):
+            raise VoiceError("Earlier Gemini attempt has no verified WAV: no automatic retry")
+        new_count += 1
+        new_chars += len(text)
+        tasks.append((L, text, primary, fallback, use_fallback))
     if new_count > MAX_NEW_LINES or new_chars > MAX_NEW_CHARACTERS:
         raise VoiceError(
             f"Simba TTS request cap exceeded ({new_count} new lines, {new_chars} chars); "
@@ -261,26 +314,21 @@ def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None):
     if new_count and not os.environ.get("GEMINI_API_KEY"):
         raise VoiceError("GEMINI_API_KEY missing; no paid requests attempted")
 
-    for L, text, dst, attempt in tasks:
-        if dst.exists():
+    switched = False
+    for L, text, primary, fallback, use_fallback in tasks:
+        cached = next((p for p, _ in (primary, fallback) if p.exists()), None)
+        if cached is not None:
+            _validated_wav(cached.read_bytes())
+            result[L["id"]] = cached
             continue
-        # Exclusive creation guards against two worker processes double billing.
-        audit = {"state": "attempt_started", "provider": "Gemini",
-                 "profile": VOICE_NAME, "text_sha256": hashlib.sha256(text.encode()).hexdigest(),
-                 "cache_name": dst.name}
-        try:
-            with attempt.open("x", encoding="utf-8") as f:
-                json.dump(audit, f)
-        except FileExistsError:
-            raise VoiceError("Concurrent or previous TTS attempt detected; no request submitted") from None
-        # Never delete the attempt record, even on errors; successful WAV is safe
-        # to reuse and errors require a manual check of billing.
-        blob = generate(text, voice_id, model)
-        _validated_wav(blob)
-        tmp = cache_dir / (dst.stem + ".pending")
-        with tmp.open("xb") as f:
-            f.write(blob)
-            f.flush()
-            os.fsync(f.fileno())
-        tmp.replace(dst)
-    return {L["id"]: dst for L, _, dst, _ in tasks}
+        switched = switched or use_fallback
+        if not switched:
+            try:
+                _synthesize_once(text, voice_id, model, *primary, generate)
+                result[L["id"]] = primary[0]
+                continue
+            except ProviderUnavailable:
+                switched = True
+        _synthesize_once(text, voice_id, FALLBACK_MODEL, *fallback, generate)
+        result[L["id"]] = fallback[0]
+    return result
