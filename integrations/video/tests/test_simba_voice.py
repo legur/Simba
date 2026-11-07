@@ -25,8 +25,29 @@ def fake_wav(duration_s=0.7):
     return out.getvalue()
 
 
+TRUSTED_WORKFLOW_ENV = {
+    "GITHUB_ACTIONS": "true",
+    "GITHUB_EVENT_NAME": "workflow_dispatch",
+    "GITHUB_ACTOR": "legur",
+    "GITHUB_TRIGGERING_ACTOR": "legur",
+    "GITHUB_REPOSITORY_OWNER": "legur",
+    "GITHUB_REPOSITORY": "legur/Simba",
+    "GITHUB_REF": "refs/heads/main",
+    "GITHUB_SHA": "a" * 40,
+    "GITHUB_WORKFLOW_SHA": "a" * 40,
+    "GITHUB_WORKFLOW": "Simba video — private GitHub Secrets render",
+    "GITHUB_WORKFLOW_REF": (
+        "legur/Simba/.github/workflows/"
+        "simba-video-secrets-render.yml@refs/heads/main"
+    ),
+}
+
+
 class SelectedVoiceTests(unittest.TestCase):
     def setUp(self):
+        workflow = patch.dict(os.environ, TRUSTED_WORKFLOW_ENV)
+        workflow.start()
+        self.addCleanup(workflow.stop)
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.job = Path(self.tmp.name)
