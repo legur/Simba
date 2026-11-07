@@ -88,6 +88,26 @@
           "Zubenelgenubi"
         ],
         "reason": "Gemini HTTP 429 on Schedar diagnostic; do not automatically resubmit paid synthesis or assume failed calls unbilled."
+      },
+      "flash_lite_samples_20261107": {
+        "model": "gemini-3.8-flash-lite-tts",
+        "status": "7_of_7_verified_private",
+        "note": "Seven previously unattempted male studio voices generated once under Flash-Lite despite Flash TTS HTTP 429. Identical Russian Prague benchmark.",
+        "voices": [
+          "Fenrir",
+          "Puck",
+          "Rasalgethi",
+          "Sadachbia",
+          "Sadaltager",
+          "Umbriel",
+          "Zubenelgenubi"
+        ],
+        "prefix": "PRAGUE-STORY-01_Gemini_38FlashLite_",
+        "extension": ".wav",
+        "storage": "Private Google Drive: Simba Private TTS Prague 2026-11-07",
+        "job_url": "https://github.com/legur/Simba/actions/runs/42346630772",
+        "production_voice_unchanged": true,
+        "a2e_calls": 0
       }
     },
     "google_chirp_3_hd": {
