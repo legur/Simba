@@ -7,6 +7,15 @@ from urllib.request import Request, urlopen
 
 REPORT=["# Simba TTS read-only diagnostic", "", "No new synthesis requests issued.", ""]
 
+def schema(value, depth=0):
+    if depth > 3:
+        return "..."
+    if isinstance(value, list):
+        return {"count":len(value),"first_item":schema(value[0],depth+1) if value else "none"}
+    if isinstance(value, dict):
+        return {str(k):schema(v,depth+1) for k,v in list(value.items())[:16]}
+    return type(value).__name__
+
 def inspect(url, env, label):
     key=os.getenv(env,"")
     if not key:
@@ -24,10 +33,12 @@ def inspect(url, env, label):
                 summary=(", ".join(keys[:15]))[:200]
                 size=[f"{k}={len(v)}" for k,v in data.items() if isinstance(v,list)]
                 REPORT.append(f"- {label}: HTTP {response.status}; top-level fields: {summary}; list sizes: {', '.join(size)[:110]}.")
+                if label=="A2E credit history":
+                    REPORT.append("  Schema only: " + json.dumps(schema(data.get("data")),ensure_ascii=False)[:900])
                 if label=="Gemini interactions list" and any(k in data for k in ("interactions","interaction_metadatas")):
                     REPORT.append("  Interaction enumeration available; recovery may be possible without resynthesis.")
                 if label=="A2E previous previews":
-                    REPORT.append("  History endpoint accessible; inspect in private account before retrying.")
+                    REPORT.append("  Schema only: " + json.dumps(schema(data.get("data")),ensure_ascii=False)[:1100])
             else:
                 REPORT.append(f"- {label}: HTTP {response.status}; response type {type(data).__name__}.")
     except HTTPError as ex:
