@@ -36,10 +36,18 @@ def main():
             code=item.get("status") if isinstance(item,dict) else "unknown"
             if not isinstance(code,str) or not re.fullmatch(r"[a-z_]{3,50}",code):
                 code="unknown"
+            permission="unknown"
+            if isinstance(item,dict) and code=="missing_permissions":
+                msg=str(item.get("message") or "")
+                m=re.search(r"permission ([a-z_]{3,50})",msg)
+                if m:
+                    permission=m.group(1)
         except Exception:
             code="unknown"
+            permission="unknown"
         post_comment("ElevenLabs Russian male catalog: HTTP "+str(e.code)+
-                     ", provider_status="+code+". No audio requests made.")
+                     ", provider_status="+code+", required_permission="+permission+
+                     ". No audio requests made.")
         raise StopTest("Voice Library lookup failed: "+code)
     voices=obj.get("voices",[])
     if not isinstance(voices,list):
