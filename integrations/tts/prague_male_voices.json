@@ -76,5 +76,27 @@
     "store_audio_privately": true,
     "run_status": "Gemini Orus verified; further male-only Gemini samples planned, A2E excluded per user",
     "no_more_a2e_requests": true
+  },
+  "character_voice_brief": {
+    "role": "Simba — recurring adult male brand character, not a generic travel-announcement narrator",
+    "perceived_age": "mature middle-aged adult male; exact age not yet specified",
+    "delivery": "Russian-speaking, natural conversational baritone or low-mid register; warm and confident, expressive but restrained; relaxed and recognizable across videos",
+    "desired": "presence, warmth, friendly authority, gentle rasp optional, consistent character",
+    "avoid": "young-boy tone, over-deep growl, theatrical announcer, theatrical lion imitation, robotic precision, shouting",
+    "selection_process": "Judge same script and at least one informational passage. Rate distinctiveness and consistency between repeated generations; keep a fixed voice ID and a reusable delivery style."
+  },
+  "selection_shortlist": {
+    "existing_samples": [
+      "Orus",
+      "Algenib",
+      "Iapetus"
+    ],
+    "next_gemini_candidates": [
+      "Algieba",
+      "Schedar",
+      "Charon",
+      "Sadaltager"
+    ],
+    "note": "Google catalog descriptions are not age classifications; actual Russian audio must be auditioned."
   }
 }
