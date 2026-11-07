@@ -12,9 +12,30 @@ import simba_voice as voice
 
 PRIMARY = 'gemini-3.8-flash-tts'
 FALLBACK = 'gemini-3.8-flash-lite-tts'
+TRUSTED_WORKFLOW_ENV = {
+    'GITHUB_ACTIONS': 'true',
+    'GITHUB_EVENT_NAME': 'workflow_dispatch',
+    'GITHUB_ACTOR': 'legur',
+    'GITHUB_TRIGGERING_ACTOR': 'legur',
+    'GITHUB_REPOSITORY_OWNER': 'legur',
+    'GITHUB_REPOSITORY': 'legur/Simba',
+    'GITHUB_REF': 'refs/heads/main',
+    'GITHUB_SHA': 'a' * 40,
+    'GITHUB_WORKFLOW_SHA': 'a' * 40,
+    'GITHUB_WORKFLOW': 'Simba video — private GitHub Secrets render',
+    'GITHUB_WORKFLOW_REF': (
+        'legur/Simba/.github/workflows/'
+        'simba-video-secrets-render.yml@refs/heads/main'
+    ),
+}
 
 
 class VoiceFallbackTests(unittest.TestCase):
+    def setUp(self):
+        workflow = patch.dict(os.environ, TRUSTED_WORKFLOW_ENV)
+        workflow.start()
+        self.addCleanup(workflow.stop)
+
     def test_duplicate_lines_generate_only_once(self):
         calls=[]
         lines=[{'id':'a','text':'Привет.'},{'id':'b','text':'Привет.'}]

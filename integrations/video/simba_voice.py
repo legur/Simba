@@ -21,6 +21,11 @@ import wave
 
 VOICE_NAME = "WarmBaritone"
 FALLBACK_MODEL = "gemini-3.8-flash-lite-tts"
+GITHUB_TTS_WORKFLOW = "Simba video — private GitHub Secrets render"
+GITHUB_TTS_WORKFLOW_REF = (
+    "legur/Simba/.github/workflows/"
+    "simba-video-secrets-render.yml@refs/heads/main"
+)
 META_NAME = "SimbaDesign_WarmBaritone.json"
 FOLDER_NAME = "Simba Private TTS Prague 2026-11-07"
 INTERACTIONS_URL = "https://generativelanguage.googleapis.com/v1beta/interactions"
@@ -46,6 +51,34 @@ class ProviderUnavailable(VoiceError):
         self.reason = reason
         self.may_have_been_billed = may_have_been_billed
         super().__init__("Gemini unavailable (" + reason + "); attempt recorded")
+
+
+def _require_github_secrets_workflow():
+    """Enforce runtime policy from GitHub environment evidence.
+
+    These variables identify the dedicated owner-dispatched workflow but are
+    not cryptographic attestation of where an environment value originated.
+    """
+    checkout_sha = os.environ.get("GITHUB_SHA", "")
+    workflow_sha = os.environ.get("GITHUB_WORKFLOW_SHA", "")
+    trusted = (
+        os.environ.get("GITHUB_ACTIONS") == "true"
+        and os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+        and os.environ.get("GITHUB_ACTOR") == os.environ.get("GITHUB_REPOSITORY_OWNER")
+        and os.environ.get("GITHUB_TRIGGERING_ACTOR") == os.environ.get("GITHUB_REPOSITORY_OWNER")
+        and os.environ.get("GITHUB_ACTOR") == "legur"
+        and os.environ.get("GITHUB_REPOSITORY") == "legur/Simba"
+        and os.environ.get("GITHUB_REF") == "refs/heads/main"
+        and os.environ.get("GITHUB_WORKFLOW") == GITHUB_TTS_WORKFLOW
+        and os.environ.get("GITHUB_WORKFLOW_REF") == GITHUB_TTS_WORKFLOW_REF
+        and re.fullmatch(r"[0-9a-fA-F]{40}", checkout_sha) is not None
+        and workflow_sha == checkout_sha
+    )
+    if not trusted:
+        raise VoiceError(
+            "New Simba TTS is allowed only in the owner-dispatched dedicated "
+            "GitHub Actions workflow on main; no request submitted"
+        )
 
 
 def approved_profile():
@@ -109,6 +142,7 @@ def voice_id_from_private_store():
             "to the private Drive JSON, or configure Google Drive OAuth secrets; "
             "no fallback voice will be used."
         )
+    _require_github_secrets_workflow()
     try:
         from google.oauth2.credentials import Credentials
         from google.auth.transport.requests import Request as GoogleRequest
@@ -193,6 +227,10 @@ def _audio_from_response(obj):
 
 
 def _generate_once(text, voice_id, model):
+    # Keep this check at the actual network boundary too: callers can inject a
+    # wrapper around this private generator and bypass synthesize_lines' early
+    # preflight identity check.
+    _require_github_secrets_workflow()
     key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not key:
         raise VoiceError("GEMINI_API_KEY missing; Simba voice cannot be rendered")
@@ -311,6 +349,10 @@ def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None):
             f"Simba TTS request cap exceeded ({new_count} new lines, {new_chars} chars); "
             "split the video or obtain explicit budget approval"
         )
+    if new_count:
+        # This must precede _synthesize_once, which creates the attempt journal
+        # immediately before the potentially billable provider call.
+        _require_github_secrets_workflow()
     if new_count and not os.environ.get("GEMINI_API_KEY"):
         raise VoiceError("GEMINI_API_KEY missing; no paid requests attempted")
 
