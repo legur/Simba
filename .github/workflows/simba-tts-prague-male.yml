@@ -2,7 +2,7 @@ name: Simba male Russian TTS Prague (private one-shot)
 
 on:
   issues:
-    types: [opened]
+    types: [opened, edited]
 
 permissions:
   contents: read
@@ -30,6 +30,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Install ffmpeg when runner image lacks it
+        run: |
+          command -v ffmpeg || (sudo apt-get update -qq && sudo apt-get install -y ffmpeg)
       - name: Static validation before any call
         run: |
           python -m py_compile integrations/tts/run_male_prague.py
