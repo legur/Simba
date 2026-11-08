@@ -7,20 +7,20 @@
     "Bavaria"
   ],
   "updated_at": "2026-11-08",
-  "stage": "ANIME_FESTIVE_REVIEW_PENDING_LEO",
+  "stage": "NEWYEAR_EDIT_OPTIONS_AWAITING_LEO",
   "sources": [
     {
       "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
-      "sha256": "09157e06a2e82579e4cc368205b13ab776fc6bc9615a48c1fffcd7930519d692"
+      "sha256": "75b694345e9af562117140a358e98bb1b2ee3e9e6276e5f7dee4e5e2eead220c"
     }
   ],
   "latest_user_request": {
-    "text": "3",
-    "state": "SELECTED_FESTIVE_ANIME_EDIT_COMPLETED",
-    "evidence": "Лео выбрал третий из показанных вариантов после прямой команды использовать Anime.js; выбор и результат зафиксированы в текущем источнике."
+    "text": "сделаqvyt существенно доугой монтаж. новогодний",
+    "state": "THREE_CONCRETE_PREVIEWS_READY_AWAITING_CHOICE",
+    "evidence": "Прямая правка Лео после объяснения, что предыдущий монтаж менялся сдержанно."
   },
-  "next_action": "Лео просматривает новогодний вариант3: золотые переходы Anime.js, движение карточек и последовательный вывод цены/CTA. Полный звук сохранен. Правки по обратной связи; публикация отдельно.",
-  "working_asset_id": "voiced-review-library",
+  "next_action": "Лео выбирает1/2/3 по трем14-секундным превью. Затем выполнить выбранный полный новогодний монтаж, используя все9готовых реплик, прежнюю музыку и клипы; итоговый QA и просмотр Лео. Новая платная генерация в показанном объеме не требуется.",
+  "working_asset_id": null,
   "approved_asset_id": null,
   "approvals": {
     "editorial": "pending",
@@ -118,8 +118,8 @@
       "kind": "review_video",
       "title": "Новогодний вариант3: Anime.js, золотые переходы, все9реплик",
       "url": "https://chatgpt.com/library?file_id=libfile_86c9e7313a6c8191ba0e7638b65ee2f6&account_id=personal",
-      "state": "available",
-      "reuse": true,
+      "state": "historical",
+      "reuse": false,
       "evidence": "Full1311-frame decode; zero black intervals; exact AAC unchanged; 19render samples inspected; Library v5 saved. Leo acceptance pending.",
       "recorded_library_version": 5,
       "recorded_duration_seconds": 54.625
@@ -199,11 +199,47 @@
       "kind": "review_video",
       "title": "Новогодний вариант3 с Anime.js",
       "url": "https://drive.google.com/file/d/1l2ov4H-087iqWvIrtPauhTCnapN_pERO/view",
-      "state": "available",
-      "reuse": true,
+      "state": "historical",
+      "reuse": false,
       "evidence": "Private upload of actual Anime.js festive render; complete decode and unchanged AAC verified.",
       "recorded_duration_seconds": 54.625,
       "recorded_size_bytes": 45621657
+    },
+    {
+      "id": "newyear-option-1",
+      "kind": "edit_preview",
+      "title": "Вариант1: Отсчет до Нового года (14с)",
+      "url": "https://chatgpt.com/library?file_id=libfile_2ba871a8e8948191882d3aa398490521&account_id=personal",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Actual Anime.js preview,336decoded frames, no black intervals, ASR0.93684; option not selected.",
+      "recorded_library_version": 0,
+      "recorded_duration_seconds": 14,
+      "recorded_size_bytes": 12276081
+    },
+    {
+      "id": "newyear-option-2",
+      "kind": "edit_preview",
+      "title": "Вариант2: Новогодние открытки (14с)",
+      "url": "https://chatgpt.com/library?file_id=libfile_163dd20684488191a1375dc22c2c3acf&account_id=personal",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Actual Anime.js preview,336decoded frames, no black intervals, ASR0.93684; option not selected.",
+      "recorded_library_version": 0,
+      "recorded_duration_seconds": 14,
+      "recorded_size_bytes": 5635744
+    },
+    {
+      "id": "newyear-option-3",
+      "kind": "edit_preview",
+      "title": "Вариант3: Праздничный трейлер (14с)",
+      "url": "https://chatgpt.com/library?file_id=libfile_f665a1f7b9248191a1ba6c5e36f24402&account_id=personal",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Actual Anime.js preview,336decoded frames, no black intervals, ASR0.93684; option not selected.",
+      "recorded_library_version": 0,
+      "recorded_duration_seconds": 14,
+      "recorded_size_bytes": 10837029
     }
   ],
   "references": [
@@ -221,16 +257,22 @@
     "Правка в другом чате может быть новее карточки: источник и последний запрос обязательно сверяются."
   ],
   "missing": [
-    "Личный просмотр и прослушивание Лео выбранного новогоднего оформления",
-    "Утверждение конкретного MP4",
+    "Выбор одного из трех новых новогодних вариантов",
+    "Полный монтаж в выбранном оформлении",
+    "Полный QA и личный просмотр Лео",
     "Подтверждение публикации"
   ],
   "selected_edit": {
-    "option": 3,
-    "style": "festive",
-    "motion_engine": "Anime.js",
-    "motion_engine_version": "4.2.2",
+    "option": null,
+    "state": "REOPENED_AFTER_FEEDBACK",
+    "prior_option": 3,
+    "prior_result": "Too restrained for Leo's requested major New Year edit",
     "new_paid_generations": 0,
-    "recipe_path": "campaigns/bavaria-new-year-2027/anime-festive/README.md"
-  }
+    "recipe_path": "campaigns/bavaria-new-year-2027/newyear-options/README.md"
+  },
+  "preview_asset_ids": [
+    "newyear-option-1",
+    "newyear-option-2",
+    "newyear-option-3"
+  ]
 }
