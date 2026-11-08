@@ -7,20 +7,20 @@
     "Bavaria"
   ],
   "updated_at": "2026-11-08",
-  "stage": "REVISION_IN_PROGRESS__PARTIAL_NARRATION",
+  "stage": "CAPTIONS_REPAIRED_REVIEW__PARTIAL_7_OF_9_NARRATION",
   "sources": [
     {
       "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
-      "sha256": "374aa88f48faee8e14070148b53a48168f65bf9796adf06e8adaf15a47e17359"
+      "sha256": "c21b96a6319772f125f08e9d43a4b04c7ff6d9cbb137b43b0d9ae7a7fa6613e6"
     }
   ],
   "latest_user_request": {
-    "text": "вопервых используй вторую модель и что это за субтитры? мы стобой говорили об этом",
-    "evidence": "Каноническая сессия, раздел Leo correction and Flash-Lite approval от 08.11.2026. Разрешены только две недостающие реплики через Flash-Lite; семь существующих WAV сохраняются.",
-    "state": "RECORDED_IN_SOURCE__IMPLEMENTATION_PENDING"
+    "text": "продолжай",
+    "evidence": "Continued after direct second-model and caption correction; implementation recorded in canonical source, caption review awaits Leo.",
+    "state": "CAPTIONS_IMPLEMENTED__LITE_FAILED_UNRESOLVED"
   },
-  "next_action": "Проверить исход двухрепличного Flash-Lite-прогона по последней записи источника, не запускать его повторно. Использовать шесть готовых A2E-клипов и семь WAV из recovery. После готовности двух реплик пересобрать с исправленными короткими субтитрами и проверить новую версию.",
-  "working_asset_id": "voiced-review",
+  "next_action": "Показать Leo исправленные короткие субтитры. Цена и CTA пока без диктора. Для новой платной попытки только155символов требуется отдельное решение после раскрытия неопределенного результата run42514415276; не повторять существующие семь WAV и A2E.",
+  "working_asset_id": "voiced-review-library",
   "approved_asset_id": null,
   "approvals": {
     "editorial": "pending",
@@ -108,20 +108,21 @@
       "kind": "review_video",
       "title": "Черновик с семью озвученными репликами",
       "url": "https://drive.google.com/file/d/1Ym4OT-wNxRHiw7-PxFQnMGSOv3bzey0G/view",
-      "state": "partial",
-      "reuse": true,
+      "state": "historical",
+      "reuse": false,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "recorded_duration_seconds": 58.666667
     },
     {
       "id": "voiced-review-library",
       "kind": "review_video",
-      "title": "Bavaria_Google_A2E_review.mp4",
+      "title": "Исправленные короткие субтитры; семь из девяти реплик",
       "url": "https://chatgpt.com/library?file_id=libfile_86c9e7313a6c8191ba0e7638b65ee2f6&account_id=personal",
       "state": "partial",
       "reuse": true,
-      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
-      "recorded_library_version": 2
+      "evidence": "Canonical source caption repair review; local bytes decoded, eight frames inspected, same Library identity replaced v3.",
+      "recorded_library_version": 3,
+      "recorded_duration_seconds": 54.291667
     },
     {
       "id": "raw-animation-review",
@@ -135,29 +136,32 @@
     {
       "id": "subtitles-review",
       "kind": "subtitles",
-      "title": "SRT только семи произнесенных реплик; требуется сверка правки",
+      "title": "28 коротких групп для семи произнесенных реплик",
       "url": "https://chatgpt.com/library?file_id=libfile_e20625b2b830819182e3160c95dbd340&account_id=personal",
       "state": "partial",
       "reuse": false,
-      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "recorded_library_version": 1
     },
     {
       "id": "qa-review",
       "kind": "qa_report",
-      "title": "QA существующего черновика, не новой редакции",
+      "title": "QA исправленных субтитров, полная озвучка не готова",
       "url": "https://chatgpt.com/library?file_id=libfile_509538b8e55081918f62df2724b03cef&account_id=personal",
       "state": "available",
       "reuse": false,
-      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "recorded_library_version": 1
     },
     {
       "id": "cover-review",
       "kind": "cover",
-      "title": "Обложка черновика",
+      "title": "Обложка исправленной просмотровой версии",
       "url": "https://chatgpt.com/library?file_id=libfile_0b16f14f13f08191aaecedd4f44f6cc9&account_id=personal",
-      "state": "unverified",
+      "state": "available",
       "reuse": false,
-      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "recorded_library_version": 1
     }
   ],
   "references": [
@@ -175,9 +179,9 @@
     "Правка в другом чате может быть новее карточки: источник и последний запрос обязательно сверяются."
   ],
   "missing": [
-    "Финальная редакция субтитров после последней правки Лео",
-    "Подтвержденная полная озвучка цены и CTA",
-    "Утверждение финального MP4",
+    "Подтвержденная успешная озвучка цены и CTA",
+    "Утверждение Leo варианта коротких субтитров и полного MP4",
+    "Полный ручной просмотр со звуком",
     "Подтверждение публикации"
   ]
 }
