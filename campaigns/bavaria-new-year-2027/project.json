@@ -7,19 +7,19 @@
     "Bavaria"
   ],
   "updated_at": "2026-11-08",
-  "stage": "AUDIO_ONLY_CONTINUATION_PREPARED",
+  "stage": "FULL_NARRATION_REVIEW_PENDING_LEO",
   "sources": [
     {
       "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
-      "sha256": "6364eff233ec1b2d6786ce443cd4b73235216f3269a8b3eab6104ea5c77dd703"
+      "sha256": "30cfaf4c3a27f5a413ae20924776dec96372d1c48b2dc03d491ae3cb194bbdce"
     }
   ],
   "latest_user_request": {
     "text": "и так закачивай озвучку и продолжим",
-    "state": "AUDIO_ONLY_CONTINUATION_PREPARED",
+    "state": "COMPLETED_NARRATION_AND_REVIEW",
     "evidence": "Прямая команда Лео в текущем чате 08.11.2026; известная неопределенность предыдущего запуска отмечена в сессии."
   },
-  "next_action": "Выполнить один аудиозапуск двух оставшихся реплик (155 символов) на выбранной Flash-Lite; сохранить WAV и квитанции. Семь готовых WAV и шесть A2E-клипов использовать повторно. После успешной проверки всех реплик продолжить монтаж.",
+  "next_action": "Лео просматривает полный ролик со всеми девятью репликами: голос, музыкальный баланс и короткие субтитры. Исправления выполнять по конкретной обратной связи; новый творческий этап предлагать тремя вариантами. Все исходные WAV и клипы переиспользовать.",
   "working_asset_id": "voiced-review-library",
   "approved_asset_id": null,
   "approvals": {
@@ -116,13 +116,13 @@
     {
       "id": "voiced-review-library",
       "kind": "review_video",
-      "title": "Исправленные короткие субтитры; семь из девяти реплик",
+      "title": "Полный ролик: девять реплик и короткие субтитры",
       "url": "https://chatgpt.com/library?file_id=libfile_86c9e7313a6c8191ba0e7638b65ee2f6&account_id=personal",
-      "state": "partial",
+      "state": "available",
       "reuse": true,
-      "evidence": "Canonical source caption repair review; local bytes decoded, eight frames inspected, same Library identity replaced v3.",
-      "recorded_library_version": 3,
-      "recorded_duration_seconds": 54.291667
+      "evidence": "Full decode 1311 frames; ASR0.95765; eight tail frames checked; Library v4 saved. Leo acceptance pending.",
+      "recorded_library_version": 4,
+      "recorded_duration_seconds": 54.625
     },
     {
       "id": "raw-animation-review",
@@ -136,22 +136,22 @@
     {
       "id": "subtitles-review",
       "kind": "subtitles",
-      "title": "28 коротких групп для семи произнесенных реплик",
+      "title": "35 коротких групп для всех девяти реплик",
       "url": "https://chatgpt.com/library?file_id=libfile_e20625b2b830819182e3160c95dbd340&account_id=personal",
-      "state": "partial",
+      "state": "available",
       "reuse": false,
-      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
-      "recorded_library_version": 1
+      "evidence": "Updated spoken price and CTA; Library v2 saved.",
+      "recorded_library_version": 2
     },
     {
       "id": "qa-review",
       "kind": "qa_report",
-      "title": "QA исправленных субтитров, полная озвучка не готова",
+      "title": "QA полной озвучки и ролика; личный просмотр Лео ожидается",
       "url": "https://chatgpt.com/library?file_id=libfile_509538b8e55081918f62df2724b03cef&account_id=personal",
       "state": "available",
       "reuse": false,
-      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
-      "recorded_library_version": 1
+      "evidence": "Current verification report saved as Library v2.",
+      "recorded_library_version": 2
     },
     {
       "id": "cover-review",
@@ -162,6 +162,37 @@
       "reuse": false,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "recorded_library_version": 1
+    },
+    {
+      "id": "voice-recovery-remaining",
+      "kind": "recovery_archive",
+      "title": "Два недостающих WAV: цена и CTA",
+      "url": "https://drive.google.com/file/d/1JUBN4KOb95xIs4oPWVxckEKG9dRnKp3a/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Private archive downloaded; two WAVs recognized; successful run42517540074.",
+      "recorded_size_bytes": 951542
+    },
+    {
+      "id": "narration-complete",
+      "kind": "narration",
+      "title": "Полная озвучка: девять реплик без музыки",
+      "url": "https://chatgpt.com/library?file_id=libfile_68dd0d765fec8191a6adca18d604e809&account_id=personal",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Nine source WAVs concatenated without new synthesis; MP3 saved v0; private Drive1Gx1wESZpzcU4lcRf8EEz9UyPR_62AYPI.",
+      "recorded_library_version": 0,
+      "recorded_duration_seconds": 51.264
+    },
+    {
+      "id": "full-review-drive",
+      "kind": "review_video",
+      "title": "Полный ролик: все девять реплик",
+      "url": "https://drive.google.com/file/d/1OAKbxokeAGhgFtzh64YIw65ef5vW5JLn/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Private upload of complete verified review; Leo acceptance pending.",
+      "recorded_duration_seconds": 54.625
     }
   ],
   "references": [
@@ -174,12 +205,11 @@
   ],
   "reuse_notes": [
     "Шесть клипов уже созданы и заархивированы; до новой генерации открыть существующие файлы.",
-    "Семь успешных реплик не синтезировать заново без необходимости и нового основания.",
+    "Все девять успешных реплик сохранены; не синтезировать заново без необходимости и нового основания.",
     "Старые полные input ZIP содержат журналы оплаченных попыток; каталог не разрешает их повторный запуск.",
     "Правка в другом чате может быть новее карточки: источник и последний запрос обязательно сверяются."
   ],
   "missing": [
-    "Подтвержденная успешная озвучка цены и CTA",
     "Утверждение Leo варианта коротких субтитров и полного MP4",
     "Полный ручной просмотр со звуком",
     "Подтверждение публикации"

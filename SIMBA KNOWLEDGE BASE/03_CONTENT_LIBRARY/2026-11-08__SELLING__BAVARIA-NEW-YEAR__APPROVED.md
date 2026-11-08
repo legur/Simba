@@ -34,7 +34,7 @@ WhatsApp: 058-677-8492. Код обращения: БАВАРИЯ. Лео, Simba
 Голос: постоянный Google Gemini Simba WarmBaritone, без подмены другим провайдером.
 KADR_REFERENCES: KADR-002 — неподвижные крупные титры поверх меняющегося фона; удержание оффера и контакта для чтения. Музыка и звук референса не копируются.
 Все цены и даты — текущие данные Leo от 08.11.2026, не постоянное правило и не источник для будущих офферов.
-STATUS_VIDEO: BLOCKED_RENDER_FAILED_SPENDING_UNCERTAIN; не PUBLISHED, не VIDEO_QA_PASS.
+STATUS_VIDEO: FULL_NARRATION_REVIEW_PENDING_LEO; latest result below; not PUBLISHED, not VIDEO_QA_PASS.
 PROVENANCE: SOURCE Leo; CLASSIFICATION sales reel; STRATEGIST Simba runtime; TEXT_EXECUTOR Сценарист; VISUAL_EXECUTOR stock selection per direct Leo instruction; RENDERER pending integrations/video; EXECUTION_STATES script prepared / stock downloaded / Google launch awaiting authentication.
 
 
@@ -241,3 +241,21 @@ Leo instruction in the materials/continuation chat: «и так закачива
 Prepared private input Drive1dfY1-ufzkEVRz8yjRJ59Xka0XIMY_2o9 contains ONLY the existing two approved remaining lines,155spoken characters. Audio-only mode uses the SAME private WarmBaritone and explicit gemini-3.8-flash-lite-tts, allow_fallback=false. One attempt per remaining line, no successful-line regeneration, no A2E, no full render. Old replay markers remain intact; this new input is tied to the current instruction. No publication authorization.
 
 Technical preparation in the existing private worker/workflow adds an optional audio_only mode, defaultfalse, capped at2lines/155chars before a permanent marker. It archives source WAVs and receipts directly rather than coupling preservation to a complete MP4. Existing owner/main/Secrets checks, source approval, private destination and permanent replay protection retained. 42security/worker +21voice tests PASS; YAML parsed. KB-LINT: PASS — source explicit, task-only, no offer change or broader launch permissions, canonical files in place. Status AUDIO_ONLY_CONTINUATION_PREPARED; no successful new audio claimed before actual run.
+
+
+## Complete narration and updated review — 2026-11-08
+
+Current status: FULL_NARRATION_REVIEW_PENDING_LEO. The current instruction was completed with nine recorded lines and an updated full voiced review; publication and final Leo acceptance remain pending.
+
+Run https://github.com/legur/Simba/actions/runs/42517540074 succeeded on commit0ab0f0c38ca29bcf240352667a429d56fcc69ffc, audio_only=true, diagnostics_only=false. Exactly the two remaining approved lines (155spoken characters) through gemini-3.8-flash-lite-tts, same private WarmBaritone, allow_fallback=false. Seven earlier WAVs and all6A2Eclips reused. No paid automatic retries or new animation. New permanent marker Drive1XDNiovpPguJkVELsFAxWcYeccRrn0SeY; all old markers retained. Old run42514415276 billing uncertainty remains unresolved and is not reclassified as success by this result.
+
+Private recovery ZIP Drive1JUBN4KOb95xIs4oPWVxckEKG9dRnKp3a,951542bytes, downloaded and verified: two source WAVs, attempt receipts and sanitized audio_only_completed diagnostic. Price trimmed6.505s, CTA4.643s. Price ASR1.000 with explicit numeric equivalence1399/100. Small ASR incorrectly decoded CTA destination as «в аварии»; independent Whisper medium with no prompt recognized the exact approved «Напишите мне в WhatsApp “Бавария”. Пришлю полную программу», normalized1.000. No audio regeneration or text substitution used to fix an ASR result.
+
+Full narration MP3:51.264s,9lines in order, no background music. Library libfile_68dd0d765fec8191a6adca18d604e809 v0; private Drive1Gx1wESZpzcU4lcRf8EEz9UyPR_62AYPI. Source WAVs remain in the two private recovery archives for reuse; no private voice ID or response fields committed.
+
+Updated same Library video libfile_86c9e7313a6c8191ba0e7638b65ee2f6 v4:54.625s,720x1280,24fps,H264/AAC48kHz, all9lines now spoken, music Holidays2 retained. First42s retain prior scenes/short captions; existing price and CTA cards held for new narration. Tail uses short1–3word groups with gold active word and outline, no opaque slab. SRT now35groups, same libfile_e20625b2b830819182e3160c95dbd340 v2. QA same libfile_509538b8e55081918f62df2724b03cef v2. Cover unchanged v1. Private full-review Drive1OAKbxokeAGhgFtzh64YIw65ef5vW5JLn; earlier7of9Drivevideo remains historical.
+
+Verification:1311frames and complete audio decode; no blackdetect intervals; actual AAC−14.75LUFS,−1.42dBTP,LRA3.10. Full-mix ASR0.95765 after explicit numeric equivalence31/6/1399/100 (threshold0.85). Eight tail/boundary frames inspected; price1399€ instead1499€,discount100€, dates28.12.2026–03.01.2027, double-occupancy unit and058-677-8492 retained. Full human listening by Leo pending; technical recognition does not certify timbre or naturalness. Caption style awaits Leo review. No VIDEO_QA_PASS, no final acceptance, no publication.
+
+KB-LINT: PASS — observed run and saved artifacts; task-scoped continuation; approved source/script and offer unchanged; existing canonical file and Library identities retained; no broad permissions or new brand rule; KADR-002 visual use retained without borrowed audio. Next: Leo reviews complete voiced MP4, then any new creative stage follows the existing three-variant choice process.
+
