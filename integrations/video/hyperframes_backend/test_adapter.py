@@ -3,16 +3,24 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 
 from hyperframes_backend import render
+from hyperframes_backend.adapter import _probe_video
 
 
 class HyperFramesAdapterTest(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
+        # The CLI below intentionally produces a byte stub, not an encoded MP4.
+        # Isolate its adapter-contract tests from the host's installed ffprobe.
+        # The real probe is tested separately against its subprocess boundary.
+        probe_patch = patch("hyperframes_backend.adapter._probe_video")
+        self.probe = probe_patch.start()
+        self.addCleanup(probe_patch.stop)
         self.root = Path(self.temp.name)
         self.job = self.root / "job"
         (self.job / "assets").mkdir(parents=True)
@@ -90,6 +98,8 @@ process.exit(__EXIT_CODE__);
         self.assertEqual(generated_plan["scenes"][0]["image"], "/assets/photo.jpg")
         self.assertEqual(generated_plan["end"]["bg"], "/assets/photo.jpg")
         self.assertEqual(self.output.stat().st_size, 128)
+        self.probe.assert_called_once()
+        self.assertEqual(self.probe.call_args.args[1:3], (1.25, 24))
         runtime_film = (self.job / ".simba-hyperframes" / "runtime" / "template" / "film.js").read_text(encoding="utf-8")
         self.assertIn("/.simba-hyperframes/timeline.json", runtime_film)
 
@@ -189,5 +199,33 @@ process.exit(__EXIT_CODE__);
         self.assertEqual(invocation["env"]["ffmpeg"], str(ffmpeg.resolve()))
 
 
+class ProbeVideoTest(unittest.TestCase):
+    def probe(self, metadata, returncode=0):
+        result = SimpleNamespace(returncode=returncode, stdout=json.dumps(metadata), stderr="invalid MP4" if returncode else "")
+        with patch("hyperframes_backend.adapter.shutil.which", return_value="/tools/ffprobe"), patch(
+            "hyperframes_backend.adapter.subprocess.run", return_value=result
+        ) as run:
+            _probe_video(Path("temporary.mp4"), 1.25, 24)
+        return run.call_args.args[0]
+
+    def test_probe_accepts_video_with_expected_duration(self):
+        command = self.probe({"streams": [{"codec_type": "video"}], "format": {"duration": "1.25"}})
+        self.assertEqual(command[0], "/tools/ffprobe")
+        self.assertEqual(command[-1], "temporary.mp4")
+
+    def test_probe_rejects_invalid_mp4(self):
+        with self.assertRaisesRegex(RuntimeError, "ffprobe rejected"):
+            self.probe({}, returncode=1)
+
+    def test_probe_rejects_output_without_video(self):
+        with self.assertRaisesRegex(RuntimeError, "no video stream"):
+            self.probe({"streams": [], "format": {"duration": "1.25"}})
+
+    def test_probe_rejects_wrong_duration(self):
+        with self.assertRaisesRegex(RuntimeError, "duration mismatch"):
+            self.probe({"streams": [{"codec_type": "video"}], "format": {"duration": "12.5"}})
+
+
 if __name__ == "__main__":
     unittest.main()
+
