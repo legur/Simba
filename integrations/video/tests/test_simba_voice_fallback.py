@@ -47,6 +47,37 @@ class VoiceFallbackTests(unittest.TestCase):
             self.assertEqual(len(calls),1)
             self.assertEqual(result['a'],result['b'])
 
+    def test_explicit_no_fallback_stops_after_one_uncertain_attempt(self):
+        calls = []
+        def generate(text, voice_id, model):
+            calls.append(model)
+            raise voice.ProviderUnavailable('timeout', may_have_been_billed=True)
+        with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {'GEMINI_API_KEY':'offline'}):
+            for _ in range(2):
+                with self.assertRaises(voice.VoiceError):
+                    voice.synthesize_lines([{'id':'one','text':'Привет.'}], Path(tmp),
+                        voice_id='voice_private123', generate=generate, allow_fallback=False)
+            self.assertEqual(calls, [PRIMARY])
+            self.assertEqual(len(list(Path(tmp).glob('*.attempt.json'))), 1)
+
+    def test_successful_response_saved_before_parser_failure_without_headers(self):
+        import base64
+        audio = {'type':'audio','data':base64.b64encode(fake_wav()).decode()}
+        payload = {'id':'interaction_test', 'output_audio':audio,
+                   'steps':[{'type':'model_output','content':[audio]}],
+                   'headers':{'x-goog-api-key':'NEVER_SAVE'}}
+        class Response:
+            def __enter__(self): return self
+            def __exit__(self,*args): pass
+            def read(self,n): return json.dumps(payload).encode()
+        with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {'GEMINI_API_KEY':'offline'}):
+            target = Path(tmp)/'response.json'
+            with patch('urllib.request.urlopen',return_value=Response()):
+                with self.assertRaises(voice.VoiceError):
+                    voice._generate_once('Привет.','voice_private123',PRIMARY,response_path=target)
+            self.assertIn('output_audio',json.loads(target.read_text()))
+            self.assertNotIn('NEVER_SAVE',target.read_text())
+
     def test_recorded_primary_outage_resumes_with_fallback_only(self):
         calls=[]
         with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {'GEMINI_API_KEY':'offline'}):
@@ -137,3 +168,4 @@ class VoiceFallbackTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
