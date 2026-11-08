@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "id": "prague-new-year-2027",
+  "title": "Прага. Новый год",
+  "aliases": [
+    "Прага",
+    "Prague"
+  ],
+  "updated_at": "2026-11-08",
+  "stage": "TECH_QA_RECORDED__EDITORIAL_REVIEW_PENDING",
+  "sources": [
+    {
+      "path": "campaigns/prague-new-year-2027/README.md",
+      "sha256": "4c3e5e83e1f298ff5afb5d3abdc51bde7925c4bda1c45b6aa05ba3e1f05f7ed9"
+    },
+    {
+      "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-01__SELLING__PRAGUE-NEW-YEAR__APPROVED.md",
+      "sha256": "bfd6d44001e5194d021481250eaff51c8fa317c986b80126bc68834da19d6493"
+    }
+  ],
+  "next_action": "Открыть анимированный черновик от 05.11, сверить более поздние решения и материалы по Праге, проверить актуальность оффера и получить решение Лео о финальной версии. Повторно использовать имеющиеся клипы и проект плашек.",
+  "working_asset_id": "animated-review",
+  "approved_asset_id": null,
+  "approvals": {
+    "editorial": "pending",
+    "publication": "pending"
+  },
+  "assets": [
+    {
+      "id": "animated-review",
+      "kind": "review_video",
+      "title": "Анимированный черновик A2E с титрами от 05.11",
+      "url": "https://drive.google.com/file/d/15zgVCXp_KBM02sGogYgzIRfK-xXZx5UD/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "recorded_sha256": "7ec84e9ce61b333894476544e995e410f562a374cddc8e9d2c45e52a33e37b37",
+      "recorded_duration_seconds": 30.375
+    },
+    {
+      "id": "qa-review",
+      "kind": "qa_report",
+      "title": "QA анимированного черновика",
+      "url": "https://drive.google.com/file/d/1uHDhS3-fA01VF2iVVWFCFaSKIrg_eLPq/view",
+      "state": "available",
+      "reuse": false,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+    },
+    {
+      "id": "media-manifest",
+      "kind": "media_manifest",
+      "title": "Манифест существующей сборки",
+      "url": "https://drive.google.com/file/d/1sILGUKvWUkEVAhnYQJ8EBp2moGw1HxG_/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+    },
+    {
+      "id": "overlay-project",
+      "kind": "project_archive",
+      "title": "Редактируемый проект плашек ZIP",
+      "url": "https://drive.google.com/file/d/1h6Z4VwLyl8XcfuYdCXAOszZQHCmz-D8v/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+    },
+    {
+      "id": "github-reel",
+      "kind": "review_video",
+      "title": "Ранее сохраненный MP4 в GitHub",
+      "url": "https://github.com/legur/Simba/blob/main/campaigns/prague-new-year-2027/simba_prague_new_year_full_reel_2027.mp4",
+      "state": "historical",
+      "reuse": false,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "recorded_sha256": "05f4d6a9ee01ebbac57b04b11b28f32fd23d5745ab6011d95c37d53b16190c99",
+      "recorded_size_bytes": 14870580
+    }
+  ],
+  "references": [
+    {
+      "id": "PRAGUE_APPROVED_TEXT",
+      "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-01__SELLING__PRAGUE-NEW-YEAR__APPROVED.md",
+      "relationship": "source_text",
+      "scope": "Утверждение текста не равно утверждению видео."
+    },
+    {
+      "id": "PRAGUE_CRITIC_LOG",
+      "path": "Симба (Писатель)/Session-Logs/2026-11-01_Прага-Новый-год.md",
+      "relationship": "text_review",
+      "scope": "Журнал правок поста, не технический видеоконтроль."
+    }
+  ],
+  "reuse_notes": [
+    "Существующий монтаж, проект плашек и манифест найдены по каноническому README.",
+    "Оригинальные клипы указаны в манифесте; перед платной генерацией прочитать его и проверить доступность файлов.",
+    "Есть более поздние материалы по голосу в переписках. Этот снимок не объявляет выбранный черновик окончательной версией."
+  ],
+  "missing": [
+    "Сверка более поздних голосовых версий и решений Лео",
+    "Явное утверждение конкретного финального MP4",
+    "Подтверждение публикации"
+  ]
+}

@@ -1,0 +1,23 @@
+# Проекты Simba
+
+Пилот общего учета рабочих материалов. Название проекта ведет к его постоянной записи; содержимое библиотек и медиа остается в текущих хранилищах.
+
+| Проект | Запись для продолжения | Основной источник |
+|---|---|---|
+| Бавария. Новый год | [project.json](bavaria-new-year-2027/project.json) | [Производственная сессия](../SIMBA%20KNOWLEDGE%20BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md) |
+| Прага. Новый год | [project.json](prague-new-year-2027/project.json) | [Материалы и версии](prague-new-year-2027/README.md) |
+
+## Быстрые действия
+
+```bash
+python3 integrations/materials/catalog.py resume Бавария
+python3 integrations/materials/catalog.py resume Прага
+python3 integrations/materials/catalog.py reuse Бавария --kind animated_clip
+python3 integrations/materials/catalog.py search "титры" --library kadr
+```
+
+Без локального Python открыть запись проекта, затем актуальные `sources` и выбранные файлы через доступные GitHub/Drive-инструменты. Сверить последнюю правку Лео. Изменение источника делает прежнюю сводку потенциально устаревшей.
+
+Поиск охватывает Архивариуса, TIA, Кадр, журналы Критика и библиотеку контента; [описание](../integrations/materials/README.md). Пригодность найденной карточки проверяется по правилам соответствующей роли.
+
+После каждого завершенного этапа исполнитель обновляет существующий источник и ту же запись проекта, проверяет ссылки и сохранение. Автоматический обмен данными с другими чатами или Notion пока не настроен.

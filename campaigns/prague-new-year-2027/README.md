@@ -50,3 +50,11 @@ PR создан по запросу «пуш и мерж на git». Ветка 
 - В Google Drive сохранены [отчет QA](https://drive.google.com/file/d/1uHDhS3-fA01VF2iVVWFCFaSKIrg_eLPq/view?usp=drivesdk), [манифест](https://drive.google.com/file/d/1sILGUKvWUkEVAhnYQJ8EBp2moGw1HxG_/view?usp=drivesdk), [проект плашек ZIP](https://drive.google.com/file/d/1h6Z4VwLyl8XcfuYdCXAOszZQHCmz-D8v/view?usp=drivesdk) и оригинальные клипы; повторная генерация A2E не требуется.
 - **Публикация не выполнена.** Нужны проверка актуальности 899 € / мест и визуальное утверждение Leo. Статус: `TECH_QA_PASS / LEO_EDITORIAL_REVIEW_REQUIRED`.
 
+## Продолжение проекта — пилот учета материалов
+
+Текущая запись: [project.json](project.json). Она связывает рабочий черновик, исторический MP4, QA, манифест, проект плашек и журнал Критика. Перед продолжением сверить актуальные источники и более поздние решения Лео; выбранный для работы файл не объявляется утвержденным автоматически.
+
+```bash
+python3 integrations/materials/catalog.py resume Прага
+python3 integrations/materials/catalog.py reuse Прага
+```

@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "id": "bavaria-new-year-2027",
+  "title": "Бавария. Новый год",
+  "aliases": [
+    "Бавария",
+    "Bavaria"
+  ],
+  "updated_at": "2026-11-08",
+  "stage": "REVISION_IN_PROGRESS__PARTIAL_NARRATION",
+  "sources": [
+    {
+      "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
+      "sha256": "374aa88f48faee8e14070148b53a48168f65bf9796adf06e8adaf15a47e17359"
+    }
+  ],
+  "latest_user_request": {
+    "text": "вопервых используй вторую модель и что это за субтитры? мы стобой говорили об этом",
+    "evidence": "Каноническая сессия, раздел Leo correction and Flash-Lite approval от 08.11.2026. Разрешены только две недостающие реплики через Flash-Lite; семь существующих WAV сохраняются.",
+    "state": "RECORDED_IN_SOURCE__IMPLEMENTATION_PENDING"
+  },
+  "next_action": "Проверить исход двухрепличного Flash-Lite-прогона по последней записи источника, не запускать его повторно. Использовать шесть готовых A2E-клипов и семь WAV из recovery. После готовности двух реплик пересобрать с исправленными короткими субтитрами и проверить новую версию.",
+  "working_asset_id": "voiced-review",
+  "approved_asset_id": null,
+  "approvals": {
+    "editorial": "pending",
+    "publication": "pending"
+  },
+  "assets": [
+    {
+      "id": "clip-1",
+      "kind": "animated_clip",
+      "title": "A2E 6af09197cabbb89a76fe0d5d",
+      "url": "https://drive.google.com/file/d/11Kbhkq1rKCT3dvI5Khn6bls3VjnFnIMl/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "task_id": "6af09197cabbb89a76fe0d5d",
+      "recorded_size_bytes": 10357655
+    },
+    {
+      "id": "clip-2",
+      "kind": "animated_clip",
+      "title": "A2E 6af0918bdac593f36d9222d5",
+      "url": "https://drive.google.com/file/d/10ovUXkr1uJqPzBUZJ1EvsMfvpTg8RX_M/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "task_id": "6af0918bdac593f36d9222d5",
+      "recorded_size_bytes": 13992091
+    },
+    {
+      "id": "clip-3",
+      "kind": "animated_clip",
+      "title": "A2E 6af0918c3172c3467b549513",
+      "url": "https://drive.google.com/file/d/1cmNSFlKdV6r8uUVyGcMlKdSIPQI2ZtZv/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "task_id": "6af0918c3172c3467b549513",
+      "recorded_size_bytes": 11128708
+    },
+    {
+      "id": "clip-4",
+      "kind": "animated_clip",
+      "title": "A2E 6af0918e845d35585ed9d950",
+      "url": "https://drive.google.com/file/d/1U6S41780RxnAsypNx4OpKR0NV_ybttD3/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "task_id": "6af0918e845d35585ed9d950",
+      "recorded_size_bytes": 14432770
+    },
+    {
+      "id": "clip-5",
+      "kind": "animated_clip",
+      "title": "A2E 6af091999c80028eb2e08832",
+      "url": "https://drive.google.com/file/d/1VCHSenO7qwa5m3tmGD7dMnWLu1fuj4Ui/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "task_id": "6af091999c80028eb2e08832",
+      "recorded_size_bytes": 12311159
+    },
+    {
+      "id": "clip-6",
+      "kind": "animated_clip",
+      "title": "A2E 6af0919a2d72d4e7f40057fe",
+      "url": "https://drive.google.com/file/d/1DaU5TzqkjzwzPFVgr_SXh4HXitEx2DOi/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "task_id": "6af0919a2d72d4e7f40057fe",
+      "recorded_size_bytes": 16890463
+    },
+    {
+      "id": "voice-recovery",
+      "kind": "recovery_archive",
+      "title": "Семь готовых WAV и квитанции попыток",
+      "url": "https://drive.google.com/file/d/1h6LFyStoQAZv8kepz4K6htbrYRNB6zI_/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "recorded_size_bytes": 3107579
+    },
+    {
+      "id": "voiced-review",
+      "kind": "review_video",
+      "title": "Черновик с семью озвученными репликами",
+      "url": "https://drive.google.com/file/d/1Ym4OT-wNxRHiw7-PxFQnMGSOv3bzey0G/view",
+      "state": "partial",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "recorded_duration_seconds": 58.666667
+    },
+    {
+      "id": "voiced-review-library",
+      "kind": "review_video",
+      "title": "Bavaria_Google_A2E_review.mp4",
+      "url": "https://chatgpt.com/library?file_id=libfile_86c9e7313a6c8191ba0e7638b65ee2f6&account_id=personal",
+      "state": "partial",
+      "reuse": true,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "recorded_library_version": 2
+    },
+    {
+      "id": "raw-animation-review",
+      "kind": "review_video",
+      "title": "Склейка анимации без голоса и титров",
+      "url": "https://chatgpt.com/library?file_id=libfile_575e0f8f88ec8191982bb6062c1ac11c&account_id=personal",
+      "state": "historical",
+      "reuse": false,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+    },
+    {
+      "id": "subtitles-review",
+      "kind": "subtitles",
+      "title": "SRT только семи произнесенных реплик; требуется сверка правки",
+      "url": "https://chatgpt.com/library?file_id=libfile_e20625b2b830819182e3160c95dbd340&account_id=personal",
+      "state": "partial",
+      "reuse": false,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+    },
+    {
+      "id": "qa-review",
+      "kind": "qa_report",
+      "title": "QA существующего черновика, не новой редакции",
+      "url": "https://chatgpt.com/library?file_id=libfile_509538b8e55081918f62df2724b03cef&account_id=personal",
+      "state": "available",
+      "reuse": false,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+    },
+    {
+      "id": "cover-review",
+      "kind": "cover",
+      "title": "Обложка черновика",
+      "url": "https://chatgpt.com/library?file_id=libfile_0b16f14f13f08191aaecedd4f44f6cc9&account_id=personal",
+      "state": "unverified",
+      "reuse": false,
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+    }
+  ],
+  "references": [
+    {
+      "id": "KADR-002",
+      "path": "Кадр/База/cards/KADR-002.md",
+      "relationship": "used_in_recorded_review",
+      "scope": "Только визуальные приемы: крупные офферы и читаемые титры. Применение зафиксировано в исходной видеосессии; новая правка субтитров требует отдельной сверки."
+    }
+  ],
+  "reuse_notes": [
+    "Шесть клипов уже созданы и заархивированы; до новой генерации открыть существующие файлы.",
+    "Семь успешных реплик не синтезировать заново без необходимости и нового основания.",
+    "Старые полные input ZIP содержат журналы оплаченных попыток; каталог не разрешает их повторный запуск.",
+    "Правка в другом чате может быть новее карточки: источник и последний запрос обязательно сверяются."
+  ],
+  "missing": [
+    "Финальная редакция субтитров после последней правки Лео",
+    "Подтвержденная полная озвучка цены и CTA",
+    "Утверждение финального MP4",
+    "Подтверждение публикации"
+  ]
+}
