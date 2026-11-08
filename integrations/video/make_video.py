@@ -201,7 +201,8 @@ def tts(spec, job):
         import simba_voice
         try:
             voices = simba_voice.synthesize_lines(spoken, vdir / '.cache',
-                                                 allow_fallback=voice_setting.get('allow_fallback', True))
+                                                 allow_fallback=voice_setting.get('allow_fallback', True),
+                                                 selected_model=voice_setting.get('model'))
         except simba_voice.VoiceError as exc:
             raise Stop('Simba approved voice: ' + str(exc)) from None
         for L in spoken:
