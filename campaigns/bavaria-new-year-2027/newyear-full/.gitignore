@@ -1,0 +1,6 @@
+__pycache__/
+helpers/
+motion.json
+*.mp4
+*.jpg
+*.log

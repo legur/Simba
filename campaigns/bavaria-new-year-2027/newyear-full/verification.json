@@ -1,0 +1,48 @@
+[
+  {
+    "variant": "Countdown",
+    "duration": 54.625,
+    "frames": 1311,
+    "width": 720,
+    "height": 1280,
+    "audio_packet_hash": "SHA256=cc4bcce52c2ba974dd7dd8d38cd00b5ebc2f84d6c38247651295ecc64a087341",
+    "loudness": {
+      "input_i": "-14.75",
+      "input_tp": "-1.42",
+      "input_lra": "3.10",
+      "input_thresh": "-24.76",
+      "output_i": "-14.59",
+      "output_tp": "-1.50",
+      "output_lra": "2.50",
+      "output_thresh": "-24.59",
+      "normalization_type": "dynamic",
+      "target_offset": "0.59"
+    },
+    "black_intervals": 0,
+    "bytes": 35999488,
+    "sha256": "a008ac7df1265c878b4f95964d351fc008893262798ce58960a9eb925f58b6bf"
+  },
+  {
+    "variant": "Postcards",
+    "duration": 54.625,
+    "frames": 1311,
+    "width": 720,
+    "height": 1280,
+    "audio_packet_hash": "SHA256=cc4bcce52c2ba974dd7dd8d38cd00b5ebc2f84d6c38247651295ecc64a087341",
+    "loudness": {
+      "input_i": "-14.75",
+      "input_tp": "-1.42",
+      "input_lra": "3.10",
+      "input_thresh": "-24.76",
+      "output_i": "-14.59",
+      "output_tp": "-1.50",
+      "output_lra": "2.50",
+      "output_thresh": "-24.59",
+      "normalization_type": "dynamic",
+      "target_offset": "0.59"
+    },
+    "black_intervals": 0,
+    "bytes": 14785652,
+    "sha256": "b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3"
+  }
+]
