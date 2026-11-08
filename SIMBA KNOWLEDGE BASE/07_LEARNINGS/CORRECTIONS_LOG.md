@@ -141,3 +141,10 @@ Scope → текущий рилс о новогодней Баварии; не �
 Reference trace → 6 собственных stock source photos (перечень URL/авторов в source package); Archivarius search attempted, no matching card retrieved; YouMind current manifest read and focused search returned no relevant template; сторонние карточки и EX-пары не заявляются примененными. Исполнитель Rafael / renderer built-in image generation. Параметры API-модели и режима thinking не доступны и не заявляются выбранными.
 Статус → новые визуалы созданы, визуальный черновик обновляется; выбор/утверждение Leo пока не получены. Блокировка Google-озвучки и запрет неопределенного повтора сохраняются.
 KB-LINT: PASS — L01 прямой источник; L02/L06 scope текущего материала; L03 динамические условия не обобщены; L04 корректный learning layer; L05 противоречия с прежним stock-only пожеланием разрешены новой прямой командой; L07 provenance обозначен без выдуманных references; L08 обновление на месте; L09 не применяется.
+
+
+## 2026-11-08 — Bavaria Reel: rejected paragraph captions
+
+Source: direct Leo correction «что это за субтитры? мы с тобой говорили об этом» after voiced Bavaria review. Scope: current Reel caption implementation. Full-sentence opaque slabs in the review are rejected. Exact earlier caption wording could not be recovered; do not invent it. Planned current repair: short2–3word groups with synchronized active-word highlighting, separate from static offer/headlines; awaiting review. This does not establish an exact prior quotation or new global caption rule. Leo also explicitly selected the second Google model for the two remaining lines, already logged in the Bavaria content record.
+
+KB-LINT: PASS — direct correction, task-specific scope, implementation proposal distinguished from confirmed global policy; no offer fact or publication authority changed.
