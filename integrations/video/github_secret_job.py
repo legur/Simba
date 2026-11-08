@@ -657,11 +657,72 @@ def invoke_renderer_privately(repo_root: Path, job_dir: Path, env: Mapping[str, 
         )
     except OSError:
         raise JobError("Trusted renderer process could not start") from None
+    if completed.returncode and job_dir.is_dir():
+        # Persist only allowlisted categories, never raw stderr/stdout or keys.
+        raw = completed.stderr or ""
+        category = "renderer_failed"
+        for phrase, tag in (
+            ("Gemini request rejected", "google_http_rejection"),
+            ("Gemini unavailable", "google_unavailable"),
+            ("audio response missing or ambiguous", "google_audio_schema"),
+            ("Gemini audio payload", "google_audio_payload"),
+            ("Earlier Gemini attempt", "previous_uncertain_attempt"),
+            ("private Simba voice", "private_voice_metadata"),
+            ("Simba TTS request cap", "tts_budget_guard"),
+            ("Simba approved voice", "approved_voice_stage"),
+        ):
+            if phrase in raw:
+                category = tag
+                break
+        status = re.search(r"HTTP[ _](\d{3})", raw)
+        diagnostic = {"returncode": completed.returncode, "category": category,
+                      "http_status": int(status.group(1)) if status else None}
+        (job_dir / "render-diagnostic.json").write_text(json.dumps(diagnostic), encoding="utf-8")
     return completed.returncode
 
 
+def preserve_failed_render(drive, folder_id: str, job_dir: Path, stage: Path,
+                           marker_id: str, run_id: str) -> dict:
+    """Archive existing WAVs and sanitized attempt receipts without more TTS."""
+    if not re.fullmatch(r"[0-9]{1,30}", run_id):
+        raise JobError("Invalid run ID for private recovery archive")
+    bundle = stage / ("simba-recovery-" + run_id + ".zip")
+    cache = job_dir / "voice" / ".cache"
+    total = 0
+    count = 0
+    with zipfile.ZipFile(bundle, "x", zipfile.ZIP_DEFLATED) as archive:
+        diagnostic = job_dir / "render-diagnostic.json"
+        if diagnostic.is_file() and not diagnostic.is_symlink():
+            data = json.loads(diagnostic.read_text(encoding="utf-8"))
+            archive.writestr("render-diagnostic.json", json.dumps({
+                key: data.get(key) for key in ("returncode", "category", "http_status")}))
+        if cache.is_dir() and not cache.is_symlink():
+            for item in sorted(cache.iterdir()):
+                if not re.fullmatch(r"[0-9a-f]{64}(?:\.wav|\.attempt\.json)", item.name):
+                    continue
+                if item.is_symlink() or not item.is_file():
+                    raise JobError("Unsafe recovery cache entry")
+                total += item.stat().st_size
+                count += 1
+                if total > 128 * 1024 * 1024 or count > 32:
+                    raise JobError("Recovery cache exceeds bounded archive size")
+                name = "voice/.cache/" + item.name
+                if item.name.endswith(".wav"):
+                    archive.write(item, name)
+                else:
+                    receipt = json.loads(item.read_text(encoding="utf-8"))
+                    # Do not archive arbitrary exception details or provider JSON.
+                    allowed = {key: receipt[key] for key in (
+                        "state", "provider", "model", "profile", "text_sha256",
+                        "cache_name", "reason", "may_have_been_billed") if key in receipt}
+                    archive.writestr(name, json.dumps(allowed))
+        archive.writestr("README.txt", "Existing audio and attempt receipts only. No new synthesis. "
+                         "Keep private. Preserve the permanent replay guard.\n")
+    return upload_verified_output(drive, folder_id, bundle, marker_id)
+
+
 def _mime_for(path: Path) -> str:
-    return {".mp4": "video/mp4", ".srt": "application/x-subrip", ".md": "text/markdown", ".jpg": "image/jpeg"}[path.suffix.lower()]
+    return {".mp4": "video/mp4", ".srt": "application/x-subrip", ".md": "text/markdown", ".jpg": "image/jpeg", ".zip": "application/zip"}[path.suffix.lower()]
 
 
 def upload_verified_output(drive, folder_id: str, path: Path, marker_id: str) -> dict:
@@ -756,10 +817,18 @@ def run(source_zip_file_id: str, destination_folder_id: str, repo_root: Path,
         # approved primary->fallback model behavior inside this one run is governed
         # separately by simba_voice's per-model attempt journals.
         marker = create_attempt_marker(drive, destination_folder_id, source_zip_file_id, env)
-        if invoke_renderer_privately(repo_root, job_dir, env) != 0:
-            raise JobError("Renderer failed after the permanent marker was created; inspect before any retry")
-        outputs = collect_outputs(job_dir, spec["packageId"])
-        return [upload_verified_output(drive, destination_folder_id, path, marker["id"]) for path in outputs]
+        try:
+            if invoke_renderer_privately(repo_root, job_dir, env) != 0:
+                raise JobError("Renderer failed after the permanent marker was created; inspect before any retry")
+            (job_dir / "render-diagnostic.json").write_text(json.dumps({
+                "returncode": 0, "category": "output_validation_or_upload", "http_status": None}), encoding="utf-8")
+            outputs = collect_outputs(job_dir, spec["packageId"])
+            return [upload_verified_output(drive, destination_folder_id, path, marker["id"]) for path in outputs]
+        except Exception:
+            preserve_failed_render(drive, destination_folder_id, job_dir, stage,
+                                   marker["id"], str(env.get("GITHUB_RUN_ID", "")))
+            print("Private audio recovery archive verified. No synthesis retry was submitted.")
+            raise
     finally:
         shutil.rmtree(stage, ignore_errors=True)
 
@@ -794,3 +863,4 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
