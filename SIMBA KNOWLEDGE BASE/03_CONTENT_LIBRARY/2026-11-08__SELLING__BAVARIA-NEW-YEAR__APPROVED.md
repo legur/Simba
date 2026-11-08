@@ -183,3 +183,12 @@ Prepared intermediate production ZIP (not dispatched/uploaded): `Bavaria_A2E_Goo
 Pending: explicit manual instruction addressing one controlled repeat of Google narration despite unknown charge outcome from the prior failed run. Do not use the new ZIP identity to bypass the original paid-attempt guard. STATUS: A2E_COMPLETE__GOOGLE_REPLAY_BLOCKED_PENDING_MANUAL_DECISION, not VIDEO_READY_FOR_LEO.
 
 KB-LINT: PASS — L01 current instruction and observed run/test evidence; L02 no inferred permanent brand rule; L03 dynamic offer unchanged; L04 task record and existing runtime files; L05 guards retained; L06 scoped recovery/diagnosis only; L07 no new visual reference; L08 canonical files updated in place; L09 original approved text/status retained and existing index entry unchanged.
+
+
+## Manual Google repeat authorized — 2026-11-08
+
+Leo replied «да» to the specific question: repeat Google narration of9lines/598characters, one attempt per line, without automatic retries, with explicitly disclosed possibility of repeat billing. This is a new manual authorization despite unresolved old billing, not zero-charge reconciliation. Original replay marker retained. One fresh prepared input ZIP staged privately as Drive `1pWc4i0ArwthwbX1AWNyDgukOQMbo9O5Y`,84242542bytes. Six completed A2E clips reused, no A2E generation.
+
+Job `voice.allow_fallback=false`: primary WarmBaritone only, no automatic Flash-Lite call. Existing default fallback behavior for other jobs retained. Successful provider response audio fields preserved privately before parsing; failed render recovery ZIP includes bounded cache WAVs/attempt receipts and selected successful-response fields, no request headers/API key or raw HTTP errors. Tests19voice +29worker PASS. No public audio or raw response logging. Package uses Holidays2 recommendation as provisional edit subject to final Leo review; narration text unchanged.
+
+KB-LINT: PASS — explicit fresh authorization scoped to one9-line run, original permanent marker retained, same canonical files updated in place, no publication permission or completed-voice claim.
