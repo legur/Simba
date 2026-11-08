@@ -370,16 +370,61 @@ def run(event: dict, workdir: Path, *, cap: int = 180) -> dict:
     return output
 
 
+
+def configure_bavaria() -> None:
+    """Scope Leo's 2026-11-08 approval to issue 72 and its exact six scenes."""
+    global APPROVED_ISSUE, TRIGGER_LABEL, JOURNAL_MARKER, GITHUB_COMMENTS, EXPECTED_URLS
+    global validated_request, verify_no_paid_effect_since_first_attempt
+    APPROVED_ISSUE = 72
+    TRIGGER_LABEL = "a2e-bavaria-180"
+    JOURNAL_MARKER = "A2E_BAVARIA_AUTHORIZED_20261108_ISSUE72_CAP180"
+    GITHUB_COMMENTS = "https://api.github.com/repos/legur/Simba/issues/72/comments"
+    EXPECTED_URLS = ['https://static.wixstatic.com/media/7fd7b8_37747bb1e24e400cb17f4b2158ec8158~mv2.jpg', 'https://static.wixstatic.com/media/7fd7b8_29a666e7ac634eb688f21a2e25231b62~mv2.jpg', 'https://static.wixstatic.com/media/7fd7b8_0057b5b8d0bc4181a343f53b69d54a5f~mv2.jpg', 'https://static.wixstatic.com/media/7fd7b8_5e90f6c912214c96b8b10d33e808659b~mv2.jpg', 'https://static.wixstatic.com/media/7fd7b8_c6d6ccf6312140b9888092902ba9d97e~mv2.jpg', 'https://static.wixstatic.com/media/7fd7b8_495b4677309240d8be81b67fbed6d086~mv2.jpg']
+    base_validate = validated_request
+
+    def exact_validate(event, cap):
+        import hashlib
+        bodies = base_validate(event, cap)
+        data = json.loads(event["issue"]["body"])
+        digest = hashlib.sha256(json.dumps(data, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+        if digest != "ca7b847bbcab4e0d1c75945b075ea333f2e6bdc3317a6c5520d877ff57b7a224":
+            raise StopGeneration("Bavaria approved scenes or prompts changed")
+        return bodies
+
+    def no_existing_bavaria_tasks(key):
+        # GET only: prevent paying again for any existing task using these images.
+        for page in range(1, 21):
+            req = Request(API_BASE + "/v1/userImage2Video/allRecords?pageNum=" + str(page) + "&pageSize=100",
+                          headers={"Authorization": "Bearer " + key, "Accept": "application/json"})
+            data = checked_api(read_json(req))
+            rows = data.get("rows")
+            if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+                raise StopGeneration("Bavaria existing-task check unavailable")
+            for row in rows:
+                record = json.dumps(row)
+                if any(url in record for url in EXPECTED_URLS):
+                    raise StopGeneration("Existing Bavaria task found; recover it without paid restart")
+            if len(rows) < 100:
+                return
+        raise StopGeneration("Bavaria task ledger check incomplete")
+
+    validated_request = exact_validate
+    verify_no_paid_effect_since_first_attempt = no_existing_bavaria_tasks
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--event", type=Path, required=True)
     parser.add_argument("--dir", type=Path, required=True)
     parser.add_argument("--cap", type=int, required=True)
+    parser.add_argument("--project", choices=("prague", "bavaria"), default="prague")
     args = parser.parse_args()
+    if args.project == "bavaria":
+        configure_bavaria()
     event = json.loads(args.event.read_text(encoding="utf-8"))
     result = run(event, args.dir, cap=args.cap)
     report = "\n".join([
-        "### Simba A2E paid generation — Prague",
+        "### Simba A2E paid generation — " + args.project.title(),
         "",
         "**Status:** " + result["status"],
         "**Approved ceiling:** 180 credits for 6 clips of 5 seconds",
@@ -396,3 +441,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+
