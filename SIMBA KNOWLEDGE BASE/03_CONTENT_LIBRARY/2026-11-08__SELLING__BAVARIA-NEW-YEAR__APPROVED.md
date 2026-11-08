@@ -139,3 +139,10 @@ Every generation body must also include `negative_prompt: "blurry, distorted, st
 Voice status: Google Simba WarmBaritone remains selected. No usable voice output from failed run 42484986937. Failure details were swallowed by private rendering and temporary cache cleanup; exact cause and billable request outcome remain unknown. Do not bypass paid-attempt marker or resubmit TTS with a different ZIP ID. Silent visual preview is not a final A2E Reel.
 
 KB-LINT: PASS — no offer changes; six source URLs and motion prompts recorded; exact quote linked; no paid-generation, completed-voice or final-ready claims.
+
+
+## Leo spending approval — 2026-11-08
+
+Leo explicitly replied «подтверждаю» to the exact 180-credit six-scene quote. A2E cap: 180 credits total, 30 per scene, no automatic paid retries. Approved images and motion prompts pinned to issue72; dedicated `a2e-bavaria-180` trigger. Existing Prague issue8 authorization remains separate and unchanged. Six festive frames accepted for this run by instruction to proceed; no publishing authorization.
+
+Implementation: existing paid generator and workflow extended in place with a strictly scoped Bavaria configuration. Six exact source URLs plus canonical prompt JSON SHA-256 are checked before any paid start. GET-only existing task check, permanent issue72 no-retry journal, price cap and paid error stop remain mandatory. Local validation: 16 safeguard tests PASS, including changed prompt/issue/cap and existing-task rejection. KB-LINT L01–L09: PASS (task-specific authorization and technical execution; no general brand rule or dynamic offer promotion).
