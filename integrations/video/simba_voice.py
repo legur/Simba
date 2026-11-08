@@ -226,7 +226,7 @@ def _audio_from_response(obj):
     return blob
 
 
-def _generate_once(text, voice_id, model):
+def _generate_once(text, voice_id, model, *, response_path=None):
     # Keep this check at the actual network boundary too: callers can inject a
     # wrapper around this private generator and bypass synthesize_lines' early
     # preflight identity check.
@@ -264,7 +264,13 @@ def _generate_once(text, voice_id, model):
     if len(body) > MAX_RESPONSE_BYTES:
         raise VoiceError("Gemini response exceeds safe limit; do not retry automatically")
     try:
-        return _audio_from_response(json.loads(body))
+        parsed = json.loads(body)
+        if response_path is not None and isinstance(parsed, dict):
+            # Private recovery only: no headers, key, request URL or raw errors.
+            saved = {k: parsed[k] for k in ("id", "steps", "output_audio", "status", "usage", "model") if k in parsed}
+            with Path(response_path).open("x", encoding="utf-8") as out:
+                json.dump(saved, out)
+        return _audio_from_response(parsed)
     except (UnicodeDecodeError, ValueError):
         raise VoiceError("Malformed Gemini JSON response; attempt recorded, no automatic retry") from None
 
@@ -293,7 +299,10 @@ def _synthesize_once(text, voice_id, model, dst, attempt, generate):
     except FileExistsError:
         raise VoiceError("Concurrent or previous TTS attempt detected; no request submitted") from None
     try:
-        blob = generate(text, voice_id, model)
+        if generate is _generate_once:
+            blob = generate(text, voice_id, model, response_path=attempt.with_suffix('.response.json'))
+        else:
+            blob = generate(text, voice_id, model)
     except ProviderUnavailable as exc:
         audit.update(state="provider_unavailable", reason=exc.reason,
                      may_have_been_billed=exc.may_have_been_billed)
@@ -308,13 +317,15 @@ def _synthesize_once(text, voice_id, model, dst, attempt, generate):
     tmp.replace(dst)
 
 
-def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None):
+def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None, allow_fallback=True):
     """Prepare all non-clip narration lines and return their cached WAV paths.
 
     Fail before ANY paid request if the maximum new lines/chars would be exceeded.
     Primary outages allow one Flash-Lite attempt. A .attempt.json is written
     BEFORE each model's request. Existing uncertain attempts are never repeated.
     """
+    if type(allow_fallback) is not bool:
+        raise VoiceError("allow_fallback must be a boolean; no request submitted")
     selected = approved_profile()
     if voice_id is None:
         voice_id = voice_id_from_private_store()
@@ -338,7 +349,7 @@ def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None):
             _validated_wav(cached.read_bytes())
             result[L["id"]] = cached
             continue
-        use_fallback = primary[1].exists() and _primary_unavailable(primary[1])
+        use_fallback = allow_fallback and primary[1].exists() and _primary_unavailable(primary[1])
         if fallback[1].exists() or (primary[1].exists() and not use_fallback):
             raise VoiceError("Earlier Gemini attempt has no verified WAV: no automatic retry")
         new_count += 1
@@ -370,7 +381,10 @@ def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None):
                 result[L["id"]] = primary[0]
                 continue
             except ProviderUnavailable:
+                if not allow_fallback:
+                    raise
                 switched = True
         _synthesize_once(text, voice_id, FALLBACK_MODEL, *fallback, generate)
         result[L["id"]] = fallback[0]
     return result
+
