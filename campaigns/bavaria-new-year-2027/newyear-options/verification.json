@@ -1,0 +1,31 @@
+{
+  "previews": [
+    {
+      "option": 1,
+      "duration": 14.0,
+      "frames": 336,
+      "audio_hash": "SHA256=5b950b958ae8c7c6aeeb82d3c8e3440540229ffc236d1505bcfc5fed0feb3428",
+      "bytes": 12276081,
+      "black_intervals": 0
+    },
+    {
+      "option": 2,
+      "duration": 14.0,
+      "frames": 336,
+      "audio_hash": "SHA256=5b950b958ae8c7c6aeeb82d3c8e3440540229ffc236d1505bcfc5fed0feb3428",
+      "bytes": 5635744,
+      "black_intervals": 0
+    },
+    {
+      "option": 3,
+      "duration": 14.0,
+      "frames": 336,
+      "audio_hash": "SHA256=5b950b958ae8c7c6aeeb82d3c8e3440540229ffc236d1505bcfc5fed0feb3428",
+      "bytes": 10837029,
+      "black_intervals": 0
+    }
+  ],
+  "asr": 0.9368421052631579,
+  "heard": "Представьте. 31 декабря. Вы в Баварии. Вокруг старый рекензбург. В окнах свет. И именно здесь вы встречаете Великой Год.",
+  "speech_end": 13.52
+}
