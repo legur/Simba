@@ -200,7 +200,8 @@ def tts(spec, job):
     if provider == 'simba':
         import simba_voice
         try:
-            voices = simba_voice.synthesize_lines(spoken, vdir / '.cache')
+            voices = simba_voice.synthesize_lines(spoken, vdir / '.cache',
+                                                 allow_fallback=voice_setting.get('allow_fallback', True))
         except simba_voice.VoiceError as exc:
             raise Stop('Simba approved voice: ' + str(exc)) from None
         for L in spoken:
@@ -569,3 +570,4 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
+
