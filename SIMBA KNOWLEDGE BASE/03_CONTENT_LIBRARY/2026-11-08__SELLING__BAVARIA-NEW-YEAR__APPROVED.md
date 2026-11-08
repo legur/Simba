@@ -146,3 +146,23 @@ KB-LINT: PASS — no offer changes; six source URLs and motion prompts recorded;
 Leo explicitly replied «подтверждаю» to the exact 180-credit six-scene quote. A2E cap: 180 credits total, 30 per scene, no automatic paid retries. Approved images and motion prompts pinned to issue72; dedicated `a2e-bavaria-180` trigger. Existing Prague issue8 authorization remains separate and unchanged. Six festive frames accepted for this run by instruction to proceed; no publishing authorization.
 
 Implementation: existing paid generator and workflow extended in place with a strictly scoped Bavaria configuration. Six exact source URLs plus canonical prompt JSON SHA-256 are checked before any paid start. GET-only existing task check, permanent issue72 no-retry journal, price cap and paid error stop remain mandatory. Local validation: 16 safeguard tests PASS, including changed prompt/issue/cap and existing-task rejection. KB-LINT L01–L09: PASS (task-specific authorization and technical execution; no general brand rule or dynamic offer promotion).
+
+
+## A2E result — 2026-11-08
+
+Status `COMPLETED_6_OF_6`, exact quoted total 180 credits, six unique task IDs, no paid resubmissions. Run https://github.com/legur/Simba/actions/runs/42493670893 ; provider completion receipt https://github.com/legur/Simba/issues/72#issuecomment-6723249959 .
+
+Original clips: six 1080×1920 MP4s, 16 fps, 5.0625 seconds each, no audio. All six decoded successfully during review assembly. Contact-sheet inspection: sampled first/middle/last frames for scenes 1,2,3,5,6 and middle frame for scene4; no obvious gross geometry failures at sampled frames. Not a full final-video QA or Leo acceptance.
+
+MEDIA_ARCHIVED_DRIVE_VERIFIED: six private MP4 files listed with matching byte sizes; archive runs 42494059177 and 42494343607 completed successfully. Second run saved the last Nuremberg task that was still pending during first archive scan.
+
+- `A2E_6af09197cabbb89a76fe0d5d.mp4` — Drive `11Kbhkq1rKCT3dvI5Khn6bls3VjnFnIMl`, 10357655 bytes.
+- `A2E_6af0918bdac593f36d9222d5.mp4` — Drive `10ovUXkr1uJqPzBUZJ1EvsMfvpTg8RX_M`, 13992091 bytes.
+- `A2E_6af0918c3172c3467b549513.mp4` — Drive `1cmNSFlKdV6r8uUVyGcMlKdSIPQI2ZtZv`, 11128708 bytes.
+- `A2E_6af0918e845d35585ed9d950.mp4` — Drive `1U6S41780RxnAsypNx4OpKR0NV_ybttD3`, 14432770 bytes.
+- `A2E_6af091999c80028eb2e08832.mp4` — Drive `1VCHSenO7qwa5m3tmGD7dMnWLu1fuj4Ui`, 12311159 bytes.
+- `A2E_6af0919a2d72d4e7f40057fe.mp4` — Drive `1DaU5TzqkjzwzPFVgr_SXh4HXitEx2DOi`, 16890463 bytes.
+
+Review-only concatenation: `Bavaria_A2E_review.mp4`, 30.375 seconds, 540×960, no voice/music/titles. Library ID `libfile_575e0f8f88ec8191982bb6062c1ac11c` version0. Original 1080×1920 sources retained. This is an animation review, not the finished advertising Reel. Google WarmBaritone remains unresolved after previous private worker failure; no new TTS submitted. Leo requested Russian translations of the actual A2E prompts; translations shown, source English prompts unchanged.
+
+KB-LINT: PASS — task-specific actual result and evidence, correct incomplete final-video status; no publication or full QA claim.
