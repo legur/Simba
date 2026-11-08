@@ -7,19 +7,19 @@
     "Bavaria"
   ],
   "updated_at": "2026-11-08",
-  "stage": "CAPTIONS_REPAIRED_REVIEW__PARTIAL_7_OF_9_NARRATION",
+  "stage": "AUDIO_ONLY_CONTINUATION_PREPARED",
   "sources": [
     {
       "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
-      "sha256": "c21b96a6319772f125f08e9d43a4b04c7ff6d9cbb137b43b0d9ae7a7fa6613e6"
+      "sha256": "6364eff233ec1b2d6786ce443cd4b73235216f3269a8b3eab6104ea5c77dd703"
     }
   ],
   "latest_user_request": {
-    "text": "продолжай",
-    "evidence": "Continued after direct second-model and caption correction; implementation recorded in canonical source, caption review awaits Leo.",
-    "state": "CAPTIONS_IMPLEMENTED__LITE_FAILED_UNRESOLVED"
+    "text": "и так закачивай озвучку и продолжим",
+    "state": "AUDIO_ONLY_CONTINUATION_PREPARED",
+    "evidence": "Прямая команда Лео в текущем чате 08.11.2026; известная неопределенность предыдущего запуска отмечена в сессии."
   },
-  "next_action": "Показать Leo исправленные короткие субтитры. Цена и CTA пока без диктора. Для новой платной попытки только155символов требуется отдельное решение после раскрытия неопределенного результата run42514415276; не повторять существующие семь WAV и A2E.",
+  "next_action": "Выполнить один аудиозапуск двух оставшихся реплик (155 символов) на выбранной Flash-Lite; сохранить WAV и квитанции. Семь готовых WAV и шесть A2E-клипов использовать повторно. После успешной проверки всех реплик продолжить монтаж.",
   "working_asset_id": "voiced-review-library",
   "approved_asset_id": null,
   "approvals": {
