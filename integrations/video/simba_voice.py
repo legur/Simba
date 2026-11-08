@@ -317,7 +317,7 @@ def _synthesize_once(text, voice_id, model, dst, attempt, generate):
     tmp.replace(dst)
 
 
-def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None, allow_fallback=True):
+def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None, allow_fallback=True, selected_model=None):
     """Prepare all non-clip narration lines and return their cached WAV paths.
 
     Fail before ANY paid request if the maximum new lines/chars would be exceeded.
@@ -327,11 +327,15 @@ def synthesize_lines(lines, cache_dir: Path, *, voice_id=None, generate=None, al
     if type(allow_fallback) is not bool:
         raise VoiceError("allow_fallback must be a boolean; no request submitted")
     selected = approved_profile()
+    if selected_model not in (None, selected["model"], FALLBACK_MODEL):
+        raise VoiceError("Selected Google TTS model is not approved; no request submitted")
+    if selected_model == FALLBACK_MODEL:
+        allow_fallback = False
     if voice_id is None:
         voice_id = voice_id_from_private_store()
     else:
         voice_id = _check_voice_id(voice_id)
-    model = selected["model"]
+    model = selected_model or selected["model"]
     generate = generate or _generate_once
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
