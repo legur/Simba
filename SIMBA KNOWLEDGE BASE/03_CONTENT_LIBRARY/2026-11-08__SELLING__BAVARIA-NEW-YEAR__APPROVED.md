@@ -34,5 +34,17 @@ WhatsApp: 058-677-8492. Код обращения: БАВАРИЯ. Лео, Simba
 Голос: постоянный Google Gemini Simba WarmBaritone, без подмены другим провайдером.
 KADR_REFERENCES: KADR-002 — неподвижные крупные титры поверх меняющегося фона; удержание оффера и контакта для чтения. Музыка и звук референса не копируются.
 Все цены и даты — текущие данные Leo от 08.11.2026, не постоянное правило и не источник для будущих офферов.
-STATUS_VIDEO: INPUT_PACKAGE_IN_PROGRESS; не PUBLISHED, не VIDEO_QA_PASS.
+STATUS_VIDEO: BLOCKED_RENDER_FAILED_SPENDING_UNCERTAIN; не PUBLISHED, не VIDEO_QA_PASS.
 PROVENANCE: SOURCE Leo; CLASSIFICATION sales reel; STRATEGIST Simba runtime; TEXT_EXECUTOR Сценарист; VISUAL_EXECUTOR stock selection per direct Leo instruction; RENDERER pending integrations/video; EXECUTION_STATES script prepared / stock downloaded / Google launch awaiting authentication.
+
+
+## Render attempt 08.11.2026
+
+- GitHub authentication completed as legur.
+- Run 42484529737 failed before credentialed rendering in offline HyperFrames tests. No synthesis stage reached; no paid marker created for this run.
+- Fixed unit test fixture isolation only; production ffprobe validation unchanged. Commit 83e4ab2e9bdefef8441ac6ba7e8de7d695573299. Local 13 tests passed; subsequent CI tests passed.
+- Run 42484986937 reached private renderer, created permanent replay marker, then failed at 13:28:57 UTC (15:28:57 Israel). Public error: private render validation or processing failed; private details were suppressed.
+- Destination inspected after completion: input ZIP plus permanent attempt marker only; no MP4/SRT/cover/QA outputs. Private job stage and voice caches removed by existing wrapper finally block. Exact failure and provider charges are not observable from current logs.
+- STATUS_VIDEO: BLOCKED_RENDER_FAILED_SPENDING_UNCERTAIN. Do not retry synthesis or bypass marker with another input ID until attempts/billing reconciled.
+- Existing visual draft is silent and remains a draft. Google Simba WarmBaritone remains selected; no alternative provider used.
+- KB-LINT: PASS (content metadata update; source/script retained, no PUBLISHED/VIDEO_QA_PASS claim, dynamic facts scoped to offer).
