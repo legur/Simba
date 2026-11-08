@@ -86,3 +86,56 @@ Edit the supplied real winter Ettal Abbey photograph into a warm inviting holida
 Edit this REAL Neuschwanstein winter castle photograph into a magnificent holiday-season twilight scene. Preserve the actual recognizable Neuschwanstein castle towers, walls, roofs and their relative proportions, wooded hillside and low-angle view through bare snowy trees. Deep blue dusk sky, subtle warm believable exterior illumination and selected glowing windows, freshly snow-covered branches with a few close snowflakes in foreground. At the very bottom foreground, a small fir tree beside the path with delicate warm fairy lights establishes New Year mood, without wrapping or decorating the castle itself. Enchanting yet believable photographic travel image, luminous and inviting instead of gray and documentary, restrained premium color grade. Vertical 9:16, keep full iconic tower visible, no words, numbers, prices, logos, watermarks, fireworks, invented towers, lion, market stalls or collage.
 
 KB-LINT: PASS — scoped correction, actual references/prompts recorded, approved source text unchanged, visuals awaiting Leo, no publication or final-video claim.
+
+
+## A2E preparation and exact quote — 2026-11-08
+
+Leo instruction: «делай правильно» after requesting A2E animation and the agreed Google voice. Six festive reference-based frames staged for animation; no paid A2E generation submitted.
+
+Quote evidence: https://github.com/legur/Simba/issues/72#issuecomment-6723066940
+
+Provider status: QUOTED_NO_CHARGE. Model `a2e`, 6 clips × 5 seconds, 30 credits each, exact quoted total **180 credits**. Audio generation disabled for A2E. Source preparation used existing Wix Media upload, not A2E presign. Quote is not spending authorization. Await Leo confirmation of the 180-credit cap before paid start; no automatic retry after uncertain submissions.
+
+```json
+{
+  "kind": "simba_a2e_quote",
+  "scenes": [
+    {
+      "name": "Regensburg riverside New Year",
+      "image_url": "https://static.wixstatic.com/media/7fd7b8_37747bb1e24e400cb17f4b2158ec8158~mv2.jpg",
+      "prompt": "Slow cinematic push forward along the snowy Danube riverside at blue hour. Existing golden lights twinkle softly, snow drifts naturally, small existing fireworks blossom gently above the skyline and reflect in the water. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music."
+    },
+    {
+      "name": "Regensburg lantern alley",
+      "image_url": "https://static.wixstatic.com/media/7fd7b8_29a666e7ac634eb688f21a2e25231b62~mv2.jpg",
+      "prompt": "Slow steady forward dolly through the festive medieval alley. Existing lanterns glow warmly, a few snowflakes drift, existing pedestrians walk naturally away from camera. Keep cozy intimate atmosphere. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music."
+    },
+    {
+      "name": "Munich Marienplatz winter",
+      "image_url": "https://static.wixstatic.com/media/7fd7b8_0057b5b8d0bc4181a343f53b69d54a5f~mv2.jpg",
+      "prompt": "Gentle cinematic upward camera tilt toward the existing Munich town hall. Existing holiday lights shimmer softly and a few snowflakes fall. Existing distant people move subtly. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music."
+    },
+    {
+      "name": "Nuremberg festive panorama",
+      "image_url": "https://static.wixstatic.com/media/7fd7b8_5e90f6c912214c96b8b10d33e808659b~mv2.jpg",
+      "prompt": "Very slow cinematic lateral camera drift over the existing Nuremberg rooftops. Existing small fireworks animate naturally in the distant sky, windows glow, light snow drifts. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music."
+    },
+    {
+      "name": "Ettal Abbey winter",
+      "image_url": "https://static.wixstatic.com/media/7fd7b8_c6d6ccf6312140b9888092902ba9d97e~mv2.jpg",
+      "prompt": "Very slow cinematic push toward the existing Ettal Abbey facade. Warm existing festive lights glow steadily, subtle snow falls, existing branches move almost imperceptibly in a light breeze. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music."
+    },
+    {
+      "name": "Neuschwanstein winter",
+      "image_url": "https://static.wixstatic.com/media/7fd7b8_495b4677309240d8be81b67fbed6d086~mv2.jpg",
+      "prompt": "Slow cinematic push toward the existing Neuschwanstein castle. Wisps of winter mist drift subtly behind the castle, fine snowflakes fall, existing window lights glow warmly. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music."
+    }
+  ]
+}
+```
+
+Every generation body must also include `negative_prompt: "blurry, distorted, static"`, `model_version: "a2e"`, `video_time: 5`, `auto_add_audio: false`, `number_of_images: 1`.
+
+Voice status: Google Simba WarmBaritone remains selected. No usable voice output from failed run 42484986937. Failure details were swallowed by private rendering and temporary cache cleanup; exact cause and billable request outcome remain unknown. Do not bypass paid-attempt marker or resubmit TTS with a different ZIP ID. Silent visual preview is not a final A2E Reel.
+
+KB-LINT: PASS — no offer changes; six source URLs and motion prompts recorded; exact quote linked; no paid-generation, completed-voice or final-ready claims.
