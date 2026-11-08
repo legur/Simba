@@ -48,6 +48,48 @@ def make_zip(path: Path, entries: dict[str, bytes], *, executable: str | None = 
             archive.writestr(info, data)
 
 
+class AudioOnlyContinuationTests(unittest.TestCase):
+    def input(self):
+        return spec(voice={"provider": "simba", "model": "gemini-3.8-flash-lite-tts", "allow_fallback": False},
+                    scenes=[{"image": "media/scene.jpg", "lines": [{"text": "Цена."}, {"text": "Напишите."}]}])
+
+    def test_narrow_caps_reject_before_synthesis(self):
+        for texts in (["x" * 156], ["a", "b", "c"], []):
+            value = self.input()
+            value["scenes"][0]["lines"] = [{"text": text} for text in texts]
+            with self.subTest(texts=texts), self.assertRaises(job.JobError):
+                job.audio_only_lines(value)
+
+    def test_requires_selected_model_and_no_fallback(self):
+        for update in ({"model": "other"}, {"allow_fallback": True}, {"provider": "edge"}):
+            value = self.input()
+            value["voice"].update(update)
+            with self.subTest(update=update), self.assertRaises(job.JobError):
+                job.audio_only_lines(value)
+
+    def test_uses_spoken_text_not_display_spelling(self):
+        value = self.input()
+        value["scenes"][0]["lines"][0].update(text="WhatsApp", say="вотсап")
+        self.assertEqual(job.audio_only_lines(value)[0]["text"], "вотсап")
+
+    def test_rejects_hidden_offer_lines(self):
+        value = self.input()
+        value["offer"] = {"lines": [{"text": "extra"}]}
+        with self.assertRaises(job.JobError):
+            job.audio_only_lines(value)
+
+    def test_audio_mode_uses_private_cache_without_renderer(self):
+        voice = mock.Mock()
+        with tempfile.TemporaryDirectory() as folder, mock.patch.object(job, "_load_voice_module", return_value=voice):
+            directory = Path(folder)
+            job.synthesize_audio_only(self.input(), directory)
+            args, kwargs = voice.synthesize_lines.call_args
+            self.assertEqual(len(args[0]), 2)
+            self.assertEqual(args[1], directory / "voice" / ".cache")
+            self.assertEqual(kwargs, {"selected_model": "gemini-3.8-flash-lite-tts", "allow_fallback": False})
+            self.assertEqual(json.loads((directory/'render-diagnostic.json').read_text())["category"], "audio_only_completed")
+
+
 class InputValidationTests(unittest.TestCase):
     def test_drive_ids_are_strict(self):
         self.assertEqual(job.validate_drive_id("1Ab_c-DEfghijkLMNop"), "1Ab_c-DEfghijkLMNop")

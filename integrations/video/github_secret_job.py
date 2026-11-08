@@ -780,8 +780,43 @@ def oauth_drive_client(env: Mapping[str, str]):
         raise JobError("Google Drive OAuth from GitHub Secrets failed") from None
 
 
+def audio_only_lines(spec: dict) -> list[dict]:
+    """Bounded continuation of at most two remaining approved narration lines."""
+    config = spec.get("voice", {})
+    if (config.get("provider") != "simba"
+            or config.get("model") != "gemini-3.8-flash-lite-tts"
+            or config.get("allow_fallback") is not False):
+        raise JobError("Audio-only continuation requires explicit Flash-Lite with no fallback")
+    lines = []
+    for scene in spec.get("scenes", []):
+        if scene.get("voice") == "clip":
+            raise JobError("Audio-only input must not include clip narration")
+        for item in scene.get("lines", []):
+            text = item.get("say", item.get("text"))
+            if not isinstance(text, str) or not text.strip():
+                raise JobError("Audio-only narration text is invalid")
+            lines.append({"id": "remaining-" + str(len(lines) + 1), "text": text})
+    if any((spec.get(section) or {}).get("lines") for section in ("offer", "end")):
+        raise JobError("Audio-only lines must be explicit scene lines")
+    if not 1 <= len(lines) <= 2 or sum(len(x["text"]) for x in lines) > 155:
+        raise JobError("Audio-only continuation is limited to two lines and 155 characters")
+    return lines
+
+
+def synthesize_audio_only(spec: dict, job_dir: Path) -> None:
+    lines = audio_only_lines(spec)
+    voice = _load_voice_module()
+    voice.synthesize_lines(lines, job_dir / "voice" / ".cache",
+                           selected_model="gemini-3.8-flash-lite-tts", allow_fallback=False)
+    (job_dir / "render-diagnostic.json").write_text(json.dumps({
+        "returncode": 0, "category": "audio_only_completed", "http_status": None}), encoding="utf-8")
+
+
 def run(source_zip_file_id: str, destination_folder_id: str, repo_root: Path,
-        runner_temp: Path, env: Mapping[str, str] | None = None, drive=None) -> list[dict]:
+        runner_temp: Path, env: Mapping[str, str] | None = None, drive=None,
+        *, audio_only: bool = False) -> list[dict]:
+    if type(audio_only) is not bool:
+        raise JobError("audio_only must be a boolean")
     env = os.environ if env is None else env
     validate_runtime(env)
     source_zip_file_id = validate_drive_id(source_zip_file_id)
@@ -811,13 +846,20 @@ def run(source_zip_file_id: str, destination_folder_id: str, repo_root: Path,
         archive.unlink(missing_ok=True)
         validate_source_post(repo_root, spec)
         spec = validate_renderer_preflight(repo_root, job_dir)
-        ensure_output_names_available(drive, destination_folder_id, spec["packageId"])
+        if audio_only:
+            audio_only_lines(spec)  # Enforce narrower cap before marker/credentials use.
+        else:
+            ensure_output_names_available(drive, destination_folder_id, spec["packageId"])
 
         # The marker blocks a new workflow run for this Drive input. The user's
         # approved primary->fallback model behavior inside this one run is governed
         # separately by simba_voice's per-model attempt journals.
         marker = create_attempt_marker(drive, destination_folder_id, source_zip_file_id, env)
         try:
+            if audio_only:
+                synthesize_audio_only(spec, job_dir)
+                return [preserve_failed_render(drive, destination_folder_id, job_dir, stage,
+                                               marker["id"], str(env.get("GITHUB_RUN_ID", "")))]
             if invoke_renderer_privately(repo_root, job_dir, env) != 0:
                 raise JobError("Renderer failed after the permanent marker was created; inspect before any retry")
             (job_dir / "render-diagnostic.json").write_text(json.dumps({
@@ -846,9 +888,12 @@ def main(argv: list[str] | None = None) -> int:
     command.add_argument("--destination-folder-id", required=True)
     command.add_argument("--repo-root", type=Path, required=True)
     command.add_argument("--runner-temp", type=Path, required=True)
+    command.add_argument("--audio-only", action="store_true",
+                         help="Only two remaining Flash-Lite lines, max 155 characters; no video render")
     args = parser.parse_args(argv)
     try:
-        uploaded = run(args.source_zip_file_id, args.destination_folder_id, args.repo_root, args.runner_temp)
+        uploaded = run(args.source_zip_file_id, args.destination_folder_id, args.repo_root, args.runner_temp,
+                       audio_only=args.audio_only)
     except ReplayBlocked:
         print("ERROR: replay guard stopped this private render; inspect Drive before any manual action", file=sys.stderr)
         return 2
