@@ -60,6 +60,21 @@ class VoiceFallbackTests(unittest.TestCase):
             self.assertEqual(calls, [PRIMARY])
             self.assertEqual(len(list(Path(tmp).glob('*.attempt.json'))), 1)
 
+    def test_explicit_flash_lite_uses_same_voice_without_primary_request(self):
+        calls=[]
+        def generate(text, voice_id, model):
+            calls.append((voice_id,model))
+            return fake_wav()
+        with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {'GEMINI_API_KEY':'offline'}):
+            voice.synthesize_lines([{'id':'one','text':'Привет.'}],Path(tmp),voice_id='voice_private123',
+                                   generate=generate,selected_model=FALLBACK)
+        self.assertEqual(calls,[('voice_private123',FALLBACK)])
+
+    def test_unapproved_model_is_blocked_before_request(self):
+        with tempfile.TemporaryDirectory() as tmp, self.assertRaises(voice.VoiceError):
+            voice.synthesize_lines([{'id':'one','text':'Привет.'}],Path(tmp),voice_id='voice_private123',
+                                   selected_model='unapproved-model',generate=lambda *a: self.fail('No request'))
+
     def test_successful_response_saved_before_parser_failure_without_headers(self):
         import base64
         audio = {'type':'audio','data':base64.b64encode(fake_wav()).decode()}
