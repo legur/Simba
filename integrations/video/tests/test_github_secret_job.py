@@ -395,5 +395,53 @@ class MarkerAndOutputTests(unittest.TestCase):
         self.assertNotIn("Traceback", combined)
 
 
+class RecoveryTests(unittest.TestCase):
+    def test_renderer_error_diagnostic_omits_raw_secret_text(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            result = mock.Mock(returncode=2, stderr="SECRET_KEY Gemini request rejected (HTTP 403) PRIVATE SCRIPT", stdout="PRIVATE")
+            with mock.patch.object(job.subprocess, "run", return_value=result):
+                self.assertEqual(job.invoke_renderer_privately(Path("repo"), root, {}), 2)
+            raw = (root / "render-diagnostic.json").read_text()
+            self.assertNotIn("SECRET", raw)
+            self.assertNotIn("PRIVATE", raw)
+            self.assertEqual(json.loads(raw)["http_status"], 403)
+
+    def test_recovery_keeps_audio_receipts_and_excludes_unknown_data(self):
+        with tempfile.TemporaryDirectory() as folder:
+            stage = Path(folder)
+            root = stage / "job"
+            cache = root / "voice/.cache"
+            cache.mkdir(parents=True)
+            stem = "a" * 64
+            (cache / (stem + ".wav")).write_bytes(b"existing paid audio")
+            (cache / (stem + ".attempt.json")).write_text(json.dumps({"state":"attempt_started", "secret":"NEVER_ARCHIVE"}))
+            (cache / "credentials.json").write_text("NEVER_ARCHIVE")
+            (root / "render-diagnostic.json").write_text(json.dumps({"category":"renderer_failed", "raw":"NEVER_ARCHIVE"}))
+            def upload(drive, folder_id, bundle, marker):
+                with zipfile.ZipFile(bundle) as z:
+                    self.assertIn("voice/.cache/" + stem + ".wav", z.namelist())
+                    self.assertEqual(z.read("voice/.cache/" + stem + ".wav"), b"existing paid audio")
+                    self.assertFalse(any(b"NEVER_ARCHIVE" in z.read(n) for n in z.namelist()))
+                return {"id":"private-recovery"}
+            with mock.patch.object(job, "upload_verified_output", side_effect=upload) as called:
+                result = job.preserve_failed_render(object(), "private-folder", root, stage, "marker", "1234")
+            self.assertEqual(result["id"], "private-recovery")
+            self.assertEqual(called.call_count, 1)
+
+    def test_recovery_rejects_symlink_without_upload(self):
+        with tempfile.TemporaryDirectory() as folder:
+            stage = Path(folder)
+            root = stage / "job"
+            cache = root / "voice/.cache"
+            cache.mkdir(parents=True)
+            other = stage / "private.txt"
+            other.write_text("secret")
+            (cache / ("a" * 64 + ".wav")).symlink_to(other)
+            with mock.patch.object(job, "upload_verified_output") as upload, self.assertRaises(job.JobError):
+                job.preserve_failed_render(object(), "folder", root, stage, "marker", "1234")
+            upload.assert_not_called()
+
 if __name__ == "__main__":
     unittest.main()
+
