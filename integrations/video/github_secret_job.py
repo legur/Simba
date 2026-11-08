@@ -823,12 +823,17 @@ def run(source_zip_file_id: str, destination_folder_id: str, repo_root: Path,
             (job_dir / "render-diagnostic.json").write_text(json.dumps({
                 "returncode": 0, "category": "output_validation_or_upload", "http_status": None}), encoding="utf-8")
             outputs = collect_outputs(job_dir, spec["packageId"])
-            return [upload_verified_output(drive, destination_folder_id, path, marker["id"]) for path in outputs]
+            uploaded = [upload_verified_output(drive, destination_folder_id, path, marker["id"]) for path in outputs]
         except Exception:
             preserve_failed_render(drive, destination_folder_id, job_dir, stage,
                                    marker["id"], str(env.get("GITHUB_RUN_ID", "")))
             print("Private audio recovery archive verified. No synthesis retry was submitted.")
             raise
+        # Keep paid source audio after successful assembly as well. This is outside
+        # the error handler so an uncertain archive upload is never repeated.
+        uploaded.append(preserve_failed_render(drive, destination_folder_id, job_dir, stage,
+                                              marker["id"], str(env.get("GITHUB_RUN_ID", ""))))
+        return uploaded
     finally:
         shutil.rmtree(stage, ignore_errors=True)
 
