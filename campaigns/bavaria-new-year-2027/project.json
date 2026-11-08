@@ -7,19 +7,19 @@
     "Bavaria"
   ],
   "updated_at": "2026-11-08",
-  "stage": "NEWYEAR_EDIT_OPTIONS_AWAITING_LEO",
+  "stage": "TWO_FULL_NEWYEAR_VARIANTS_READY_FOR_LEO_REVIEW",
   "sources": [
     {
       "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
-      "sha256": "75b694345e9af562117140a358e98bb1b2ee3e9e6276e5f7dee4e5e2eead220c"
+      "sha256": "ee29c2776768b0f3ea4f561a7a77bef4058b6ea16dc9eff5ca37897918cb0cb9"
     }
   ],
   "latest_user_request": {
-    "text": "сделаqvyt существенно доугой монтаж. новогодний",
-    "state": "THREE_CONCRETE_PREVIEWS_READY_AWAITING_CHOICE",
-    "evidence": "Прямая правка Лео после объяснения, что предыдущий монтаж менялся сдержанно."
+    "text": "1 и 2",
+    "state": "BOTH_SELECTED_FULL_VARIANTS_COMPLETED",
+    "evidence": "Лео выбрал оба14-секундных превью; выполнены и сохранены две отдельные полные версии."
   },
-  "next_action": "Лео выбирает1/2/3 по трем14-секундным превью. Затем выполнить выбранный полный новогодний монтаж, используя все9готовых реплик, прежнюю музыку и клипы; итоговый QA и просмотр Лео. Новая платная генерация в показанном объеме не требуется.",
+  "next_action": "Лео просматривает обе полные версии1и2 по прямым MP4ссылкам. Дальнейшие правки/выбор основного файла по обратной связи. Итоговое утверждение конкретного MP4 и публикация отдельно.",
   "working_asset_id": null,
   "approved_asset_id": null,
   "approvals": {
@@ -240,6 +240,80 @@
       "recorded_library_version": 0,
       "recorded_duration_seconds": 14,
       "recorded_size_bytes": 10837029
+    },
+    {
+      "id": "newyear-full-1",
+      "kind": "review_video",
+      "title": "Полная версия1: Отсчет",
+      "url": "https://chatgpt.com/library?file_id=libfile_c97a946c28a081919ee7dbda12881959&account_id=personal",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Saved actual selected full alternatives; decode and unchanged AAC verified; Leo acceptance pending.",
+      "recorded_library_version": 0,
+      "recorded_duration_seconds": 54.625,
+      "recorded_size_bytes": 35999488
+    },
+    {
+      "id": "newyear-full-2",
+      "kind": "review_video",
+      "title": "Полная версия2: Новогодние открытки",
+      "url": "https://chatgpt.com/library?file_id=libfile_684af63fe53c81919ddd755bd6521833&account_id=personal",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Saved actual selected full alternatives; decode and unchanged AAC verified; Leo acceptance pending.",
+      "recorded_library_version": 0,
+      "recorded_duration_seconds": 54.625,
+      "recorded_size_bytes": 14785652
+    },
+    {
+      "id": "newyear-full-1-cover",
+      "kind": "cover",
+      "title": "Обложка версии1",
+      "url": "https://chatgpt.com/library?file_id=libfile_71413e6cbca88191b92af8dd41728ad3&account_id=personal",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Saved actual selected full alternatives; decode and unchanged AAC verified; Leo acceptance pending.",
+      "recorded_library_version": 0
+    },
+    {
+      "id": "newyear-full-2-cover",
+      "kind": "cover",
+      "title": "Обложка версии2",
+      "url": "https://chatgpt.com/library?file_id=libfile_bccaa414b94481919c64a5ebd76bc98e&account_id=personal",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Saved actual selected full alternatives; decode and unchanged AAC verified; Leo acceptance pending.",
+      "recorded_library_version": 0
+    },
+    {
+      "id": "newyear-full-qa",
+      "kind": "qa_report",
+      "title": "Проверка полных версий1и2",
+      "url": "https://chatgpt.com/library?file_id=libfile_c48561bb29c8819181b6903ca8afa6e6&account_id=personal",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Saved actual selected full alternatives; decode and unchanged AAC verified; Leo acceptance pending.",
+      "recorded_library_version": 0
+    },
+    {
+      "id": "newyear-full-1-drive",
+      "kind": "review_video",
+      "title": "Архив полной версии1",
+      "url": "https://drive.google.com/file/d/1ToHfVnfeSXl490p9SJI8u5DqNRSkaF-u/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Private Drive copy of actual complete file; no new paid generation.",
+      "recorded_duration_seconds": 54.625
+    },
+    {
+      "id": "newyear-full-2-drive",
+      "kind": "review_video",
+      "title": "Архив полной версии2",
+      "url": "https://drive.google.com/file/d/1eWThGBpNyhXPWoDs-5OyqrOYJYQf2HZr/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Private Drive copy of actual complete file; no new paid generation.",
+      "recorded_duration_seconds": 54.625
     }
   ],
   "references": [
@@ -247,7 +321,7 @@
       "id": "KADR-002",
       "path": "Кадр/База/cards/KADR-002.md",
       "relationship": "used_in_recorded_review",
-      "scope": "Неподвижный заголовок городов14.08–22.46с, отделенные читаемые цена и CTA; актуальная проверка нового монтажа выполнена. Звук референса не переносился."
+      "scope": "Версия1: заголовок городов удерживается14.08–22.46с. Версия2: та же подпись повторена на соседних открытках, читается на первой. Отдельные цена/CTA, звук референса не переносился."
     }
   ],
   "reuse_notes": [
@@ -257,22 +331,26 @@
     "Правка в другом чате может быть новее карточки: источник и последний запрос обязательно сверяются."
   ],
   "missing": [
-    "Выбор одного из трех новых новогодних вариантов",
-    "Полный монтаж в выбранном оформлении",
-    "Полный QA и личный просмотр Лео",
+    "Личный просмотр и прослушивание Лео обеих полных версий",
+    "Окончательное утверждение конкретного MP4",
     "Подтверждение публикации"
   ],
   "selected_edit": {
-    "option": null,
-    "state": "REOPENED_AFTER_FEEDBACK",
-    "prior_option": 3,
-    "prior_result": "Too restrained for Leo's requested major New Year edit",
+    "options": [
+      1,
+      2
+    ],
+    "state": "TWO_FULL_ALTERNATIVES_READY_FOR_REVIEW",
     "new_paid_generations": 0,
-    "recipe_path": "campaigns/bavaria-new-year-2027/newyear-options/README.md"
+    "recipe_path": "campaigns/bavaria-new-year-2027/newyear-full/README.md"
   },
   "preview_asset_ids": [
     "newyear-option-1",
     "newyear-option-2",
     "newyear-option-3"
+  ],
+  "working_asset_ids": [
+    "newyear-full-1",
+    "newyear-full-2"
   ]
 }

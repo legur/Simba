@@ -34,7 +34,7 @@ WhatsApp: 058-677-8492. Код обращения: БАВАРИЯ. Лео, Simba
 Голос: постоянный Google Gemini Simba WarmBaritone, без подмены другим провайдером.
 KADR_REFERENCES: KADR-002 — неподвижные крупные титры поверх меняющегося фона; удержание оффера и контакта для чтения. Музыка и звук референса не копируются.
 Все цены и даты — текущие данные Leo от 08.11.2026, не постоянное правило и не источник для будущих офферов.
-STATUS_VIDEO: NEWYEAR_EDIT_OPTIONS_AWAITING_LEO; latest result below; not PUBLISHED, not VIDEO_QA_PASS.
+STATUS_VIDEO: TWO_FULL_NEWYEAR_VARIANTS_READY_FOR_LEO_REVIEW; latest result below; not PUBLISHED, not VIDEO_QA_PASS.
 PROVENANCE: SOURCE Leo; CLASSIFICATION sales reel; STRATEGIST Simba runtime; TEXT_EXECUTOR Сценарист; VISUAL_EXECUTOR stock selection per direct Leo instruction; RENDERER pending integrations/video; EXECUTION_STATES script prepared / stock downloaded / Google launch awaiting authentication.
 
 
@@ -292,4 +292,24 @@ QA: each720x1280,24fps,336frames,14.0s, full video/audio decode and zero black i
 Recipe: campaigns/bavaria-new-year-2027/newyear-options/ with motion.mjs,render.py,verification.json andREADME. Uses the existing sibling anime-festive recipe/media; no renderer defaults or global brand rules changed. Next: Leo chooses1/2/3, then perform the selected full-length edit with all9reusable lines, existing music/clips, price1399€ instead1499€, discount100€, dates28.12.2026–03.01.2027 and058-677-8492. Choice authorizes shown editing scope without a repeat launch question; publication remains separate.
 
 KB-LINT: PASS — direct feedback and task-only alternatives; three concrete previews preserved as options, not parallel final masters; canonical source/project updated, full approved script retained; no dynamic offer promotion, no new paid permissions or final acceptance.
+
+
+
+## Leo selected 1 and 2: both complete New Year edits — 2026-11-08
+
+Direct answer: «1 и 2» to the three actual New Year previews. Interpreted and announced as two separate complete alternatives, not a merged design. Produced both with existing clips,9spoken lines and soundtrack; no new paid generation or launch question. No final acceptance/publication inferred.
+
+Variant1 Countdown: selected3–2–1/2027 intro, full-screen city scenes with fir corners, ornaments, warm lights and snow, followed by holiday-invitation price/contact cards. Library libfile_c97a946c28a081919ee7dbda12881959 v0,35999488bytes; private Drive1ToHfVnfeSXl490p9SJI8u5DqNRSkaF-u. SHA256a008ac7df1265c878b4f95964d351fc008893262798ce58960a9eb925f58b6bf. Cover Library libfile_71413e6cbca88191b92af8dd41728ad3 v0.
+
+Variant2 Postcards: selected burgundy/cream moving photo postcards across all cities; separate price and final-contact postcards. Library libfile_684af63fe53c81919ddd755bd6521833 v0,14785652bytes; private Drive1eWThGBpNyhXPWoDs-5OyqrOYJYQf2HZr. SHA256b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3. Cover Library libfile_bccaa414b94481919c64a5ebd76bc98e v0.
+
+Common QA report Library libfile_c48561bb29c8819181b6903ca8afa6e6 v0. Original35-group SRT and full narration MP3 unchanged. Existing prior full-video Library identity remains the historical restrained edit; it was not overwritten arbitrarily with one of the two new alternatives. User reported Library links do not open in Android; direct sandbox MP4 links are used for delivery, durable Library/Drive identities retained in this record.
+
+Both actual outputs54.625s,720x1280,24fps,H264/AAC,1311frames fully decoded, blackdetect0intervals. Exact compressed AAC hash identical to checked9-line source:cc4bcce52c2ba974dd7dd8d38cd00b5ebc2f84d6c38247651295ecc64a087341. Existing source-line checks and final-mix ASR0.95765 retained for the same audio bytes; actual−14.75LUFS,−1.42dBTP,LRA3.10. No TTS/A2E retries.
+
+Actual Anime.js4.2.2 paused animate/seek states control motion, card rotation and staged title/price/contact reveals; Pillow composes, FFmpeg encodes/remuxes. Visual QA caught a transparent-text compositing defect on opaque card backgrounds; fixed by compositing text on a transparent layer into each card. Corrected42–54.625s in both edits; reused first42s and fully decoded new whole outputs again.17rendered samples per variant plus8price-reveal samples inspected. Source1399€ instead1499€,discount100€ p.p.,double occupancy,6nights/dates28.12.2026–03.01.2027, optional castles and058-677-8492 retained; static reading times and caption/contact separation checked. Full human listening/Leo final review remains pending, not VIDEO_QA_PASS.
+
+Reproducible task recipe: campaigns/bavaria-new-year-2027/newyear-full/ (motion.mjs,render.py,verify.py,verification.json,README). Depends on the existing newyear-options/anime-festive recipes and staged media; no global workflow/default changes. Countdown/snow/ornaments are holiday graphics, not documentary claims. Next: Leo reviews both complete files; edits/choice and any eventual publication are separate from this completed selection.
+
+KB-LINT: PASS — explicit two-option choice; task-only two alternatives; canonical production/project updated and source script retained, no dynamic-fact promotion; existing paid outcomes/voice/rights boundaries preserved. Provenance SOURCE Leo / CLASSIFICATION sales-reel alternatives / TEXT_EXECUTOR existing approved Scenarist / VISUAL_EXECUTOR existing festive A2E + chosen edit / RENDERER Anime.js4.2.2 +Pillow+FFmpeg / STATUS TWO_FULL_NEWYEAR_VARIANTS_READY_FOR_LEO_REVIEW.
 
