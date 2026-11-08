@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-11-08 | [Новый год в Баварии — источник рилса](2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md) | APPROVED source; video in progress | sales / reel | Bavaria / 28 Dec 2026–3 Jan 2027 | New Year in Regensburg; stock imagery | «Делай»; price and dates clarified | high |
 | 2026-11-04 | [Arkia: багаж и новые цены](2026-11-04__NEWS__ARKIA-BAGGAGE__APPROVED.md) | APPROVED; факт-проверка условий Arkia не завершена | news / commercial CTA | Arkia / baggage | 23 кг, расчет для пары | «готово» | high |
 | 2026-11-02 | [MSC Black Friday](2026-11-02__SELLING__MSC-BLACK-FRIDAY__APPROVED.md) | APPROVED | sales | MSC Cruises | Black Friday, четыре примера | «Берём» | high |
 | 2026-11-01 | [Новый год в Праге](2026-11-01__SELLING__PRAGUE-NEW-YEAR__APPROVED.md) | APPROVED | sales | Ophir Tours / Prague / Hotel Opera | четыре дня и три ночи, расписание | «берем» | high |
