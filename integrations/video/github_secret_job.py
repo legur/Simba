@@ -698,7 +698,7 @@ def preserve_failed_render(drive, folder_id: str, job_dir: Path, stage: Path,
                 key: data.get(key) for key in ("returncode", "category", "http_status")}))
         if cache.is_dir() and not cache.is_symlink():
             for item in sorted(cache.iterdir()):
-                if not re.fullmatch(r"[0-9a-f]{64}(?:\.wav|\.attempt\.json)", item.name):
+                if not re.fullmatch(r"[0-9a-f]{64}(?:\.wav|\.attempt\.json|\.attempt\.response\.json)", item.name):
                     continue
                 if item.is_symlink() or not item.is_file():
                     raise JobError("Unsafe recovery cache entry")
@@ -707,7 +707,7 @@ def preserve_failed_render(drive, folder_id: str, job_dir: Path, stage: Path,
                 if total > 128 * 1024 * 1024 or count > 32:
                     raise JobError("Recovery cache exceeds bounded archive size")
                 name = "voice/.cache/" + item.name
-                if item.name.endswith(".wav"):
+                if item.name.endswith(".wav") or item.name.endswith(".response.json"):
                     archive.write(item, name)
                 else:
                     receipt = json.loads(item.read_text(encoding="utf-8"))
