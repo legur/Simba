@@ -213,3 +213,10 @@ Saved review updates existing Library video `libfile_86c9e7313a6c8191ba0e7638b65
 Next manual decision: finish ONLY price and CTA,155characters, potentially Google Flash-Lite with same approved private WarmBaritone voice. No new request submitted for that proposal. Do not rerun full nine-line ZIP (existing guard blocks it). Publication not authorized/performed.
 
 KB-LINT: PASS — actual partial result distinguished from final, cost uncertainty/429 and unattempted CTA recorded; fresh explicit approval not broadened; code fixes canonical in place; no dynamic fact promotion; source approved text unchanged.
+
+
+## Leo correction and Flash-Lite approval — 2026-11-08
+
+Direct instruction: «во первых используй вторую модель и что это за субтитры? мы с тобой говорили об этом». This explicitly authorizes ONLY the two remaining narration lines (price98chars,CTA57chars) through Google Gemini3.8 Flash-Lite TTS using the SAME private approved WarmBaritone voice. Existing seven WAVs retained without synthesis. No automatic retries. Fresh inputZIP `1XZzta35HrAY2BKWLYcd4QHD5Qb5oYOrM` contains only those two lines and internal still backgrounds plus generated silence for clean audio capture; not a new full nine-line job. Final assembly remains the existing six A2E clips with actual music. Successful and failed private runs now retain bounded source WAV/response cache ZIPs before cleanup. Tests21voice+37security PASS.
+
+Caption correction: Leo rejects the whole-sentence caption slabs in the prior review. Exact earlier wording of the caption agreement could not be recovered from canonical module/corrections or two targeted Personal Context lookups; do not invent a quotation or claim exact recall. Existing renderer uses word-level karaoke; planned repair for this review: short2–3word groups with active word highlighted in sync, no full-sentence slab, visual headers/offer/CTA kept separate. This is the current implementation choice, not a newly confirmed global brand rule. Pending final visual review. KB-LINT: PASS — source explicit, scope current reel, no final-ready/publication claim or secret exposed.
