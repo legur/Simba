@@ -147,7 +147,7 @@ class GitHubSecretsGuardTests(unittest.TestCase):
         env["GITHUB_TRIGGERING_ACTOR"] = "other-user"
         calls = []
 
-        def external_request(*args):
+        def external_request(*args, **kwargs):
             calls.append(args)
             return fake_wav()
 
@@ -167,7 +167,7 @@ class GitHubSecretsGuardTests(unittest.TestCase):
     def test_local_environment_cannot_start_real_synthesis_or_attempt_journal(self):
         calls = []
 
-        def external_request(*args):
+        def external_request(*args, **kwargs):
             calls.append(args)
             return fake_wav()
 
@@ -188,7 +188,7 @@ class GitHubSecretsGuardTests(unittest.TestCase):
     def test_trusted_manual_main_workflow_can_start_real_synthesis(self):
         calls = []
 
-        def external_request(text, voice_id, model):
+        def external_request(text, voice_id, model, *, response_path=None):
             calls.append((text, voice_id, model))
             return fake_wav()
 
@@ -210,7 +210,7 @@ class GitHubSecretsGuardTests(unittest.TestCase):
     def test_existing_cache_remains_available_outside_github_actions(self):
         calls = []
 
-        def external_request(*args):
+        def external_request(*args, **kwargs):
             calls.append(args)
             return fake_wav()
 
@@ -234,3 +234,4 @@ class GitHubSecretsGuardTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
