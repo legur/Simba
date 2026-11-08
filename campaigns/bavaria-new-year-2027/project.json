@@ -7,19 +7,19 @@
     "Bavaria"
   ],
   "updated_at": "2026-11-08",
-  "stage": "FULL_NARRATION_REVIEW_PENDING_LEO",
+  "stage": "ANIME_FESTIVE_REVIEW_PENDING_LEO",
   "sources": [
     {
       "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
-      "sha256": "30cfaf4c3a27f5a413ae20924776dec96372d1c48b2dc03d491ae3cb194bbdce"
+      "sha256": "09157e06a2e82579e4cc368205b13ab776fc6bc9615a48c1fffcd7930519d692"
     }
   ],
   "latest_user_request": {
-    "text": "и так закачивай озвучку и продолжим",
-    "state": "COMPLETED_NARRATION_AND_REVIEW",
-    "evidence": "Прямая команда Лео в текущем чате 08.11.2026; известная неопределенность предыдущего запуска отмечена в сессии."
+    "text": "3",
+    "state": "SELECTED_FESTIVE_ANIME_EDIT_COMPLETED",
+    "evidence": "Лео выбрал третий из показанных вариантов после прямой команды использовать Anime.js; выбор и результат зафиксированы в текущем источнике."
   },
-  "next_action": "Лео просматривает полный ролик со всеми девятью репликами: голос, музыкальный баланс и короткие субтитры. Исправления выполнять по конкретной обратной связи; новый творческий этап предлагать тремя вариантами. Все исходные WAV и клипы переиспользовать.",
+  "next_action": "Лео просматривает новогодний вариант3: золотые переходы Anime.js, движение карточек и последовательный вывод цены/CTA. Полный звук сохранен. Правки по обратной связи; публикация отдельно.",
   "working_asset_id": "voiced-review-library",
   "approved_asset_id": null,
   "approvals": {
@@ -116,12 +116,12 @@
     {
       "id": "voiced-review-library",
       "kind": "review_video",
-      "title": "Полный ролик: девять реплик и короткие субтитры",
+      "title": "Новогодний вариант3: Anime.js, золотые переходы, все9реплик",
       "url": "https://chatgpt.com/library?file_id=libfile_86c9e7313a6c8191ba0e7638b65ee2f6&account_id=personal",
       "state": "available",
       "reuse": true,
-      "evidence": "Full decode 1311 frames; ASR0.95765; eight tail frames checked; Library v4 saved. Leo acceptance pending.",
-      "recorded_library_version": 4,
+      "evidence": "Full1311-frame decode; zero black intervals; exact AAC unchanged; 19render samples inspected; Library v5 saved. Leo acceptance pending.",
+      "recorded_library_version": 5,
       "recorded_duration_seconds": 54.625
     },
     {
@@ -146,22 +146,22 @@
     {
       "id": "qa-review",
       "kind": "qa_report",
-      "title": "QA полной озвучки и ролика; личный просмотр Лео ожидается",
+      "title": "QA новогоднего монтажа Anime.js",
       "url": "https://chatgpt.com/library?file_id=libfile_509538b8e55081918f62df2724b03cef&account_id=personal",
       "state": "available",
       "reuse": false,
       "evidence": "Current verification report saved as Library v2.",
-      "recorded_library_version": 2
+      "recorded_library_version": 3
     },
     {
       "id": "cover-review",
       "kind": "cover",
-      "title": "Обложка исправленной просмотровой версии",
+      "title": "Обложка новогоднего варианта3",
       "url": "https://chatgpt.com/library?file_id=libfile_0b16f14f13f08191aaecedd4f44f6cc9&account_id=personal",
       "state": "available",
       "reuse": false,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
-      "recorded_library_version": 1
+      "recorded_library_version": 2
     },
     {
       "id": "voice-recovery-remaining",
@@ -189,10 +189,21 @@
       "kind": "review_video",
       "title": "Полный ролик: все девять реплик",
       "url": "https://drive.google.com/file/d/1OAKbxokeAGhgFtzh64YIw65ef5vW5JLn/view",
-      "state": "available",
-      "reuse": true,
+      "state": "historical",
+      "reuse": false,
       "evidence": "Private upload of complete verified review; Leo acceptance pending.",
       "recorded_duration_seconds": 54.625
+    },
+    {
+      "id": "anime-festive-drive",
+      "kind": "review_video",
+      "title": "Новогодний вариант3 с Anime.js",
+      "url": "https://drive.google.com/file/d/1l2ov4H-087iqWvIrtPauhTCnapN_pERO/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Private upload of actual Anime.js festive render; complete decode and unchanged AAC verified.",
+      "recorded_duration_seconds": 54.625,
+      "recorded_size_bytes": 45621657
     }
   ],
   "references": [
@@ -200,7 +211,7 @@
       "id": "KADR-002",
       "path": "Кадр/База/cards/KADR-002.md",
       "relationship": "used_in_recorded_review",
-      "scope": "Только визуальные приемы: крупные офферы и читаемые титры. Применение зафиксировано в исходной видеосессии; новая правка субтитров требует отдельной сверки."
+      "scope": "Неподвижный заголовок городов14.08–22.46с, отделенные читаемые цена и CTA; актуальная проверка нового монтажа выполнена. Звук референса не переносился."
     }
   ],
   "reuse_notes": [
@@ -210,8 +221,16 @@
     "Правка в другом чате может быть новее карточки: источник и последний запрос обязательно сверяются."
   ],
   "missing": [
-    "Утверждение Leo варианта коротких субтитров и полного MP4",
-    "Полный ручной просмотр со звуком",
+    "Личный просмотр и прослушивание Лео выбранного новогоднего оформления",
+    "Утверждение конкретного MP4",
     "Подтверждение публикации"
-  ]
+  ],
+  "selected_edit": {
+    "option": 3,
+    "style": "festive",
+    "motion_engine": "Anime.js",
+    "motion_engine_version": "4.2.2",
+    "new_paid_generations": 0,
+    "recipe_path": "campaigns/bavaria-new-year-2027/anime-festive/README.md"
+  }
 }

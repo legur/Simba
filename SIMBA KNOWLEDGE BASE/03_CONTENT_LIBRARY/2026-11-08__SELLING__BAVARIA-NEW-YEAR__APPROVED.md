@@ -34,7 +34,7 @@ WhatsApp: 058-677-8492. Код обращения: БАВАРИЯ. Лео, Simba
 Голос: постоянный Google Gemini Simba WarmBaritone, без подмены другим провайдером.
 KADR_REFERENCES: KADR-002 — неподвижные крупные титры поверх меняющегося фона; удержание оффера и контакта для чтения. Музыка и звук референса не копируются.
 Все цены и даты — текущие данные Leo от 08.11.2026, не постоянное правило и не источник для будущих офферов.
-STATUS_VIDEO: FULL_NARRATION_REVIEW_PENDING_LEO; latest result below; not PUBLISHED, not VIDEO_QA_PASS.
+STATUS_VIDEO: ANIME_FESTIVE_REVIEW_PENDING_LEO; latest result below; not PUBLISHED, not VIDEO_QA_PASS.
 PROVENANCE: SOURCE Leo; CLASSIFICATION sales reel; STRATEGIST Simba runtime; TEXT_EXECUTOR Сценарист; VISUAL_EXECUTOR stock selection per direct Leo instruction; RENDERER pending integrations/video; EXECUTION_STATES script prepared / stock downloaded / Google launch awaiting authentication.
 
 
@@ -258,4 +258,20 @@ Updated same Library video libfile_86c9e7313a6c8191ba0e7638b65ee2f6 v4:54.625s,7
 Verification:1311frames and complete audio decode; no blackdetect intervals; actual AAC−14.75LUFS,−1.42dBTP,LRA3.10. Full-mix ASR0.95765 after explicit numeric equivalence31/6/1399/100 (threshold0.85). Eight tail/boundary frames inspected; price1399€ instead1499€,discount100€, dates28.12.2026–03.01.2027, double-occupancy unit and058-677-8492 retained. Full human listening by Leo pending; technical recognition does not certify timbre or naturalness. Caption style awaits Leo review. No VIDEO_QA_PASS, no final acceptance, no publication.
 
 KB-LINT: PASS — observed run and saved artifacts; task-scoped continuation; approved source/script and offer unchanged; existing canonical file and Library identities retained; no broad permissions or new brand rule; KADR-002 visual use retained without borrowed audio. Next: Leo reviews complete voiced MP4, then any new creative stage follows the existing three-variant choice process.
+
+
+
+## Anime.js festive edit — Leo selected option3, 2026-11-08
+
+Latest Leo instruction: «используй аниме для созданияч анимации и переходов». Three options shown:1smooth fades and slow price approach;2directional/beat-paced city changes;3festive warm-gold glow, light card movement, sequential price and CTA, short steady karaoke captions. Leo explicitly chose «3». Selection authorizes this editing pass, not publication or final MP4 acceptance. Scope: existing6clips, same9spoken lines and music, zero new paid generation.
+
+Executed option3 with actual Anime.js4.2.2 in Node: paused animate(...).seek(...) emits1311deterministic frame states. Nine segments:0–5.625,5.625–14.083333,14.083333–19.458333,19.458333–22.458333,22.458333–27.666667,27.666667–35.458333,35.458333–42,42–49.208333,49.208333–54.625. Crossfades900ms with soft gold glow, background zoom1.015–1.055 and slight drift, text reveals750ms staggered180ms. Pillow composites using Anime-calculated values; FFmpeg encodes and remuxes existing audio. Not a HyperFrames run. No global renderer/workflow change.
+
+Task recipe preserved at campaigns/bavaria-new-year-2027/anime-festive/: motion.mjs,render.py,alignment.json,prepare.py,package.json andREADME. Media remain outsideGit. Existing A2Eclips slowed to span each scene without regeneration. Same35caption groups; freshly computed86Whisper word marks mapped by normalized character length within groups. This is word-based alignment, not phoneme accuracy. First city headline retained across Munich/Nuremberg scenes14.08–22.46s perKADR-002 READY; no reference audio copied. Gold glow is Leo-selected style, not a learned reference law.
+
+Output:54.625s,720x1280,24fps,H264/AAC,45621657bytes,SHA25672ced9ef5fad01c96dadb1180d25a36acd8c34c8c504afdf4f874fcf10eeee29. Private Drive1l2ov4H-087iqWvIrtPauhTCnapN_pERO. Same Library video libfile_86c9e7313a6c8191ba0e7638b65ee2f6 v5, QA libfile_509538b8e55081918f62df2724b03cef v3, cover libfile_0b16f14f13f08191aaecedd4f44f6cc9 v2. SRT identity/version2 unchanged because timings and group text unchanged. Full narration MP3 unchanged.
+
+QA:1311frames/all audio decoded; no black intervals. SHA256 of compressed AAC packets identical before/after:cc4bcce52c2ba974dd7dd8d38cd00b5ebc2f84d6c38247651295ecc64a087341. Actual−14.75LUFS,−1.42dBTP,LRA3.10; full-mix ASR0.95765 against approved9lines with explicit numeric equivalence; per-line checks retained with unchanged sourceWAVs.19render-control frames,12composition frames and8transition samples inspected. Static headline/offer/phone reading times checked; short caption groups follow speech. All offer values/contact compared to source unchanged. Human full listening/Leo acceptance pending; no VIDEO_QA_PASS or publication claim.
+
+KB-LINT: PASS — explicit task-only choice3; source text and dynamic offer unchanged; existing canonical record/project and Library identities updated, not a permanent system rule. Provenance SOURCE Leo / CLASSIFICATION sales-reel edit / TEXT_EXECUTOR existing approved Scenarist / VISUAL_EXECUTOR existing festive frames and A2E / RENDERER Anime.js4.2.2 motion +Pillow+FFmpeg / STATUS ANIME_FESTIVE_REVIEW_PENDING_LEO.
 

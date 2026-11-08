@@ -1,0 +1,9 @@
+node_modules/
+frames/
+current/
+helpers/
+__pycache__/
+motion.json
+*.mp4
+*.jpg
+*.log
