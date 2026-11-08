@@ -77,3 +77,55 @@ jobs:
             gh issue comment 8 --repo legur/Simba --body \
               "A2E generation outcome is unknown. DO NOT RESTART: inspect the GitHub workflow run and A2E billing first."
           fi
+
+
+
+  bavaria:
+    name: Bavaria authorized six clips (max 180 credits)
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.action == 'labeled' &&
+      github.event.label.name == 'a2e-bavaria-180' &&
+      github.event.issue.number == 72 &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    concurrency:
+      group: a2e-issue-72-paid-start
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Offline spending safeguard tests
+        run: python -m unittest integrations/video/test_github_a2e_prague_generate.py -v
+      - name: Generate only the six authorized Bavaria scenes
+        env:
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python integrations/video/github_a2e_prague_generate.py --project bavaria \
+            --event "$GITHUB_EVENT_PATH" --dir "$RUNNER_TEMP/a2e-bavaria-result" --cap 180
+      - name: Preserve clips and task receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a2e-bavaria-issue72-videos
+          path: ${{ runner.temp }}/a2e-bavaria-result
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Record outcome
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-bavaria-result/report.md" ]; then
+            gh issue comment 72 --repo legur/Simba --body-file "$RUNNER_TEMP/a2e-bavaria-result/report.md"
+          fi
