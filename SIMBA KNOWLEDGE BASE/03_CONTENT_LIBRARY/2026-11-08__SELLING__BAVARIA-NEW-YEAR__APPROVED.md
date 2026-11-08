@@ -166,3 +166,20 @@ MEDIA_ARCHIVED_DRIVE_VERIFIED: six private MP4 files listed with matching byte s
 Review-only concatenation: `Bavaria_A2E_review.mp4`, 30.375 seconds, 540×960, no voice/music/titles. Library ID `libfile_575e0f8f88ec8191982bb6062c1ac11c` version0. Original 1080×1920 sources retained. This is an animation review, not the finished advertising Reel. Google WarmBaritone remains unresolved after previous private worker failure; no new TTS submitted. Leo requested Russian translations of the actual A2E prompts; translations shown, source English prompts unchanged.
 
 KB-LINT: PASS — task-specific actual result and evidence, correct incomplete final-video status; no publication or full QA claim.
+
+
+## Continuation: Google diagnosis and production preparation — 2026-11-08
+
+Leo instruction: «дальше». Continue authorized preparation; no additional paid TTS request submitted while previous attempt remains unreconciled.
+
+Read-only Google diagnostic run https://github.com/legur/Simba/actions/runs/42509859519 on commit80ca48cb704506eca397009d8b51b8aae650c926: approved private voice metadata resolved; GET selected voice HTTP200; GET primary Gemini3.8 Flash TTS HTTP200; GET fallback Flash-Lite TTS HTTP200. Renderer job SKIPPED, no synthesis/voice creation. This confirms current resource access only; it does not identify the past error or prove past billing outcome.
+
+Technical repair in existing canonical files: owner-only `diagnostics_only` workflow mode; failed renderer or post-render output failure now saves existing paid WAV cache plus allowlisted attempt receipts and sanitized error classification to a private, read-back-verified `simba-recovery-<runId>.zip` before temporary cleanup. No public raw stderr, provider responses or credentials. Existing permanent replay guard retained. Tests: 29 worker tests PASS, including secret suppression, cache retention and symlink rejection; diagnostic YAML/Python parse PASS. Commits e0ba76f2c41e05edec1ed7f4f9877cc1332ea827 and5bea6f26e132f8244917e58c6edb5d0bf6c18577. Recovery applies to future runs; it cannot restore files deleted by run42484986937.
+
+Music shortlist downloaded from https://mixkit.co/free-stock-music/tag/christmas/ : recommended `Holidays 2` by Grigoriy Nuzhny (107.546s), alternative `Our Journey` by Michael Ramir C., festive alternative `Tinsel and Mistletoe` by Ahjay Stelino. License checked2026-11-08: https://mixkit.co/license/modal/musicFree/ permits commercial social-video and online marketing advertisements; source homepage states no attribution required. Standalone redistribution/remix and rights-management registration prohibited; Content ID claims remain possible. Files actually obtained; no claim of final-mix listening/QA. Editorial recommendation only, no explicit Leo music selection yet.
+
+Prepared intermediate production ZIP (not dispatched/uploaded): `Bavaria_A2E_Google_input.zip`,84242526bytes; seven scene slots referencing six actual A2E clips with `voice:tts`, two festive card backgrounds, recommended music asset and unchanged approved script. Nine Google lines,598characters. A2E clips already completed and archived; no more A2E charges required. Final timing/retiming, speech ASR and audio mix remain pending voice.
+
+Pending: explicit manual instruction addressing one controlled repeat of Google narration despite unknown charge outcome from the prior failed run. Do not use the new ZIP identity to bypass the original paid-attempt guard. STATUS: A2E_COMPLETE__GOOGLE_REPLAY_BLOCKED_PENDING_MANUAL_DECISION, not VIDEO_READY_FOR_LEO.
+
+KB-LINT: PASS — L01 current instruction and observed run/test evidence; L02 no inferred permanent brand rule; L03 dynamic offer unchanged; L04 task record and existing runtime files; L05 guards retained; L06 scoped recovery/diagnosis only; L07 no new visual reference; L08 canonical files updated in place; L09 original approved text/status retained and existing index entry unchanged.
