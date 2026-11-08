@@ -191,5 +191,47 @@ class GuardTests(unittest.TestCase):
         self.assertEqual(len(submissions), 1)
         self.assertEqual(outcome["current_scene"], 1)
 
+class BavariaGuardTests(unittest.TestCase):
+    def setUp(self):
+        import importlib
+        importlib.reload(paid)
+        paid.configure_bavaria()
+        self.body = "{\"kind\":\"simba_a2e_quote\",\"scenes\":[{\"name\":\"Regensburg riverside New Year\",\"image_url\":\"https://static.wixstatic.com/media/7fd7b8_37747bb1e24e400cb17f4b2158ec8158~mv2.jpg\",\"prompt\":\"Slow cinematic push forward along the snowy Danube riverside at blue hour. Existing golden lights twinkle softly, snow drifts naturally, small existing fireworks blossom gently above the skyline and reflect in the water. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music.\"},{\"name\":\"Regensburg lantern alley\",\"image_url\":\"https://static.wixstatic.com/media/7fd7b8_29a666e7ac634eb688f21a2e25231b62~mv2.jpg\",\"prompt\":\"Slow steady forward dolly through the festive medieval alley. Existing lanterns glow warmly, a few snowflakes drift, existing pedestrians walk naturally away from camera. Keep cozy intimate atmosphere. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music.\"},{\"name\":\"Munich Marienplatz winter\",\"image_url\":\"https://static.wixstatic.com/media/7fd7b8_0057b5b8d0bc4181a343f53b69d54a5f~mv2.jpg\",\"prompt\":\"Gentle cinematic upward camera tilt toward the existing Munich town hall. Existing holiday lights shimmer softly and a few snowflakes fall. Existing distant people move subtly. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music.\"},{\"name\":\"Nuremberg festive panorama\",\"image_url\":\"https://static.wixstatic.com/media/7fd7b8_5e90f6c912214c96b8b10d33e808659b~mv2.jpg\",\"prompt\":\"Very slow cinematic lateral camera drift over the existing Nuremberg rooftops. Existing small fireworks animate naturally in the distant sky, windows glow, light snow drifts. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music.\"},{\"name\":\"Ettal Abbey winter\",\"image_url\":\"https://static.wixstatic.com/media/7fd7b8_c6d6ccf6312140b9888092902ba9d97e~mv2.jpg\",\"prompt\":\"Very slow cinematic push toward the existing Ettal Abbey facade. Warm existing festive lights glow steadily, subtle snow falls, existing branches move almost imperceptibly in a light breeze. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music.\"},{\"name\":\"Neuschwanstein winter\",\"image_url\":\"https://static.wixstatic.com/media/7fd7b8_495b4677309240d8be81b67fbed6d086~mv2.jpg\",\"prompt\":\"Slow cinematic push toward the existing Neuschwanstein castle. Wisps of winter mist drift subtly behind the castle, fine snowflakes fall, existing window lights glow warmly. Preserve the exact source architecture, perspective, landmarks and existing decorations. Realistic restrained motion. No new buildings, no transformations, no text, no speech, no music.\"}]}"
+
+    def tearDown(self):
+        import importlib
+        importlib.reload(paid)
+
+    def approved_event(self):
+        return {"action": "labeled", "label": {"name": "a2e-bavaria-180"},
+                "repository": {"full_name": "legur/Simba"},
+                "issue": {"number": 72, "user": {"login": "legur"}, "body": self.body}}
+
+    def test_exact_bavaria_and_cap(self):
+        self.assertEqual(len(paid.validated_request(self.approved_event(), 180)), 6)
+        with self.assertRaises(paid.StopGeneration):
+            paid.validated_request(self.approved_event(), 181)
+
+    def test_changed_prompt_or_issue_is_blocked(self):
+        ev = self.approved_event()
+        body = json.loads(ev["issue"]["body"])
+        body["scenes"][0]["prompt"] += " changed"
+        ev["issue"]["body"] = json.dumps(body)
+        with self.assertRaises(paid.StopGeneration):
+            paid.validated_request(ev, 180)
+        ev = self.approved_event()
+        ev["issue"]["number"] = 8
+        with self.assertRaises(paid.StopGeneration):
+            paid.validated_request(ev, 180)
+
+    def test_existing_task_blocks_new_charge(self):
+        with patch.object(paid, "read_json", return_value={"code": 0, "data": {
+                "rows": [{"image_url": paid.EXPECTED_URLS[0]}]}}):
+            with self.assertRaises(paid.StopGeneration):
+                paid.verify_no_paid_effect_since_first_attempt("sk_fake")
+        with patch.object(paid, "read_json", return_value={"code": 0, "data": {"rows": []}}):
+            paid.verify_no_paid_effect_since_first_attempt("sk_fake")
+
 if __name__ == "__main__":
     unittest.main()
+
