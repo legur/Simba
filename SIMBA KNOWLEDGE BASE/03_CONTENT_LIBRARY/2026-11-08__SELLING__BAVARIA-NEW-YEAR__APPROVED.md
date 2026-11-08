@@ -192,3 +192,24 @@ Leo replied «да» to the specific question: repeat Google narration of9lines/
 Job `voice.allow_fallback=false`: primary WarmBaritone only, no automatic Flash-Lite call. Existing default fallback behavior for other jobs retained. Successful provider response audio fields preserved privately before parsing; failed render recovery ZIP includes bounded cache WAVs/attempt receipts and selected successful-response fields, no request headers/API key or raw HTTP errors. Tests19voice +29worker PASS. No public audio or raw response logging. Package uses Holidays2 recommendation as provisional edit subject to final Leo review; narration text unchanged.
 
 KB-LINT: PASS — explicit fresh authorization scoped to one9-line run, original permanent marker retained, same canonical files updated in place, no publication permission or completed-voice claim.
+
+
+## Google narration result and voiced review — 2026-11-08
+
+Run42511654522 stopped in offline guard-test doubles BEFORE credentialed render; no Google request/new marker in that run. Updated two mocked function signatures for the optional private response_path argument; guards unchanged. Local37security +19voice tests PASS. Commitc0ef4e6ec2c5d2e152a151833b38f9025ebe31f9.
+
+Actual paid run https://github.com/legur/Simba/actions/runs/42511902062 on c0ef4e6: all preflight tests passed, one new permanent input marker created (Drive1kbgtm23CNqNMkRHz93GscgL-yeRPg6gM). Google primary WarmBaritone produced lines1–7; durations5.76,8.32,5.08,2.24,4.96,7.68,6.12seconds. Line8 (price) returned ProviderUnavailable reason `http_429`, receipt `may_have_been_billed:false`; no automatic retry/Flash-Lite call. Line9 (CTA) was NOT attempted. Exact remaining texts:98characters offer +57characters CTA =155characters. Prior7lines must not be generated again.
+
+Recovery fix worked: private read-back-verified `simba-recovery-42511902062.zip`, Drive1h6LFyStoQAZv8kepz4K6htbrYRNB6zI_,3107579bytes. Contains seven successful WAVs, selected successful Google response fields, eight attempt receipts and sanitized google_unavailable diagnostic. No private voice ID or provider-response content published. Original failed-run marker retained.
+
+Built complete visual/music review locally from the seven recovered WAVs and six existing A2E clips. Runtime58.666667s,720×1280,24fps,H264+AAC48kHz,25021963bytes. Price and final CTA appear on screen with music but WITHOUT narration; SRT contains only the seven actually spoken lines. STATUS `VIDEO_REVIEW_PARTIAL_NARRATION`, not final9-line approval/VIDEO_QA_PASS.
+
+Technical QA: all7line ASR scores≥0.9 after explicit numeric equivalence for first line «тридцать первое»↔Whisper«31» (raw first score0.778; normalized1.0); other scores1.0,0.977,1.0,0.929,0.951,0.970. Final mix ASR0.932 vs actual seven spoken lines.−14.11LUFS, truepeak−1.39dBTP, blackdetect no intervals, duration<60s, all streams fully decoded. Nine scene midpoint frames visually inspected. Full human audio listening remains pending Leo.
+
+KADR_REFERENCES: KADR-002 READY re-read; constant city headline across Munich/Nuremberg background change, clear large price with unit, final CTA held for reading. No reference audio borrowed. Music Holidays2 byGrigoriyNuzhny, actual file mixed with sidechain ducking/fades, rights per prior verified Mixkit license. Final source facts unchanged.
+
+Saved review updates existing Library video `libfile_86c9e7313a6c8191ba0e7638b65ee2f6` version2, filenameBavaria_Google_A2E_review.mp4. SRT libfile_e20625b2b830819182e3160c95dbd340 v0; cover libfile_0b16f14f13f08191aaecedd4f44f6cc9 v0; QA libfile_509538b8e55081918f62df2724b03cef v0. Raw A2E review libfile_575e0f8f88ec8191982bb6062c1ac11c remains separate. Private voiced-review Drive copy: 1Ym4OT-wNxRHiw7-PxFQnMGSOv3bzey0G.
+
+Next manual decision: finish ONLY price and CTA,155characters, potentially Google Flash-Lite with same approved private WarmBaritone voice. No new request submitted for that proposal. Do not rerun full nine-line ZIP (existing guard blocks it). Publication not authorized/performed.
+
+KB-LINT: PASS — actual partial result distinguished from final, cost uncertainty/429 and unattempted CTA recorded; fresh explicit approval not broadened; code fixes canonical in place; no dynamic fact promotion; source approved text unchanged.
