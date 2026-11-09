@@ -52,3 +52,5 @@
 
 Новые материалы, созданные после запуска Knowledge Base, добавляются сюда после достижения как минимум `APPROVED_TEXT`; при выборе визуала фиксируется `PUBLICATION_PACKAGE_READY`.
 | 2026-11-09 | [Новый год в Праге](2026-11-09__REEL__8a8f834b91924ca3b5af28718737c8e3-209e5cc0509d__VIDEO-SESSION.md) | APPROVED | VIDEO_SESSION | reel | dashboard-approved script | explicit dashboard approval | high |
+
+| 2026-11-09 | [Из Израиля без пересадок: новые направления к сезону 2027](2026-11-09__INFO__new-direct-routes-2027.md) | APPROVED | Info | planned direct airline routes | направления, перевозчики, планируемые сроки; без сюжета фактчекинга | «Отлично делаем постер» | high |
