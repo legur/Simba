@@ -1,0 +1,22 @@
+{
+  "duration": 54.625,
+  "frames": 1311,
+  "width": 720,
+  "height": 1280,
+  "audio_packet_hash": "SHA256=cc4bcce52c2ba974dd7dd8d38cd00b5ebc2f84d6c38247651295ecc64a087341",
+  "black_intervals": 0,
+  "loudness": {
+    "input_i": "-14.75",
+    "input_tp": "-1.42",
+    "input_lra": "3.10",
+    "input_thresh": "-24.76",
+    "output_i": "-14.59",
+    "output_tp": "-1.50",
+    "output_lra": "2.50",
+    "output_thresh": "-24.59",
+    "normalization_type": "dynamic",
+    "target_offset": "0.59"
+  },
+  "bytes": 33661770,
+  "sha256": "c94a0710ef2d1d07315db880c516cad2410bc6bb384348a64426b9466b1a900f"
+}
