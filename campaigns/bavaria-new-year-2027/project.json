@@ -7,19 +7,19 @@
     "Bavaria"
   ],
   "updated_at": "2026-11-09",
-  "stage": "ALL_THREE_NEWYEAR_VARIANTS_READY_FOR_LEO_REVIEW",
+  "stage": "THIRD_TRAILER_CLEAR_SCENES_READY_FOR_LEO_REVIEW",
   "sources": [
     {
       "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
-      "sha256": "be441d955929a55fbd71d39101e8c87ce9cdd42e51400f443e495c6e4c187eca"
+      "sha256": "78c98699987ad9190bdd279c6479eabfd8d89fd68fb0378c9c23494c059f0546"
     }
   ],
   "latest_user_request": {
-    "text": "авай последний вариант тоже",
-    "state": "FULL_THIRD_VARIANT_COMPLETED",
-    "evidence": "Прямая команда Лео09.11.2026 после передачи полных1и2; выполнен отдельный полный трейлер3."
+    "text": "1",
+    "state": "SCENE_TITLE_BARS_REMOVED",
+    "evidence": "Лео выбрал вариант1 исправления: убрать закрывающую кадр плашку, белые названия сверху с обводкой; это правка трейлера3."
   },
-  "next_action": "Лео просматривает полную третью версию по прямой MP4ссылке, сравнивает с готовыми1/2. Дальнейшие правки и утверждение конкретного MP4 по обратной связи; публикация отдельно.",
+  "next_action": "Лео просматривает исправленную третью версию по прямой MP4ссылке: города без закрывающих плашек, цена и финал отдельными карточками. Версии1/2 сохранены. Окончательное утверждение и публикация отдельно.",
   "working_asset_id": null,
   "approved_asset_id": null,
   "approvals": {
@@ -318,14 +318,14 @@
     {
       "id": "newyear-full-3",
       "kind": "review_video",
-      "title": "Полная версия3: Праздничный трейлер",
+      "title": "Полная версия3: открытые кадры без плашек",
       "url": "https://chatgpt.com/library?file_id=libfile_f9cdbb23d6088191b928c9194408ec6a&account_id=personal",
       "state": "available",
       "reuse": true,
-      "evidence": "Actual full third edit saved; complete decode and unchanged full AAC verified; Leo acceptance pending.",
-      "recorded_library_version": 0,
+      "evidence": "Libraryv1 saved;1311frames decoded; unchanged AAC;18render samples checked; title bars removed0–42s. Leo review pending.",
+      "recorded_library_version": 1,
       "recorded_duration_seconds": 54.625,
-      "recorded_size_bytes": 33661770
+      "recorded_size_bytes": 38426086
     },
     {
       "id": "newyear-full-3-cover",
@@ -335,7 +335,7 @@
       "state": "available",
       "reuse": true,
       "evidence": "Actual full third edit saved; complete decode and unchanged full AAC verified; Leo acceptance pending.",
-      "recorded_library_version": 0
+      "recorded_library_version": 1
     },
     {
       "id": "newyear-full-3-qa",
@@ -345,18 +345,29 @@
       "state": "available",
       "reuse": true,
       "evidence": "Actual full third edit saved; complete decode and unchanged full AAC verified; Leo acceptance pending.",
-      "recorded_library_version": 0
+      "recorded_library_version": 1
     },
     {
       "id": "newyear-full-3-drive",
       "kind": "review_video",
       "title": "Архив полной версии3",
       "url": "https://drive.google.com/file/d/17EuYM5xT0A4Clqb22Dm6SD_88CpmGzcw/view",
-      "state": "available",
-      "reuse": true,
+      "state": "historical",
+      "reuse": false,
       "evidence": "Private Drive copy of completed full third alternative; no new paid generation.",
       "recorded_duration_seconds": 54.625,
       "recorded_size_bytes": 33661770
+    },
+    {
+      "id": "newyear-full-3-clear-drive",
+      "kind": "review_video",
+      "title": "Исправленный трейлер3 без плашек",
+      "url": "https://drive.google.com/file/d/1AxpEftO-BCHQBR06vUkSKpODFaxLCqYb/view",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Private corrected full MP4 archive; exact9-line AAC preserved; no new paid generation.",
+      "recorded_duration_seconds": 54.625,
+      "recorded_size_bytes": 38426086
     }
   ],
   "references": [
@@ -364,7 +375,7 @@
       "id": "KADR-002",
       "path": "Кадр/База/cards/KADR-002.md",
       "relationship": "used_in_recorded_review",
-      "scope": "Версия1: заголовок городов удерживается14.08–22.46с. Версия2: та же подпись повторена на соседних открытках, читается на первой. Отдельные цена/CTA, звук референса не переносился. Версия3: тот же заголовок удержан14.08–22.46с через смены компоновки; цена/контакт отдельными блоками, без заимствованного звука."
+      "scope": "Версия1: заголовок городов удерживается14.08–22.46с. Версия2: та же подпись повторена на соседних открытках, читается на первой. Отдельные цена/CTA, звук референса не переносился. Версия3: тот же заголовок удержан14.08–22.46с через смены компоновки; цена/контакт отдельными блоками, без заимствованного звука. В исправленном трейлере3 подпись небольшая белая вверху, центральные фоны убраны; отдельные оффер/контакт сохранены."
     }
   ],
   "reuse_notes": [
@@ -386,7 +397,14 @@
     ],
     "state": "ALL_THREE_FULL_ALTERNATIVES_READY_FOR_REVIEW",
     "new_paid_generations": 0,
-    "latest_recipe_path": "campaigns/bavaria-new-year-2027/newyear-trailer/README.md"
+    "latest_recipe_path": "campaigns/bavaria-new-year-2027/newyear-trailer/README.md",
+    "latest_correction": {
+      "target_option": 3,
+      "correction_choice": 1,
+      "change": "Remove destination-scene title backgrounds; small white outlined upper titles",
+      "date": "2026-11-09",
+      "new_paid_generations": 0
+    }
   },
   "preview_asset_ids": [
     "newyear-option-1",

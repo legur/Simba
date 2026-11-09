@@ -148,3 +148,13 @@ KB-LINT: PASS — L01 прямой источник; L02/L06 scope текуще�
 Source: direct Leo correction «что это за субтитры? мы с тобой говорили об этом» after voiced Bavaria review. Scope: current Reel caption implementation. Full-sentence opaque slabs in the review are rejected. Exact earlier caption wording could not be recovered; do not invent it. Planned current repair: short2–3word groups with synchronized active-word highlighting, separate from static offer/headlines; awaiting review. This does not establish an exact prior quotation or new global caption rule. Leo also explicitly selected the second Google model for the two remaining lines, already logged in the Bavaria content record.
 
 KB-LINT: PASS — direct correction, task-specific scope, implementation proposal distinguished from confirmed global policy; no offer fact or publication authority changed.
+
+
+## 2026-11-09 — Бавария, трейлер3: плашка закрывает изображение
+
+Источник → прямая корректировка Лео: «красная плашка поцентру экрана все закрывает». Из трех предложений Лео выбрал «1»: убрать плашку, названия городов небольшим белым текстом сверху с темной обводкой; крупные отдельные карточки только для цены и финального контакта.
+Исходный результат → третья полная новогодняя версия имела крупные бордовые заголовки в центре туристических кадров, закрывающие архитектуру.
+Действие → в сценах0–42с убрать непрозрачные центральные и верхние титровые блоки; названия33px белым с темной обводкой сверху; сохранить split-screen/шторки, готовые клипы/звук, отдельные карточки оффера и финала42–54.625с.
+Scope → только текущая третья версия рилса Баварии; не общее запрещение плашек/цвета и не изменение остальных вариантов1/2. Изменение утвержденного текста речи, фактов, музыки или публикация не разрешались и не выполнялись. Постоянное правило не формируется.
+Канон исполнения → campaigns/bavaria-new-year-2027/newyear-trailer/render.py и существующий производственный источник Баварии в03_CONTENT_LIBRARY; результат ожидает личного просмотра Лео.
+KB-LINT: PASS — L01 прямая правка и выбор; L02/L06 единичный scope; L03 динамические условия не закреплены; L04 learning layer; L05 цена/финал являются явным исключением текущей задачи; L07 без нового чужого контента; L08 обновление на месте; L09 source/script сохранены.
