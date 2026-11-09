@@ -51,3 +51,4 @@
 Второй проход `ARCHIVE FROM MEMORY` расширил покрытие до января–сентября 2026. Полные тексты создаются только при наличии непрерывного достоверного оригинала. Темы, для которых память подтверждает существование, выбор Leo или Critic, но не отдаёт весь текст без пропусков, остаются только в `_MISSING_POSTS.md`.
 
 Новые материалы, созданные после запуска Knowledge Base, добавляются сюда после достижения как минимум `APPROVED_TEXT`; при выборе визуала фиксируется `PUBLICATION_PACKAGE_READY`.
+| 2026-11-09 | [Новый год в Праге](2026-11-09__REEL__8a8f834b91924ca3b5af28718737c8e3-209e5cc0509d__VIDEO-SESSION.md) | APPROVED | VIDEO_SESSION | reel | dashboard-approved script | explicit dashboard approval | high |
