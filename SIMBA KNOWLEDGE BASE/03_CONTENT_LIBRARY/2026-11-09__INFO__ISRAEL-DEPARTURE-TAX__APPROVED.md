@@ -1,7 +1,7 @@
 # Налог на вылет из Израиля
 
 Date: 2026-11-09
-Status: APPROVED; visual pending identity reference
+Status: APPROVED; FIVE_PREVIEWS_READY; awaiting selection
 Approval: Leo «Отлично» после завершения цикла внешних отзывов и подтверждения неизменного текста.
 Type: polemical / news-based discussion
 Goal: comments and position (working goal from supplied review)
@@ -43,13 +43,13 @@ SOURCE: Israel Tax Authority paper + current coverage retrieved in conversation
 CLASSIFICATION: Info initially; polemical tone expressly requested by Leo
 STRATEGIST: none
 TEXT_EXECUTOR: Info profile, revised within conversation per direct Leo tone instruction and supplied external reviews
-VISUAL_EXECUTOR: Rafael (rules loaded; render not run)
-RENDERER: NOT_RUN
-EXECUTION_STATES: author rules loaded; author revised; final manual Humanizer completed; TEXT_READY_FOR_LEO; APPROVED_TEXT; RAFAEL_TASK_CREATED; awaiting usable Leo photograph
+VISUAL_EXECUTOR: Rafael (five previews; final render pending)
+RENDERER: built-in image_gen, five preview calls completed
+EXECUTION_STATES: author rules loaded; author revised; final manual Humanizer completed; TEXT_READY_FOR_LEO; APPROVED_TEXT; RAFAEL_TASK_CREATED; five previews completed; awaiting selection
 STATUS: APPROVED, not published
-HERO_IDENTITY_OVERRIDE: LEO (Info provenance); no usable Leo identity image attached in this conversation
+HERO_IDENTITY_OVERRIDE: LEO (Info provenance); Leo photo supplied to each preview call
 
 ## Validation
 
-Full final text preserved unchanged. External final review supplied by Leo: «Публикуемо, около 8.1»; not represented as an independently executed internal Critic verdict. Reference search/concepts/render remain pending identity reference.
+Full final text preserved unchanged. External final review supplied by Leo: «Публикуемо, около 8.1»; not represented as an independently executed internal Critic verdict. Five previews and full prompts recorded in visual session 2026-11-09__INFO__ISRAEL-DEPARTURE-TAX__VISUAL-SESSION.md; final render pending.
 KB-LINT Content Library profile: PASS after index update and read-back. L09: full text, approval, date/type/angle/CTA, dynamic-fact boundary and index entry checked.
