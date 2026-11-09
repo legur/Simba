@@ -1,7 +1,7 @@
 # Israel departure tax — visual session
 
 Date: 2026-11-09
-STATUS: FIVE_PREVIEWS_READY; awaiting Leo selection
+STATUS: FINAL_VISUAL_READY; selected variant 5
 APPROVED_TEXT: 2026-11-09__INFO__ISRAEL-DEPARTURE-TAX__APPROVED.md
 SOURCE: approved post + Leo identity photo uploaded in this conversation
 CLASSIFICATION: polemical/news-based discussion, Info provenance
@@ -92,3 +92,27 @@ Preserve identity from Image 1, which is identity only; do not keep the park bac
 Leo selects 1–5. Reload full selected prompt from this file. Make separate square final render preserving scene/identity/headline/caption; remove preview number only; strengthen safe margins where needed. Do not reconstruct prompt from memory. Preview outputs are displayed in conversation and auto-saved by image tool; local paths session-bound.
 
 KB-LINT Content profile: PASS after read-back and index update. Approved text unchanged, dynamic facts remain historical.
+
+
+## Selected final render — 2026-11-09
+
+SELECTED_VARIANT_ID: 5
+Selection: Leo «5»
+Selected full prompt reloaded from GitHub before renderer call.
+FINAL_VISUAL_READY: true
+PUBLICATION: NOT_PUBLISHED
+Renderer: built-in image_gen; exact model/thinking mode not selectable.
+Final output: Generated images are saved to /workspace/scratch/f27f9e260841/generated_images as /workspace/scratch/f27f9e260841/generated_images/exec-11f5355f-e346-4f8a-8616-c3d33e14ebe4.png by default.
+Final QA: separate square final render inspected; preview number removed; headline «А ВОЗДУХ ПОЧЕМ?» correct once; caption «Налог на вылет пока предлагают» correct once; brand correct once; face/glasses/hair/beard recognized against original; cloud, glass, pose and suitcase preserved; no contacts or extraneous text. Lower text readable, final margins visually reviewed.
+REFERENCE_TRACE unchanged: no external Archivarius/YouMind card used; original Rafael composition.
+
+### Exact final renderer prompt
+
+Create ONE square 1:1 Russian Facebook poster preview, professionally art-directed for an adult Israeli Russian-speaking audience. Use the supplied photograph as the ONLY identity reference for Leo. Preserve his specific face, apparent age around 50, stocky build, dark upswept hair, round thin metal glasses, beard and mustache, natural skin texture. No beautification, no slimming, no generic replacement face. Retain taupe-gray travel jacket and black V-neck shirt; remove backpack/crossbody straps only if necessary for scene clarity. Change background, pose and lighting as described; keep facial identity exact. No lion or mascot. This is clearly a satirical illustration of a PROPOSED departure tax, not documentary news evidence. No government logos, no airline branding, no false real official document. Strong readable Cyrillic typography, six-percent safe margins. Each specified text string exactly ONCE. No other words except specified brand and preview number. Brand small: "Simba by Bon Tours". Lower caption always clearly readable: "Налог на вылет пока предлагают". No prices, phones, QR codes, watermark or tiny writing.
+EXACT HEADLINE: "А ВОЗДУХ ПОЧЕМ?".
+SCENE / STYLE / COMPOSITION: Minimal surreal studio photograph with playful deadpan editorial art direction. Pale powder-blue seamless background and clean light stone counter. One realistic fluffy white cloud trapped beneath a transparent glass bell jar on counter at center-left. Leo waist-up right, faithful face and natural stocky proportions, taupe jacket and black shirt; hand gesturing open toward jar as if asking its price, skeptical rather than smiling. A travel suitcase partly visible beside him. Elegant diffused studio light, believable glass refraction and cloud volume, sharp face, no saturated neon. No price tags or labels. Large dark-navy Cyrillic headline at top, lower caption left, brand lower right. Small preview badge "5" upper left.
+Preserve identity from Image 1, which is identity only; do not keep the park background. This is one standalone preview, not a contact sheet.
+
+FINAL RENDER OVERRIDE (takes precedence over preview wording): Produce a polished full-resolution FINAL square poster, separately rendered from the selected preview. Image 1 is the selected preview: preserve its exact scene, pale blue color palette, glass bell jar with cloud on left, Leo on right with open palm, taupe jacket, black shirt, suitcase and cream counter. Image 2 is the original Leo photograph and is the sole authoritative facial identity reference. Preserve his exact recognizable face, round glasses, age, beard, hair and stocky proportions, no beauty filter. REMOVE the small "5" preview badge entirely; no number anywhere. Retain exactly one headline "А ВОЗДУХ ПОЧЕМ?", one caption "Налог на вылет пока предлагают", and one brand "Simba by Bon Tours". Rebalance with at least 6% safe margin for ALL text on every edge, including bottom and right; slightly shrink caption/brand if needed, keep very legible. Keep head silhouette clear of headline, no letters behind hair. No redesign of approved concept, no extra text. High-detail realistic skin, hands and glass, elegant soft studio lighting.
+
+KB-LINT Content profile: PASS after read-back; source/selection/status explicit; approved text unchanged. No publication authorization inferred.
