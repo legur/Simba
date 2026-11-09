@@ -1,0 +1,68 @@
+name: Simba approved voice issue runner
+on:
+  issues:
+    types: [labeled]
+  pull_request:
+    paths:
+      - '.github/workflows/simba-approved-voice-issue.yml'
+      - 'integrations/video/simba_voice.py'
+      - 'integrations/video/simba_voice_issue.py'
+      - 'integrations/video/tests/test_simba_voice_issue.py'
+permissions:
+  contents: read
+concurrency:
+  group: simba-approved-voice-global
+  cancel-in-progress: false
+jobs:
+  test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m unittest discover -s integrations/video/tests -p 'test_simba_voice_issue.py' -v
+  voice:
+    if: >-
+      github.event_name == 'issues' &&
+      github.event.label.name == 'simba-approved-voice' &&
+      github.event.sender.login == 'legur' &&
+      github.event.issue.user.login == 'legur' &&
+      github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'google-api-python-client>=2.140,<3' 'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+      - name: Verify trusted main checkout
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$GITHUB_WORKFLOW_SHA" = "$GITHUB_SHA"
+          git diff --exit-code HEAD --
+      - name: Synthesize approved voice once and save privately
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+        run: python integrations/video/simba_voice_issue.py --event "$GITHUB_EVENT_PATH" --out "$RUNNER_TEMP/simba-voice"
+      - name: Report outcome without audio or secrets
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          if [ -f "$RUNNER_TEMP/simba-voice/report.md" ]; then
+            gh issue comment "$ISSUE_NUMBER" --repo legur/Simba --body-file "$RUNNER_TEMP/simba-voice/report.md"
+          else
+            gh issue comment "$ISSUE_NUMBER" --repo legur/Simba --body 'Outcome unknown. Inspect private Drive marker and billing; do not retry automatically.'
+          fi

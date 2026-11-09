@@ -61,16 +61,34 @@ def _require_github_secrets_workflow():
     """
     checkout_sha = os.environ.get("GITHUB_SHA", "")
     workflow_sha = os.environ.get("GITHUB_WORKFLOW_SHA", "")
+    event_kind = os.environ.get("GITHUB_EVENT_NAME")
+    trusted_issue = False
+    if event_kind == "issues":
+        try:
+            event = json.loads(Path(os.environ.get("GITHUB_EVENT_PATH", "")).read_text(encoding="utf-8"))
+            issue = event.get("issue") or {}
+            trusted_issue = (
+                event.get("action") == "labeled"
+                and (event.get("label") or {}).get("name") == "simba-approved-voice"
+                and (event.get("sender") or {}).get("login") == "legur"
+                and (issue.get("user") or {}).get("login") == "legur"
+                and issue.get("pull_request") is None
+                and os.environ.get("GITHUB_WORKFLOW") == "Simba approved voice issue runner"
+                and os.environ.get("GITHUB_WORKFLOW_REF") == "legur/Simba/.github/workflows/simba-approved-voice-issue.yml@refs/heads/main"
+            )
+        except (OSError, ValueError, TypeError):
+            trusted_issue = False
+    trusted_dispatch = (event_kind == "workflow_dispatch"
+        and os.environ.get("GITHUB_WORKFLOW") == GITHUB_TTS_WORKFLOW
+        and os.environ.get("GITHUB_WORKFLOW_REF") == GITHUB_TTS_WORKFLOW_REF)
     trusted = (
         os.environ.get("GITHUB_ACTIONS") == "true"
-        and os.environ.get("GITHUB_EVENT_NAME") == "workflow_dispatch"
+        and (trusted_dispatch or trusted_issue)
         and os.environ.get("GITHUB_ACTOR") == os.environ.get("GITHUB_REPOSITORY_OWNER")
         and os.environ.get("GITHUB_TRIGGERING_ACTOR") == os.environ.get("GITHUB_REPOSITORY_OWNER")
         and os.environ.get("GITHUB_ACTOR") == "legur"
         and os.environ.get("GITHUB_REPOSITORY") == "legur/Simba"
         and os.environ.get("GITHUB_REF") == "refs/heads/main"
-        and os.environ.get("GITHUB_WORKFLOW") == GITHUB_TTS_WORKFLOW
-        and os.environ.get("GITHUB_WORKFLOW_REF") == GITHUB_TTS_WORKFLOW_REF
         and re.fullmatch(r"[0-9a-fA-F]{40}", checkout_sha) is not None
         and workflow_sha == checkout_sha
     )
