@@ -34,7 +34,7 @@ WhatsApp: 058-677-8492. Код обращения: БАВАРИЯ. Лео, Simba
 Голос: постоянный Google Gemini Simba WarmBaritone, без подмены другим провайдером.
 KADR_REFERENCES: KADR-002 — неподвижные крупные титры поверх меняющегося фона; удержание оффера и контакта для чтения. Музыка и звук референса не копируются.
 Все цены и даты — текущие данные Leo от 08.11.2026, не постоянное правило и не источник для будущих офферов.
-STATUS_VIDEO: ALL_THREE_NEWYEAR_VARIANTS_READY_FOR_LEO_REVIEW; latest result below; not PUBLISHED, not VIDEO_QA_PASS.
+STATUS_VIDEO: THIRD_TRAILER_CLEAR_SCENES_READY_FOR_LEO_REVIEW; latest result below; not PUBLISHED, not VIDEO_QA_PASS.
 PROVENANCE: SOURCE Leo; CLASSIFICATION sales reel; STRATEGIST Simba runtime; TEXT_EXECUTOR Сценарист; VISUAL_EXECUTOR stock selection per direct Leo instruction; RENDERER pending integrations/video; EXECUTION_STATES script prepared / stock downloaded / Google launch awaiting authentication.
 
 
@@ -328,4 +328,18 @@ QA:54.625s,720x1280,24fps,H264/AAC,1311frames and all audio fully decoded; black
 KADR_REFERENCES: KADR-002 READY — repeated city headline held14.08–22.46s across background/layout changes, clear separate price and contact; no reference audio borrowed. Other trailer graphics are the chosen task style, not a measured performance claim. Recipe campaigns/bavaria-new-year-2027/newyear-trailer/ contains motion.mjs,render.py,verify.py,verification.json andREADME; depends on the saved earlier recipes/media. Global runtime/defaults unchanged.
 
 KB-LINT: PASS — direct task-specific third-option authorization, source script/offer retained, original alternatives and archive identities preserved; no permanent brand rule, dynamic-fact promotion, paid-scope expansion or publication implied. Next: Leo reviews the third complete file alongside1/2; further changes/approval only from actual feedback.
+
+
+
+## Trailer3 correction: remove obstructing title bars — 2026-11-09
+
+Leo feedback: «красная плашка поцентру экрана все закрывает». Offered1remove bars and use small white outlined titles at top;2narrow top ribbon;3brief title1–1.5s. Leo chose «1». This is a correction of the third trailer, not selection of the first countdown variant. Larger separate offer and final-contact cards are explicitly retained.
+
+Executed: no opaque central or upper red title backgrounds in destination scenes0–42s, including the intro. City/short titles33px white with2px dark outline at the top; small19px gold New Year line, optional-trip note23px. Split screen, triptych, Anime.js wipes and snow retained; price/final-card functions42–54.625s unchanged. Versions1and2 unchanged. Voice/music/script/timing/35caption groups unchanged; no paid generation. Recovering pruned temporary files used existing saved assets only.
+
+Updated SAME Library identities: full trailer libfile_f9cdbb23d6088191b928c9194408ec6a v1; cover libfile_9565d422d2708191999c80143e7de35e v1; QA libfile_bd39fac62cac8191b0b8d5bb9bdc7507 v1. Corrected private Drive1AxpEftO-BCHQBR06vUkSKpODFaxLCqYb; prior Drive17EuYM5xT0A4Clqb22Dm6SD_88CpmGzcw is historical. Deliver direct sandbox MP4 link per user access issue.
+
+Actual corrected output54.625s,720x1280,24fps,H264/AAC,1311frames,38426086bytes; SHA256ab4635b8398adfe6fda91126d68a6c6b708024f9be7bd9074e742fdf7c56e32b. Full decode/all audio complete, blackdetect0intervals; AAC packet SHA256unchangedcc4bcce52c2ba974dd7dd8d38cd00b5ebc2f84d6c38247651295ecc64a087341. Existing per-line and full-mix ASR0.95765 retained for identical audio; actual−14.75LUFS,−1.42dBTP,LRA3.10.18rendered controls and8composition controls inspected: architecture is exposed, titles above main view, offer/phone clear. Source1399€ vs1499€,discount100€ p.p.,double occupancy,6nights,dates28.12.2026–03.01.2027,optional castles and058-677-8492 retained.
+
+Canonical render.py/README/verification.json updated in place and scoped correction appended to07_LEARNINGS/CORRECTIONS_LOG.md. No new global ban on red panels or change to other variants. Personal full listening and final Leo review remain pending; not VIDEO_QA_PASS/PUBLISHED. KB-LINT: PASS — direct correction and explicit option choice; task-only scope; script/offer retained; no paid-scope expansion/dynamic promotion; same artifact identities and source/project synchronized.
 

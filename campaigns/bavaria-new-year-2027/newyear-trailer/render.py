@@ -12,20 +12,23 @@ def txt(im,*a,**k):
     layer=Image.new('RGBA',im.size);opt.txt(layer,*a,**k);im.alpha_composite(layer)
 def body(s):
     t=s['t'];i=s['i'];cycle=s['cycle'];im=Image.new('RGBA',(W,H),(*NAVY,255))
-    if cycle%3==0:
+    layout=(0 if cycle==0 else (1 if cycle%2 else 2)) if t<full.CUTS[2] else cycle%3
+    if layout==0:
         for j in range(3):
-            raw=full.bg(i,max(full.CUTS[i],t-.3*j),1.05+.015*j);panel=opt.cover(raw,234,1090);im.alpha_composite(panel,(j*243,160))
-    elif cycle%3==1:
+            raw=opt.bg(1 if j!=1 else 2,t+j*.6,1.05) if t<2.8 else full.bg(i,max(full.CUTS[i],t-.3*j),1.05+.015*j)
+            panel=opt.cover(raw,234,1020 if t<full.CUTS[2] else 1090);im.alpha_composite(panel,(j*243,170 if t<full.CUTS[2] else 160))
+    elif layout==1:
         im=opt.dim(full.bg(i,t,1.04),20);p=s['wipe']['p'];old=full.bg(i,max(full.CUTS[i],t-.45),1.13)
         if p<1:
             for j in range(6):
                 x=int(j*W/6);edge=int((j+1)*W/6);shift=round(p*(H+100)+j*18*p);im.alpha_composite(old.crop((x,0,edge,H)),(x,shift))
     else:
         left=opt.cover(full.bg(i,t,1.06),416,H);right=opt.cover(full.bg(i,max(full.CUTS[i],t-.5),1.12),294,H);im.alpha_composite(left,(0,0));im.alpha_composite(right,(426,0));ImageDraw.Draw(im).line((421,0,421,H),fill=(*GOLD,255),width=8)
-    d=ImageDraw.Draw(im);d.rectangle((0,88,620,209),fill=(*RED,255));txt(im,'НОВЫЙ ГОД',36,106,55,CREAM,True)
-    d.rectangle((35,667,685,884 if i==6 else 858),fill=(*RED,255))
-    for k,line in enumerate(full.TITLES[i]):txt(im,line.upper(),W/2,692+k*67,41,CREAM,True,True)
-    if i==6:txt(im,'Дополнительная поездка',W/2,830,25,GOLD,False,True)
+    # Leo selected option1: no opaque bars in the destination scenes.
+    txt(im,'НОВЫЙ ГОД',42,64,19,GOLD,True,stroke=2)
+    lines=['Бавария · 2027','31 декабря'] if i==0 else ['Регенсбург','31 декабря'] if i==1 else full.TITLES[i]
+    for k,line in enumerate(lines):txt(im,line,42,128+k*47,33,(255,255,255),True,stroke=2)
+    if i==6:txt(im,'Дополнительная поездка',42,233,23,(255,255,255),False,stroke=2)
     opt.snowfall(im,t,.5);opt.caption(im,t,1000);opt.brand(im);return im
 
 def offer(s):
@@ -54,8 +57,6 @@ def end(s):
     opt.snowfall(im,s['t'],.4);opt.caption(im,s['t'],1020);opt.brand(im);return im
 
 def compose(s):
-    if s['t']<full.CUTS[2]:
-        st=dict(opt.M['states'][min(len(opt.M['states'])-1,round(s['t']*24))]);st['t']=s['t'];st['wipe']={'p':max(0,min(.999999,1-st['wipe']['p']))};return opt.option3(st)
     return body(s) if s['i']<7 else offer(s) if s['i']==7 else end(s)
 
 def main():
@@ -70,3 +71,4 @@ def main():
     subprocess.run(['ffmpeg','-nostdin','-v','error','-y','-i',str(pic),'-i',str(opt.BASE/'current/Bavaria_Google_A2E_review.mp4'),'-map','0:v','-map','1:a','-c','copy','-movflags','+faststart',str(R/'Bavaria_NewYear_Trailer.mp4')],check=True)
     print('Complete full third variant',flush=True)
 if __name__=='__main__':main()
+

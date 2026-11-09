@@ -4,9 +4,10 @@ Leo requested the last option too on 2026-11-09, after receiving full options1/2
 This produces the selected third alternative, with all nine existing narration
 lines and the unchanged complete soundtrack. No new paid generation.
 
-Visuals: triptych, split screen, six-panel vertical wipes, bold burgundy labels,
-large price pop and a stable final contact panel. The selected preview opening
-is retained in style. Wipes move old panels out to reveal the new view; body
+Visuals: triptych, split screen and six-panel vertical wipes. After Leo's
+2026-11-09 correction, destination scenes use small white outlined titles at
+the top, with no opaque title bars. Burgundy panels remain only for the large
+price reveal and final contact. The selected trailer layout style is retained. Wipes move old panels out to reveal the new view; body
 panels use crops of the current city's clip, not new photographic angles.
 
 Dependencies: sibling `newyear-full`, `newyear-options` and `anime-festive`
