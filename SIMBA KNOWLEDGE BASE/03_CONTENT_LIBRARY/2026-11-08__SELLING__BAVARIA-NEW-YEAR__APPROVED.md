@@ -34,7 +34,7 @@ WhatsApp: 058-677-8492. Код обращения: БАВАРИЯ. Лео, Simba
 Голос: постоянный Google Gemini Simba WarmBaritone, без подмены другим провайдером.
 KADR_REFERENCES: KADR-002 — неподвижные крупные титры поверх меняющегося фона; удержание оффера и контакта для чтения. Музыка и звук референса не копируются.
 Все цены и даты — текущие данные Leo от 08.11.2026, не постоянное правило и не источник для будущих офферов.
-STATUS_VIDEO: TWO_FULL_NEWYEAR_VARIANTS_READY_FOR_LEO_REVIEW; latest result below; not PUBLISHED, not VIDEO_QA_PASS.
+STATUS_VIDEO: ALL_THREE_NEWYEAR_VARIANTS_READY_FOR_LEO_REVIEW; latest result below; not PUBLISHED, not VIDEO_QA_PASS.
 PROVENANCE: SOURCE Leo; CLASSIFICATION sales reel; STRATEGIST Simba runtime; TEXT_EXECUTOR Сценарист; VISUAL_EXECUTOR stock selection per direct Leo instruction; RENDERER pending integrations/video; EXECUTION_STATES script prepared / stock downloaded / Google launch awaiting authentication.
 
 
@@ -312,4 +312,20 @@ Actual Anime.js4.2.2 paused animate/seek states control motion, card rotation an
 Reproducible task recipe: campaigns/bavaria-new-year-2027/newyear-full/ (motion.mjs,render.py,verify.py,verification.json,README). Depends on the existing newyear-options/anime-festive recipes and staged media; no global workflow/default changes. Countdown/snow/ornaments are holiday graphics, not documentary claims. Next: Leo reviews both complete files; edits/choice and any eventual publication are separate from this completed selection.
 
 KB-LINT: PASS — explicit two-option choice; task-only two alternatives; canonical production/project updated and source script retained, no dynamic-fact promotion; existing paid outcomes/voice/rights boundaries preserved. Provenance SOURCE Leo / CLASSIFICATION sales-reel alternatives / TEXT_EXECUTOR existing approved Scenarist / VISUAL_EXECUTOR existing festive A2E + chosen edit / RENDERER Anime.js4.2.2 +Pillow+FFmpeg / STATUS TWO_FULL_NEWYEAR_VARIANTS_READY_FOR_LEO_REVIEW.
+
+
+
+## Full third New Year variant — 2026-11-09
+
+Leo instruction: «авай последний вариант тоже». This selects the previously shown third festive-trailer option in addition to completed full1and2. Produced a separate full54.625-second trailer, not another14-second preview, and preserved both earlier alternatives. No new paid requests, no publication or final acceptance.
+
+Actual selected style: triptych, split screen, six vertical-panel wipes, large burgundy text blocks, a distinct price pop and stable final contact. Anime.js4.2.2 paused animate/seek generates1311deterministic frame states (650ms wipes,900ms price scale, inherited sequential text reveals); Pillow composes, FFmpeg encodes/remuxes. Old panels move out to reveal the new view. Body panels show crops of the current scene's saved clip; they are not claimed as additional real camera angles. Existing6A2Eclips,9narration lines, music and35caption groups reused unchanged.
+
+Full MP4 Library libfile_f9cdbb23d6088191b928c9194408ec6a v0,33661770bytes. Private Drive17EuYM5xT0A4Clqb22Dm6SD_88CpmGzcw. SHA256c94a0710ef2d1d07315db880c516cad2410bc6bb384348a64426b9466b1a900f. Cover Library libfile_9565d422d2708191999c80143e7de35e v0; QA Library libfile_bd39fac62cac8191b0b8d5bb9bdc7507 v0. Direct sandbox MP4 delivery per Leo's reported Library-link problem; persistent identities retained here.
+
+QA:54.625s,720x1280,24fps,H264/AAC,1311frames and all audio fully decoded; blackdetect0intervals. Original AAC packet hash unchanged:cc4bcce52c2ba974dd7dd8d38cd00b5ebc2f84d6c38247651295ecc64a087341. Per-line checks and full-mix ASR0.95765 retained for the same exact audio bytes; actual−14.75LUFS,−1.42dBTP,LRA3.10.18rendered controls plus16transition/price/CTA compositions inspected. Static reading times and subtitle separation checked; source1399€ vs1499€,discount100€ p.p.,double occupancy,6nights,dates28.12.2026–03.01.2027,optional castles and058-677-8492 copied unchanged. Full human listening and final Leo review pending; not VIDEO_QA_PASS or PUBLISHED.
+
+KADR_REFERENCES: KADR-002 READY — repeated city headline held14.08–22.46s across background/layout changes, clear separate price and contact; no reference audio borrowed. Other trailer graphics are the chosen task style, not a measured performance claim. Recipe campaigns/bavaria-new-year-2027/newyear-trailer/ contains motion.mjs,render.py,verify.py,verification.json andREADME; depends on the saved earlier recipes/media. Global runtime/defaults unchanged.
+
+KB-LINT: PASS — direct task-specific third-option authorization, source script/offer retained, original alternatives and archive identities preserved; no permanent brand rule, dynamic-fact promotion, paid-scope expansion or publication implied. Next: Leo reviews the third complete file alongside1/2; further changes/approval only from actual feedback.
 
