@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>Simba Studio — выбор монтажа</title>
+  <link rel="stylesheet" href="/assets/motionlab_host.css">
+</head>
+<body>
+  <header class="top">
+    <div>
+      <div class="eyebrow">BON TOURS · SIMBA STUDIO</div>
+      <h1>Выбор монтажа</h1>
+      <p>Переходы, субтитры и титры для уже готовых клипов Ф2У</p>
+    </div>
+    <div id="status" class="status" role="status" aria-live="polite">Подключение к проекту…</div>
+  </header>
+  <main>
+    <section id="warning" class="warning" hidden>
+      <h2>Сессия недоступна</h2>
+      <p id="errorText">Ссылка устарела либо не подтверждена.</p>
+      <p>Откройте новую ссылку из защищенной Киностудии.</p>
+    </section>
+    <section id="studio" class="editor-panel" hidden>
+      <div class="controls">
+        <span id="project" class="project"></span>
+        <button id="check" type="button">Проверить передачу монтажеру</button>
+      </div>
+      <iframe id="editor" title="Motion Lab — режиссерский выбор"
+        sandbox="allow-scripts allow-same-origin allow-forms"
+        referrerpolicy="no-referrer"></iframe>
+      <p class="note">Выбор передается в Киностудию только после подтвержденного сохранения.
+      Здесь не запускается генерация Ф2У, новый голос или публикация.</p>
+    </section>
+  </main>
+  <script type="module" src="/assets/motionlab_host_page.js"></script>
+</body>
+</html>
