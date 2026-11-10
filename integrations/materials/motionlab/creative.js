@@ -232,6 +232,7 @@ function renderBeat(seconds){
 function renderTemplate(){
  const v=CATALOG.templates.find(x=>x.id===chosen.templates);
  $('templateCategory').textContent=v.name.toUpperCase();$('templateHeading').textContent=v.ru;
+ $('openStoryboard').href='storyboard.html?creativePreset='+encodeURIComponent(v.id);
  $('templateCamera').textContent='Камера: '+v.camera;$('templateTransition').textContent='Переход: '+v.transition;
  $('templateTitle').textContent='Титр: '+v.title;
 }
