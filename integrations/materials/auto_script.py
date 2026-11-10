@@ -126,7 +126,7 @@ def ollama_chat(messages: list[dict], *, url: str = OLLAMA_URL) -> str:
         raise AgentError('only loopback local Ollama endpoint allowed')
     data = json.dumps({
         'model': MODEL, 'messages': messages, 'stream': False, 'think': False,
-        'options': {'temperature': 0.55, 'num_predict': 900, 'num_ctx': 4096},
+        'options': {'temperature': 0.55, 'num_predict': 1450, 'num_ctx': 4096},
     }, ensure_ascii=False).encode('utf-8')
     request = Request(url, data=data, method='POST', headers={
         'Content-Type': 'application/json', 'Accept': 'application/json',
@@ -140,9 +140,18 @@ def ollama_chat(messages: list[dict], *, url: str = OLLAMA_URL) -> str:
         raise AgentError('local inference unavailable; no fallback API') from None
     try:
         payload = json.loads(body)
-        result = payload['message']['content'].strip()
-        if not isinstance(result, str) or not 120 <= len(result) <= MAX_DRAFT_CHARS:
-            raise AgentError('local model returned an invalid-length draft')
+        result = payload['message']['content']
+        if not isinstance(result, str) or len(result) > 8000:
+            raise AgentError('local model returned a malformed/oversized response')
+        result = result.strip()
+        # Short but well-formed responses must be rejected by draft_guard,
+        # allowing one local retry instead of aborting before the retry gate.
+        if len(result) < 120:
+            reason = payload.get('done_reason', 'unknown')
+            if reason not in ('stop', 'length', 'unknown'):
+                reason = 'other'
+            print(f'SIMBA_LOCAL_MODEL_SHORT: chars={len(result)}, reason={reason}',
+                  file=sys.stderr)
     except (KeyError, TypeError, ValueError):
         raise AgentError('local model response malformed') from None
     return result.replace('ё', 'е').replace('Ё', 'Е')
@@ -330,7 +339,7 @@ def smoke_run(folder: str, *, infer=ollama_chat, drive_factory=drive_client) -> 
         'Даты, маршрут перелета, гостиницы и цена не определены. '
         'Финал: предложить зрителю узнать подробности.'
     )
-    revision = hashlib.sha256(b'SIMBA_LOCAL_ONLY_SMOKE_SCRIPT_V2').hexdigest()
+    revision = hashlib.sha256(b'SIMBA_LOCAL_ONLY_SMOKE_SCRIPT_V3').hexdigest()
     name = private_name('smoke-local-scenarist', revision)
     if not FOLDER_ID_RE.fullmatch(folder):
         raise AgentError('smoke needs a private Drive destination')

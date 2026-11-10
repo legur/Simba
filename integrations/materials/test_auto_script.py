@@ -172,6 +172,32 @@ class ScriptRunnerTests(unittest.TestCase):
         self.assertIn('ТЕХНИЧЕСКИЙ ТЕСТ', uploads[0][3])
         self.assertEqual(len(calls), 3)
 
+    def test_short_local_response_reaches_bounded_retry_gate(self):
+        with patch.object(auto_script, 'urlopen') as opened:
+            output = opened.return_value.__enter__.return_value
+            output.status = 200
+            output.read.return_value = b'{"message":{"content":"short"},"done_reason":"stop"}'
+            self.assertEqual(auto_script.ollama_chat([]), 'short')
+        with self.assertRaises(auto_script.AgentError):
+            auto_script.draft_guard(SAMPLE, 'short')
+
+        calls = []
+        uploads = []
+        def sometimes_short(messages):
+            calls.append(messages)
+            if len(calls) == 1:
+                return 'коротко'
+            return SCRIPT_BASE + (' История.' if len(calls) == 2 else
+                                  ' Интрига.' if len(calls) == 3 else ' Трейлер.')
+        with patch.object(auto_script, 'find_existing', return_value=None), \
+             patch.object(auto_script, 'upload_private',
+                          side_effect=lambda *x: uploads.append(x) or 'PRIVATE_ARCHIVED_FOR_LEO_REVIEW'):
+            result = auto_script.smoke_run(self.folder, infer=sometimes_short, drive_factory=FakeDrive)
+        self.assertEqual(result['draft_options'], 3)
+        self.assertEqual(len(calls), 4)
+        self.assertEqual(len(uploads), 1)
+        self.assertFalse(result['published'])
+
     def test_cli_dry_run_does_not_need_key_or_model(self):
         file = self.root / 'dispatch.json'
         file.write_text(json.dumps(self.report), encoding='utf-8')
