@@ -6,8 +6,8 @@
     "Бавария",
     "Bavaria"
   ],
-  "updated_at": "2026-11-09",
-  "stage": "THIRD_TRAILER_CLEAR_SCENES_READY_FOR_LEO_REVIEW",
+  "updated_at": "2026-11-10",
+  "stage": "THREE_FULL_VERSIONS_TECH_VERIFIED__LEO_SELECTION_PENDING",
   "sources": [
     {
       "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
@@ -19,8 +19,8 @@
     "state": "SCENE_TITLE_BARS_REMOVED",
     "evidence": "Лео выбрал вариант1 исправления: убрать закрывающую кадр плашку, белые названия сверху с обводкой; это правка трейлера3."
   },
-  "next_action": "Лео просматривает исправленную третью версию по прямой MP4ссылке: города без закрывающих плашек, цена и финал отдельными карточками. Версии1/2 сохранены. Окончательное утверждение и публикация отдельно.",
-  "working_asset_id": null,
+  "next_action": "Лео выбирает для финального утверждения один из трех полных MP4: 1 — обратный отсчет, 2 — новогодние открытки, 3 — праздничный трейлер с исправленными заголовками. Все три реально скачаны из закрытого архива и технически проверены. Третий — последняя рабочая версия, но еще не утвержден. После выбора сохранить точный selected/approved MP4; не генерировать платно и не публиковать без отдельного решения.",
+  "working_asset_id": "newyear-full-3-clear-drive",
   "approved_asset_id": null,
   "approvals": {
     "editorial": "pending",
@@ -302,8 +302,16 @@
       "url": "https://drive.google.com/file/d/1ToHfVnfeSXl490p9SJI8u5DqNRSkaF-u/view",
       "state": "available",
       "reuse": true,
-      "evidence": "Private Drive copy of actual complete file; no new paid generation.",
-      "recorded_duration_seconds": 54.625
+      "evidence": "10.11.2026: downloaded actual MP4 from private Google Drive, SHA-256 and size verified; 54.625s 720x1280 24fps 1311frames H264/AAC; full FFmpeg video/audio decode passes; zero >=0.1s black intervals. Documented in campaigns/bavaria-new-year-2027/step4-review-2026-11-10.md. Not editorial approval.",
+      "recorded_duration_seconds": 54.625,
+      "recorded_size_bytes": 35999488,
+      "recorded_sha256": "a008ac7df1265c878b4f95964d351fc008893262798ce58960a9eb925f58b6bf",
+      "recorded_width": 720,
+      "recorded_height": 1280,
+      "recorded_fps": 24,
+      "recorded_frame_count": 1311,
+      "recorded_audio_sample_rate_hz": 96000,
+      "verified_on": "2026-11-10"
     },
     {
       "id": "newyear-full-2-drive",
@@ -312,8 +320,16 @@
       "url": "https://drive.google.com/file/d/1eWThGBpNyhXPWoDs-5OyqrOYJYQf2HZr/view",
       "state": "available",
       "reuse": true,
-      "evidence": "Private Drive copy of actual complete file; no new paid generation.",
-      "recorded_duration_seconds": 54.625
+      "evidence": "10.11.2026: downloaded actual MP4 from private Google Drive, SHA-256 and size verified; 54.625s 720x1280 24fps 1311frames H264/AAC; full FFmpeg video/audio decode passes; zero >=0.1s black intervals. Documented in campaigns/bavaria-new-year-2027/step4-review-2026-11-10.md. Not editorial approval.",
+      "recorded_duration_seconds": 54.625,
+      "recorded_size_bytes": 14785652,
+      "recorded_sha256": "b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3",
+      "recorded_width": 720,
+      "recorded_height": 1280,
+      "recorded_fps": 24,
+      "recorded_frame_count": 1311,
+      "recorded_audio_sample_rate_hz": 96000,
+      "verified_on": "2026-11-10"
     },
     {
       "id": "newyear-full-3",
@@ -365,9 +381,16 @@
       "url": "https://drive.google.com/file/d/1AxpEftO-BCHQBR06vUkSKpODFaxLCqYb/view",
       "state": "available",
       "reuse": true,
-      "evidence": "Private corrected full MP4 archive; exact9-line AAC preserved; no new paid generation.",
+      "evidence": "10.11.2026: downloaded actual MP4 from private Google Drive, SHA-256 and size verified; 54.625s 720x1280 24fps 1311frames H264/AAC; full FFmpeg video/audio decode passes; zero >=0.1s black intervals. Documented in campaigns/bavaria-new-year-2027/step4-review-2026-11-10.md. Not editorial approval.",
       "recorded_duration_seconds": 54.625,
-      "recorded_size_bytes": 38426086
+      "recorded_size_bytes": 38426086,
+      "recorded_sha256": "ab4635b8398adfe6fda91126d68a6c6b708024f9be7bd9074e742fdf7c56e32b",
+      "recorded_width": 720,
+      "recorded_height": 1280,
+      "recorded_fps": 24,
+      "recorded_frame_count": 1311,
+      "recorded_audio_sample_rate_hz": 96000,
+      "verified_on": "2026-11-10"
     }
   ],
   "references": [
@@ -376,18 +399,25 @@
       "path": "Кадр/База/cards/KADR-002.md",
       "relationship": "used_in_recorded_review",
       "scope": "Версия1: заголовок городов удерживается14.08–22.46с. Версия2: та же подпись повторена на соседних открытках, читается на первой. Отдельные цена/CTA, звук референса не переносился. Версия3: тот же заголовок удержан14.08–22.46с через смены компоновки; цена/контакт отдельными блоками, без заимствованного звука. В исправленном трейлере3 подпись небольшая белая вверху, центральные фоны убраны; отдельные оффер/контакт сохранены."
+    },
+    {
+      "id": "BAVARIA_STEP4_THREE_FULL_REVIEW_20261110",
+      "path": "campaigns/bavaria-new-year-2027/step4-review-2026-11-10.md",
+      "relationship": "actual_media_technical_qa_and_leo_review",
+      "scope": "Actual full 3 MP4 files downloaded and checked 10.11.2026. Not final Leo approval, publication, or commercial fact-check."
     }
   ],
   "reuse_notes": [
     "Шесть клипов уже созданы и заархивированы; до новой генерации открыть существующие файлы.",
     "Все девять успешных реплик сохранены; не синтезировать заново без необходимости и нового основания.",
     "Старые полные input ZIP содержат журналы оплаченных попыток; каталог не разрешает их повторный запуск.",
-    "Правка в другом чате может быть новее карточки: источник и последний запрос обязательно сверяются."
+    "Правка в другом чате может быть новее карточки: источник и последний запрос обязательно сверяются.",
+    "10.11.2026: re-downloaded all 3 complete existing Bavaria reels; SHA-256 matches saved source logs; all 3 video/audio decode with 0 black intervals; AAC bitstream identical across 1/2/3; latest corrected 3 bound to working_asset_id; 0 new paid calls."
   ],
   "missing": [
-    "Личный просмотр и прослушивание Лео всех выбранных полных версий",
-    "Окончательное утверждение конкретного MP4",
-    "Подтверждение публикации"
+    "Выбор Лео одного из трех полных MP4: 1 / 2 / 3 и оценка просмотра/прослушивания",
+    "Явное утверждение конкретного финального MP4",
+    "Публикация — только по отдельной команде"
   ],
   "selected_edit": {
     "options": [
@@ -395,7 +425,7 @@
       2,
       3
     ],
-    "state": "ALL_THREE_FULL_ALTERNATIVES_READY_FOR_REVIEW",
+    "state": "THREE_FULL_VERSIONS_VERIFIED_FOR_LEO_SELECTION",
     "new_paid_generations": 0,
     "latest_recipe_path": "campaigns/bavaria-new-year-2027/newyear-trailer/README.md",
     "latest_correction": {
@@ -404,7 +434,31 @@
       "change": "Remove destination-scene title backgrounds; small white outlined upper titles",
       "date": "2026-11-09",
       "new_paid_generations": 0
-    }
+    },
+    "last_verified": "2026-11-10",
+    "review_candidates": [
+      {
+        "asset_id": "newyear-full-1-drive",
+        "sha256": "a008ac7df1265c878b4f95964d351fc008893262798ce58960a9eb925f58b6bf",
+        "bytes": 35999488,
+        "technical_qa": "pass",
+        "editorial_approval": "pending"
+      },
+      {
+        "asset_id": "newyear-full-2-drive",
+        "sha256": "b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3",
+        "bytes": 14785652,
+        "technical_qa": "pass",
+        "editorial_approval": "pending"
+      },
+      {
+        "asset_id": "newyear-full-3-clear-drive",
+        "sha256": "ab4635b8398adfe6fda91126d68a6c6b708024f9be7bd9074e742fdf7c56e32b",
+        "bytes": 38426086,
+        "technical_qa": "pass",
+        "editorial_approval": "pending"
+      }
+    ]
   },
   "preview_asset_ids": [
     "newyear-option-1",
