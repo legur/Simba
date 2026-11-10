@@ -108,6 +108,29 @@ def _private_zip_identity(project: dict, zipfile_path: Path,
     return choices[approved_opt - 1]["scenes"]
 
 
+def verified_private_drive_bytes(drive_id: str, local_bytes: bytes) -> bool:
+    """Read-only, live Google Drive verification; no upload or public permission."""
+    import auto_script
+    drive = auto_script.drive_client()
+    folder = rafael_archive.ARCHIVE_FOLDER
+    rafael_archive.check_private_folder(drive, folder)
+    meta = rafael_archive.drive_call(drive.files().get(
+        fileId=drive_id,
+        fields="id,name,parents,size,md5Checksum,permissions(type,role)"))
+    expected_sha = digest(local_bytes)
+    if (meta.get("id") != drive_id or folder not in (meta.get("parents") or [])
+            or int(meta.get("size") or -1) != len(local_bytes)
+            or meta.get("md5Checksum") != hashlib.md5(local_bytes).hexdigest()):
+        raise BridgeError("private Drive storyboard metadata or bytes differ")
+    perms = meta.get("permissions")
+    if perms is not None and any(p.get("type") != "user" for p in perms):
+        raise BridgeError("private storyboard ZIP is shared more broadly than allowed")
+    remote = rafael_archive.drive_call(drive.files().get_media(fileId=drive_id))
+    if not isinstance(remote, bytes) or digest(remote) != expected_sha:
+        raise BridgeError("private storyboard ZIP failed full remote SHA-256 readback")
+    return True
+
+
 def _wix_jpeg_match(source: bytes, received: bytes) -> bool:
     """Verify the Wix picture still depicts the same selected frame.
 
@@ -154,7 +177,8 @@ def fetch_wix(url: str, *, limit: int = MAX_WIX_BYTES) -> bytes:
 
 
 def create_owner_issue(root: Path, project_id: str, plan_path: Path, zip_path: Path,
-                       *, fetch=fetch_wix, verify_remote: bool = True) -> tuple[dict, dict]:
+                       *, fetch=fetch_wix, verify_remote: bool = True,
+                       drive_check=verified_private_drive_bytes) -> tuple[dict, dict]:
     if not _valid_id(project_id):
         raise BridgeError("invalid project ID")
     root = root.resolve()
@@ -188,6 +212,8 @@ def create_owner_issue(root: Path, project_id: str, plan_path: Path, zip_path: P
         project, "script", stages["script"], handoff.source_fingerprint(project))[0]["receipt"]
     selected = _private_zip_identity(project, zip_path, manifest,
                                      private["storyboard_archive"], script_receipt)
+    if drive_check(private["storyboard_archive"]["drive_file_id"], zip_bytes) is not True:
+        raise BridgeError("private Drive storyboard archive could not be independently verified")
     specs = private["scenes"]
     if (not isinstance(specs, list) or len(specs) != len(selected)
             or not 1 <= len(specs) <= 6):
@@ -301,6 +327,12 @@ def main(argv=None) -> int:
             rafael_archive.ArchiveError) as exc:
         # Never print private prompt text, URLs, or the raw issue body.
         print("SIMBA_A2E_HANDOFF_BLOCKED: " + str(exc), file=sys.stderr)
+        return 2
+    except Exception as exc:
+        # A client/library/auth failure must fail closed without echoing
+        # credentials, private URLs, or remote response bodies.
+        print("SIMBA_A2E_HANDOFF_BLOCKED: PRIVATE_DRIVE_VERIFICATION_UNAVAILABLE",
+              file=sys.stderr)
         return 2
 
 
