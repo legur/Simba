@@ -23,6 +23,7 @@ import sys
 import tempfile
 from pathlib import Path
 from urllib.parse import urlsplit
+from urllib.request import Request, urlopen
 
 MATERIALS = Path(__file__).resolve().parent
 VIDEO = MATERIALS.parent / "video"
@@ -36,6 +37,7 @@ import auto_script
 import rafael_archive
 import a2e_writeback
 import simba_voice
+import simba_voice_issue
 
 SHA = re.compile(r"^[0-9a-f]{64}$")
 DRIVE_ID = re.compile(r"^[A-Za-z0-9_-]{10,128}$")
@@ -201,6 +203,60 @@ def _options(data: dict, stage_receipt: str, project_id: str) -> tuple[dict, dic
     return sel, voice, music
 
 
+def _fetch_existing_voice_issue(number: int) -> dict:
+    """GET-only owner voice Issue; never synthesize or create a new Issue."""
+    if type(number) is not int or number <= 0 or number > 1_000_000:
+        raise AudioHandoffError("existing approved Simba voice issue number required")
+    token = __import__("os").environ.get("GH_TOKEN", "")
+    if not token:
+        raise AudioHandoffError("GitHub read-only voice provenance token missing")
+    req = Request(
+        f"https://api.github.com/repos/legur/Simba/issues/{number}",
+        headers={"Authorization": "Bearer " + token,
+                 "Accept": "application/vnd.github+json",
+                 "User-Agent": "simba-voice-music-verified-handoff/1"},
+        method="GET",
+    )
+    try:
+        with urlopen(req, timeout=20) as response:
+            if response.status != 200:
+                raise AudioHandoffError("existing approved voice issue not readable")
+            raw = response.read(16_001)
+        if len(raw) > 16_000:
+            raise AudioHandoffError("voice issue response exceeded safe limit")
+        return json.loads(raw)
+    except AudioHandoffError:
+        raise
+    except Exception:
+        raise AudioHandoffError("read-only trusted GitHub voice issue lookup failed") from None
+
+
+def _verify_voice_issue(issue: dict, voice: dict) -> None:
+    """Pin recorded selection to the input of the EXISTING owner-only TTS runner."""
+    issue_no = voice.get("issue_number")
+    if (not isinstance(issue, dict)
+            or issue.get("number") != issue_no
+            or (issue.get("user") or {}).get("login") != "legur"
+            or issue.get("pull_request") is not None
+            or not any(row.get("name") == "simba-approved-voice"
+                       for row in (issue.get("labels") or [])
+                       if isinstance(row, dict))):
+        raise AudioHandoffError("approved owner voice Issue identity/label does not match")
+    try:
+        exact_number, speech_text, destination = simba_voice_issue.validate_event({
+            "repository": {"full_name": "legur/Simba"},
+            "action": "labeled", "sender": {"login": "legur"},
+            "label": {"name": "simba-approved-voice"},
+            "issue": issue,
+        })
+    except (ValueError, KeyError, TypeError):
+        raise AudioHandoffError("existing voice issue cannot be validated") from None
+    if (exact_number != issue_no
+            or destination != voice.get("folder_id")
+            or digest(speech_text.encode("utf-8")) != voice.get("text_sha256")):
+        raise AudioHandoffError("approved WAV does not match selected speech text/Drive folder")
+
+
 def _probe_music(raw: bytes, mime: str) -> float:
     """Production audio decode check, never a paid TTS or media download."""
     if mime not in MIMES:
@@ -230,7 +286,7 @@ def _probe_music(raw: bytes, mime: str) -> float:
 
 def build_candidate(root: Path, project_id: str, manifest_id: str,
                     manifest_sha256: str, *, drive=None,
-                    probe_music=None) -> tuple[Path, dict, dict]:
+                    probe_music=None, voice_issue_fetch=None) -> tuple[Path, dict, dict]:
     """Reconcile private selected voice/music and produce canonical project update."""
     if not isinstance(project_id, str) or not ID.fullmatch(project_id):
         raise AudioHandoffError("invalid project ID")
@@ -270,13 +326,20 @@ def build_candidate(root: Path, project_id: str, manifest_id: str,
     # The Voice Design profile was previously approved by Leo. This step
     # verifies already-produced audio, never requests speech synthesis.
     if voice["profile"] == "simba_warmbaritone":
+        issue_number = voice.get("issue_number")
+        if type(issue_number) is not int or issue_number <= 0:
+            raise AudioHandoffError("existing approved voice Issue number required")
+        # Lookup never calls Gemini and is after private selection verification.
+        trusted_voice_issue = (voice_issue_fetch or _fetch_existing_voice_issue)(issue_number)
+        _verify_voice_issue(trusted_voice_issue, voice)
         wav_id, wav_folder, wav_sha = (
             voice.get("file_id"), voice.get("folder_id"), voice.get("sha256"))
         wav, wav_meta = _private_file(
             drive, wav_id, wav_folder, wav_sha,
             content_type="audio", limit=simba_voice.MAX_AUDIO_BYTES)
-        if wav_meta.get("mimeType") not in ("audio/wav", "audio/x-wav"):
-            raise AudioHandoffError("selected Simba narration must be real WAV")
+        if (wav_meta.get("mimeType") not in ("audio/wav", "audio/x-wav")
+                or wav_meta.get("name") != f"Simba_voice_issue_{issue_number}.wav"):
+            raise AudioHandoffError("selected Simba narration not from approved TTS issue")
         if (not isinstance((wav_meta.get("appProperties") or {}).get("simba_render_marker_id"), str)
                 or not (wav_meta.get("appProperties") or {})["simba_render_marker_id"]):
             raise AudioHandoffError("existing approved Simba voice run marker missing")
@@ -285,7 +348,7 @@ def build_candidate(root: Path, project_id: str, manifest_id: str,
         except simba_voice.VoiceError:
             raise AudioHandoffError("existing Simba narration WAV invalid") from None
     else:
-        if any(key in voice for key in ("file_id", "folder_id", "sha256")):
+        if any(key in voice for key in ("file_id", "folder_id", "sha256", "issue_number")):
             raise AudioHandoffError("voice=none cannot silently add a new narrator")
         wav_duration, wav_id, wav_sha = None, None, None
     result = json.loads(json.dumps(original, ensure_ascii=False))
