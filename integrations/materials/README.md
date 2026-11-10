@@ -51,6 +51,10 @@ python3 integrations/materials/handoff.py --json --report-only all
 
 Решение Лео «подходит как финальный» относится к названному файлу и его SHA. В реестре `approved_asset_id` указывает именно на этот asset, `approvals.editorial` фиксирует `approved` и точное текстовое основание. `approvals.publication` остается `pending` до отдельной команды. Старые проекты и публичные HTTPS-активы продолжают работать без изменений.
 
+## Завершение публикации по сообщению Leo
+
+Для рабочего видеопроекта сообщение Leo «ролик опубликован» означает **завершение производственной задачи**, если конкретный MP4 уже редакционно утвержден. Фиксировать `approvals.publication=approved`, `publication_evidence` с точной цитатой и `publication_record.status=reported_by_leo_not_verified` (не притворяться, что страницу поста проверили). `stage=PUBLICATION_REPORTED_BY_LEO__CLOSED`, `missing=[]`. `catalog.py status` возвращает `PUBLICATION_REPORTED_COMPLETE`, а `handoff.py` — пакет со стадией `closed`; повторная публикация не выполняется. Указание URL поста **не является обязательным** для закрытия производства. Проверка актуальности фактов оффера не относится к задачам Киностудии и не добавляется в `missing` / `next_action`.
+
 ## Как продолжать проект
 
 1. Обновить checkout из `main`, либо прочитать актуальные файлы через GitHub-инструменты.
