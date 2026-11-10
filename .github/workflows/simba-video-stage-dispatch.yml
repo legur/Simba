@@ -5,6 +5,8 @@ on:
     paths:
       - 'integrations/materials/dispatcher.py'
       - 'integrations/materials/test_dispatcher.py'
+      - 'integrations/materials/auto_script.py'
+      - 'integrations/materials/test_auto_script.py'
       - 'integrations/materials/catalog.py'
       - 'integrations/materials/handoff.py'
       - 'integrations/materials/test_catalog.py'
@@ -15,6 +17,8 @@ on:
       - 'campaigns/**/project.json'
       - 'integrations/materials/dispatcher.py'
       - 'integrations/materials/test_dispatcher.py'
+      - 'integrations/materials/auto_script.py'
+      - 'integrations/materials/test_auto_script.py'
       - '.github/workflows/simba-video-stage-dispatch.yml'
 
 permissions:
@@ -34,6 +38,8 @@ jobs:
           python-version: '3.12'
       - run: python3 -m unittest discover -s integrations/materials -p test_dispatcher.py -v
       - run: python3 integrations/materials/catalog.py check
+      - name: Verify local-AI drafting privacy, first-stage gate and source checks
+        run: python3 -m unittest discover -s integrations/materials -p test_auto_script.py -v
       - name: Preview existing project routing (read-only)
         run: python3 integrations/materials/dispatcher.py --all
 
@@ -44,7 +50,7 @@ jobs:
       github.repository == 'legur/Simba' &&
       github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 30
     concurrency:
       group: simba-video-stage-dispatch-global
       cancel-in-progress: false
@@ -78,6 +84,57 @@ jobs:
             cat "$RUNNER_TEMP/simba-video-dispatch.json"
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+      - name: Detect whether a new Scenarist draft is needed
+        id: ai_gate
+        shell: bash
+        run: |
+          python3 - "$RUNNER_TEMP/simba-video-dispatch.json" >> "$GITHUB_OUTPUT" <<'PY'
+          import json, sys
+          doc = json.load(open(sys.argv[1], encoding='utf-8'))
+          allowed = doc.get('mode') == 'ISSUE_DISPATCH' and doc.get('paid_jobs') == 0
+          rows = doc.get('dispatch', [])
+          script = [r for r in rows if r.get('stage') == 'script' and r.get('status') == 'TASK_ISSUE_CREATED_NOT_EXECUTED']
+          print('script_needed=' + ('true' if allowed and len(script) == 1 else 'false'))
+          PY
+      - name: Install a local, open-weight Russian-capable drafting model (no API key)
+        if: github.actor == 'legur' && (steps.ai_gate.outputs.script_needed == 'true' || contains(github.event.head_commit.message, '[simba-ai-smoke]'))
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location --retry 2 --max-time 300 \
+            https://ollama.com/download/ollama-linux-amd64.tar.zst -o "$RUNNER_TEMP/ollama-linux.tar.zst"
+          sudo tar --zstd -C /usr -xf "$RUNNER_TEMP/ollama-linux.tar.zst"
+          command -v ollama
+          OLLAMA_HOST=127.0.0.1:11434 OLLAMA_DEBUG=false ollama serve > "$RUNNER_TEMP/ollama-server.log" 2>&1 &
+          ready=false
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent --max-time 3 http://127.0.0.1:11434/api/version > /dev/null; then
+              ready=true
+              break
+            fi
+            sleep 1
+          done
+          test "$ready" = "true"
+          ollama pull qwen3:1.7b
+      - name: Produce three actual AI script drafts and archive privately (no publication)
+        if: github.actor == 'legur' && (steps.ai_gate.outputs.script_needed == 'true' || contains(github.event.head_commit.message, '[simba-ai-smoke]'))
+        shell: bash
+        env:
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+          RUN_SMOKE: ${{ contains(github.event.head_commit.message, '[simba-ai-smoke]') && github.actor == 'legur' }}
+        run: |
+          python3 -m pip install --disable-pip-version-check \
+            'google-api-python-client>=2.140,<3' 'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+          args=(--root "$GITHUB_WORKSPACE" \
+                --dispatch-report "$RUNNER_TEMP/simba-video-dispatch.json" \
+                --private-folder 1GMoSVogs0SKuTAXCdMVcG-U7bTn-IuCt --execute)
+          if [ "$RUN_SMOKE" = "true" ]; then
+            SIMBA_LOCAL_SMOKE_APPROVED=true python3 integrations/materials/auto_script.py "${args[@]}" --smoke
+          else
+            python3 integrations/materials/auto_script.py "${args[@]}"
+          fi
       - name: Preserve redacted dispatch receipt
         uses: actions/upload-artifact@v4
         with:
