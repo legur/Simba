@@ -45,3 +45,9 @@ jobs:
 
       - name: Motion Lab contract tests
         run: python -m unittest discover -s integrations/video/tests -p 'test_motion_lab_transitions.py' -v
+
+      - name: Subtitle style renderer contract tests
+        run: |
+          python -m unittest discover -s integrations/video/tests -p 'test_subtitle_styles.py' -v
+          node --check integrations/video/template/subtitle_styles.js
+          node --test integrations/video/tests/test_subtitle_styles.mjs
