@@ -9,6 +9,7 @@ Paid generation is performed ONLY by the existing github_a2e_universal.run.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
 import json
 import os
@@ -165,3 +166,78 @@ def perhaps_resolve(event: dict, **kwargs) -> tuple[dict, bool]:
     if not isinstance(value, dict) or value.get("kind") != KIND:
         return event, False
     return resolve_private_issue(event, **kwargs), True
+
+
+def dry_run_readonly(project_id: str, plan_file_id: str,
+                     storyboard_file_id: str, *, root: Path | None = None,
+                     **dependencies) -> dict:
+    """Read all approved sources and Wix frames, never quote/start/post/label."""
+    candidate = {
+        "kind": KIND, "project_id": project_id,
+        "plan_file_id": plan_file_id, "storyboard_file_id": storyboard_file_id,
+    }
+    # A synthetic event is used ONLY to reuse strict read-only validation.
+    # It is not an authentic GitHub event and cannot trigger the paid workflow.
+    synthetic = {
+        "action": "labeled", "repository": {"full_name": "legur/Simba"},
+        "sender": {"login": "legur"},
+        "label": {"name": "a2e-generate-approved"},
+        "issue": {"number": 1, "user": {"login": "legur"},
+                  "body": json.dumps(candidate)},
+    }
+    resolved = resolve_private_issue(synthetic, root=root, **dependencies)
+    import github_a2e_universal as universal
+    _, cap, bodies = universal.validate(resolved)
+    lineage = json.loads(resolved["issue"]["body"])
+    return {
+        "status": "DRIVE_AND_WIX_SOURCES_VERIFIED_NO_A2E_EXECUTION",
+        "project_id": lineage["project_id"],
+        "handoff_sha256": lineage["handoff_sha256"],
+        "selected_storyboard": lineage["selected_storyboard"],
+        "selected_prompts": lineage["selected_prompts"],
+        "verified_scene_count": len(bodies),
+        "recorded_approved_max_credits": cap,
+        "model_version": "a2e",
+        "video_time_seconds_per_scene": 5,
+        "actual_A2E_quote_checked": False,
+        "private_bytes_readback_verified": True,
+        "wix_frames_verified": True,
+        "github_issue_created": False,
+        "a2e_paid_calls": 0,
+        "a2e_task_ids": [],
+        "published": False,
+    }
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(
+        description="Read-only Simba approved Rafael -> Drive -> Wix -> existing universal A2E preflight")
+    parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
+    parser.add_argument("--project", required=True)
+    parser.add_argument("--plan-file-id", required=True)
+    parser.add_argument("--storyboard-file-id", required=True)
+    args = parser.parse_args(argv)
+    try:
+        report = dry_run_readonly(
+            args.project, args.plan_file_id, args.storyboard_file_id, root=args.root)
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        return 0
+    except (PrivateBridgeError, bridge.BridgeError, ValueError, TypeError, KeyError,
+            OSError, auto_script.AgentError, rafael_archive.ArchiveError):
+        print(json.dumps({"status": "BLOCKED_READ_ONLY_PREFLIGHT",
+                          "no_a2e_calls": True, "no_github_issue": True,
+                          "reason": "Approved project/Drive/Wix source verification failed or unavailable"},
+                         ensure_ascii=False))
+        return 2
+    except Exception:
+        # Any unknown library/auth error is also fail-closed. Never show
+        # private media links, tokens or contents of exception responses.
+        print(json.dumps({"status": "BLOCKED_READ_ONLY_PREFLIGHT",
+                          "no_a2e_calls": True, "no_github_issue": True,
+                          "reason": "Unexpected private source verification failure"},
+                         ensure_ascii=False))
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
