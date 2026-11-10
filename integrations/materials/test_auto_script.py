@@ -149,6 +149,25 @@ class ScriptRunnerTests(unittest.TestCase):
             auto_script.render_markdown(self.project, 'f'*64, 'a'*64,
                                        [SCRIPT_BASE, SCRIPT_BASE, SCRIPT_BASE])
 
+    def test_synthetic_smoke_stays_private_without_real_tour_or_api(self):
+        calls = []
+        uploads = []
+        def infer(messages):
+            calls.append(messages)
+            return SCRIPT_BASE + (' История.' if len(calls) == 1 else
+                                  ' Интрига.' if len(calls) == 2 else ' Трейлер.')
+        with patch.object(auto_script, 'find_existing', return_value=None), \\
+             patch.object(auto_script, 'upload_private',
+                          side_effect=lambda *x: uploads.append(x) or 'PRIVATE_ARCHIVED_FOR_LEO_REVIEW'):
+            result = auto_script.smoke_run(self.folder, infer=infer,
+                                           drive_factory=FakeDrive)
+        self.assertEqual(result['draft_options'], 3)
+        self.assertFalse(result['published'])
+        self.assertEqual(result['charged_api_calls'], 0)
+        self.assertEqual(len(uploads), 1)
+        self.assertIn('ТЕХНИЧЕСКИЙ ТЕСТ', uploads[0][3])
+        self.assertEqual(len(calls), 3)
+
     def test_cli_dry_run_does_not_need_key_or_model(self):
         file = self.root / 'dispatch.json'
         file.write_text(json.dumps(self.report), encoding='utf-8')
