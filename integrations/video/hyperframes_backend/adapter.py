@@ -254,6 +254,7 @@ def _build_project(job: Path, plan: dict, fps: int) -> Path:
 
     sources = {
         VIDEO_ROOT / "template" / "film.js": runtime / "template" / "film.js",
+        VIDEO_ROOT / "template" / "transitions.js": runtime / "template" / "transitions.js",
         VIDEO_ROOT / "template" / "inserts.js": runtime / "template" / "inserts.js",
         VIDEO_ROOT / "template" / "cartoon.js": runtime / "template" / "cartoon.js",
         VIDEO_ROOT / "engine" / "lib.js": runtime / "engine" / "lib.js",
@@ -278,6 +279,7 @@ def _build_project(job: Path, plan: dict, fps: int) -> Path:
         ),
         "/template/inserts.js": f"/{PROJECT_DIRNAME}/runtime/template/inserts.js",
         "/template/cartoon.js": f"/{PROJECT_DIRNAME}/runtime/template/cartoon.js",
+        "/template/transitions.js": f"/{PROJECT_DIRNAME}/runtime/template/transitions.js",
     }
     for source, destination in sources.items():
         if source.suffix == ".js":
