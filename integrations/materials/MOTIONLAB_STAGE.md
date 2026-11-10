@@ -25,6 +25,41 @@ Motion Lab помогает выбрать монтажные переходы, 
 клипов, Wix deploy с `403 VELO.APP_PROJECT_READ`.
 Не утверждать, что эти функции уже работают в production.
 
+## Live host / обратная передача выбора — реализация (10.11.2026)
+
+**Добавлен серверный приемник и браузерная оболочка, но внешнее
+развертывание еще не настроено.** Код:
+`integrations/materials/motionlab_live_receiver.py`,
+`integrations/materials/motionlab/motionlab_live_host.js`,
+`integrations/materials/motionlab/motionlab_host.html`,
+`integrations/materials/motionlab/motionlab_host_page.js`.
+Полный контракт и конфигурация:
+`integrations/materials/MOTIONLAB_LIVE_RECEIVER.md`.
+
+Доверенная автоматическая среда через owner-authenticated API создает
+короткоживущую сессию для реально проверенного проекта. Отдельная
+страница `/studio` открывает **старый** Wix Motion Lab внутри iframe,
+передает трехвариантный `launch`, принимает `SELECTION` через
+старый `motionlab_host_adapter.js` и отвечает `ACK` после
+долговечной записи в приватную SQLite. Статус `QUEUED` значит
+«выбор получен», **не** «задание уже у монтажера».
+
+Серверный worker в том же процессе записывает оба JSON
+в закрытый Google Drive, повторно вызывает
+`motionlab_stage_writeback.build_candidate` и выполняет
+GitHub CAS writeback только `project.json`.
+После действительного коммита статус `APPLIED`; существующий
+push dispatcher назначает `MONTAGE_RENDERER`.
+Любая неопределенная ошибка приводит к `BLOCKED` без
+автоматических платных повторов. Пользовательское подтверждение
+выбора не разрешает публикацию.
+
+**Развертывание не выполнено:** необходим внешний постоянный HTTPS
+host, отдельный приватный диск SQLite, конфигурация Google OAuth,
+owner и GitHub write tokens. Wix CI-деплой сам по себе этого не
+делает. Успешные GitHub CI-тесты проверяют код и реальные SQLite,
+но не означают, что live URL доступен пользователю.
+
 ## Источники истины
 
 - Сайт/редактор: \`integrations/materials/motionlab/storyboard.js\`, редактор
