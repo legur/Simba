@@ -133,10 +133,70 @@ def project_issues(root: Path, path: Path, data: dict) -> list[str]:
         issues.append("Editorial approval needs an asset and recorded evidence")
     if approvals.get("publication") == "approved" and not approvals.get("publication_evidence"):
         issues.append("Publication needs recorded evidence")
+    if approvals.get("publication") == "approved" and approvals.get("editorial") != "approved":
+        issues.append("Publication requires editorial approval")
     for ref in data.get("references", []):
         if not inside(root, ref["path"]).is_file():
             issues.append(f"MISSING_REFERENCE: {ref['path']}")
     return issues
+
+
+def project_progress(root: Path, path: Path, data: dict) -> dict:
+    """Read-only status derived from local registry evidence, never remote media QA."""
+    issues = project_issues(root, path, data)
+    approvals = data.get("approvals") or {}
+    assets = {a.get("id"): a for a in data.get("assets", []) if a.get("id")}
+    working = assets.get(data.get("working_asset_id"))
+    approved = data.get("approved_asset_id")
+    stage = data.get("stage", "")
+    missing = data.get("missing") or []
+    if issues:
+        state, status, owner = "BLOCKED", "ЗАБЛОКИРОВАНО", "PROCESS_OWNER"
+        if any(i.startswith("STALE_SOURCE") for i in issues):
+            action = ("Сверить измененные источники и последние решения Лео; "
+                      "только затем пересчитать хеши project.json.")
+        elif any(i.startswith(("MISSING_SOURCE", "MISSING_REFERENCE")) for i in issues):
+            action = "Восстановить отсутствующие источники и повторить проверку проекта."
+        else:
+            action = "Исправить ошибки project.json и повторить catalog.py check."
+    elif (approvals.get("editorial") == "approved" and approved
+          and approvals.get("publication") == "approved" and not missing):
+        state, status, owner = "REGISTERED_COMPLETE", "ГОТОВО", "PROCESS_OWNER"
+        action = "Подтверждено по реестру; проверить внешние файлы и публикацию отдельно."
+    elif (approvals.get("editorial") == "approved" and approved
+          and approvals.get("publication") != "approved"):
+        state, status, owner = "NEEDS_LEO", "НУЖНО РЕШЕНИЕ ЛЕО", "LEO"
+        action = data.get("next_action") or "Решение о публикации утвержденного файла."
+    elif (approvals.get("editorial") == "pending" and working
+          and working.get("state") == "available"):
+        state, status, owner = "NEEDS_LEO", "НУЖНО РЕШЕНИЕ ЛЕО", "LEO"
+        action = data.get("next_action") or "Проверить рабочую версию и принять решение."
+    else:
+        state, status, owner = "IN_PROGRESS", "В РАБОТЕ", "PROFILE_EXECUTOR"
+        if not working and "REVIEW" in stage.upper():
+            action = ("Указать конкретный проверенный рабочий файл в working_asset_id "
+                      "до передачи Лео на утверждение.")
+        else:
+            action = data.get("next_action") or "Продолжить работу профильного исполнителя."
+    return {
+        "id": data.get("id"), "title": data.get("title"), "stage": stage,
+        "state": state, "status": status, "action_owner": owner,
+        "next_action": action, "issues": issues, "missing": missing,
+        "working_asset_id": data.get("working_asset_id"),
+        "approved_asset_id": approved,
+        "checks": {
+            "local_manifest": "FAIL" if issues else "PASS",
+            "local_sources": "FAIL" if any(i.startswith(("STALE_SOURCE", "MISSING_SOURCE"))
+                                           for i in issues) else "PASS",
+            "working_asset_record": "RECORDED" if working else "NOT_SET",
+            "editorial": approvals.get("editorial", "unknown"),
+            "publication": approvals.get("publication", "unknown"),
+            "external_media_and_actual_publication": "NOT_VERIFIED_BY_CATALOG",
+        },
+        "verification_scope": "LOCAL_REPOSITORY_ONLY",
+        "note": ("Каталог проверяет только локальные сведения, не Google Drive, "
+                 "фактический MP4/QA или реальную публикацию. ГОТОВО = по реестру."),
+    }
 
 
 def search(root: Path, query: str, library: str | None, limit: int) -> list[dict]:
@@ -205,6 +265,18 @@ def human(output: list | dict, command: str) -> str:
         return "\n".join(lines)
     lines = [output.get("title", output["id"]) + " [" + output["id"] + "]"]
     lines.extend("ВНИМАНИЕ: " + x for x in output.get("issues", []))
+    if command == "status":
+        return "
+".join([
+            f"Проект: {output['title']} [{output['id']}]",
+            "Статус: " + output["status"],
+            "Этап: " + output["stage"],
+            "Следующее действие: " + output["next_action"],
+            "Ответственный: " + output["action_owner"],
+            "Недостает: " + ("; ".join(output["missing"]) or "нет"),
+            "Ошибки: " + ("; ".join(output["issues"]) or "нет"),
+            "Внешние файлы: не проверены",
+        ])
     if command == "resume":
         lines.extend(["Этап: " + output["stage"], "Дальше: " + output["next_action"],
                       "Рабочая версия: " + str(output.get("working_asset_id")),
@@ -229,7 +301,7 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("list")
     sub.add_parser("check")
-    for command in ("resume", "reuse"):
+    for command in ("resume", "reuse", "status"):
         child = sub.add_parser(command)
         child.add_argument("project")
         if command == "reuse":
@@ -259,13 +331,16 @@ def main(argv: list[str] | None = None) -> int:
             path, data = resolve_project(root, args.project)
             issues = project_issues(root, path, data)
             code = 2 if issues else 0
-            if args.command == "reuse":
+            if args.command == "status":
+                output = project_progress(root, path, data)
+            elif args.command == "reuse":
                 output = {"id": data["id"], "issues": issues,
                           "assets": [a for a in data["assets"] if a.get("reuse") and
                                      (not args.kind or a.get("kind") == args.kind)],
                           "note": "Catalog evidence only; open and verify actual file before reuse. No generation is started."}
             else:
-                output = dict(data, issues=issues)
+                output = dict(data, issues=issues,
+                              progress=project_progress(root, path, data))
         if args.as_json:
             print(json.dumps(output, ensure_ascii=False, indent=2))
         else:
