@@ -9,6 +9,8 @@ on:
       - integrations/materials/test_catalog.py
       - integrations/materials/handoff.py
       - integrations/materials/test_handoff.py
+      - integrations/materials/dispatcher.py
+      - integrations/materials/test_dispatcher.py
       - integrations/materials/README.md
       - 'campaigns/**/project.json'
       - 'campaigns/**/README.md'
@@ -23,6 +25,8 @@ on:
       - integrations/materials/test_catalog.py
       - integrations/materials/handoff.py
       - integrations/materials/test_handoff.py
+      - integrations/materials/dispatcher.py
+      - integrations/materials/test_dispatcher.py
       - integrations/materials/README.md
       - 'campaigns/**/project.json'
       - 'campaigns/**/README.md'
@@ -55,6 +59,10 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Test validated production stage handoffs
         run: python3 -m unittest discover -s integrations/materials -p test_handoff.py -v
+      - name: Test live dispatcher safety and deduplication (offline)
+        run: |
+          python3 -m unittest discover -s integrations/materials -p test_dispatcher.py -v
+          python3 integrations/materials/dispatcher.py --all | tee "$RUNNER_TEMP/simba-video-dispatch-preview.json"
       - name: Generate stage handoff packets without external calls
         run: |
           python3 integrations/materials/handoff.py --json --report-only all > "$RUNNER_TEMP/simba-stage-handoffs.json"
