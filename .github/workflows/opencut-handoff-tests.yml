@@ -33,3 +33,8 @@ jobs:
         run: python3 -m unittest discover -s integrations/video/tests -p test_opencut_handoff.py -v
       - name: Test materials project status and archive safety
         run: python3 -m unittest discover -s integrations/materials -p test_catalog.py -v
+      - name: Validate current project manifests and detect next actions
+        run: |
+          python3 integrations/materials/catalog.py check
+          python3 integrations/materials/catalog.py status Прага
+          python3 integrations/materials/catalog.py status Бавария
