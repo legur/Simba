@@ -124,7 +124,7 @@ def _wix_jpeg_match(source: bytes, received: bytes) -> bool:
             b = ImageOps.fit(ImageOps.exif_transpose(r).convert("RGB"), (96, 128))
             diff = ImageChops.difference(a, b)
             average = sum(ImageStat.Stat(diff).mean) / 3
-            return average <= 22
+            return average <= 11
     except (OSError, SyntaxError, ValueError):
         return False
 
