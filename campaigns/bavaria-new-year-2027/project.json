@@ -7,7 +7,7 @@
     "Bavaria"
   ],
   "updated_at": "2026-11-10",
-  "stage": "FULL_OPTION_2_SELECTED__EDITORIAL_APPROVAL_PENDING",
+  "stage": "EDITORIAL_APPROVED__PUBLICATION_PENDING",
   "sources": [
     {
       "path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md",
@@ -15,16 +15,17 @@
     }
   ],
   "latest_user_request": {
-    "text": "2",
-    "state": "FULL_OPTION_2_SELECTED",
-    "evidence": "10.11.2026: на вопрос после просмотра трех готовых 54,625-секундных MP4 «Какой вариант берем за основу финального ролика: 1, 2 или 3?» Лео ответил «2». Выбор относится к полному варианту «Новогодние открытки», а не к ранее предложенной правке третьего трейлера."
+    "text": "утверждаем",
+    "state": "EDITORIAL_APPROVED",
+    "evidence": "10.11.2026: Лео явно утвердил без правок выбранную полную версию №2 «Новогодние открытки», точный SHA-256 b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3. Публикация отдельно."
   },
-  "next_action": "Предъявить Лео выбранный полный ролик №2 «Новогодние открытки» с сохраненной озвучкой, музыкой и титрами. Он готов технически, пересобирать не требуется. Если Лео утверждает без правок, зафиксировать editorial approval для этого MP4 по SHA256; если укажет замечания, править только выбранный вариант. Публикация отдельно. Без коммерческого фактчека.",
+  "next_action": "Киностудия завершила создание, монтаж, технический QA и редакционное утверждение полного варианта №2 «Новогодние открытки» (Bavaria_NewYear_Postcards.mp4). Ролик готов к публикации. Публиковать только по отдельной прямой команде Лео. Без фактчека коммерческих условий, нового A2E или TTS.",
   "working_asset_id": "newyear-full-2-drive",
-  "approved_asset_id": null,
+  "approved_asset_id": "newyear-full-2-drive",
   "approvals": {
-    "editorial": "pending",
-    "publication": "pending"
+    "editorial": "approved",
+    "publication": "pending",
+    "editorial_evidence": "10.11.2026: на прямой вопрос после выбора полного MP4 №2 «утверждаем вариант №2 без изменений или нужны правки?» Лео ответил «утверждаем». Выбранный Bavaria_NewYear_Postcards.mp4 (Drive ID 1eWThGBpNyhXPWoDs-5OyqrOYJYQf2HZr) размер 14785652 байт, SHA-256 b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3; SHA подтвержден повторно с реального MP4. Это только редакционное утверждение, не разрешение публикации."
   },
   "assets": [
     {
@@ -413,11 +414,11 @@
     "Старые полные input ZIP содержат журналы оплаченных попыток; каталог не разрешает их повторный запуск.",
     "Правка в другом чате может быть новее карточки: источник и последний запрос обязательно сверяются.",
     "10.11.2026: re-downloaded all 3 complete existing Bavaria reels; SHA-256 matches saved source logs; all 3 video/audio decode with 0 black intervals; AAC bitstream identical across 1/2/3; latest corrected 3 bound to working_asset_id; 0 new paid calls.",
-    "10.11.2026: после просмотра трех полных вариантов Лео выбрал вариант 2 «Новогодние открытки». working_asset_id=newyear-full-2-drive; архивный MP4 b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3, 14 785 652 байта. Варианты 1/3 сохранены, editorial/publication пока pending."
+    "10.11.2026: после просмотра трех полных вариантов Лео выбрал вариант 2 «Новогодние открытки». working_asset_id=newyear-full-2-drive; архивный MP4 b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3, 14 785 652 байта. Варианты 1/3 сохранены, editorial/publication пока pending.",
+    "10.11.2026: Лео явно утвердил без правок финальный вариант 2 «Новогодние открытки» (SHA-256 b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3). Полный MP4 в приватном Google Drive, доступен для повторного использования; альтернативы 1/3 остаются в архиве. Публикация не разрешена."
   ],
   "missing": [
-    "Решение Лео по финальному редакционному утверждению полного MP4 №2 или конкретные правки",
-    "Публикация только по отдельной команде"
+    "Публикация только по отдельной команде Лео"
   ],
   "selected_edit": {
     "options": [
@@ -425,7 +426,7 @@
       2,
       3
     ],
-    "state": "LEO_SELECTED_FULL_OPTION_2_EDITORIAL_REVIEW_PENDING",
+    "state": "FULL_OPTION_2_EDITORIALLY_APPROVED",
     "new_paid_generations": 0,
     "latest_recipe_path": "campaigns/bavaria-new-year-2027/newyear-trailer/README.md",
     "latest_correction": {
@@ -449,7 +450,7 @@
         "sha256": "b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3",
         "bytes": 14785652,
         "technical_qa": "pass",
-        "editorial_approval": "pending"
+        "editorial_approval": "approved"
       },
       {
         "asset_id": "newyear-full-3-clear-drive",
@@ -464,7 +465,9 @@
     "selection_evidence": "Сообщение Лео «2» от 10.11.2026 после предъявления всех 3 полных видео",
     "selected_sha256": "b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3",
     "selected_filename": "Bavaria_NewYear_Postcards.mp4",
-    "selected_at": "2026-11-10"
+    "selected_at": "2026-11-10",
+    "final_approval": "2026-11-10",
+    "final_approval_evidence": "Ответ Лео «утверждаем» на вопрос об окончательном утверждении варианта 2 без правок"
   },
   "preview_asset_ids": [
     "newyear-option-1",
