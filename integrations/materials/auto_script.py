@@ -295,8 +295,20 @@ def run(root: Path, report: dict, folder: str, *, infer=ollama_chat, drive_facto
             raise AgentError('source changed between handoff and generation')
         variants = []
         for title, angle in ANGLES:
-            result = infer(prompt_for(source, title, angle))
-            draft_guard(source, result)
+            for attempt in range(2):
+                prompts = prompt_for(source, title, angle)
+                if attempt:
+                    prompts.append({'role': 'user', 'content': (
+                        'Перепиши только как полноценную живую речь: 8–12 предложений, '
+                        '550–950 символов в одном абзаце, без пунктов, заголовков '
+                        'и новых фактов.')})
+                result = infer(prompts)
+                try:
+                    draft_guard(source, result)
+                    break
+                except AgentError:
+                    if attempt == 1:
+                        raise
             variants.append(result)
         content = render_markdown(project, source_hash, revision, variants)
         status = upload_private(drive, folder, name, content, revision)
@@ -327,14 +339,26 @@ def smoke_run(folder: str, *, infer=ollama_chat, drive_factory=drive_client) -> 
         return {'status': 'SMOKE_ALREADY_PRIVATE_ARCHIVED', 'charged_api_calls': 0}
     drafts = []
     for title, angle in ANGLES:
-        text = infer(prompt_for(source, title, angle))
-        draft_guard(source, text)
-        drafts.append(text)
+        for attempt in range(2):
+            prompts = prompt_for(source, title, angle)
+            if attempt:
+                prompts.append({'role': 'user', 'content': (
+                    'Перепиши только как полноценную живую речь: 8–12 предложений, '
+                    '550–950 символов в одном абзаце, без пунктов, заголовков '
+                    'и новых фактов.')})
+            result = infer(prompts)
+            try:
+                draft_guard(source, result)
+                break
+            except AgentError:
+                if attempt == 1:
+                    raise
+        drafts.append(result)
     content = render_markdown(
         {'id': 'smoke-local-scenarist'},
         hashlib.sha256(source.encode('utf-8')).hexdigest(), revision, drafts)
     # Explicit label: this is a synthetic technical demonstration, not a tour.
-    content = ('**ТЕХНИЧЕСКИЙ ТЕСТ, НЕ ПУБЛИКОВАТЬ**\\n\\n' + content)
+    content = ('**ТЕХНИЧЕСКИЙ ТЕСТ, НЕ ПУБЛИКОВАТЬ**\n\n' + content)
     state = upload_private(drive, folder, name, content, revision)
     return {'status': 'SMOKE_' + state, 'draft_options': 3,
             'charged_api_calls': 0, 'published': False}
