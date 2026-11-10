@@ -51,6 +51,11 @@ def digest(value: bytes) -> str:
     return hashlib.sha256(value).hexdigest()
 
 
+def owner_issue_bytes(issue: dict) -> bytes:
+    # The audit digest is of the exact file bytes, not a different JSON layout.
+    return (json.dumps(issue, ensure_ascii=False, sort_keys=True, indent=2) + "\n").encode("utf-8")
+
+
 def _valid_id(value: object, *, drive: bool = False) -> bool:
     return isinstance(value, str) and (DRIVE_ID if drive else ID).fullmatch(value) is not None
 
@@ -275,7 +280,7 @@ def create_owner_issue(root: Path, project_id: str, plan_path: Path, zip_path: P
         "selected_prompts": stages["a2e_prompts"]["selected_option"],
         "scene_count": len(scenes), "wix_media_sha256": wix_hashes,
         "quoted_credits_recorded": quote, "approved_ceiling_recorded": cap,
-        "issue_body_sha256": digest(json.dumps(issue, sort_keys=True, ensure_ascii=False).encode()),
+        "issue_body_sha256": digest(owner_issue_bytes(issue)),
         "issued": False, "label_applied": False, "a2e_started": False,
         "price_requote_required_by_existing_runner": True,
         "paid_calls": 0, "publication": False,
@@ -293,9 +298,8 @@ def private_write(out: Path, project_root: Path, issue: dict) -> None:
     out.parent.mkdir(parents=True, exist_ok=True)
     fd = os.open(out, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
     try:
-        with os.fdopen(fd, "w", encoding="utf-8") as f:
-            json.dump(issue, f, ensure_ascii=False, indent=2)
-            f.write("\n")
+        with os.fdopen(fd, "wb") as f:
+            f.write(owner_issue_bytes(issue))
     except Exception:
         out.unlink(missing_ok=True)
         raise
