@@ -30,7 +30,7 @@ export function connectLiveMotionLab({ targetWindow, session, onStatus = () => {
     'X-Simba-Capability': session.capability,
   };
   const connector = connectStoryboard({
-    targetWindow, launch: session.launch, onStatus: notify,
+    targetWindow, launch: session.launch, onStatus,
     acceptSelection: async choice => {
       const response = await fetchImpl('/api/motionlab/selection', {
         method: 'POST', cache: 'no-store', credentials: 'same-origin', headers,
