@@ -17,8 +17,8 @@ import catalog
 # Completed producer -> next consumer. The stage order follows VIDEO_PIPELINE.md.
 STAGES = (
     ("script", "SCENARIST", "RAFAEL", "script"),
-    ("storyboard", "RAFAEL", "A2E_PROMPT_AUTHOR", "storyboard"),
-    ("a2e_prompts", "A2E_PROMPT_AUTHOR", "A2E_RUNNER", "animation_prompt"),
+    ("storyboard", "RAFAEL", "SCENARIST", "storyboard"),
+    ("a2e_prompts", "SCENARIST", "A2E_RUNNER", "animation_prompt"),
     ("a2e_clips", "A2E_RUNNER", "VOICE_AND_MUSIC", "animated_clip"),
     ("voice_music", "VOICE_AND_MUSIC", "MONTAGE", "music"),
     ("edit_choice", "MONTAGE", "MONTAGE_RENDERER", "edit_plan"),
@@ -253,6 +253,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
     ap.add_argument("--json", action="store_true")
+    ap.add_argument("--report-only", action="store_true",
+                    help="Return success even for known project blockers; report states unchanged")
     ap.add_argument("project", help="Project name/ID, or 'all'")
     args = ap.parse_args(argv)
     root = args.root.resolve()
@@ -274,7 +276,7 @@ def main(argv: list[str] | None = None) -> int:
                 if row["missing"]:
                     print("Не хватает: " + "; ".join(row["missing"]))
                 print("Никаких запусков и публикаций.\n")
-        return 2 if any(row["state"] == "BLOCKED" for row in results) else 0
+        return 2 if (not args.report_only and any(row["state"] == "BLOCKED" for row in results)) else 0
     except (ValueError, OSError, KeyError, TypeError) as exc:
         print("HANDOFF_ERROR: " + str(exc), file=sys.stderr)
         return 2
