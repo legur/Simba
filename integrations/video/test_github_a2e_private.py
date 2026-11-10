@@ -159,6 +159,21 @@ class PrivateResolverTests(unittest.TestCase):
                 fetch_wix=lambda url:self.case.mock_media[url])
         self.assertEqual(self.fake.reads,0)
 
+    def test_actual_existing_prague_and_bavaria_projects_cannot_be_recharged(self):
+        # Existing projects are closed or at final editorial review;
+        # there is no NEW staged script/storyboard/prompts approval record.
+        repo_root=HERE.parents[1]
+        for pid in ("prague-new-year-2027","bavaria-new-year-2027"):
+            with self.subTest(project=pid):
+                payload=dict(self.request,project_id=pid)
+                event=dict(self.event,
+                           issue=dict(self.event["issue"],body=json.dumps(payload)))
+                with self.assertRaises(private.PrivateBridgeError):
+                    private.resolve_private_issue(
+                        event,root=repo_root,drive=self.fake,
+                        fetch_wix=lambda _:self.fail("Wix must not be queried"))
+        self.assertEqual(self.fake.reads,0)
+
     def test_universal_run_consumes_resolved_payload_without_paid_call(self):
         # Verify the existing one-time runner remains the only paid codepath.
         resolved=self._resolve()
