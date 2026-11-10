@@ -378,6 +378,46 @@ GitHub Actions этого этапа **не получает** `GEMINI_API_KEY`
 музыкального handoff, ни изменения `main`. Не
 объявлять `VOICE_AND_MUSIC=completed` без live readback.
 
+## Шаг 5G — интеграция Motion Lab PR №112 (редактор уже есть)
+
+**Библиотеки не дублируются.** На 10.11.2026 PR №112 смержен в \`main\`:
+30 переходов, 15 титров, 29 субтитров, 12 движений камеры,
+15 анимированных объектов, 10 маршрутов, 8 BPM-схем, 5 шаблонов.
+PR №105 синхронизирован с \`main\` без правки опубликованных статических
+Wix HTML/CSS/JS. У существующего сайта Motion Lab есть протокол
+\`SIMBA_MOTIONLAB_START/SELECTION/ACK\`, \`motionlab_host_adapter.js\`,
+а у Simba уже есть \`motionlab_selection.py:validate\`.
+
+**Новый адресный приемник:** \`motionlab_stage_writeback.py\`
+готовит привязанный к настоящему \`voice_music\` receipt launch из
+трех вариантов и существующих \`a2e_clips.assets[]\`; затем
+сверяет **две** приватные Google Drive JSON-записи (launch +
+connected-session choice), их полный SHA-256/MD5 и доступ владельца;
+вызывает **старый** \`motionlab_selection.validate\` без модификаций;
+сверяет, что нет подмененного A2E-клипа, измененного фингерпринта,
+увеличенной длительности или невыполненного выбора Лео. Экспорт
+\`DRAFT_NOT_DELIVERED\` от автономного сайта не принимается как
+\`USER_SELECTED_IN_CONNECTED_SESSION\` по одному только изменению поля;
+для production нужен реальный подключенный хост и owner-authenticated
+запись.
+
+После проверки и owner-only CAS-записи в \`project.json\`
+создаются \`kind=edit_plan\`, \`stage_handoffs.edit_choice=approved\`,
+\`options_presented=3\`, \`selected_option\`, исходный
+\`voice_music\` receipt и доказательство \`motionlab:\` выбранного
+плана. \`handoff.make_handoff\` должен вернуть **MONTAGE_RENDERER/render**.
+Новый workflow \`simba-motionlab-stage-writeback.yml\` работает
+на \`main\` только для владельца; старый dispatcher принимает push и
+создает следующую задачу. Никаких TTS/A2E/MP4 рендеров, публикации
+и расходов этот шаг не делает.
+
+**Статус:** офлайн-тесты на реальных JSON-байтах и mock Drive;
+production-ACK браузера **не подключен**, новый утвержденный
+полноценный проект отсутствует, live-writeback не выполнялся.
+Статические файлы Motion Lab не изменяли; проблема
+\`403 VELO.APP_PROJECT_READ\` в Wix CI-деплое из PR №112 остается.
+Подробно: \`integrations/materials/MOTIONLAB_STAGE.md\`.
+
 ## 2. Состояния
 
 ```text
