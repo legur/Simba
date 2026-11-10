@@ -65,6 +65,11 @@ jobs:
           for item in data:
               print('- '+item['project_id']+': '+item['state']+' → '+item['recipient'])
               if item['reason']: print('  - Reason: '+item['reason'])
+          unsafe = {'PROJECT_INTEGRITY', 'INVALID_STAGE_HANDOFFS',
+                    'STAGE_ORDER_GAP', 'INVALID_OR_STALE_STAGE'}
+          bad = [x for x in data if x.get('reason') in unsafe]
+          if bad:
+              raise SystemExit('Invalid stage handoff data: '+', '.join(x['project_id'] for x in bad))
           PY
       - name: Preserve transfer packets for handoff consumers
         uses: actions/upload-artifact@v4
