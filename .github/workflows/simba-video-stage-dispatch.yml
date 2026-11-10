@@ -7,6 +7,8 @@ on:
       - 'integrations/materials/test_dispatcher.py'
       - 'integrations/materials/auto_script.py'
       - 'integrations/materials/test_auto_script.py'
+      - 'integrations/materials/chatgpt_rafael.py'
+      - 'integrations/materials/test_chatgpt_rafael.py'
       - 'integrations/materials/catalog.py'
       - 'integrations/materials/handoff.py'
       - 'integrations/materials/test_catalog.py'
@@ -19,6 +21,8 @@ on:
       - 'integrations/materials/test_dispatcher.py'
       - 'integrations/materials/auto_script.py'
       - 'integrations/materials/test_auto_script.py'
+      - 'integrations/materials/chatgpt_rafael.py'
+      - 'integrations/materials/test_chatgpt_rafael.py'
       - '.github/workflows/simba-video-stage-dispatch.yml'
 
 permissions:
@@ -40,6 +44,10 @@ jobs:
       - run: python3 integrations/materials/catalog.py check
       - name: Verify local-AI drafting privacy, first-stage gate and source checks
         run: python3 -m unittest discover -s integrations/materials -p test_auto_script.py -v
+      - name: Test ChatGPT Rafael image packaging (offline; no paid API)
+        run: |
+          python3 -m pip install --disable-pip-version-check 'Pillow>=11,<13'
+          python3 -m unittest discover -s integrations/materials -p test_chatgpt_rafael.py -v
       - name: Preview existing project routing (read-only)
         run: python3 integrations/materials/dispatcher.py --all
 
