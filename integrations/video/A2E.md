@@ -419,3 +419,51 @@ journal, один платный start, статус и скачивание MP4
 новая платная генерация A2E в рамках PR №105 не запускались**.
 До полноценной проверки production-path статус
 `PRIVATE_BRIDGE_CODE_READY / LIVE_SOURCE_PENDING`.
+
+## Read-only production preflight — 10.11.2026 (PR №105)
+
+New workflow: `.github/workflows/simba-a2e-private-preflight.yml`.
+
+After `project.json` contains **three real Leo-approved stages**
+`script → storyboard → a2e_prompts` and both private Drive
+files are archived with matching SHA-256 and file IDs, the owner may
+launch the **read-only** GitHub Actions `workflow_dispatch` with only:
+`project_id`, `plan_file_id`, `storyboard_file_id`.
+The workflow accepts only `legur` on `main`, has `contents: read`
+only and **does not inject A2E_API_KEY**, any GitHub Issues write token,
+or Media Manager upload tokens.
+
+Command used by the workflow:
+
+```sh
+python integrations/video/github_a2e_private.py \
+  --project "<approved-project-id>" \
+  --plan-file-id "<approved-private-plan-drive-id>" \
+  --storyboard-file-id "<approved-private-rafael-zip-drive-id>"
+```
+
+All values must come from actually existing approved artifacts, not
+from synthetic demo credentials, example IDs or previous projects.
+This command reads the private Google Drive archive and prompt JSON,
+checks the `stage_handoffs` ledger, verifies Wix-hosted images, and
+validates the final request body using the **old** universal A2E
+schema. Output is only a redacted status and counts:
+`DRIVE_AND_WIX_SOURCES_VERIFIED_NO_A2E_EXECUTION`, or
+`BLOCKED_READ_ONLY_PREFLIGHT`. It **does not** quote costs, create a
+GitHub Issue, add labels, call A2E, animate, download MP4 or publish.
+The actual free A2E quote and charged generation remain under the
+existing `a2e-generate-approved` issue workflow.
+
+**Snapshot of actual projects (10.11.2026):**
+`prague-new-year-2027` has completed publication-reported status;
+`bavaria-new-year-2027` has an editorial-approved final MP4 and
+publication still pending. Neither project has a new three-stage
+`stage_handoffs` chain. They must **not** be repurposed as a fresh
+billable Rafael-to-A2E test. The archived `smoke-chatgpt-rafael`
+triptychs are not an approved real tour, and their ZIP expressly says
+`approval_recorded=false`. No approved new production test source
+currently exists in the known `campaigns` catalog.
+
+This PR's preflight tests have synthetic actual media bytes and mock
+Drive/Wix; a live on-`main` owner preflight awaits real stage approvals
+and merge, and is not an asserted successful A2E generation.
