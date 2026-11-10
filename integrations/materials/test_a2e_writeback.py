@@ -97,6 +97,7 @@ class WritebackTests(unittest.TestCase):
             "status":"COMPLETED",
             "private_source_readback_verified":True,
             "owner_issue_number":ISSUE,
+            "requested_scene_count":3,
             "max_credits":100,
             "lineage":{
                 "project_id":fixture.pid,
@@ -152,6 +153,18 @@ class WritebackTests(unittest.TestCase):
                 with self.assertRaises(bridge.WritebackError):
                     self.candidate()
         self.assertEqual(self.drive.reads,0)
+
+    def test_less_completed_than_submitted_blocks_without_read(self):
+        self.state["scenes"].pop()
+        with self.assertRaisesRegex(bridge.WritebackError,"count differs"):
+            self.candidate()
+        self.assertEqual(self.drive.reads,0)
+
+    def test_empty_permissions_rejected(self):
+        row=self.drive.records[TASKS[0]]
+        row["permissions"]=[]
+        with self.assertRaises(bridge.WritebackError):
+            self.candidate()
 
     def test_task_scene_order_duplicate_status_and_receipt_fail(self):
         self.state["scenes"][1]["number"]=3
