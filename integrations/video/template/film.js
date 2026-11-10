@@ -5,6 +5,7 @@ import { animate } from '/node_modules/animejs/dist/modules/index.js';
 import { makeRoute } from '/template/inserts.js';
 import { makeCartoon } from '/template/cartoon.js';
 import { renderTransition } from '/template/transitions.js';
+import { drawStyledSubtitle } from '/template/subtitle_styles.js';
 
 const TL = await (await fetch('timeline.json')).json();
 const W = innerWidth, H = innerHeight;
@@ -151,6 +152,7 @@ function drawTitle(s, i, t) {
 // ---------------------------------------------------------------- subtitles (karaoke: the spoken word turns gold)
 function drawSub(t) {
   const L = TL.lines.find(l => t >= l.t0 && t < l.t1); if (!L) return;
+  if (TL.subtitleStyle) { drawStyledSubtitle(ctx, L, t, TL.subtitleStyle, W, H); return; }
   const a = Math.min(seg(t, L.t0, L.t0 + .15), 1 - seg(t, L.t1 - .15, L.t1));
   ctx.save(); ctx.font = `600 50px ${SANS}`; ctx.textBaseline = 'middle';
   const lines = wrap(ctx, L.words.map(w => w[0]), W - 200), lh = 66, padX = 34, padY = 26;
