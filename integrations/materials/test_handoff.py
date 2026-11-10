@@ -223,5 +223,22 @@ class StageHandoffTests(unittest.TestCase):
         self.assertEqual(json.loads(captured.getvalue())[0]["state"], "BLOCKED")
 
 
+    def test_out_of_order_stages_are_blocked(self):
+        self.project["stage_handoffs"] = {
+            "qa": {"state": "completed", "qa_pass": True, "qa_evidence": "unrelated"}
+        }
+        result = handoff.make_handoff(self.root, self.path, self.project)
+        self.assertEqual(result["state"], "BLOCKED")
+        self.assertEqual(result["reason"], "STAGE_ORDER_GAP")
+
+    def test_qa_without_pass_is_blocked(self):
+        expected = handoff.source_fingerprint(self.project)
+        for stage in handoff.STAGE_NAMES:
+            expected = self.complete_stage(stage, expected)
+        self.project["stage_handoffs"]["qa"]["qa_pass"] = False
+        result = handoff.make_handoff(self.root, self.path, self.project)
+        self.assertEqual(result["state"], "BLOCKED")
+        self.assertIn("qa: pass", " ".join(result["missing"]))
+
 if __name__ == "__main__":
     unittest.main()
