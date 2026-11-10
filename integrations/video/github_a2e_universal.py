@@ -33,6 +33,17 @@ def validate(event):
     data = json.loads(raw)
     if not isinstance(data, dict) or data.get('kind') != 'simba_a2e_generate':
         raise ValueError('Invalid request kind')
+    # Optional non-private provenance from the approved Rafael/A2E stage
+    # contract. Older owner-created issues remain valid unchanged.
+    lineage_keys = ('project_id', 'handoff_sha256', 'selected_storyboard', 'selected_prompts')
+    if any(k in data for k in lineage_keys):
+        if (not isinstance(data.get('project_id'), str)
+            or not re.fullmatch(r'[a-z0-9][a-z0-9-]{0,63}', data['project_id'])
+            or not isinstance(data.get('handoff_sha256'), str)
+            or not re.fullmatch(r'[a-f0-9]{64}', data['handoff_sha256'])
+            or any(type(data.get(k)) is not int or data[k] not in (1, 2, 3)
+                   for k in ('selected_storyboard', 'selected_prompts'))):
+            raise ValueError('Malformed or incomplete approved provenance')
     cap = data.get('max_credits')
     if type(cap) not in (int, float) or not math.isfinite(cap) or not 0 < cap <= 1000:
         raise ValueError('Invalid credit ceiling')
@@ -81,6 +92,16 @@ def run(event, out):
         (out / 'status.json').write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding='utf-8')
     try:
         issue, cap, bodies = validate(event)
+        approved_source = json.loads(event['issue']['body'])
+        if 'project_id' in approved_source:
+            state['lineage'] = {
+                'project_id': approved_source['project_id'],
+                'handoff_sha256': approved_source['handoff_sha256'],
+                'selected_storyboard': approved_source['selected_storyboard'],
+                'selected_prompts': approved_source['selected_prompts'],
+                'verified_at_source': False,
+                'note': 'Owner-authored record; previously validated by Rafael bridge, not re-read from Drive here',
+            }
         key = os.environ.get('A2E_API_KEY', '')
         if not key.startswith('sk_') or len(key) < 15:
             raise core.StopGeneration('A2E key unavailable')
