@@ -1,4 +1,4 @@
-name: Simba video: route next stage (NO paid calls)
+name: 'Simba video: route next stage (NO paid calls)'
 
 on:
   pull_request:
