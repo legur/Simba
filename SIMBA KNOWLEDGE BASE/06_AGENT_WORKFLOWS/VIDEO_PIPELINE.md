@@ -258,6 +258,66 @@ payload. Поэтому не объявлять цепочку Rafael → A2E п
 автономной, не изменять статусы действующих роликов Праги и Баварии,
 не включать автоматическую публикацию.
 
+## Шаг 5E — A2E write-back из реальных завершенных MP4 (PR №105, 10.11.2026)
+
+**Не запускать новое A2E и не подменять роль монтажера.** В уже существующем
+`github_a2e_universal.py` статусный `status.json` теперь содержит
+`owner_issue_number`, `requested_scene_count` и выбранные ранее
+`lineage.project_id/handoff_sha256/selected_storyboard/selected_prompts`.
+Сама генерация, цены, paid/no-retry и частное архивирование MP4 остаются
+в действующих исполнителях, без изменения модели или голосов.
+
+**Новый модуль:**
+`integrations/materials/a2e_writeback.py`. Это проверяемое
+завершение стадии, не AI-агент и не A2E-регенератор.
+Он отклоняет неполный/устаревший `stage_handoffs`, иной
+одобренный вариант, частичный `status.json`, несовпадение
+количества сцен, лимита, GitHub owner Issue, SHA-256 stage receipt,
+неполные/повторяющиеся A2E task IDs. Для каждого ID он делает
+**только GET** в A2E и запрашивает готовый MP4 через существующий
+`a2e_drive_archiver.already_verified_on_drive` в приватной папке
+`A2E_Auto_Archive`. Затем скачивает фактические байты из Google
+Drive, повторно сверяет MD5/SHA-256/размер, private permissions и
+`ffprobe` видео (длительность в пределах разрешенной 5-секундной
+модели). Если хотя бы один кадр не подтвержден, **не пишет ничего**
+и не повторяет генерацию.
+
+**Запись в канонический проект:** только после подтверждения всех MP4
+прибавляет по одному `kind=animated_clip` с `task_id`, закрытым
+Drive ID, SHA-256, размером и длительностью, и
+`stage_handoffs.a2e_clips={state:completed,input_fingerprint,assets,
+approval_evidence,task_evidence}`. Далее проверяет через
+`handoff.make_handoff` ровно `READY_FOR_HANDOFF →
+VOICE_AND_MUSIC / voice_music`. Сохраняет прежние `approvals`,
+`approved_asset_id`, `working_asset_id`; не создает
+окончательно утвержденный ролик и ничего не публикует.
+
+**Запуск:** отдельный workflow
+`.github/workflows/simba-a2e-writeback.yml` после того,
+как существующий A2E universal завершился и существующий Drive archiver
+сохранил все MP4. Только owner `legur`, вручную
+`workflow_dispatch` на `main`, с `project_id`,
+`owner_issue` и `universal_run`. GitHub API проверяет,
+что указанный run действительно завершен успешно, относится к
+стандартному universal A2E workflow, создан owner-ом из Issue
+на `main`. Читает оригинальный Actions artifact `status.json`,
+выполняет все read-only сверки, в рамках checkout записывает только
+`campaigns/<project_id>/project.json` с SHA/CAS-проверкой; push
+отклоняется, если `main` успела измениться. Существующий push
+dispatcher открывает следующую задачу `VOICE_AND_MUSIC`.
+`contents:write` дается только этому строго ограниченному job;
+у PR-тестов и preflight никакой права на изменение нет.
+
+**Проверка:** синтетические офлайн-тесты обрабатывают **настоящие
+бинарные MP4-подобные данные**, но A2E GET и Drive подменены
+моками; `ffprobe` в тестах заменен фиксированным результатом.
+Настоящее декодирование включено лишь в production-workflow.
+Охвачены partial, mismatch, duplicate, stale source, SHA,
+приватность, сумма, двойная запись и запрет `--apply` вне
+доверенного GitHub. **Сквозной платный запуск реального нового тура,
+реальное обновление `main` и переход к voice/music пока не делались.**
+Не объявлять их выполненными до live read-back.
+
 ## 2. Состояния
 
 ```text
