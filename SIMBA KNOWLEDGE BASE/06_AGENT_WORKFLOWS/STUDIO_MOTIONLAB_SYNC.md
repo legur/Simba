@@ -11,7 +11,7 @@ Studio/Motion Lab **помогает монтажеру собрать гото�
 переходы, субтитры, экранный текст, движения, графику, маршруты,
 музыкальные акценты, режиссерские сочетания и дает пользователю
 выбрать конкретные настройки. **Это НЕ видеоредактор/рендерер** и не
-замена \`Монтажер Клод\` / \`integrations/video/\`.
+замена `Монтажер Клод` / `integrations/video/`.
 
 Вход в подготовительный модуль — **уже имеющиеся изображения и/или
 короткие ролики длительностью 5–15 секунд**. Изображения могут быть
@@ -37,37 +37,37 @@ Studio/Motion Lab **помогает монтажеру собрать гото�
 | A. READY_MEDIA | проверенные готовые фото и/или видео 5–15 с | не вызывается, платных задач нет | передать их ID, исходный тип, продолжительность/права и сцены |
 | B. A2E_MEDIA | согласованные кадры Рафаэля + готовые MP4 A2E | только ранее утвержденные анимации и task ID; verify + архив | передать ID проверенных MP4, реальные длительности и сцены |
 
-**Точка объединения:** \`MONTAGE_PREPARE\`, затем \`edit_choice\`,
-\`MONTAGE_RENDERER\`, \`VIDEO_QA\`, решение Leo по результату и
+**Точка объединения:** `MONTAGE_PREPARE`, затем `edit_choice`,
+`MONTAGE_RENDERER`, `VIDEO_QA`, решение Leo по результату и
 отдельное разрешение на публикацию.
-Узел \`MONTAGE_PREPARE\` — **термин общего процесса**, пока еще
-не реализованный как отдельная каноническая стадия \`handoff.py\`.
-Нельзя симулировать обязательные \`a2e_prompts\`/\`a2e_clips\`
-для \`READY_MEDIA\`: им нужны корректный optional-route контракт
+Узел `MONTAGE_PREPARE` — **термин общего процесса**, пока еще
+не реализованный как отдельная каноническая стадия `handoff.py`.
+Нельзя симулировать обязательные `a2e_prompts`/`a2e_clips`
+для `READY_MEDIA`: им нужны корректный optional-route контракт
 и отдельные тесты.
 
 ## 3. Кто и что выполняет
 
 1. **Simba/Киностудия — оркестратор**: ID проекта, источник истины
-   \`campaigns/<id>/project.json\`, SHA-256 оригиналов, тройки
+   `campaigns/<id>/project.json`, SHA-256 оригиналов, тройки
    вариантов, выбор Leo, чекпоинты и маршрутизация.
 2. **Режиссерская подготовка Studio/Motion Lab (PR #112 merged)**:
    предлагает и отображает три *существенно разных* варианта
    обработки исходных сцен, дает изменить конкретные переходы,
    субтитры, титры, камеру, графику и темп; возвращает подробный
    JSON выбранного варианта по уже существующему
-   \`bontours.motionlab.storyboard.launch/v1\` /
-   \`bontours.motionlab.storyboard.selection/v1\`.
+   `bontours.motionlab.storyboard.launch/v1` /
+   `bontours.motionlab.storyboard.selection/v1`.
    Не генерирует клипы, не синтезирует голос, не публикует.
 3. **Проверенный приемник (PR #105 draft)**: проверяет
-   \`request_id/project_id/expected_input_fingerprint\`,
+   `request_id/project_id/expected_input_fingerprint`,
    исходные asset ID, длительности и выбор; сохраняет
-   выбранные настройки в \`stage_handoffs.edit_choice\`.
-   \`DRAFT_NOT_DELIVERED\` не является согласием пользователя.
+   выбранные настройки в `stage_handoffs.edit_choice`.
+   `DRAFT_NOT_DELIVERED` не является согласием пользователя.
 4. **Монтажер Клод**: по выбранному сценарию, реальным исходникам,
    согласованному голосу и лицензированной музыке собирает
    единственный финальный вариант MP4 через действующие
-   \`integrations/video/\`, включая настоящие переходы, экранный
+   `integrations/video/`, включая настоящие переходы, экранный
    текст и субтитры. Не подменяет согласованный голос; если
    клип уже содержит синхронизированную речь, сохраняет режим
    собственного звука и не накладывает синтез поверх без решения.
@@ -84,15 +84,15 @@ Studio/Motion Lab **помогает монтажеру собрать гото�
 ## 4. Данные между компонентами
 
 **Вызов**:
-- \`project_id\`, \`request_id\`, \`stage=edit_choice\`,
-  \`expected_input_fingerprint\` текущего канонического проекта;
-- \`scenes[]\` в утвержденном порядке с \`scene_id\`,
-  \`asset_id\` (не временный URL), \`source_kind\`
-  (still/image или video), \`duration_s\` (для видео — реальная
+- `project_id`, `request_id`, `stage=edit_choice`,
+  `expected_input_fingerprint` текущего канонического проекта;
+- `scenes[]` в утвержденном порядке с `scene_id`,
+  `asset_id` (не временный URL), `source_kind`
+  (still/image или video), `duration_s` (для видео — реальная
   5–15 секунд в исходнике, а не автоматически 5 секунд),
-  \`trim/window\` при наличии и безопасным preview URL **только**
+  `trim/window` при наличии и безопасным preview URL **только**
   если есть разрешенный, действительно доступный публичный предпросмотр;
-- \`options[3]\`: полное оформление каждой сцены (camera,
+- `options[3]`: полное оформление каждой сцены (camera,
   transition, subtitle style + word motion, title, экранный текст,
   графика, темп) и понятное визуальное сравнение;
 - отдельные references на уже утвержденный текст/голос, аудио,
@@ -102,21 +102,21 @@ Studio/Motion Lab **помогает монтажеру собрать гото�
   в публичных Issue или на статическом сайте.**
 
 **Возврат**:
-- \`SIMBA_MOTIONLAB_SELECTION\` с теми же ID/receipt,
+- `SIMBA_MOTIONLAB_SELECTION` с теми же ID/receipt,
   выбранным номером 1–3 и настройками **для каждой сцены**;
-- существующий \`motionlab_selection.validate\` + проверка
+- существующий `motionlab_selection.validate` + проверка
   в действительном проекте; запись в защищенное хранилище,
-  новый \`stage_handoffs.edit_choice\`, запись выбранного plan SHA;
-- \`SIMBA_MOTIONLAB_ACK\` **только после** durable-save у
+  новый `stage_handoffs.edit_choice`, запись выбранного plan SHA;
+- `SIMBA_MOTIONLAB_ACK` **только после** durable-save у
   реального аутентифицированного host. Офлайн JSON-экспорт
-  помечен \`DRAFT_NOT_DELIVERED\`; без backend он не может быть
+  помечен `DRAFT_NOT_DELIVERED`; без backend он не может быть
   утвержден даже при ручной правке флага;
-- при ошибке/устаревшем receipt: \`REJECTED\`, без silent
+- при ошибке/устаревшем receipt: `REJECTED`, без silent
   approval, без запуска рендера/платного TTS/A2E.
 
-Значения \`source_kind\`, \`trim/window\`, \`graphics/rhythm\` требуют
-**согласованного обратносуместимого расширения** существующих
-\`launch/v1\`/\`selection/v1\` или отдельной \`v2\`, а не
+Значения `source_kind`, `trim/window`, `graphics/rhythm` требуют
+**согласованного обратно совместимого расширения** существующих
+`launch/v1`/`selection/v1` или отдельной `v2`, а не
 непроверенного добавления полей в GitHub. Сама веб-страница
 Motion Lab сегодня при отсутствии утвержденного preview может
 показывать demo-фотографию: это **не** предпросмотр реального исходника.
@@ -126,20 +126,20 @@ Motion Lab сегодня при отсутствии утвержденного
 - **PR #112 — merged в main:** Motion Lab статические страницы,
   30 переходов, 15 титров, 29 субтитров, 12 камер, 15 объектов,
   10 маршрутов, 8 ритмических схем, 5 режиссерских шаблонов;
-  существующие \`motionlab_selection.py\` и
-  \`motionlab_host_adapter.js\`.
-- **PR #105 — draft:** подготовлен \`motionlab_stage_writeback.py\`,
-  owner-only \`simba-motionlab-stage-writeback.yml\`, проверка
-  приватных JSON и создание \`edit_choice\` на следующую роль
-  \`MONTAGE_RENDERER\`. Offline CI на синтетических источниках
+  существующие `motionlab_selection.py` и
+  `motionlab_host_adapter.js`.
+- **PR #105 — draft:** подготовлен `motionlab_stage_writeback.py`,
+  owner-only `simba-motionlab-stage-writeback.yml`, проверка
+  приватных JSON и создание `edit_choice` на следующую роль
+  `MONTAGE_RENDERER`. Offline CI на синтетических источниках
   проходит для **ветки A2E_MEDIA**.
-- **Не готово:** \`READY_MEDIA\` как first-class без обязательных
-  \`a2e_prompts/a2e_clips\` в \`handoff.py\` и writeback;
+- **Не готово:** `READY_MEDIA` как first-class без обязательных
+  `a2e_prompts/a2e_clips` в `handoff.py` и writeback;
   media-agnostic preview/trim, реальный authenticated browser host
   и устойчивый ACK, полный end-to-end тест с живым проектом.
   **Нельзя утверждать, что это уже автоматически работает.**
 - **Wix:** публикация последней статики через CI приостановлена
-  из-за \`403 VELO.APP_PROJECT_READ\`. Слияние GitHub PR
+  из-за `403 VELO.APP_PROJECT_READ`. Слияние GitHub PR
   не доказывает, что Wix сайт обновлен.
 
 ## 6. Разграничение разработки и порядок продолжения
@@ -151,7 +151,7 @@ Motion Lab сегодня при отсутствии утвержденного
 
 **PR #105 (чат Киностудии)** отвечает за backend:
 истинные assets из Drive/репозитория, безопасную передачу
-вызова, новый optional \`READY_MEDIA\` путь, валидацию,
+вызова, новый optional `READY_MEDIA` путь, валидацию,
 durable-save и owner-authenticated write-back, маршрут
 к существующему Монтажеру Клоду; не дублирует веб-эффекты.
 Работу над READY_MEDIA начинать с контрактных тестов и не
