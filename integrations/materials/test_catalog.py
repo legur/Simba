@@ -241,5 +241,22 @@ class CatalogTests(unittest.TestCase):
         self.record['assets'][0]['url'] = 'https://example.com/other.mp4'
         self.assertTrue(any('Invalid private Library' in x for x in self.check()))
 
+    def test_reported_publication_closes_video_without_link_or_fact_check(self):
+        self.record['approved_asset_id'] = 'clip'
+        self.record['approvals'].update(
+            editorial='approved', editorial_evidence='Leo approved the exact file',
+            publication='approved', publication_evidence='Leo: ролик опубликован')
+        self.record['publication_record'] = {
+            'status': 'reported_by_leo_not_verified',
+            'post_url': None, 'remote_post_verified': False,
+        }
+        self.record['missing'] = []
+        p = catalog.project_progress(self.root, self.manifest, self.record)
+        self.assertEqual(p['state'], 'PUBLICATION_REPORTED_COMPLETE')
+        self.assertEqual(p['action_owner'], 'PROCESS_OWNER')
+        self.assertEqual(p['checks']['external_media_and_actual_publication'],
+                         'NOT_VERIFIED_BY_CATALOG')
+        self.assertEqual(self.check(), [])
+
 if __name__ == '__main__':
     unittest.main()
