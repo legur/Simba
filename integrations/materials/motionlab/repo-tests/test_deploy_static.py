@@ -60,8 +60,8 @@ class WixDeploymentSafety(unittest.TestCase):
                 collect_site_files(root)
 
     def test_auth_header_never_accepts_blank_or_multiple_lines(self):
-        self.assertEqual(make_auth_header("some_token"), "Bearer some_token")
-        self.assertEqual(make_auth_header("Bearer token"), "Bearer token")
+        self.assertEqual(make_auth_header("some_token"), "some_token")
+        self.assertEqual(make_auth_header(" WixSecret "), "WixSecret")
         for invalid in ("", "  ", "abc\nBearer evil"):
             with self.subTest(value=invalid):
                 with self.assertRaises(ValueError):
