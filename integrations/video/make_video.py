@@ -53,6 +53,12 @@ def node(script, *args):
 MOVES = {'push', 'pull', 'pan-left', 'pan-right', 'rise', 'hold', 'none'}
 MOTIONS = {'anime', 'classic'}
 RENDERERS = {'simba', 'hyperframes'}
+# Motion Lab transition ids are mirrored in template/transitions.js.
+TRANSITIONS = {'crossfade', 'push', 'zoom', 'whip', 'circle', 'diagonal', 'flash',
+               'blur', 'flip', 'parallax', 'shutter', 'glitch', 'split', 'rotate',
+               'tiles', 'portal', 'textmask', 'lightleak', 'speedramp', 'particles',
+               'ripple', 'map', 'postcard', 'filmstrip', 'pagecurl', 'luma',
+               'foreground', 'mask', 'morph', 'match'}
 VIDEO_EXT = ('.mp4', '.mov', '.m4v', '.webm')
 INSERTS = {'route', 'cartoon'}   # code-drawn scenes in template/inserts.js
 
@@ -74,6 +80,16 @@ def load_spec(job: Path):
     s.setdefault('motion', 'anime')
     need(isinstance(s.get('scenes'), list) and 1 <= len(s['scenes']) <= 8, 'scenes: 1–8 scenes')
     for i, sc in enumerate(s['scenes']):
+        transition = sc.get('transition')
+        if transition is not None:
+            need(i > 0, 'scene 1: transition is only valid on an incoming scene')
+            need(isinstance(transition, dict), f'scene {i + 1}: transition must be an object')
+            need(transition.get('id') in TRANSITIONS,
+                 f'scene {i + 1}: transition.id must be one of {sorted(TRANSITIONS)}')
+            ms = transition.get('duration_ms', 900)
+            need(type(ms) is int and 400 <= ms <= 2400,
+                 f'scene {i + 1}: transition.duration_ms must be an integer from 400 to 2400')
+            sc['transition'] = {'id': transition['id'], 'duration_ms': ms}
         src = sc.get('clip') or sc.get('image') or ''
         if sc.get('insert'):
             need(sc['insert'].get('type') in INSERTS, f'scene {i + 1}: insert type must be one of {sorted(INSERTS)}')
@@ -415,7 +431,7 @@ def timeline(spec):
             end = speak(ls, t + (.5 if i == 0 else .35), 1420) - .35 + .5
             if sc.get('title'): end = max(end, t0 + 1.1 + need_read(sc['title']))
             t = max(end, t0 + (c['dur'] if c else sc.get('minDur', 2.8)))
-        s = {'image': sc.get('image', sc.get('clip')), 'move': sc.get('move', 'push'), 'focus': sc.get('focus', [.5, .5]), 'title': sc.get('title'), 't0': round(t0, 3), 't1': round(t, 3)}
+        s = {'image': sc.get('image', sc.get('clip')), 'move': sc.get('move', 'push'), 'focus': sc.get('focus', [.5, .5]), 'title': sc.get('title'), 't0': round(t0, 3), 't1': round(t, 3), 'transition': sc.get('transition')}
         if c: s.update(frames=c['frames'], count=c['count'], fps=c['fps'])
         if sc.get('insert'): s['insert'] = sc['insert']
         scenes.append(s)
