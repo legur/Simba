@@ -89,6 +89,10 @@ def _validate_stage(project: dict, name: str, record: dict, expected_input: str)
     elif name != "qa" and not record["approval_evidence"].strip():
         problems.append(name + ": approval_evidence empty")
     if name in OPTIONS_STAGES:
+        if record.get("options_presented") != 3:
+            problems.append(name + ": evidence that three options were presented is required")
+        if not isinstance(record.get("options_evidence"), str) or not record["options_evidence"].strip():
+            problems.append(name + ": options_evidence required")
         opt = record.get("selected_option")
         if type(opt) is not int or opt not in (1, 2, 3):
             problems.append(name + ": selected_option must be 1, 2, or 3")
@@ -101,6 +105,8 @@ def _validate_stage(project: dict, name: str, record: dict, expected_input: str)
         if not isinstance(record.get("quote_evidence"), str) or not record["quote_evidence"].strip():
             problems.append("a2e_prompts: recorded quote evidence required")
     if name == "voice_music":
+        if record.get("texts_presented") != 3 or record.get("music_presented") != 3:
+            problems.append("voice_music: three text and three music options must be recorded")
         for field in ("text_option", "music_option"):
             opt = record.get(field)
             if type(opt) is not int or opt not in (1, 2, 3):
@@ -180,6 +186,7 @@ def make_handoff(root: Path, path: Path, project: dict) -> dict:
         return _blocked(project, "INVALID_STAGE_HANDOFFS", ["known stage names only"])
     expected = source_fingerprint(project)
     prior = None
+    lineage = []
     for name, producer, recipient, _ in STAGES:
         record = stages.get(name)
         if record is None:
@@ -201,7 +208,8 @@ def make_handoff(root: Path, path: Path, project: dict) -> dict:
                 "source_revision": source_fingerprint(project),
                 "expected_input_fingerprint": expected,
                 "receipt_sha256": prior["receipt"],
-                "assets": prior["assets"],
+                "assets": [item for step in lineage for item in step["assets"]],
+                "lineage": lineage,
                 "decision": prior["decision"],
                 "next_action": "Исполнить этап " + name + " по своему каноническому профилю; "
                                "проверить реальные файлы перед использованием.",
@@ -232,17 +240,25 @@ def make_handoff(root: Path, path: Path, project: dict) -> dict:
         prior = {"stage": name, "producer": producer, "recipient": recipient,
                  "receipt": validated["receipt"], "assets": validated["assets"],
                  "decision": decision}
+        lineage.append(prior)
         expected = validated["receipt"]
+    final_review_needed = project.get("approvals", {}).get("editorial") != "approved"
     return {
         "schema_version": 1, "project_id": project["id"], "title": project["title"],
-        "state": "NEEDS_LEO_REVIEW", "recipient": "LEO", "reason": None,
-        "missing": ["explicit approval of the final MP4; publication remains separate"],
+        "state": "NEEDS_LEO_REVIEW" if final_review_needed else "APPROVED_UNPUBLISHED",
+        "recipient": "LEO", "reason": None,
+        "missing": (["explicit approval of the final MP4; publication remains separate"]
+                    if final_review_needed else ["publication only on separate explicit request"]),
         "packet": {
-            "producer": "VIDEO_QA", "next_stage": "editorial_review",
+            "producer": "VIDEO_QA", "next_stage": "editorial_review" if final_review_needed else "publication_decision",
             "source_revision": source_fingerprint(project),
-            "receipt_sha256": prior["receipt"], "assets": prior["assets"],
+            "receipt_sha256": prior["receipt"],
+            "assets": [item for step in lineage for item in step["assets"]],
+            "lineage": lineage,
             "decision": prior["decision"], "qa_status": "RECORDED_PASS_NOT_REVERIFIED",
-            "next_action": "Получить явное решение Лео по конкретному MP4; не публиковать.",
+            "next_action": ("Получить явное решение Лео по конкретному MP4; не публиковать."
+                            if final_review_needed else
+                            "При желании отдельно запросить разрешение на публикацию; не публиковать автоматически."),
         },
         "auto_dispatched": False, "external_media_verified": False,
         "paid_execution_authorized_by_handoff": False,
