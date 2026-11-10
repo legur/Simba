@@ -7,7 +7,7 @@
     "Prague"
   ],
   "updated_at": "2026-11-10",
-  "stage": "TECH_QA_RECORDED__EDITORIAL_REVIEW_PENDING",
+  "stage": "EDITORIAL_APPROVED__PUBLICATION_PENDING",
   "sources": [
     {
       "path": "campaigns/prague-new-year-2027/README.md",
@@ -18,12 +18,13 @@
       "sha256": "bfd6d44001e5194d021481250eaff51c8fa317c986b80126bc68834da19d6493"
     }
   ],
-  "next_action": "Лео просматривает/прослушивает WarmBaritone-кандидат из закрытой ChatGPT Library, сверяет речь с PRAGUE-STORY-01 и экранными надписями. Сначала подтвердить живой оффер 899 € / наличие / рейсы у оператора; после выбора финального MP4 сохранить его в закрытом Drive, read-back и лишь затем обновить working_asset_id / approved_asset_id по явному решению. Публикация отдельно.",
-  "working_asset_id": "animated-review",
-  "approved_asset_id": null,
+  "next_action": "Финальный ролик с голосом WarmBaritone редакционно утвержден Лео. Перед размещением отдельно проверить текущую цену 899 €, наличие мест, условия отеля и рейсов у оператора; при необходимости выполнить независимую сверку озвучки с PRAGUE-STORY-01. Сохранить дополнительную архивную копию MP4 в закрытом Drive, когда доступен поддерживаемый загрузчик. Публикация только после отдельной явной команды Лео.",
+  "working_asset_id": "warmbaritone-editorial-approved-20261110",
+  "approved_asset_id": "warmbaritone-editorial-approved-20261110",
   "approvals": {
-    "editorial": "pending",
-    "publication": "pending"
+    "editorial": "approved",
+    "publication": "pending",
+    "editorial_evidence": "10.11.2026, текущий диалог: на вопрос «подходит ли этот ролик как финальный или требуется правка?» Лео ответил «да подходит». Конкретный MP4: Prague_2027_WarmBaritone_Existing_Audio_REVIEW.mp4; SHA-256 a77cc034f957dec224bc5345bfdd818e8c2f6453f592cd356a3e195d1b11ed13. Approval относится только к редакционной версии ролика, не к публикации и не к текущей цене."
   },
   "assets": [
     {
@@ -74,6 +75,21 @@
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "recorded_sha256": "05f4d6a9ee01ebbac57b04b11b28f32fd23d5745ab6011d95c37d53b16190c99",
       "recorded_size_bytes": 14870580
+    },
+    {
+      "id": "warmbaritone-editorial-approved-20261110",
+      "kind": "review_video",
+      "title": "Прага 2027 — версия с голосом Simba WarmBaritone, редакционно утверждена Лео 10.11.2026",
+      "storage": "chatgpt_library",
+      "library_path": "/New Simba/Prague_2027_WarmBaritone_EDITORIALLY_APPROVED_2026-11-10.mp4",
+      "library_file_id": "libfile_2a931971edb08191bf4f0eb7b972e74d",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Чат 10.11.2026: после прямого вопроса «подходит ли этот ролик как финальный» Лео ответил «да подходит». Копия байт-в-байт совпадает с продемонстрированным MP4 по SHA-256; файл подтвержден в приватной ChatGPT Library, 29 427 590 байт. Не является разрешением на публикацию.",
+      "recorded_sha256": "a77cc034f957dec224bc5345bfdd818e8c2f6453f592cd356a3e195d1b11ed13",
+      "recorded_size_bytes": 29427590,
+      "recorded_duration_seconds": 30.375,
+      "technical_qa_report": "docs/validation/2026-11-10-prague-warmbaritone-reuse.md"
     }
   ],
   "references": [
@@ -107,13 +123,18 @@
     "Оригинальные клипы указаны в манифесте; перед платной генерацией прочитать его и проверить доступность файлов.",
     "Есть более поздние материалы по голосу в переписках. Этот снимок не объявляет выбранный черновик окончательной версией.",
     "Техническая пересборка из сохраненного A2E черновика без титров и ZIP проекта плашек прошла 10.11.2026; видео-поток совпадает с архивным. Отчет в docs/validation/2026-11-10-prague-offline-rebuild.md. Новый локальный тест не заменяет working_asset_id.",
-    "10.11.2026: техпроверка WarmBaritone WAV + архивная 6-сценная версия прошла (1080x1920, 30.375 сек, −14.1 LUFS, −3.1 dBFS, video stream unchanged). Новый MP4 хранится в ChatGPT Library: /New Simba/Prague_2027_WarmBaritone_Existing_Audio_REVIEW_2026-11-10.mp4; не утвержден и не загружен в Drive. Отчет docs/validation/2026-11-10-prague-warmbaritone-reuse.md."
+    "10.11.2026: техпроверка WarmBaritone WAV + архивная 6-сценная версия прошла (1080x1920, 30.375 сек, −14.1 LUFS, −3.1 dBFS, video stream unchanged). Новый MP4 хранится в ChatGPT Library: /New Simba/Prague_2027_WarmBaritone_Existing_Audio_REVIEW_2026-11-10.mp4; не утвержден и не загружен в Drive. Отчет docs/validation/2026-11-10-prague-warmbaritone-reuse.md.",
+    "10.11.2026: Лео явно выбрал как финальный просмотренный вариант с WarmBaritone (SHA-256 a77cc034f957dec224bc5345bfdd818e8c2f6453f592cd356a3e195d1b11ed13). Оригинал и идентичная одобренная копия находятся в приватной ChatGPT Library; это редакционное утверждение, не проверка текущей цены и не разрешение на публикацию."
   ],
   "missing": [
-    "Редакционный просмотр и прослушивание WarmBaritone-кандидата и согласование текста/субтитров",
-    "Проверка актуальности цены 899 €, наличия тура, рейсов и условий",
-    "Сохранение нового голосового MP4 в закрытом Google Drive с проверкой байтов",
-    "Явное утверждение конкретного финального MP4",
-    "Подтверждение публикации только по отдельной команде"
-  ]
+    "Проверка актуального оффера: 899 €, наличие мест, отель, авиарейсы и условия",
+    "Семантическая проверка речи относительно PRAGUE-STORY-01 независимым ASR перед публикацией — еще не выполнена",
+    "Дополнительное архивирование утвержденного MP4 в закрытый Google Drive с read-back; копия в приватной ChatGPT Library уже сохранена",
+    "Публикация — только по отдельной явной команде Лео"
+  ],
+  "latest_user_request": {
+    "text": "да подходит",
+    "state": "EDITORIAL_APPROVED",
+    "evidence": "Чат 10.11.2026: одобрение показанной версии с WarmBaritone, SHA-256 a77cc034f957dec224bc5345bfdd818e8c2f6453f592cd356a3e195d1b11ed13; публикация отдельно."
+  }
 }

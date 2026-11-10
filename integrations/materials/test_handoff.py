@@ -240,5 +240,22 @@ class StageHandoffTests(unittest.TestCase):
         self.assertEqual(result["state"], "BLOCKED")
         self.assertIn("qa: pass", " ".join(result["missing"]))
 
+
+    def test_legacy_explicit_final_approval_does_not_request_review_again(self):
+        self.project["stage"] = "EDITORIAL_APPROVED__PUBLICATION_PENDING"
+        self.project["working_asset_id"] = "review_video"
+        self.project["approved_asset_id"] = "review_video"
+        self.project["approvals"].update(
+            editorial="approved",
+            editorial_evidence="User accepted exact MP4 SHA-256"
+        )
+        self.project["missing"] = ["separate publication instruction"]
+        result = handoff.make_handoff(self.root, self.path, self.project)
+        self.assertEqual(result["state"], "APPROVED_UNPUBLISHED")
+        self.assertEqual(result["packet"]["approved_asset_id"], "review_video")
+        self.assertEqual(result["packet"]["next_stage"], "publication_decision")
+        self.assertFalse(result["auto_dispatched"])
+        self.assertFalse(result["external_media_verified"])
+
 if __name__ == "__main__":
     unittest.main()

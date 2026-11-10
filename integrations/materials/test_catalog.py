@@ -214,5 +214,32 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(before, self.manifest.read_bytes())
 
 
+
+    def test_private_library_asset_is_valid_without_public_url(self):
+        self.record['assets'][0] = dict(
+            id='clip', kind='review_video', title='Approved review',
+            storage='chatgpt_library', library_path='/New Simba/approved.mp4',
+            library_file_id='libfile_2a931971edb08191bf4f0eb7b972e74d',
+            state='available', evidence='Library listing read-back and SHA-256', reuse=True
+        )
+        self.assertEqual(self.check(), [])
+        self.save()
+        with redirect_stdout(StringIO()) as captured:
+            rc = catalog.main(['--root', str(self.root), 'reuse', 'Prague'])
+        self.assertEqual(rc, 0)
+        self.assertIn('/New Simba/approved.mp4', captured.getvalue())
+
+    def test_private_library_asset_requires_valid_exact_reference(self):
+        self.record['assets'][0].update(
+            storage='chatgpt_library', url='',
+            library_path='/New Simba/../escape.mp4',
+            library_file_id='bad', evidence='file found')
+        self.assertTrue(any('Invalid private Library' in x for x in self.check()))
+        self.record['assets'][0]['library_path'] = '/New Simba/file.mp4'
+        self.record['assets'][0]['library_file_id'] = 'libfile_2a931971edb08191bf4f0eb7b972e74d'
+        self.assertEqual(self.check(), [])
+        self.record['assets'][0]['url'] = 'https://example.com/other.mp4'
+        self.assertTrue(any('Invalid private Library' in x for x in self.check()))
+
 if __name__ == '__main__':
     unittest.main()
