@@ -4,12 +4,29 @@
   "text_executor": "Simba",
   "visual_executor": "Rafael/RAFAEL_System_v6.2.md",
   "renderer": "image_gen",
-  "status": "PREVIEWS_IN_PROGRESS",
+  "status": "FIVE_VISUALS_READY; AWAITING_LEO_SELECTION",
   "mode_selection": "UNAVAILABLE: image tool exposes no fast/thinking mode",
   "references": {
     "Archivarius": "4 active trusted cards read",
     "YouMind": "manifest read; poster-flyer.json returned empty content twice; unavailable for template selection",
-    "OpenAI_examples": "EX-01 exact-text prompt mechanics; linked legacy sample images not available in renderer; no image reference passed"
+    "OpenAI_examples": "EX-01 exact-text prompt mechanics; linked legacy sample images not available in renderer; no image reference passed",
+    "traceByVariant": {
+      "1": [
+        "AR-20260720-004 — Графический постер в Behance-стиле"
+      ],
+      "2": [
+        "AR-20260902-001 — Минималистичный туристический постер Лондона в стиле линогравюры"
+      ],
+      "3": [
+        "AR-20260720-005 — Винтажный векторный постер города"
+      ],
+      "4": [
+        "AR-20260902-005 — Городской постер с радиальной архитектурной композицией"
+      ],
+      "5": [
+        "AR-20260720-004 — Графический постер в Behance-стиле"
+      ]
+    }
   },
   "variants": [
     {
@@ -19,7 +36,15 @@
       "refs": [
         "AR-20260720-004"
       ],
-      "renderStatus": "PENDING"
+      "renderStatus": "PREVIEW_GENERATED",
+      "result_hint": "Generated images are saved to /workspace/scratch/1926c64694a7/generated_images as /workspace/scratch/1926c64694a7/generated_images/exec-09c3e742-127a-4d2c-864e-1d57673169e7.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "qa": {
+        "text": "Title, dates, price, occupancy condition and brand visually checked",
+        "character": "Adult realistic anthropomorphic lion present",
+        "format": "Square",
+        "final": false,
+        "warnings": "Preview edge spacing tighter than requested; adjust margins in final render without changing concept"
+      }
     },
     {
       "id": 2,
@@ -28,7 +53,15 @@
       "refs": [
         "AR-20260902-001"
       ],
-      "renderStatus": "PENDING"
+      "renderStatus": "PREVIEW_GENERATED",
+      "result_hint": "Generated images are saved to /workspace/scratch/1926c64694a7/generated_images as /workspace/scratch/1926c64694a7/generated_images/exec-2245cd82-08fb-41bc-bb0b-2661408c2175.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "qa": {
+        "text": "Title, dates, price, occupancy condition and brand visually checked",
+        "character": "Adult realistic anthropomorphic lion present",
+        "format": "Square",
+        "final": false,
+        "warnings": "Preview edge spacing tighter than requested; adjust margins in final render without changing concept"
+      }
     },
     {
       "id": 3,
@@ -37,7 +70,15 @@
       "refs": [
         "AR-20260720-005"
       ],
-      "renderStatus": "PENDING"
+      "renderStatus": "PREVIEW_GENERATED",
+      "result_hint": "Generated images are saved to /workspace/scratch/1926c64694a7/generated_images as /workspace/scratch/1926c64694a7/generated_images/exec-02bab4a3-b5d4-49fc-8a09-0dccc419f835.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "qa": {
+        "text": "Title, dates, price, occupancy condition and brand visually checked",
+        "character": "Adult realistic anthropomorphic lion present",
+        "format": "Square",
+        "final": false,
+        "warnings": "Preview edge spacing tighter than requested; adjust margins in final render without changing concept"
+      }
     },
     {
       "id": 4,
@@ -46,7 +87,15 @@
       "refs": [
         "AR-20260902-005"
       ],
-      "renderStatus": "PENDING"
+      "renderStatus": "PREVIEW_GENERATED",
+      "result_hint": "Generated images are saved to /workspace/scratch/1926c64694a7/generated_images as /workspace/scratch/1926c64694a7/generated_images/exec-f08b92b4-4b88-4032-a3c3-7f90fb087332.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "qa": {
+        "text": "Title, dates, price, occupancy condition and brand visually checked",
+        "character": "Adult realistic anthropomorphic lion present",
+        "format": "Square",
+        "final": false,
+        "warnings": "Preview edge spacing tighter than requested; adjust margins in final render without changing concept"
+      }
     },
     {
       "id": 5,
@@ -55,7 +104,15 @@
       "refs": [
         "AR-20260720-004"
       ],
-      "renderStatus": "PENDING"
+      "renderStatus": "PREVIEW_GENERATED",
+      "result_hint": "Generated images are saved to /workspace/scratch/1926c64694a7/generated_images as /workspace/scratch/1926c64694a7/generated_images/exec-147c0c18-a973-43c5-ab0c-126d2883e389.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+      "qa": {
+        "text": "Title, dates, price, occupancy condition and brand visually checked",
+        "character": "Adult realistic anthropomorphic lion present",
+        "format": "Square",
+        "final": false,
+        "warnings": "Preview edge spacing tighter than requested; adjust margins in final render without changing concept"
+      }
     }
   ],
   "kb_lint": "PASS: source explicit; dynamic facts dated; correct content layer; distinct material; prompts preserved; no publication claim"
