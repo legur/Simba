@@ -157,7 +157,7 @@ class DispatchTests(unittest.TestCase):
         calls = []
         def fake(method, path, payload=None):
             calls.append(path)
-            if 'page=1' in path:
+            if path.endswith('page=1'):
                 return [{'number': i, 'body': None} for i in range(100)]
             return [{'number': 150, 'state': 'closed', 'body': plan['body']}]
         cl.request = fake
