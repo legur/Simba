@@ -1,0 +1,87 @@
+name: 'Simba video: route next stage (NO paid calls)'
+
+on:
+  pull_request:
+    paths:
+      - 'integrations/materials/dispatcher.py'
+      - 'integrations/materials/test_dispatcher.py'
+      - 'integrations/materials/catalog.py'
+      - 'integrations/materials/handoff.py'
+      - 'integrations/materials/test_catalog.py'
+      - '.github/workflows/simba-video-stage-dispatch.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'campaigns/**/project.json'
+      - 'integrations/materials/dispatcher.py'
+      - 'integrations/materials/test_dispatcher.py'
+      - '.github/workflows/simba-video-stage-dispatch.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test task-routing safety without posting
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - run: python3 -m unittest discover -s integrations/materials -p test_dispatcher.py -v
+      - run: python3 integrations/materials/catalog.py check
+      - name: Preview existing project routing (read-only)
+        run: python3 integrations/materials/dispatcher.py --all
+
+  dispatch:
+    name: Create next-stage GitHub task only after verified main write-back
+    if: >-
+      github.event_name == 'push' &&
+      github.repository == 'legur/Simba' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    concurrency:
+      group: simba-video-stage-dispatch-global
+      cancel-in-progress: false
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Validate real projects and safe dispatcher
+        run: |
+          python3 -m unittest discover -s integrations/materials -p test_dispatcher.py -v
+          python3 integrations/materials/catalog.py check
+      - name: Dispatch changed project handoffs (create at most one public task per revision)
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          python3 integrations/materials/dispatcher.py \
+            --before "$BEFORE" --after "$AFTER" --execute \
+            | tee "$RUNNER_TEMP/simba-video-dispatch.json"
+          {
+            echo '### Simba video dispatcher (no provider execution)'
+            echo '```json'
+            cat "$RUNNER_TEMP/simba-video-dispatch.json"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve redacted dispatch receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: simba-video-dispatch-report
+          path: ${{ runner.temp }}/simba-video-dispatch.json
+          retention-days: 7
+          if-no-files-found: error
