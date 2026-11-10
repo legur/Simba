@@ -15,6 +15,7 @@ storage. An ACK means "selection safely received", not "video rendered".
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import base64
 from datetime import datetime, timezone
 import hashlib
@@ -87,13 +88,17 @@ class SessionStore:
               CREATE INDEX IF NOT EXISTS sessions_status ON sessions(status);
             """)
 
+    @contextmanager
     def open(self):
         conn=sqlite3.connect(str(self.filename),timeout=10,isolation_level=None)
-        conn.row_factory=sqlite3.Row
-        conn.execute("PRAGMA busy_timeout=10000")
-        conn.execute("PRAGMA journal_mode=WAL")
-        conn.execute("PRAGMA synchronous=FULL")
-        return conn
+        try:
+            conn.row_factory=sqlite3.Row
+            conn.execute("PRAGMA busy_timeout=10000")
+            conn.execute("PRAGMA journal_mode=WAL")
+            conn.execute("PRAGMA synchronous=FULL")
+            yield conn
+        finally:
+            conn.close()
 
     def create(self, root: Path, project_id: str, options: list[dict]) -> dict:
         sid=secrets.token_hex(16)
