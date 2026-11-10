@@ -97,7 +97,7 @@ jobs:
           print('script_needed=' + ('true' if allowed and len(script) == 1 else 'false'))
           PY
       - name: Install a local, open-weight Russian-capable drafting model (no API key)
-        if: steps.ai_gate.outputs.script_needed == 'true' && github.actor == 'legur'
+        if: github.actor == 'legur' && (steps.ai_gate.outputs.script_needed == 'true' || contains(github.event.head_commit.message, '[simba-ai-smoke]'))
         shell: bash
         run: |
           set -euo pipefail
@@ -117,19 +117,24 @@ jobs:
           test "$ready" = "true"
           ollama pull qwen3:1.7b
       - name: Produce three actual AI script drafts and archive privately (no publication)
-        if: steps.ai_gate.outputs.script_needed == 'true' && github.actor == 'legur'
+        if: github.actor == 'legur' && (steps.ai_gate.outputs.script_needed == 'true' || contains(github.event.head_commit.message, '[simba-ai-smoke]'))
         shell: bash
         env:
           GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
           GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
           GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+          RUN_SMOKE: ${{ contains(github.event.head_commit.message, '[simba-ai-smoke]') && github.actor == 'legur' }}
         run: |
           python3 -m pip install --disable-pip-version-check \
             'google-api-python-client>=2.140,<3' 'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
-          python3 integrations/materials/auto_script.py \
-            --root "$GITHUB_WORKSPACE" \
-            --dispatch-report "$RUNNER_TEMP/simba-video-dispatch.json" \
-            --private-folder 1GMoSVogs0SKuTAXCdMVcG-U7bTn-IuCt --execute
+          args=(--root "$GITHUB_WORKSPACE" \
+                --dispatch-report "$RUNNER_TEMP/simba-video-dispatch.json" \
+                --private-folder 1GMoSVogs0SKuTAXCdMVcG-U7bTn-IuCt --execute)
+          if [ "$RUN_SMOKE" = "true" ]; then
+            SIMBA_LOCAL_SMOKE_APPROVED=true python3 integrations/materials/auto_script.py "${args[@]}" --smoke
+          else
+            python3 integrations/materials/auto_script.py "${args[@]}"
+          fi
       - name: Preserve redacted dispatch receipt
         uses: actions/upload-artifact@v4
         with:
