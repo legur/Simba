@@ -27,6 +27,8 @@ MATERIALS = Path(__file__).resolve().parent
 MOTIONLAB = MATERIALS / "motionlab"
 if str(MATERIALS) not in sys.path:
     sys.path.insert(0, str(MATERIALS))
+if str(MATERIALS.parent / "video") not in sys.path:
+    sys.path.insert(0, str(MATERIALS.parent / "video"))
 if str(MOTIONLAB) not in sys.path:
     sys.path.insert(0, str(MOTIONLAB))
 
