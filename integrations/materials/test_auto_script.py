@@ -156,7 +156,7 @@ class ScriptRunnerTests(unittest.TestCase):
             calls.append(messages)
             return SCRIPT_BASE + (' История.' if len(calls) == 1 else
                                   ' Интрига.' if len(calls) == 2 else ' Трейлер.')
-        with patch.object(auto_script, 'find_existing', return_value=None), \\
+        with patch.object(auto_script, 'find_existing', return_value=None), \
              patch.object(auto_script, 'upload_private',
                           side_effect=lambda *x: uploads.append(x) or 'PRIVATE_ARCHIVED_FOR_LEO_REVIEW'):
             result = auto_script.smoke_run(self.folder, infer=infer,
