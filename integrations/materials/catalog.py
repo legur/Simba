@@ -94,7 +94,17 @@ def project_issues(root: Path, path: Path, data: dict) -> list[str]:
         issues.append("Unsupported schema_version")
     for name in ("title", "stage", "next_action", "updated_at", "sources", "assets", "references", "approvals"):
         if not data.get(name):
-            if name != "references":
+            # A brand-new staged reel has no media yet; don't fabricate a
+            # placeholder asset before Scenarist produces the first script.
+            # Existing/legacy projects retain strict nonempty assets checks.
+            new_first_stage = (
+                name == "assets" and data.get("stage_handoffs") == {}
+                and data.get("assets") == []
+                and data.get("approvals", {}).get("editorial") == "pending"
+                and not data.get("working_asset_id")
+                and not data.get("approved_asset_id")
+            )
+            if name != "references" and not new_first_stage:
                 issues.append(f"Missing {name}")
     for source in data.get("sources", []):
         source_path = inside(root, source["path"])
