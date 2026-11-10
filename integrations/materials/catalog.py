@@ -257,7 +257,10 @@ def human(output: list | dict, command: str) -> str:
                 lines.append(row["id"] + ": " + ("; ".join(row["issues"]) or "PASS"))
             elif command == "list":
                 lines.extend([f"{row['title']} [{row['id']}] — {row['stage']}",
-                              "Дальше: " + row["next_action"], "Файл: " + row["path"]])
+                              "Статус: " + row["progress"]["status"],
+                              "Ответственный: " + row["progress"]["action_owner"],
+                              "Дальше: " + row["progress"]["next_action"],
+                              "Файл: " + row["path"]])
                 lines.extend("ВНИМАНИЕ: " + x for x in row.get("issues", []))
             else:
                 lines.extend([f"[{row['library']} / {row['status']}] {row['title']}", row["path"], row["excerpt"]])
@@ -316,7 +319,8 @@ def main(argv: list[str] | None = None) -> int:
         if args.command == "list":
             output = [{"id": d["id"], "title": d["title"], "stage": d["stage"],
                        "path": p.relative_to(root).as_posix(), "next_action": d["next_action"],
-                       "issues": project_issues(root, p, d)}
+                       "issues": project_issues(root, p, d),
+                       "progress": project_progress(root, p, d)}
                       for p, d in load_projects(root)]
             code = 2 if any(x["issues"] for x in output) else 0
         elif args.command == "check":
