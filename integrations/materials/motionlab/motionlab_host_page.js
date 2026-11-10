@@ -44,7 +44,7 @@ async function start() {
     try {
       const s = await connection.status();
       if (s.status === 'APPLIED') {
-        status('Выбор сохранен в Киностудии. Задание монтажеру передано.');
+        status('Выбор записан в проект Киностудии. Диспетчер получит задание на монтаж.');
         polling = false;
       } else if (s.status === 'BLOCKED') {
         status('Выбор сохранен, но запись в проект требует проверки.');
@@ -79,7 +79,7 @@ async function start() {
       } else if (event.type === 'editing') {
         status('Сессия подключена. Выберите оформление в Motion Lab.');
       } else if (event.type === 'montage_handoff_applied') {
-        status('Выбор записан в проект. Задание для монтажера готово.');
+        status('Выбор записан в проект. Запуск задания монтажеру проверяется отдельно.');
       }
     },
   });
