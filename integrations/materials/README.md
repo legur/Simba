@@ -8,12 +8,15 @@
 
 ```bash
 python3 integrations/materials/catalog.py list
+python3 integrations/materials/catalog.py status Бавария
 python3 integrations/materials/catalog.py resume Бавария
 python3 integrations/materials/catalog.py reuse Бавария --kind animated_clip
 python3 integrations/materials/catalog.py search "крупные титры" --library kadr
 python3 integrations/materials/catalog.py search "Прага" --library critic
 python3 integrations/materials/catalog.py check
 ```
+
+Новая команда `status <проект>` сводит локальные проверки, следующий этап и ответственного. Она различает `BLOCKED` (источник изменен или ошибка записи), `NEEDS_LEO` (выбранный рабочий материал требует решения), `IN_PROGRESS` (исполнитель должен подготовить проверяемый материал), `REGISTERED_COMPLETE` (по реестру есть оба утверждения). Возвращает `checks`, `issues`, `missing`, `next_action`, `action_owner`. Не запускает генерацию, не меняет `project.json`, не проверяет удаленные MP4 и не подтверждает фактическую публикацию: `external_media_and_actual_publication=NOT_VERIFIED_BY_CATALOG`.
 
 Для машинного результата поставьте `--json` перед командой. Для другого checkout: `--root /path/to/Simba` перед командой. На Windows вместо `python3` может использоваться `python`.
 
