@@ -165,16 +165,16 @@ class WritebackTests(unittest.TestCase):
         self.assertEqual(self.drive.reads,0)
 
     def test_requires_private_owner_issue_and_unchanged_user_credit_cap(self):
-        for case in [
+        for key, bad in [
             ("private_source_readback_verified",False),
             ("owner_issue_number",778),
             ("max_credits",250),
         ]:
-            with self.subTest(case=case):
-                previous=self.state[case]
-                self.state[case]=case[1]
+            with self.subTest(case=key):
+                previous=self.state[key]
+                self.state[key]=bad
                 with self.assertRaises(bridge.WritebackError):self.candidate()
-                self.state[case]=previous
+                self.state[key]=previous
         self.assertEqual(self.drive.reads,0)
 
     def test_upstream_approval_change_blocks_no_remote_reads(self):
