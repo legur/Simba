@@ -115,7 +115,7 @@ jobs:
             sleep 1
           done
           test "$ready" = "true"
-          ollama pull qwen3:1.7b
+          ollama pull qwen3:4b
       - name: Produce three actual AI script drafts and archive privately (no publication)
         if: github.actor == 'legur' && (steps.ai_gate.outputs.script_needed == 'true' || contains(github.event.head_commit.message, '[simba-ai-smoke]'))
         shell: bash
