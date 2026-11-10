@@ -122,7 +122,7 @@ class ScriptRunnerTests(unittest.TestCase):
         calls = []
         def fake_model(messages):
             calls.append(messages)
-            return SCRIPT_BASE + f' Ракурс {len(calls)}.'
+            return SCRIPT_BASE + ' ' + ('История.' if len(calls)==1 else 'Интрига.' if len(calls)==2 else 'Трейлер.')
         uploaded = []
         with patch.object(auto_script, 'find_existing', return_value=None) as find, \
              patch.object(auto_script, 'upload_private', side_effect=lambda *a: uploaded.append(a) or 'PRIVATE_ARCHIVED_FOR_LEO_REVIEW'):
