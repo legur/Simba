@@ -147,3 +147,28 @@ Callback `acceptSelection` обязан независимо валидиров�
 агентов и не создает запись `stage_handoffs.edit_choice`.
 Эту операцию должен выполнить доверенный исполнитель автоматической
 Киностудии после корректного выбора и фактического write-back.
+
+### Временная блокировка публикации (10.11.2026)
+
+Несмотря на `Specific sites: Anime Transition Lab`, `Manage Sites` и
+`Wix CLI - Git Integration`, Wix CLI для **Headless** проекта
+`795efbc2-50c4-435e-939e-537cb2df75c7` с внутренним приватным
+`appId=78ffbc67-367d-40e6-8f21-b2d2b1a760af` возвращает
+`403 PERMISSION_DENIED: VELO.APP_PROJECT_READ` на
+`POST /_api/wix-code-app-deployments/v1/app-projects/{appId}/app-deployments`.
+Повторено после обновления разрешений ключа, в том числе в
+GitHub run `42879839810` (attempt 4).
+
+GitHub **PR/push validation продолжает работать**, но автоматический
+публикационный шаг временно **выключен** для `push`, чтобы не плодить
+падающие сборки и уведомления. Для диагностического Wix CLI **preview**
+(без публикации) разрешен только ручной `workflow_dispatch` с
+`publish=true`. До устранения права для Headless private app **не
+считать автоматическую публикацию настроенной**. Не включать
+`All permissions` ради обхода отказа.
+
+Следующий шаг: передать Wix Support сайт, `appId`, точный код отказа и
+уточнить, какое право/тип идентичности требуется **именно Wix-managed
+Headless** проекту для неинтерактивного `wix preview/release`.
+После официального ответа проверить preview, затем отдельно вернуть
+автодеплой `main` и заменить preview на release в CI.
