@@ -111,6 +111,7 @@ class VoiceMusicWritebackTests(unittest.TestCase):
                 "profile":"simba_warmbaritone",
                 "text_sha256":texts[1]["sha256"],
                 "file_id":VOICE,"folder_id":FOLDER,
+                "issue_number":55,
                 "sha256":bridge.digest(self.wav)
             },
             "music":{
@@ -134,6 +135,14 @@ class VoiceMusicWritebackTests(unittest.TestCase):
         self.drive.folder(bridge.rafael_archive.ARCHIVE_FOLDER)
         self.drive.add(VOICE,FOLDER,"audio/wav",self.wav,
                        properties={"simba_render_marker_id":"1AlreadyVerifiedTTSMarker123"})
+        self.drive.files_data[VOICE]["metadata"]["name"]="Simba_voice_issue_55.wav"
+        self.voice_issue={
+            "number":55,"user":{"login":"legur"},
+            "labels":[{"name":"simba-approved-voice"}],
+            "body":json.dumps({"kind":"simba_approved_voice",
+                               "text":"Sample narration 2",
+                               "destination_folder_id":FOLDER}),
+        }
         self.drive.add(MUSIC,FOLDER,"audio/wav",self.music)
         self.sync()
     def sync(self):
@@ -144,7 +153,8 @@ class VoiceMusicWritebackTests(unittest.TestCase):
     def candidate(self,**kwargs):
         return bridge.build_candidate(
             self.root,"example",MANIFEST,self.sha,
-            drive=self.drive,probe_music=lambda data,mime:12.0,**kwargs)
+            drive=self.drive,probe_music=lambda data,mime:12.0,
+            voice_issue_fetch=lambda number:self.voice_issue,**kwargs)
 
     def test_approved_selected_text_and_track_to_existing_montage(self):
         path,project,report=self.candidate()
@@ -207,6 +217,26 @@ class VoiceMusicWritebackTests(unittest.TestCase):
 
     def test_wav_sha_mismatch_blocks(self):
         self.drive.files_data[VOICE]["payload"]+=b"tampered"
+        with self.assertRaises(bridge.AudioHandoffError):
+            self.candidate()
+
+    def test_owner_issue_voice_text_provenance_required(self):
+        self.voice_issue["body"]=json.dumps({
+            "kind":"simba_approved_voice","text":"Different script",
+            "destination_folder_id":FOLDER,
+        })
+        with self.assertRaises(bridge.AudioHandoffError):
+            self.candidate()
+        self.voice_issue["body"]=json.dumps({
+            "kind":"simba_approved_voice","text":"Sample narration 2",
+            "destination_folder_id":FOLDER,
+        })
+        self.voice_issue["user"]["login"]="not-owner"
+        with self.assertRaises(bridge.AudioHandoffError):
+            self.candidate()
+
+    def test_original_tts_file_name_required(self):
+        self.drive.files_data[VOICE]["metadata"]["name"]="unrelated.wav"
         with self.assertRaises(bridge.AudioHandoffError):
             self.candidate()
 
