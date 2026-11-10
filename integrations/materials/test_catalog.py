@@ -203,5 +203,16 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual(rc, 2)
         self.assertEqual(json.loads(captured.getvalue())['state'], 'BLOCKED')
 
+
+    def test_list_returns_status_for_all_projects_without_writing(self):
+        before = self.manifest.read_bytes()
+        with redirect_stdout(StringIO()) as captured:
+            rc = catalog.main(['--root', str(self.root), '--json', 'list'])
+        self.assertEqual(rc, 0)
+        rows = json.loads(captured.getvalue())
+        self.assertEqual(rows[0]['progress']['state'], 'NEEDS_LEO')
+        self.assertEqual(before, self.manifest.read_bytes())
+
+
 if __name__ == '__main__':
     unittest.main()
