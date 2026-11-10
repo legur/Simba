@@ -25,7 +25,8 @@ import handoff
 
 REPOSITORY = "legur/Simba"
 PROJECT_ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
-SHA = re.compile(r"^[a-f0-9]{40}$")
+SHA = re.compile(r"^[a-f0-9]{40}$")  # Git commits (SHA-1)
+RECEIPT = re.compile(r"^[a-f0-9]{64}$")  # stage input/receipt (SHA-256)
 PROJECT_PATH = re.compile(r"^campaigns/([a-z0-9][a-z0-9-]{0,63})/project\.json$")
 ROLE_BY_STAGE = {stage: producer for stage, producer, _, _ in handoff.STAGES}
 ROLE_BY_STAGE["editorial_review"] = "LEO"
@@ -69,7 +70,7 @@ def action_for(project: dict, hand: dict) -> dict | None:
         # BLOCKED, APPROVED_UNPUBLISHED, PUBLICATION_REPORTED_COMPLETE,
         # and all unknown states must NEVER enqueue a task.
         return None
-    if stage not in ROLE_BY_STAGE or not isinstance(stamp, str) or not SHA.fullmatch(stamp):
+    if stage not in ROLE_BY_STAGE or not isinstance(stamp, str) or not RECEIPT.fullmatch(stamp):
         raise DispatchError("handoff has invalid stage or missing revision receipt")
     role = ROLE_BY_STAGE[stage]
     if hand.get("recipient") != role:
