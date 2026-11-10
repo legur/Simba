@@ -238,6 +238,7 @@ class BridgeTests(unittest.TestCase):
         output=self.private/"owner-issue.json"
         bridge.private_write(output,self.root,issue)
         self.assertEqual(json.loads(output.read_text()),issue)
+        self.assertEqual(bridge.digest(output.read_bytes()), bridge.digest(bridge.owner_issue_bytes(issue)))
         if os.name=="posix":
             self.assertEqual(output.stat().st_mode & 0o777,0o600)
         with self.assertRaises(bridge.BridgeError):
