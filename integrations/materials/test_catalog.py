@@ -148,5 +148,60 @@ class CatalogTests(unittest.TestCase):
         self.assertEqual([a['id'] for a in result['assets']], ['clip'])
 
 
+
+    def test_progress_waits_for_leo_on_selected_review(self):
+        p = catalog.project_progress(self.root, self.manifest, self.record)
+        self.assertEqual((p['state'], p['action_owner']), ('NEEDS_LEO', 'LEO'))
+        self.assertEqual(p['checks']['external_media_and_actual_publication'],
+                         'NOT_VERIFIED_BY_CATALOG')
+
+    def test_progress_blocks_stale_source(self):
+        self.put('source.md', '# Changed\n')
+        p = catalog.project_progress(self.root, self.manifest, self.record)
+        self.assertEqual(p['state'], 'BLOCKED')
+        self.assertIn('Сверить измененные источники', p['next_action'])
+
+    def test_progress_review_without_working_asset_needs_executor(self):
+        self.record['working_asset_id'] = None
+        p = catalog.project_progress(self.root, self.manifest, self.record)
+        self.assertEqual(p['state'], 'IN_PROGRESS')
+        self.assertIn('working_asset_id', p['next_action'])
+
+    def test_progress_approved_does_not_assume_publication(self):
+        self.record['approved_asset_id'] = 'clip'
+        self.record['approvals'].update(editorial='approved', editorial_evidence='Explicit Leo choice')
+        self.assertEqual(catalog.project_progress(self.root, self.manifest, self.record)['state'],
+                         'NEEDS_LEO')
+
+    def test_progress_complete_is_only_registry_level(self):
+        self.record['approved_asset_id'] = 'clip'
+        self.record['approvals'].update(editorial='approved', editorial_evidence='Leo',
+                                        publication='approved', publication_evidence='Remote post ID')
+        p = catalog.project_progress(self.root, self.manifest, self.record)
+        self.assertEqual(p['state'], 'REGISTERED_COMPLETE')
+        self.assertEqual(p['verification_scope'], 'LOCAL_REPOSITORY_ONLY')
+        self.assertEqual(p['checks']['external_media_and_actual_publication'],
+                         'NOT_VERIFIED_BY_CATALOG')
+
+    def test_publication_cannot_bypass_editorial_gate(self):
+        self.record['approvals'].update(publication='approved',
+                                        publication_evidence='Remote post ID')
+        self.assertIn('Publication requires editorial approval', self.check())
+
+    def test_status_cli_json_read_only(self):
+        before = self.manifest.read_bytes()
+        with redirect_stdout(StringIO()) as captured:
+            rc = catalog.main(['--root', str(self.root), '--json', 'status', 'Prague'])
+        self.assertEqual(rc, 0)
+        self.assertEqual(json.loads(captured.getvalue())['state'], 'NEEDS_LEO')
+        self.assertEqual(self.manifest.read_bytes(), before)
+
+    def test_status_cli_failure_on_stale_source(self):
+        self.put('source.md', '# Changed\n')
+        with redirect_stdout(StringIO()) as captured:
+            rc = catalog.main(['--root', str(self.root), '--json', 'status', 'Prague'])
+        self.assertEqual(rc, 2)
+        self.assertEqual(json.loads(captured.getvalue())['state'], 'BLOCKED')
+
 if __name__ == '__main__':
     unittest.main()
