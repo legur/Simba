@@ -156,6 +156,28 @@ def make_handoff(root: Path, path: Path, project: dict) -> dict:
         working_id = project.get("working_asset_id")
         assets = {a["id"]: a for a in project["assets"]}
         working = assets.get(working_id)
+        approved_id = project.get("approved_asset_id")
+        approved = assets.get(approved_id)
+        if (approved and approved.get("state") == "available"
+                and project.get("approvals", {}).get("editorial") == "approved"
+                and project.get("approvals", {}).get("publication") != "approved"):
+            return {
+                "schema_version": 1, "project_id": project["id"], "title": project["title"],
+                "state": "APPROVED_UNPUBLISHED", "recipient": "LEO",
+                "reason": "EDITORIAL_APPROVED_PUBLICATION_SEPARATE",
+                "missing": project.get("missing", []),
+                "packet": {
+                    "producer": "LEO", "next_stage": "publication_decision",
+                    "source_revision": source_fingerprint(project),
+                    "approved_asset_id": approved_id,
+                    "assets": [{"id": approved_id, "kind": approved.get("kind")}],
+                    "approval_evidence": project["approvals"].get("editorial_evidence"),
+                    "external_media": "NOT_VERIFIED_BY_CATALOG",
+                    "next_action": progress["next_action"],
+                },
+                "auto_dispatched": False, "external_media_verified": False,
+                "paid_execution_authorized_by_handoff": False,
+            }
         if progress["state"] == "NEEDS_LEO" and working and working.get("state") == "available":
             qa = [a for a in project["assets"] if a.get("kind") == "qa_report"
                   and a.get("state") == "available"]
