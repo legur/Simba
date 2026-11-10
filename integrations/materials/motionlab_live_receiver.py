@@ -69,10 +69,12 @@ def _safe_repository_content(root: Path, project: str) -> Path:
 class SessionStore:
     """Single-owner SQLite queue; never store raw credentials in the DB."""
     def __init__(self, filename: Path):
+        # Never follow a caller-supplied symlink into a shared directory.
+        filename=filename.expanduser()
+        if filename.is_symlink():
+            raise ReceiverError("SQLite path must not be a symlink")
         self.filename=filename.resolve()
         self.filename.parent.mkdir(parents=True,exist_ok=True)
-        if self.filename.exists() and self.filename.is_symlink():
-            raise ReceiverError("SQLite path must not be a symlink")
         self.filename.touch(mode=0o600,exist_ok=True)
         os.chmod(self.filename,0o600)
         with self.open() as db:
@@ -383,7 +385,14 @@ def main(argv=None):
     parser.add_argument("--port",type=int,default=8765)
     parser.add_argument("--drain-once",action="store_true")
     args=parser.parse_args(argv)
-    relay=Relay(args.repo_root,SessionStore(args.sqlite))
+    os.umask(0o077)
+    root=args.repo_root.resolve()
+    sqlite_path=args.sqlite.expanduser().resolve()
+    if sqlite_path.is_relative_to(root):
+        raise ReceiverError("Private SQLite state must be outside GitHub checkout")
+    if not 1<=args.port<=65535:
+        raise ReceiverError("Invalid listening port")
+    relay=Relay(root,SessionStore(args.sqlite))
     if args.drain_once:
         print(json.dumps({"processed":relay.process_once(),"paid_calls":0}))
         return 0
