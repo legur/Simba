@@ -63,6 +63,7 @@ jobs:
           for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js creative.js; do
             node --check "integrations/materials/motionlab/$file"
           done
+          node --test integrations/materials/motionlab/repo-tests/test_creative_catalog.mjs
       - name: Validation summary
         if: ${{ success() }}
         run: |
