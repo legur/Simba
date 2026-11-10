@@ -105,6 +105,7 @@ def run(event, out):
                 state['private_source_readback_verified'] = True
         issue, cap, bodies = validate(event)
         state['owner_issue_number'] = issue
+        state['requested_scene_count'] = len(bodies)
         approved_source = json.loads(event['issue']['body'])
         if 'project_id' in approved_source:
             state['lineage'] = {
