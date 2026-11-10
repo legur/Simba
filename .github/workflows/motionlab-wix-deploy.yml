@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       publish:
-        description: 'Publish to the existing production Wix site (unchecked means validation only)'
+        description: 'Attempt STAGING Wix CLI preview for permission diagnostics (never publish to production)'
         type: boolean
         required: true
         default: false
@@ -71,7 +71,9 @@ jobs:
   deploy:
     name: Wix CLI staging preview (production unchanged)
     needs: [validate]
-    if: ${{ github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.publish == true) }}
+    # Temporarily manual only: Wix Headless private app rejects the site-scoped key
+    # with VELO.APP_PROJECT_READ 403. Keep PR/push validation green until Wix fixes it.
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish == true }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
