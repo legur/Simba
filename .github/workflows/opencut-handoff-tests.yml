@@ -1,16 +1,22 @@
-name: OpenCut handoff tests
+name: Media tooling regression tests
 
 on:
   pull_request:
     paths:
       - integrations/video/opencut_handoff.py
       - integrations/video/tests/test_opencut_handoff.py
+      - integrations/materials/catalog.py
+      - integrations/materials/test_catalog.py
+      - integrations/materials/README.md
       - .github/workflows/opencut-handoff-tests.yml
   push:
     branches: [main]
     paths:
       - integrations/video/opencut_handoff.py
       - integrations/video/tests/test_opencut_handoff.py
+      - integrations/materials/catalog.py
+      - integrations/materials/test_catalog.py
+      - integrations/materials/README.md
       - .github/workflows/opencut-handoff-tests.yml
 
 permissions:
@@ -25,3 +31,5 @@ jobs:
           persist-credentials: false
       - name: Test package and path safety
         run: python3 -m unittest discover -s integrations/video/tests -p test_opencut_handoff.py -v
+      - name: Test materials project status and archive safety
+        run: python3 -m unittest discover -s integrations/materials -p test_catalog.py -v
