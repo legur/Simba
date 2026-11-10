@@ -74,9 +74,9 @@ jobs:
             | tee "$RUNNER_TEMP/simba-video-dispatch.json"
           {
             echo '### Simba video dispatcher (no provider execution)'
-            echo '\`\`\`json'
+            echo '```json'
             cat "$RUNNER_TEMP/simba-video-dispatch.json"
-            echo '\`\`\`'
+            echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
       - name: Preserve redacted dispatch receipt
         uses: actions/upload-artifact@v4
