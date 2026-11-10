@@ -266,8 +266,7 @@ def human(output: list | dict, command: str) -> str:
     lines = [output.get("title", output["id"]) + " [" + output["id"] + "]"]
     lines.extend("ВНИМАНИЕ: " + x for x in output.get("issues", []))
     if command == "status":
-        return "
-".join([
+        return "\n".join([
             f"Проект: {output['title']} [{output['id']}]",
             "Статус: " + output["status"],
             "Этап: " + output["stage"],
