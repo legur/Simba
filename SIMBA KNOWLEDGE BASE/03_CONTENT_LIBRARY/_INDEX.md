@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-11-10 | [Злата Прага: неделя в Европе](2026-11-10__SELLING__ZLATA-PRAGUE-LAST-MINUTE__APPROVED.md) | APPROVED; visual previews pending | sales / last minute | Prague, Dresden, Karlovy Vary / 15–21 Nov 2026 | неделя не за все деньги мира; 599 EUR/person sharing | «3 вариант» | high |
 | 2026-11-09 | [Бутылка вина за отзыв](2026-11-09__LEO__HOTEL-REVIEWS__APPROVED.md) | APPROVED | Leo / discussion | отзывы об отелях | подарок за отзыв и достоверность рейтинга | «Отлично» после внешнего review | high |
 | 2026-11-09 | [Налог на вылет из Израиля](2026-11-09__INFO__ISRAEL-DEPARTURE-TAX__APPROVED.md) | APPROVED; FINAL_VISUAL_READY (5) | Info / polemical discussion | proposed departure tax | семейная арифметика и справедливость налога | «Отлично» после внешнего review 8.1 | high |
 | 2026-11-08 | [Новый год в Баварии — источник рилса](2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md) | APPROVED source; video in progress | sales / reel | Bavaria / 28 Dec 2026–3 Jan 2027 | New Year in Regensburg; stock imagery | «Делай»; price and dates clarified | high |
