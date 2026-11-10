@@ -91,6 +91,12 @@ def run(event, out):
     def save():
         (out / 'status.json').write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding='utf-8')
     try:
+        # Private Drive reference issues are resolved entirely in-memory.
+        # The approved A2E universal runner below remains the only paid path.
+        from github_a2e_private import perhaps_resolve
+        event, private_source = perhaps_resolve(event)
+        if private_source:
+            state['private_source_readback_verified'] = True
         issue, cap, bodies = validate(event)
         approved_source = json.loads(event['issue']['body'])
         if 'project_id' in approved_source:
@@ -160,7 +166,7 @@ def run(event, out):
                 break
             time.sleep(13)
         state['status'] = 'COMPLETED' if all(x['status'] == 'completed' for x in state['scenes']) else 'PARTIAL_OR_PROCESSING'
-    except (ValueError, TypeError, KeyError, core.StopGeneration, OSError) as exc:
+    except (ValueError, TypeError, KeyError, core.StopGeneration, OSError, RuntimeError) as exc:
         state.update(status='STOPPED', note=str(exc))
     save()
     (out / 'report.md').write_text('### A2E universal\n\nStatus: ' + state['status'] + '\nTasks: ' + ', '.join(x['task_id'] for x in state['scenes']) + '\n' + state.get('note', '') + '\nDo not retry paid starts without reconciliation.\n', encoding='utf-8')
