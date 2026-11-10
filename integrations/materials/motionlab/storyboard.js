@@ -201,6 +201,21 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  $('resetDemo').addEventListener('click',()=>{if(state.bridge){say('Активное задание агента. Демо не заменяет его.');return;}prepareDemo();say('Открыт демонстрационный проект');});
  $('requestFile').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>300_000){say('Максимальный размер задания 300 КБ');return;}try{const source=JSON.parse(await file.text());if(state.bridge){say('Задание от агента активно. Импорт недоступен.');return;}loadLaunch(source,null);}catch(err){say('Ошибка JSON: '+err.message);}});
  $('downloadJson').addEventListener('click',jsonDownload);$('copyBrief').addEventListener('click',copyBrief);$('sendToAgent').addEventListener('click',sendSelection);
- window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>clearTimeout(pendingAckTimer));prepareDemo();announceReady();
+ window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>clearTimeout(pendingAckTimer));prepareDemo();
+ // Creative templates apply ONLY to the local demo. Agent launch with three options remains authoritative.
+ const creativeId=new URLSearchParams(location.search).get('creativePreset');
+ const creativeSuggestions={
+   'new-year':['Новогодний','cinematic-zoom','lightleak','light-sweep','capsule'],
+   'cruise':['Круиз','pan','crossfade','fade-rise','clean'],
+   'excursion':['Экскурсионный','reveal','match','word-cascade','soft-shadow'],
+   'flash-deal':['Горящее предложение','push-through','whip','punch-zoom','bar'],
+   'premium':['Премиальный','float','crossfade','soft-zoom','luxury']
+ };
+ if(creativeId && Object.prototype.hasOwnProperty.call(creativeSuggestions,creativeId)){
+   const [name,camera,transition,titleFx,subtitleStyle]=creativeSuggestions[creativeId];
+   state.concepts[0]={...state.concepts[0],name,tag:'ШАБЛОН',camera,transition,titleFx,subtitleStyle};
+   choicesFromPreset(1);say('Шаблон применен только к демонстрации. Для проекта нужен выбор трех предложений агента.');
+ }
+ announceReady();
 }
 wire();
