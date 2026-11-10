@@ -24,6 +24,8 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent
 SITE_ID = "795efbc2-50c4-435e-939e-537cb2df75c7"
+# Account that owns the Wix Headless site; an API key needs the account header.
+ACCOUNT_ID = "7fd7b840-06ec-4c55-bee4-b7f932f5f07b"
 SITE_URL = "https://headless-cvcdjldqjlx-leostraveltips-140e.wix-site-host.com"
 API_URL = (
     "https://www.wixapis.com/headless-business-setup/v1/"
@@ -118,19 +120,32 @@ def check_remote_files(data: dict) -> None:
 def make_auth_header(token: str) -> str:
     value = token.strip()
     if not value or "\n" in value or "\r" in value:
-        raise ValueError("Missing or malformed Wix CLI access token")
-    return value if value.lower().startswith("bearer ") else "Bearer " + value
+        raise ValueError("Missing or malformed Wix API key")
+    # Wix API keys go verbatim in Authorization; do not prefix them with Bearer.
+    return value
 
 
 def wix_files_snapshot(auth: str) -> dict:
     req = urllib.request.Request(
         API_URL + "/files",
-        headers={"Authorization": auth, "Accept": "application/json"},
+        headers={"Authorization": auth, "wix-account-id": ACCOUNT_ID, "Accept": "application/json"},
     )
-    with urllib.request.urlopen(req, timeout=35) as resp:
-        if resp.status != 200:
-            raise RuntimeError(f"Wix files returned HTTP {resp.status}")
-        return json.load(resp)
+    try:
+        with urllib.request.urlopen(req, timeout=35) as resp:
+            if resp.status != 200:
+                raise RuntimeError(f"Wix files returned HTTP {resp.status}")
+            return json.load(resp)
+    except urllib.error.HTTPError as error:
+        # Only a diagnostic code, never credentials or echoed request metadata.
+        code = "unknown"
+        try:
+            payload = json.loads(error.read(32768))
+            details = payload.get("details") or {}
+            app_error = details.get("applicationError") or {}
+            code = str(app_error.get("code") or payload.get("code") or "unknown")[:90]
+        except (ValueError, TypeError, AttributeError):
+            pass
+        raise RuntimeError(f"Wix files API HTTP {error.code}; error code: {code}") from None
 
 
 def publish(bundle: Path, auth: str) -> dict:
@@ -143,6 +158,7 @@ def publish(bundle: Path, auth: str) -> dict:
             "-X", "POST",
             API_URL + "/drop?campaign=github-actions&agent=simba",
             "-H", "Authorization: " + auth,
+            "-H", "wix-account-id: " + ACCOUNT_ID,
             "-F", f"files=@{bundle};filename=motion-lab.zip;type=application/zip",
             "-o", str(response_path),
             "-w", "%{http_code}",
@@ -174,7 +190,7 @@ def main() -> int:
         if args.action == "build":
             print("Build-only mode; Wix not contacted.")
             return 0
-        auth = make_auth_header(os.environ.get("WIX_ACCESS_TOKEN", ""))
+        auth = make_auth_header(os.environ.get("WIX_API_KEY", ""))
         before = wix_files_snapshot(auth)
         check_remote_files(before)
         print("Remote static site is the expected 16-file Motion Lab; publishing.", flush=True)
