@@ -110,11 +110,24 @@ def project_issues(root: Path, path: Path, data: dict) -> list[str]:
         if asset.get("state") not in ASSET_STATES:
             issues.append(f"Invalid asset state: {asset.get('id')}")
         url = asset.get("url", "")
-        parsed = urlsplit(url)
-        if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
-            issues.append(f"Invalid HTTPS URL: {asset.get('id')}")
-        if re.search(r"(?:[?&])(?:token|access_token|signature|x-amz-signature|x-goog-signature)=", url, re.I):
-            issues.append(f"Temporary/credential URL is not an archive link: {asset.get('id')}")
+        # Private ChatGPT Library files have persistent path/ID, not a direct HTTPS link.
+        # Never fabricate a URL and never treat this registry check as a byte read-back.
+        if asset.get("storage") == "chatgpt_library":
+            library_path = asset.get("library_path", "")
+            library_id = asset.get("library_file_id", "")
+            if (url or not isinstance(library_path, str)
+                or not library_path.startswith("/")
+                or ".." in library_path.split("/")
+                or "//" in library_path
+                or not isinstance(library_id, str)
+                or not re.fullmatch(r"libfile_[a-z0-9]{16,64}", library_id)):
+                issues.append(f"Invalid private Library reference: {asset.get('id')}")
+        else:
+            parsed = urlsplit(url)
+            if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
+                issues.append(f"Invalid HTTPS URL: {asset.get('id')}")
+            if re.search(r"(?:[?&])(?:token|access_token|signature|x-amz-signature|x-goog-signature)=", url, re.I):
+                issues.append(f"Temporary/credential URL is not an archive link: {asset.get('id')}")
         if not asset.get("evidence"):
             issues.append(f"Missing asset evidence: {asset.get('id')}")
     working = data.get("working_asset_id")
@@ -289,7 +302,8 @@ def human(output: list | dict, command: str) -> str:
         lines.append("Чего не хватает: " + "; ".join(output.get("missing", [])))
         lines.extend("Источник: " + x["path"] for x in output["sources"])
     for asset in output.get("assets", []):
-        lines.append(f"{asset['id']} [{asset['state']}]: {asset['title']}\n{asset['url']}")
+        location = asset.get("url") or asset.get("library_path") or "location not recorded"
+        lines.append(f"{asset['id']} [{asset['state']}]: {asset['title']}\n{location}")
     lines.extend("Повторное использование: " + x for x in output.get("reuse_notes", []))
     if output.get("note"):
         lines.append(output["note"])
