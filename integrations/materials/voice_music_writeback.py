@@ -221,8 +221,8 @@ def _fetch_existing_voice_issue(number: int) -> dict:
         with urlopen(req, timeout=20) as response:
             if response.status != 200:
                 raise AudioHandoffError("existing approved voice issue not readable")
-            raw = response.read(16_001)
-        if len(raw) > 16_000:
+            raw = response.read(262_145)
+        if len(raw) > 262_144:
             raise AudioHandoffError("voice issue response exceeded safe limit")
         return json.loads(raw)
     except AudioHandoffError:
