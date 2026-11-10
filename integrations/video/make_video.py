@@ -53,6 +53,17 @@ def node(script, *args):
 MOVES = {'push', 'pull', 'pan-left', 'pan-right', 'rise', 'hold', 'none'}
 MOTIONS = {'anime', 'classic'}
 RENDERERS = {'simba', 'hyperframes'}
+# The production style registry lives in template/subtitle_styles.js.
+SUBTITLE_STYLES = {
+    'clean', 'soft-shadow', 'capsule', 'bar', 'outline', 'two-line',
+    'cinema', 'letterbox', 'editorial', 'spotlight', 'glow',
+    'price-tag', 'offer-pill', 'gold-card', 'gradient-bar', 'countdown',
+    'word-focus', 'karaoke', 'pop', 'marker', 'luxury', 'glass',
+    'neon', 'travel-stamp',
+}
+SUBTITLE_MOTIONS = {'karaoke', 'active-pop', 'caption-swap', 'highlight-strip', 'word-reveal'}
+SUBTITLE_COLORS = {'lime', 'gold', 'sky', 'white'}
+SUBTITLE_POSITIONS = {'top', 'middle', 'bottom'}
 # Motion Lab transition ids are mirrored in template/transitions.js.
 TRANSITIONS = {'crossfade', 'push', 'zoom', 'whip', 'circle', 'diagonal', 'flash',
                'blur', 'flip', 'parallax', 'shutter', 'glitch', 'split', 'rotate',
@@ -78,6 +89,27 @@ def load_spec(job: Path):
     need(isinstance(s.get('motion', 'anime'), str) and s.get('motion', 'anime') in MOTIONS,
          f'motion must be one of {sorted(MOTIONS)}')
     s.setdefault('motion', 'anime')
+    substyle = s.get('subtitleStyle')
+    if substyle is not None:
+        need(isinstance(substyle, dict), 'subtitleStyle must be an object')
+        need(type(substyle.get('style')) is str and substyle['style'] in SUBTITLE_STYLES,
+             'subtitleStyle.style: unknown Motion Lab visual style')
+        need(type(substyle.get('motion')) is str and substyle['motion'] in SUBTITLE_MOTIONS,
+             'subtitleStyle.motion: unknown Motion Lab word animation')
+        need(type(substyle.get('color', 'lime')) is str and substyle.get('color', 'lime') in SUBTITLE_COLORS,
+             'subtitleStyle.color must be lime/gold/sky/white')
+        need(type(substyle.get('position', 'bottom')) is str and substyle.get('position', 'bottom') in SUBTITLE_POSITIONS,
+             'subtitleStyle.position must be top/middle/bottom')
+        size = substyle.get('scale_percent', 100)
+        need(type(size) is int and 80 <= size <= 135,
+             'subtitleStyle.scale_percent must be an integer between 80 and 135')
+        s['subtitleStyle'] = {
+            'style': substyle['style'],
+            'motion': substyle['motion'],
+            'color': substyle.get('color', 'lime'),
+            'position': substyle.get('position', 'bottom'),
+            'scale_percent': size,
+        }
     need(isinstance(s.get('scenes'), list) and 1 <= len(s['scenes']) <= 8, 'scenes: 1–8 scenes')
     for i, sc in enumerate(s['scenes']):
         transition = sc.get('transition')
@@ -459,7 +491,7 @@ def timeline(spec):
     for k, L in enumerate(lines):                        # hold each subtitle ≥ max(1.8 s, speech + 0.6 s), never into the next line
         nxt = lines[k + 1]['t0'] - .05 if k + 1 < len(lines) else dur - .3
         L['t1'] = round(min(max(L['t0'] + 1.8, L['t0'] + L['dur'] + .6), nxt), 3); L['end'] = round(L['t0'] + L['dur'], 3)
-    return {'size': [w, h], 'dur': dur, 'crossfade': CROSSFADE, 'motion': spec.get('motion', 'anime'), 'scenes': scenes, 'offer': offer, 'lines': lines,
+    return {'size': [w, h], 'dur': dur, 'crossfade': CROSSFADE, 'motion': spec.get('motion', 'anime'), 'subtitleStyle': spec.get('subtitleStyle'), 'scenes': scenes, 'offer': offer, 'lines': lines,
             'music': spec.get('music', {'style': 'calm'}), 'plucks': plucks, 'clipAudio': clip_audio,
             'end': {'poster': e.get('poster'), 'bg': still_of(e.get('bg')), 'table': e.get('table'), 'cta': e.get('cta'), 'contact': e.get('contact'), 'brand': e['brand'], 't0': round(t0, 3)}}
 
