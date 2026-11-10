@@ -295,26 +295,69 @@ def run(root: Path, report: dict, folder: str, *, infer=ollama_chat, drive_facto
     return output
 
 
+
+def smoke_run(folder: str, *, infer=ollama_chat, drive_factory=drive_client) -> dict:
+    """One synthetic safe integration test. Does not create or change a reel."""
+    source = (
+        'Технический тест будущего сценария: прогулка по историческому центру '
+        'старого города, посещение архитектурных памятников, '
+        'спокойная культурная атмосфера. '
+        'Это учебный пример, не реальный тур и не коммерческое предложение. '
+        'Даты, маршрут перелета, гостиницы и цена не определены. '
+        'Финал: предложить зрителю узнать подробности.'
+    )
+    revision = hashlib.sha256(b'SIMBA_LOCAL_ONLY_SMOKE_SCRIPT_V1').hexdigest()
+    name = private_name('smoke-local-scenarist', revision)
+    if not FOLDER_ID_RE.fullmatch(folder):
+        raise AgentError('smoke needs a private Drive destination')
+    drive = drive_factory()
+    if find_existing(drive, folder, name, revision):
+        return {'status': 'SMOKE_ALREADY_PRIVATE_ARCHIVED', 'charged_api_calls': 0}
+    drafts = []
+    for title, angle in ANGLES:
+        text = infer(prompt_for(source, title, angle))
+        draft_guard(source, text)
+        drafts.append(text)
+    content = render_markdown(
+        {'id': 'smoke-local-scenarist'},
+        hashlib.sha256(source.encode('utf-8')).hexdigest(), revision, drafts)
+    # Explicit label: this is a synthetic technical demonstration, not a tour.
+    content = ('**ТЕХНИЧЕСКИЙ ТЕСТ, НЕ ПУБЛИКОВАТЬ**\\n\\n' + content)
+    state = upload_private(drive, folder, name, content, revision)
+    return {'status': 'SMOKE_' + state, 'draft_options': 3,
+            'charged_api_calls': 0, 'published': False}
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument('--root', type=Path, default=Path(__file__).resolve().parents[2])
     ap.add_argument('--dispatch-report', type=Path, required=True)
     ap.add_argument('--private-folder', required=True)
     ap.add_argument('--execute', action='store_true')
+    ap.add_argument('--smoke', action='store_true', help='one synthetic local model + private Drive integration test')
     args = ap.parse_args(argv)
     try:
-        with args.dispatch_report.open(encoding='utf-8') as f:
-            report = json.load(f)
-        root = args.root.resolve()
-        tasks = read_created_script_tasks(root, report)
+        if args.smoke and not args.execute:
+            raise AgentError('smoke requires authenticated execute')
         if args.execute:
             if (os.getenv('GITHUB_REPOSITORY') != REPOSITORY or
                 os.getenv('GITHUB_EVENT_NAME') != 'push' or
-                os.getenv('GITHUB_REF') != 'refs/heads/main'):
-                raise AgentError('local AI execution restricted to trusted main push')
-            outcome = run(root, report, args.private_folder)
+                os.getenv('GITHUB_REF') != 'refs/heads/main' or
+                os.getenv('GITHUB_ACTOR') != 'legur'):
+                raise AgentError('local AI execution restricted to trusted owner main push')
+        if args.smoke:
+            if not os.getenv('SIMBA_LOCAL_SMOKE_APPROVED'):
+                raise AgentError('no explicit one-off synthetic integration test request')
+            outcome = [smoke_run(args.private_folder)]
         else:
-            outcome = [{'project_id': x['id'], 'status': 'LOCAL_AI_DRY_RUN_NO_MODEL'} for x, _ in tasks]
+            with args.dispatch_report.open(encoding='utf-8') as f:
+                report = json.load(f)
+            root = args.root.resolve()
+            tasks = read_created_script_tasks(root, report)
+            if args.execute:
+                outcome = run(root, report, args.private_folder)
+            else:
+                outcome = [{'project_id': x['id'], 'status': 'LOCAL_AI_DRY_RUN_NO_MODEL'} for x, _ in tasks]
         print(json.dumps({'results': outcome, 'mode': 'EXECUTED_PRIVATE' if args.execute else 'DRY_RUN',
                           'charged_api_calls': 0, 'published': False}, ensure_ascii=False))
         return 0
