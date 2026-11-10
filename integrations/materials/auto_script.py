@@ -152,9 +152,9 @@ def draft_guard(source: str, draft: str) -> None:
     """Mechanical transfer guard, not external commercial fact-checking."""
     if not 450 <= len(draft.strip()) <= 1200:
         raise AgentError('draft must be complete, 450–1200 characters')
-    if re.search(r'(?m)^\\s*(?:[-*•]|\\d+[.)])\\s', draft):
+    if re.search(r'(?m)^\s*(?:[-*•]|\d+[.)])\s', draft):
         raise AgentError('speech draft cannot be a list or numbered outline')
-    if re.search(r'(?i)(?:^|\\n)\\s*(?:вот (?:закадровая речь|сценарий)|текст для ролика|вариант \\d+|сценарий:)', draft):
+    if re.search(r'(?i)(?:^|\n)\s*(?:вот (?:закадровая речь|сценарий)|текст для ролика|вариант \d+|сценарий:)', draft):
         raise AgentError('speech draft contains AI-style meta introduction')
     sentences = [piece for piece in re.split(r'[.!?]+', draft) if piece.strip()]
     if not 6 <= len(sentences) <= 17:
