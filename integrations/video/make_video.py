@@ -84,7 +84,7 @@ def load_spec(job: Path):
         if transition is not None:
             need(i > 0, 'scene 1: transition is only valid on an incoming scene')
             need(isinstance(transition, dict), f'scene {i + 1}: transition must be an object')
-            need(transition.get('id') in TRANSITIONS,
+            need(isinstance(transition.get('id'), str) and transition['id'] in TRANSITIONS,
                  f'scene {i + 1}: transition.id must be one of {sorted(TRANSITIONS)}')
             ms = transition.get('duration_ms', 900)
             need(type(ms) is int and 400 <= ms <= 2400,
