@@ -173,6 +173,13 @@ def project_progress(root: Path, path: Path, data: dict) -> dict:
         else:
             action = "Исправить ошибки project.json и повторить catalog.py check."
     elif (approvals.get("editorial") == "approved" and approved
+          and approvals.get("publication") == "approved"
+          and (data.get("publication_record") or {}).get("status") == "reported_by_leo_not_verified"):
+        state, status, owner = ("PUBLICATION_REPORTED_UNVERIFIED",
+                                "СООБЩЕНО О ПУБЛИКАЦИИ", "PROCESS_OWNER")
+        action = (data.get("next_action") or
+                  "Получить ссылку или ID поста для независимой проверки; не публиковать повторно.")
+    elif (approvals.get("editorial") == "approved" and approved
           and approvals.get("publication") == "approved" and not missing):
         state, status, owner = "REGISTERED_COMPLETE", "ГОТОВО", "PROCESS_OWNER"
         action = "Подтверждено по реестру; проверить внешние файлы и публикацию отдельно."
@@ -205,6 +212,7 @@ def project_progress(root: Path, path: Path, data: dict) -> dict:
             "editorial": approvals.get("editorial", "unknown"),
             "publication": approvals.get("publication", "unknown"),
             "external_media_and_actual_publication": "NOT_VERIFIED_BY_CATALOG",
+            "publication_report": (data.get("publication_record") or {}).get("status", "NOT_RECORDED"),
         },
         "verification_scope": "LOCAL_REPOSITORY_ONLY",
         "note": ("Каталог проверяет только локальные сведения, не Google Drive, "
