@@ -91,22 +91,12 @@ jobs:
         uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
         with:
           python-version: '3.12'
-      - name: Node 24 (Wix CLI minimum)
-        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
-        with:
-          node-version: '24.22.1'
-      - name: Authenticate Wix, verify existing site, publish, verify inventory
+      - name: Authenticate Wix API key, verify site, publish, verify inventory
         shell: bash
         run: |
           set -euo pipefail
-          npm install --global --no-audit --no-fund @wix/cli@latest
-          wix login --api-key "$WIX_API_KEY" >/dev/null
-          ACCESS="$(wix token)"
-          if [[ -z "$ACCESS" ]]; then
-            echo "::error::Wix CLI failed to issue an account-scoped access token."
-            exit 1
-          fi
-          export WIX_ACCESS_TOKEN="$ACCESS"
+          # Headless static site API is account-scoped. The deployment script
+          # sends raw Wix API key plus Wix account ID; no CLI token exchange.
           python3 integrations/materials/motionlab/deploy_static.py deploy --bundle "$RUNNER_TEMP/motionlab-site.zip"
           {
             echo '### Motion Lab published to Wix'
