@@ -93,6 +93,17 @@ class TestMotionLabLiveReceiver(unittest.TestCase):
             "Origin":"https://owner.example"})
         self.assertEqual(new_status,201)
         self.assertEqual(new["launch"]["stage"],"edit_choice")
+        self.assertTrue(new["studio_url"].startswith("https://owner.example/studio#"))
+        self.assertIn(new["session_id"]+"."+new["capability"],new["studio_url"])
+        _,browser=api.get("/api/motionlab/session/"+new["session_id"],{
+            "Origin":"https://owner.example",
+            "X-Simba-Capability":new["capability"]})
+        self.assertEqual(browser["launch"],new["launch"])
+        self.assertNotIn("capability",browser)
+        with self.assertRaises(live.ReceiverError):
+            api.get("/api/motionlab/session/"+new["session_id"],{
+                "Origin":"https://owner.example",
+                "X-Simba-Capability":"invalid"})
         # Browser cannot access owner token to create future sessions.
         self.assertNotIn("owner-secret",json.dumps(new))
         with self.assertRaises(live.ReceiverError):
