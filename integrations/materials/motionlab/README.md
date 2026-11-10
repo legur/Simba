@@ -47,3 +47,21 @@ iframe.contentWindow.postMessage({
 ## Связь с Simba
 
 `integrations/materials/handoff.py`: `stage_handoffs.edit_choice` требует ровно 3 предъявленных варианта, выбранный №1–3, корректный входной fingerprint, непустой `approval_evidence`, реальный ID готового edit_plan asset. UI результат **не** заменяет эти проверки, и самостоятельный выбор на сайте не записывает `project.json`. Агент должен независимо проверить и сохранить результат и evidence в закрытом контуре; только после этого существующий handoff/dispatcher пропускает следующую стадию.
+
+## Готовый браузерный адаптер вызывающей среды
+
+Файл `motionlab_host_adapter.js` предоставляет `storyboardUrl()` и
+`connectStoryboard({targetWindow, launch, acceptSelection, onStatus})`.
+Вызывающая среда показывает iframe либо открывает popup с `storyboardUrl()`,
+а `targetWindow` указывает на `iframe.contentWindow` или popup.
+После получения `SIMBA_MOTIONLAB_READY` адаптер передает `launch`.
+Callback `acceptSelection` обязан независимо валидировать результат
+через `motionlab_selection.validate(launch, choice)`, сохранить решение в
+разрешенном приватном хранилище и вернуть `{receipt_id: "..."}`.
+**Только тогда** адаптер посылает положительный ACK. Если сохранение не
+состоялось, UI не показывает ложную доставку.
+
+Важное ограничение: веб-адаптер сам по себе **не** подключает ChatGPT
+агентов и не создает запись `stage_handoffs.edit_choice`.
+Эту операцию должен выполнить доверенный исполнитель автоматической
+Киностудии после корректного выбора и фактического write-back.
