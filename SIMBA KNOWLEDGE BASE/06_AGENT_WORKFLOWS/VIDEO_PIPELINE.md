@@ -318,6 +318,66 @@ dispatcher открывает следующую задачу `VOICE_AND_MUSIC`.
 реальное обновление `main` и переход к voice/music пока не делались.**
 Не объявлять их выполненными до live read-back.
 
+## Шаг 5F — существующие WarmBaritone и Music Editor → MONTAGE (PR №105, 10.11.2026)
+
+Следующая роль после подтвержденных A2E MP4 и записи
+`stage_handoffs.a2e_clips=completed` — **VOICE_AND_MUSIC**.
+В Simba **уже существуют** `simba_voice_issue.py`,
+`.github/workflows/simba-approved-voice-issue.yml`,
+постоянный одобренный голос `WarmBaritone`,
+Музыкальный редактор и `music_input.py` для фактического
+MP3/WAV импортa. Новый синтезатор/музыкальная библиотека не создаются.
+
+**Новый адаптер готовых результатов:**
+`integrations/materials/voice_music_writeback.py` и
+owner-only `.github/workflows/simba-voice-music-writeback.yml`.
+На входе **уже выбранные Лео** варианты текста 1–3 и музыки
+1–3, записанные в приватный Drive JSON, закрепленный
+SHA-256 и receipt актуального `a2e_clips`. Код требует
+три действительно разные текстовые версии и три разных
+трековых источника, решения Leo и отдельную
+лицензионную проверку Music Editor для нужных каналов
+и рекламы. Он **не** назначает вариант и **не**
+подтверждает юридические права автоматически.
+
+Только read-only операции:
+- Проверить actual private Drive WAV/MP3/WAV bytes, MD5/SHA-256,
+  parent folder и owner-only permissions;
+- проверить `ffprobe` выбранного трека;
+- при выбранном `simba_warmbaritone` — найти
+  уже существующую owner-labeled `simba-approved-voice` Issue,
+  сверить SHA точного текста и ее folder ID, WAV имя
+  `Simba_voice_issue_<issue>.wav`, приватный маркер
+  существующего TTS-runner и настоящие PCM WAV-байты
+  через `simba_voice._validated_wav`;
+- `voice_profile=none` разрешать **только** после
+  отдельного выбора режима без диктора, без скрытого TTS.
+
+После успешной проверки модуль добавляет
+`kind=music` и при необходимости `kind=narration` в
+существующий `assets[]`, записывает
+`stage_handoffs.voice_music={state:completed, input_fingerprint,
+texts_presented:3, music_presented:3, text_option, music_option,
+voice_profile, music_license_evidence, assets}`.
+Следующая проверка `handoff.make_handoff` обязана вернуть
+`READY_FOR_HANDOFF → MONTAGE/edit_choice`; при
+`push main` задачу создаст прежний диспетчер.
+Ни утверждение готового MP4, ни публикация не меняются.
+
+**Подробный контракт и приватный JSON:**
+`integrations/materials/VOICE_MUSIC.md`.
+GitHub Actions этого этапа **не получает** `GEMINI_API_KEY`
+или `A2E_API_KEY`, не скачивает музыку из интернета,
+не вызывает синтез/рендер. Реальные подтверждения
+лицензии и выбор Leo — обязательная внешняя предпосылка.
+
+**Статус:** offline CI tests используют реальные
+синтетические WAV-байты, а Drive, GitHub Issue GET
+и music `ffprobe` замоканы. На новом реально выбранном
+проекте **не было** ни paid TTS, ни подтвержденного
+музыкального handoff, ни изменения `main`. Не
+объявлять `VOICE_AND_MUSIC=completed` без live readback.
+
 ## 2. Состояния
 
 ```text
