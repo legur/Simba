@@ -31,6 +31,7 @@ on:
       - 'integrations/materials/motionlab_live_receiver.py'
       - 'integrations/materials/test_motionlab_live_receiver.py'
       - 'integrations/materials/motionlab/motionlab_live_host.js'
+      - 'integrations/materials/motionlab/repo-tests/test_motionlab_live_host.mjs'
       - 'integrations/materials/motionlab/motionlab_selection.py'
       - 'integrations/materials/handoff.py'
 
@@ -58,6 +59,7 @@ jobs:
           python -m unittest discover -s integrations/materials/motionlab/repo-tests -p test_motionlab_selection.py -v
           python -m unittest discover -s integrations/materials -p test_motionlab_stage_writeback.py -v
           python -m unittest discover -s integrations/materials -p test_motionlab_live_receiver.py -v
+          node --experimental-default-type=module --test integrations/materials/motionlab/repo-tests/test_motionlab_live_host.mjs
 
   owner_writeback:
     # This cannot fake the browser ACK: only actual persisted accepted source
