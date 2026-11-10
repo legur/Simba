@@ -158,6 +158,26 @@ def make_handoff(root: Path, path: Path, project: dict) -> dict:
         working = assets.get(working_id)
         approved_id = project.get("approved_asset_id")
         approved = assets.get(approved_id)
+        publication = project.get("publication_record") or {}
+        if (approved and approved.get("state") == "available"
+                and project.get("approvals", {}).get("editorial") == "approved"
+                and project.get("approvals", {}).get("publication") == "approved"
+                and publication.get("status") == "reported_by_leo_not_verified"):
+            return {
+                "schema_version": 1, "project_id": project["id"], "title": project["title"],
+                "state": "PUBLICATION_REPORTED_COMPLETE", "recipient": "PROCESS_OWNER",
+                "reason": "PUBLICATION_REPORTED_BY_LEO",
+                "missing": project.get("missing", []),
+                "packet": {
+                    "producer": "LEO", "next_stage": "closed",
+                    "approved_asset_id": approved_id,
+                    "publication_evidence": project["approvals"].get("publication_evidence"),
+                    "external_post_verified": False,
+                    "next_action": "Видеопроект завершен по сообщению Лео; повторно не публиковать.",
+                },
+                "auto_dispatched": False, "external_media_verified": False,
+                "paid_execution_authorized_by_handoff": False,
+            }
         if (approved and approved.get("state") == "available"
                 and project.get("approvals", {}).get("editorial") == "approved"
                 and project.get("approvals", {}).get("publication") != "approved"):
