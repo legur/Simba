@@ -215,6 +215,19 @@ class CatalogTests(unittest.TestCase):
 
 
 
+    def test_new_staged_reel_allows_no_assets_before_first_script(self):
+        self.record['assets'] = []
+        self.record['stage_handoffs'] = {}
+        self.record['approved_asset_id'] = None
+        self.record['working_asset_id'] = None
+        self.assertEqual(self.check(), [])
+        # The exception is not available for unstaged legacy projects.
+        del self.record['stage_handoffs']
+        self.assertIn("Missing assets", self.check())
+        self.record['stage_handoffs'] = {}
+        self.record['approvals']['editorial'] = 'approved'
+        self.assertIn("Missing assets", self.check())
+
     def test_private_library_asset_is_valid_without_public_url(self):
         self.record['assets'][0] = dict(
             id='clip', kind='review_video', title='Approved review',
