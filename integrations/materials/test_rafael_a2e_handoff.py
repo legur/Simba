@@ -147,6 +147,10 @@ class BridgeTests(unittest.TestCase):
     def test_selected_real_frames_and_prompts_go_to_existing_universal(self):
         issue,receipt=self.invoke()
         self.assertEqual(issue["kind"],"simba_a2e_generate")
+        self.assertEqual(issue["project_id"],self.pid)
+        self.assertEqual(issue["handoff_sha256"],receipt["handoff_receipt"])
+        self.assertEqual(issue["selected_storyboard"],2)
+        self.assertEqual(issue["selected_prompts"],1)
         self.assertEqual(issue["max_credits"],100)
         self.assertEqual(len(issue["scenes"]),3)
         self.assertEqual(issue["scenes"][0]["prompt"],self.plan["scenes"][0]["prompt_en"])
