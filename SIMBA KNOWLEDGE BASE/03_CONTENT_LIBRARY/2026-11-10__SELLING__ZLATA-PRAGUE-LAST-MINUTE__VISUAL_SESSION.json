@@ -4,7 +4,7 @@
   "text_executor": "Simba",
   "visual_executor": "Rafael/RAFAEL_System_v6.2.md",
   "renderer": "image_gen",
-  "status": "FIVE_VISUALS_READY; AWAITING_LEO_SELECTION",
+  "status": "FINAL_VISUAL_READY",
   "mode_selection": "UNAVAILABLE: image tool exposes no fast/thinking mode",
   "references": {
     "Archivarius": "4 active trusted cards read",
@@ -115,5 +115,27 @@
       }
     }
   ],
-  "kb_lint": "PASS: source explicit; dynamic facts dated; correct content layer; distinct material; prompts preserved; no publication claim"
+  "kb_lint": "PASS: source explicit; dynamic facts dated; correct content layer; distinct material; prompts preserved; no publication claim",
+  "selected_variant_id": 3,
+  "selection_source": "Leo: 3",
+  "final": {
+    "prompt": "Use case: ads-marketing. Generate ONE standalone SQUARE 1:1 preview poster for Russian-speaking adults. Not a contact sheet. Text must be large, mobile-readable and exact. Header at top: \"ПРАГА\" once. Lower-left compact information: \"15-21.11.2026\" once, \"599 € / чел.\" once and \"при двухместном размещении\" once; make the condition easily readable, not fine print. Small tasteful brand at bottom: \"Simba by Bon Tours\" once. Small clear numbered preview label at top right: \"ВАРИАНТ 3\" once. Only replace NUMBER with this variant number. No extra text, no phone, no QR, no slogan, no all-city list, no watermark, no made-up claims. Keep 6% safe margins, headline top, strong main image middle, conditions lower left. Avoid snowfall and Christmas decor. No input images or identity reference supplied; create an original adult realistic lion mascot, not a child's cartoon, not a costume.\nScene and art direction: Mid-century travel poster, simplified flat illustration of Prague skyline viewed over the Vltava with Charles Bridge and orange rooflines. Muted petrol blue, terracotta, butter cream, balanced spacious foreground/city/background. A PHOTOREAL adult anthropomorphic male lion with tawny fur and full dark-gold mane in a brown wool blazer and ochre scarf at lower right looking toward the panorama, real fur and fabric against deliberately illustrative background. Warm approachable editorial travel art.\nFINAL PRODUCTION RENDER OF SELECTED VARIANT 3. Image 1 is the selected preview and is the authoritative composition, style, lion identity, clothing, palette and typography reference. Preserve exactly the vintage city illustration, bridge panorama, photoreal adult lion in brown wool blazer and ochre scarf leaning on the stone parapet at lower right, cream title, cream date panel, terracotta price panel, cream occupancy panel and bottom brand. Render a fresh crisp high-resolution square final, target 2048x2048 if supported. CHANGE ONLY production finishing: remove the small preview-only \"ВАРИАНТ 3\" badge, filling its area with the same sky; ensure all remaining text and brand are inside 6% edge margins. No new elements. The final exact text is ONLY \"ПРАГА\", \"15-21.11.2026\", \"599 € / чел.\", \"при двухместном размещении\", \"Simba by Bon Tours\", each once. Do not change date or price. No phone, slogan, QR, new symbols or extra words.",
+    "result_hint": "Generated images are saved to /workspace/scratch/1926c64694a7/generated_images as /workspace/scratch/1926c64694a7/generated_images/exec-71c84140-0d09-49a4-ad59-6fa1d9eaf81e.png by default.\nIf you need to use a generated image at another path, copy it and leave the original in place unless the user explicitly asks you to delete it.\nThe generated image is already displayed to the user. There is no need to render it in the final response as a Markdown image or file link.",
+    "renderer": "image_gen",
+    "reference_role": "selected preview = composition/style/character reference",
+    "mode": "Tool does not expose thinking/fast selection; no claim of applied thinking mode",
+    "qa": {
+      "square": true,
+      "title": "ПРАГА",
+      "dates": "15-21.11.2026",
+      "price": "599 € / чел.",
+      "occupancy": "при двухместном размещении",
+      "brand": "Simba by Bon Tours",
+      "extra_text": false,
+      "preview_badge_removed": true,
+      "identity_and_composition": "preserved",
+      "status": "PASS"
+    },
+    "publication": "NOT_PUBLISHED"
+  }
 }
