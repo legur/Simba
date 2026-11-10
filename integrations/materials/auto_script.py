@@ -23,7 +23,7 @@ import handoff
 REPOSITORY = 'legur/Simba'
 FOLDER_ID_RE = re.compile(r'^[A-Za-z0-9_-]{10,120}$')
 ID_RE = re.compile(r'^[a-z0-9][a-z0-9-]{0,63}$')
-MODEL = 'qwen3:4b'
+MODEL = 'qwen3:4b-instruct'
 OLLAMA_URL = 'http://127.0.0.1:11434/api/chat'
 MAX_SOURCE_BYTES = 12000
 MAX_DRAFT_CHARS = 1800
@@ -339,7 +339,7 @@ def smoke_run(folder: str, *, infer=ollama_chat, drive_factory=drive_client) -> 
         'Даты, маршрут перелета, гостиницы и цена не определены. '
         'Финал: предложить зрителю узнать подробности.'
     )
-    revision = hashlib.sha256(b'SIMBA_LOCAL_ONLY_SMOKE_SCRIPT_V3').hexdigest()
+    revision = hashlib.sha256(b'SIMBA_LOCAL_ONLY_SMOKE_SCRIPT_V4').hexdigest()
     name = private_name('smoke-local-scenarist', revision)
     if not FOLDER_ID_RE.fullmatch(folder):
         raise AgentError('smoke needs a private Drive destination')
