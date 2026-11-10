@@ -190,6 +190,10 @@ def make_handoff(root: Path, path: Path, project: dict) -> dict:
     for name, producer, recipient, _ in STAGES:
         record = stages.get(name)
         if record is None:
+            if any(later in stages for later in STAGE_NAMES[STAGE_NAMES.index(name) + 1:]):
+                return _blocked(project, "STAGE_ORDER_GAP",
+                                ["missing earlier stage: " + name],
+                                next_owner="PROCESS_OWNER")
             if prior is None:
                 return {
                     "schema_version": 1, "project_id": project["id"], "title": project["title"],
