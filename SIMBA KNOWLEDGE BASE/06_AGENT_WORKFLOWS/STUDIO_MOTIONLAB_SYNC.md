@@ -166,3 +166,26 @@ owner-authenticated write-back и маршрут к Монтажеру Клод�
 названием версии, затем каждый модуль адаптируется и проходит
 совместимые тесты. Не редактировать один и тот же JS/Python из
 двух независимых веток без синхронизации Git.
+
+## 7. Продвижение live-приемника в PR №105 (10.11.2026)
+
+В PR №105 уже разработан **неразвернутый** серверный приемник
+`integrations/materials/motionlab_live_receiver.py`, а также
+`motionlab/motionlab_host.html` и
+`motionlab/motionlab_live_host.js`. Owner-authenticated backend
+создает короткую сессию для утвержденных клипов Ф2У, на своем
+защищенном origin открывает существующий Wix Motion Lab, принимает
+`SELECTION` и возвращает `ACK` **только после SQLite COMMIT**.
+Отдельный worker сверяет выбор, сохраняет два JSON в приватном
+Google Drive, затем CAS-обновляет `stage_handoffs.edit_choice` в
+GitHub. Только статус `APPLIED` означает передачу существующему
+диспетчеру `MONTAGE_RENDERER`. Все платные операции и публикация
+остаются запрещенными на этом этапе.
+
+**Код прошел офлайн-тесты, но доступного production HTTPS host
+еще нет.** Для запуска нужен постоянно работающий сервер,
+приватный SQLite-диск и отдельно настроенные owner/GitHub/Drive
+секреты. Static Wix Headless сам не выполняет Python API.
+Не считать реализованные endpoints доказательством живого
+соединения с браузером. Полный документ в PR №105:
+`integrations/materials/MOTIONLAB_LIVE_RECEIVER.md`.
