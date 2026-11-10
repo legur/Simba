@@ -175,10 +175,10 @@ def project_progress(root: Path, path: Path, data: dict) -> dict:
     elif (approvals.get("editorial") == "approved" and approved
           and approvals.get("publication") == "approved"
           and (data.get("publication_record") or {}).get("status") == "reported_by_leo_not_verified"):
-        state, status, owner = ("PUBLICATION_REPORTED_UNVERIFIED",
-                                "СООБЩЕНО О ПУБЛИКАЦИИ", "PROCESS_OWNER")
+        state, status, owner = ("PUBLICATION_REPORTED_COMPLETE",
+                                "ОПУБЛИКОВАНО СО СЛОВ ЛЕО", "PROCESS_OWNER")
         action = (data.get("next_action") or
-                  "Получить ссылку или ID поста для независимой проверки; не публиковать повторно.")
+                  "Видеопроект закрыт по сообщению Лео; не публиковать повторно.")
     elif (approvals.get("editorial") == "approved" and approved
           and approvals.get("publication") == "approved" and not missing):
         state, status, owner = "REGISTERED_COMPLETE", "ГОТОВО", "PROCESS_OWNER"
