@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1018">
+  <meta name="description" content="Motion Lab Type Studio: интерактивная библиотека 15 анимаций титров, заголовков и офферов для рилсов Bon Tours.">
+  <title>Motion Lab — титры и текст</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="text.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/animejs@4/dist/bundles/anime.umd.min.js"></script>
+  <script defer src="text.js"></script>
+</head>
+<body>
+  <div class="glow glow-one" aria-hidden="true"></div><div class="glow glow-two" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="Motion Lab — главная"><span class="brand-icon" aria-hidden="true"><i></i><i></i><i></i></span><span><strong>MOTION LAB</strong><small>BON TOURS · КИНОСТУДИЯ</small></span></a>
+    <nav class="module-nav" aria-label="Разделы Motion Lab"><a href="index.html">↗ Переходы <b>30</b></a><a href="text.html" class="active" aria-current="page">Титры и текст <b>15</b></a><a href="subtitles.html">Субтитры <b>5 + 24</b></a><a href="camera.html">Камера <b>12</b></a><a href="storyboard.html">Раскадровка</a><a href="creative.html">Графика и ритм</a></nav>
+    <span class="build-chip"><span class="live"></span> ANIME.JS <span class="chip-divider">/</span> TYPE STUDIO</span>
+  </header>
+  <main>
+    <section class="hero">
+      <div class="eyebrow"><span class="accent-line"></span> МОДУЛЬ 02 / КИНОСТУДИЯ <span class="hero-chip">НОВЫЙ РАЗДЕЛ</span></div>
+      <h1>Слова тоже<br><em>умеют двигаться.</em></h1>
+      <p>15 анимаций для заголовков, названий городов, цен и дат. Выберите анимацию, введите собственный текст и посмотрите, как она выглядит на вертикальном видео.</p>
+      <div class="hero-stats"><span><strong>15</strong> анимаций</span><span class="stat-sep"></span><span><strong>3</strong> группы</span><span class="stat-sep"></span><span><strong>9:16</strong> предпросмотр</span></div>
+    </section>
+    <div class="workspace" id="library">
+      <section class="library-panel" aria-label="Каталог текстовых эффектов">
+        <div class="section-top"><div><span class="overline">01 / БИБЛИОТЕКА</span><h2>Титры и текст <span id="visibleCount">15</span></h2></div><span class="section-hint">НАЖМИТЕ НА ЭФФЕКТ ↗</span></div>
+        <div class="filter-row" role="group" aria-label="Категории анимаций">
+          <button class="filter selected" type="button" data-filter="all">Все <b>15</b></button>
+          <button class="filter" type="button" data-filter="cinematic">Титры <b>5</b></button>
+          <button class="filter" type="button" data-filter="dynamic">Динамичные <b>5</b></button>
+          <button class="filter" type="button" data-filter="offers">Цены и даты <b>5</b></button>
+        </div>
+        <div class="effect-grid" id="effectGrid" aria-live="polite"></div>
+        <div class="library-foot">15 эффектов заголовков и офферов. Пять анимаций произносимых слов перенесены в единый редактор субтитров.</div>
+      </section>
+      <aside class="studio-panel" id="studio">
+        <div class="section-top studio-heading"><div><span class="overline">02 / ЖИВОЙ ПРЕДПРОСМОТР</span><h2 id="activeName">Fade Rise</h2></div><span class="position-chip" id="effectIndex">01 / 15</span></div>
+        <p id="activeDescription" class="active-description">Заголовок мягко появляется снизу.</p>
+        <div class="backdrop-row"><span class="overline">ФОН</span><div class="pill-group" role="group" aria-label="Выбор фона"><button class="background-choice selected" data-bg="city" type="button">Город</button><button class="background-choice" data-bg="sea" type="button">Море</button><button class="background-choice" data-bg="mountains" type="button">Горы</button></div></div>
+        <div class="stage-frame">
+          <div id="textStage" class="text-stage" role="img" aria-label="Анимированный титр на фотографии города">
+            <div class="backdrop" id="stageBackdrop"></div>
+            <div class="shade"></div>
+            <div class="stage-top"><span>BON TOURS</span><span>REEL / 01</span></div>
+            <div id="safeGuides" class="safe-guides" hidden><span>БЕЗОПАСНАЯ ЗОНА</span></div>
+            <div class="type-layer" id="typeLayer"></div>
+            <div class="stage-bottom"><span><span class="live-dot"></span> LIVE PREVIEW</span><span id="stageTime">0.00 с</span></div>
+          </div>
+          <div class="stage-note">Вертикальный предпросмотр 9:16 · 30–60 FPS в зависимости от устройства</div>
+        </div>
+        <div class="stage-actions"><button class="main-button" id="playButton" type="button">▶ &nbsp; Воспроизвести</button><button class="icon-button" id="favButton" type="button" aria-label="Добавить эффект в подборку" title="В подборку">☆</button><button class="icon-button" id="resetButton" type="button" aria-label="Вернуть демонстрационный текст" title="Вернуть пример">↺</button></div>
+        <div class="track" aria-hidden="true"><span id="progressBar"></span></div>
+        <div class="editor">
+          <div class="editor-head"><span class="overline">РЕДАКТОР ТЕКСТА</span><span class="editor-tip">ИЗМЕНЕНИЯ ВИДНЫ СРАЗУ</span></div>
+          <label for="mainText">Основной текст</label><textarea id="mainText" rows="2" maxlength="120" spellcheck="true">Новый год в Баварии</textarea>
+          <label for="secondText">Вторая строка / подпись</label><input id="secondText" maxlength="110" value="Шесть ночей, экскурсии и атмосфера праздника" type="text">
+          <div class="settings-pair"><div><label for="durationRange">Длительность <output id="durationLabel">1.8 с</output></label><input id="durationRange" type="range" min="700" max="4000" step="100" value="1800"></div><div><label for="scaleRange">Размер <output id="scaleLabel">100%</output></label><input id="scaleRange" type="range" min="75" max="130" step="5" value="100"></div></div>
+          <div class="settings-pair selector-line"><div><span class="field-label">РАСПОЛОЖЕНИЕ</span><div class="pill-group" role="group" aria-label="Положение текста"><button class="position-choice" data-position="top" type="button">Сверху</button><button class="position-choice selected" data-position="middle" type="button">Центр</button><button class="position-choice" data-position="bottom" type="button">Снизу</button></div></div><div><span class="field-label">АКЦЕНТ</span><div class="color-palette" role="group" aria-label="Цвет акцента"><button class="swatch selected" data-color="lime" aria-label="Лаймовый" aria-pressed="true" type="button"></button><button class="swatch" data-color="gold" aria-label="Золотой" aria-pressed="false" type="button"></button><button class="swatch" data-color="white" aria-label="Белый" aria-pressed="false" type="button"></button></div></div></div>
+          <label class="checkbox-row"><input type="checkbox" id="safeZone"> Показать безопасные зоны</label>
+          <label class="checkbox-row"><input type="checkbox" id="loopPreview"> Повторять анимацию</label>
+        </div>
+        <div class="studio-meta"><div><span>ТИП</span><strong id="typeLabel">Титры</strong></div><div><span>ПРИМЕНЕНИЕ</span><strong id="usageLabel">Первый кадр</strong></div></div>
+      </aside>
+    </div>
+    <section class="favorites-panel" id="favorites">
+      <div class="favorites-header"><div><span class="overline">03 / ПОДБОРКА ДЛЯ МОНТАЖЕРА</span><h2>Выбранные эффекты <span id="favoritesCount">0</span></h2><p>Отмечайте звездочкой варианты, которые хотите использовать в рилсах. Выбор сохраняется в этом браузере.</p></div><div class="export-buttons"><button id="copyBrief" type="button" class="outline-button">Скопировать ТЗ ↗</button><button id="exportJson" type="button" class="main-button">Экспорт JSON ↓</button></div></div>
+      <div id="favoriteList" class="favorite-list" aria-live="polite"><p class="empty">Подборка пока пуста.</p></div>
+      <div class="disclaimer"><span id="exportStatus" role="status">Экспорт создает монтажное задание. Применение к MP4 через Simba/HyperFrames пока не подключено.</span><button type="button" id="clearFavorites">Очистить подборку</button></div>
+    </section>
+    <section class="next-module"><div><span class="overline">В БИБЛИОТЕКЕ УЖЕ ЕСТЬ</span><h3>Отдельно: субтитры и переходы</h3><p>Для субтитров действует один редактор: анимация слов и визуальный стиль выбираются вместе.</p></div><div><a href="subtitles.html" class="outline-button">Субтитры ↗</a> <a href="index.html" class="outline-button">Переходы ↗</a></div></section>
+    <footer><span>MOTION LAB <b>×</b> BON TOURS</span><small>15 анимаций титров · демонстрационный редактор</small><a href="https://animejs.com/documentation/" target="_blank" rel="noopener noreferrer">Anime.js documentation ↗</a></footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

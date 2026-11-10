@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b1118">
+<title>Motion Lab — Графика, маршруты, ритм и шаблоны</title>
+<meta name="description" content="Подготовка туристических рилсов к монтажу: 15 анимаций объектов, 10 маршрутов, 8 ритмических схем и 5 режиссерских шаблонов.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="creative.css"><script defer src="creative.js"></script>
+</head>
+<body>
+<header class="site-header">
+<a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">◩</span><span><strong>MOTION LAB</strong><small>BON TOURS / КИНОСТУДИЯ</small></span></a>
+<nav class="nav" aria-label="Модули">
+<a href="index.html">Переходы</a><a href="text.html">Титры</a><a href="subtitles.html">Субтитры</a><a href="camera.html">Камера</a><a href="storyboard.html">Раскадровка</a><a class="current" href="creative.html">Графика и ритм</a>
+</nav><span class="badge">ТОЛЬКО ПОДГОТОВКА</span>
+</header>
+<main>
+<section class="hero">
+<div class="overline">МОДУЛИ 06–09 / ПОДГОТОВКА К МОНТАЖУ</div>
+<h1>Графика. Маршруты.<br><em>Ритм и режиссура.</em></h1>
+<p>Выбирайте приемы, смотрите настоящую анимацию и сохраняйте настройки для Киностудии. Генерация видео, покупка услуг и публикация здесь не выполняются.</p>
+<div class="hero-stats"><span><b>15</b> анимаций объектов</span><span><b>10</b> приемов для маршрута</span><span><b>8</b> ритмических схем</span><span><b>5</b> шаблонов</span></div>
+</section>
+<div class="tabbar" role="tablist" aria-label="Направления подготовки">
+<button type="button" class="tab active" role="tab" aria-selected="true" data-tab="objects">06. Объекты <b>15</b></button>
+<button type="button" class="tab" role="tab" aria-selected="false" data-tab="routes">07. Маршруты <b>10</b></button>
+<button type="button" class="tab" role="tab" aria-selected="false" data-tab="music">08. Музыкальный ритм <b>8</b></button>
+<button type="button" class="tab" role="tab" aria-selected="false" data-tab="templates">09. Шаблоны <b>5</b></button>
+</div>
+<div class="workspace">
+<section class="library panel" aria-label="Библиотека эффектов">
+<div class="section-head"><div><span class="overline" id="sectionCaption">06 / ОБЪЕКТЫ</span><h2 id="catalogTitle">Анимации объектов</h2><p id="catalogIntro">Плашки, значки, цены, логотипы и другие элементы.</p></div><span class="count" id="catalogCount">15</span></div>
+<div class="catalog-tools"><label for="search">Поиск по библиотеке</label><input type="search" id="search" placeholder="Название или применение"></div>
+<div id="catalog" class="card-grid"></div>
+<div class="panel-note" id="catalogFoot">Сохранение параметров предназначено для подготовки монтажа. 3D-облеты и географическая точность здесь не моделируются.</div>
+</section>
+<aside class="preview-panel panel" aria-label="Закрепленный предпросмотр">
+<div class="section-head"><div><span class="overline">ЖИВОЙ ПРЕДПРОСМОТР</span><h2 id="selectedName">Fade Up</h2><p id="selectedDesc">Мягкое появление карточки.</p></div><span class="count" id="selectedCount">01 / 15</span></div>
+<div class="stage-wrap">
+<div class="stage" id="stage" aria-label="Предпросмотр анимации 9 на 16">
+<div class="stage-art" id="stageArt"></div><div class="stage-shade"></div>
+<div class="stage-watermark">BON TOURS <span>PREVIEW / 9:16</span></div>
+<div id="objectTarget" class="object-target"><span class="object-caption" id="objectCaption">СПЕЦПРЕДЛОЖЕНИЕ</span><strong id="objectText">1399 €</strong><span class="object-sub" id="objectSub">Новогодняя Бавария</span></div>
+<svg id="routeSvg" viewBox="0 0 320 568" role="img" aria-label="Условная схема маршрута" xmlns="http://www.w3.org/2000/svg">
+<g id="mapGrid"></g><path id="routeTrail" d="" fill="none" stroke="#c9f47d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><g id="routeStops"></g><g id="routeVehicle"></g>
+</svg>
+<div class="beat-preview" id="beatPreview"><div class="beat-visual" id="beatVisual"><b>♪</b></div><span id="beatAction">Ритмический акцент</span><strong id="beatTime">00:00.0</strong></div>
+<div class="template-preview" id="templatePreview"><span id="templateCategory">НОВОГОДНИЙ ТУР</span><strong id="templateHeading">Праздничное путешествие</strong><div class="template-samples"><span id="templateCamera">Камера</span><span id="templateTransition">Переход</span><span id="templateTitle">Титры</span></div><span>СЦЕНАРНАЯ ПОДАЧА / НЕ MP4</span></div>
+</div>
+</div>
+<div class="preview-actions"><button type="button" id="play" class="primary">▶ Воспроизвести</button><button type="button" id="favorite" class="icon-action" title="В избранное" aria-label="Добавить в избранное">☆</button></div>
+<div class="controls">
+<div id="objectControls" class="control-group">
+<div class="controls-title">НАСТРОЙКА ОБЪЕКТА</div>
+<label>Тип объекта<select id="objectKind"><option value="price">Цена</option><option value="label">Плашка</option><option value="date">Даты</option><option value="badge">Значок</option><option value="logo">Логотип / текст</option></select></label>
+<label>Главный текст<input id="objectInput" type="text" maxlength="48" value="1399 €"></label>
+<label>Подпись<input id="objectSubInput" type="text" maxlength="65" value="Новогодняя Бавария"></label>
+</div>
+<div id="routeControls" class="control-group" hidden>
+<div class="controls-title">МАРШРУТ / СХЕМА</div>
+<label>Остановки через запятую<input id="routeInput" maxlength="180" value="Тель-Авив, Мюнхен, Нюрнберг, Регенсбург"></label>
+<p class="warning">Схема условная: расположение точек не соответствует реальным координатам. Маршрут не проверяется по карте.</p>
+</div>
+<div id="musicControls" class="control-group" hidden>
+<div class="controls-title">РУЧНАЯ РАЗМЕТКА МУЗЫКИ</div>
+<div class="control-row"><label>BPM<input type="number" id="bpm" min="50" max="200" value="110"></label><label>Длительность, с<input type="number" id="musicLength" min="5" max="90" value="24"></label></div>
+<button type="button" id="tapBeat" class="secondary">Отбить ритм (4+ нажатия)</button>
+<label class="upload-label">Локальный WAV/MP3 для прослушивания<input id="localAudio" type="file" accept="audio/*"></label><audio id="audioPlayer" controls preload="none"></audio>
+<p class="warning">BPM вводится или отбивается вручную. Автоматического определения ударов по аудиофайлу здесь нет; файл не загружается на сервер.</p>
+<div class="cue-list" id="cueList" aria-label="Временные метки музыкальных акцентов"></div>
+</div>
+<div id="templateControls" class="control-group" hidden>
+<div class="controls-title">РЕЖИССЕРСКИЙ ШАБЛОН</div>
+<p class="control-info">Шаблон дает пример сочетания четырех библиотек. Он не заменяет три варианта, которые должна предложить Киностудия.</p>
+<a href="storyboard.html" id="openStoryboard" class="secondary inline-link">Применить к демо-раскадровке ↗</a>
+</div>
+<div class="control-row"><label>Скорость / длительность, с<input type="range" id="duration" min=".6" max="6" value="2.4" step=".2"><output id="durationValue">2.4 с</output></label><label>Интенсивность<input type="range" id="intensity" min="15" max="100" value="60" step="5"><output id="intensityValue">60%</output></label></div>
+<div class="control-row"><label>Акцент<select id="accent"><option value="#c9f47d">Зеленый</option><option value="#f0be6b">Золотой</option><option value="#8cd9ff">Голубой</option><option value="#ffffff">Белый</option></select></label><label>Фон<select id="background"><option value="city">Город</option><option value="sea">Море</option><option value="mountains">Горы</option></select></label></div>
+</div>
+<div class="output-actions"><button id="saveChoice" type="button" class="primary">＋ В монтажную подборку</button><button id="downloadPlan" type="button" class="secondary">Скачать ТЗ JSON</button><button id="copyPlan" type="button" class="secondary">Копировать ТЗ</button></div>
+<div class="selection-head"><span class="overline">МОЯ ПОДБОРКА</span><strong id="choiceCount">0</strong></div><div id="choiceList" class="choice-list"><p>Выберите приемы слева и добавьте их в подборку.</p></div>
+<p class="panel-note">Результат сохраняется в этом браузере и выгружается в JSON. Это еще не подтверждение получения агентом Киностудии.</p>
+</aside>
+</div>
+</main>
+<footer>MOTION LAB · BON TOURS <span>Подготовка к монтажу · Без генерации MP4 · Без платежей</span></footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "schema": "bontours.motionlab.storyboard.launch/v1",
+  "request_id": "demo-project-2026-edit-001",
+  "project_id": "bavaria-new-year-2027",
+  "stage": "edit_choice",
+  "expected_input_fingerprint": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "options": [
+    {"name": "Классическое кино", "label": "ЭЛЕГАНТНЫЙ", "description": "Плавное движение и деликатное растворение", "settings": {"camera": "cinematic-zoom", "transition": "crossfade", "titleFx": "fade-rise", "subtitleStyle": "clean", "wordMotion": "karaoke", "intensity": 30}},
+    {"name": "Энергичный трейлер", "label": "ДИНАМИЧНЫЙ", "description": "Быстрые движения и акцентные заголовки", "settings": {"camera": "push-through", "transition": "whip", "titleFx": "punch-zoom", "subtitleStyle": "outline", "wordMotion": "active-pop", "intensity": 70}},
+    {"name": "Праздничные открытки", "label": "ПРЕМИАЛЬНЫЙ", "description": "Золото, плавные движения и открытки", "settings": {"camera": "float", "transition": "postcard", "titleFx": "light-sweep", "subtitleStyle": "luxury", "wordMotion": "highlight-strip", "intensity": 35}}
+  ],
+  "scenes": [
+    {"scene_id": "bav-01", "name": "Открытие", "asset_id": "clip-1", "image": "mountains", "duration_s": 3, "title_text": "Новый год в Баварии", "subtitle_preview": "Встречайте зимнюю сказку"},
+    {"scene_id": "bav-02", "name": "Мюнхен", "asset_id": "clip-2", "image": "city", "duration_s": 3.5, "title_text": "Мюнхен", "subtitle_preview": "Праздник приходит в город"},
+    {"scene_id": "bav-03", "name": "Альпы", "asset_id": "clip-3", "image": "mountains", "duration_s": 4.5, "title_text": "Баварские Альпы", "subtitle_preview": "Сказочные виды"}
+  ],
+  "selected_option": 3
+}

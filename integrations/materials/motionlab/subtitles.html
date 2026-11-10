@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1018">
+  <meta name="description" content="Motion Lab: единый редактор субтитров с 5 анимациями и 24 стилями для рекламы туров, круизов и рилсов Bon Tours. Интерактивный предпросмотр, собственный текст и экспорт монтажного ТЗ.">
+  <title>Motion Lab — субтитры: анимация и оформление</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="subtitles.css">
+  <script defer src="subtitles.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-one" aria-hidden="true"></div><div class="ambient ambient-two" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="index.html" aria-label="На главную Motion Lab"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span class="brand-name"><strong>MOTION LAB</strong><small>BON TOURS · КИНОСТУДИЯ</small></span></a>
+    <nav class="module-nav" aria-label="Разделы Motion Lab">
+      <a href="index.html">Переходы <b>30</b></a>
+      <a href="text.html">Титры и текст <b>15</b></a>
+      <a class="selected" href="subtitles.html" aria-current="page">Субтитры <b>5 + 24</b></a>
+      <a href="camera.html">Камера <b>12</b></a>
+      <a href="storyboard.html">Раскадровка</a>
+      <a href="creative.html">Графика и ритм</a>
+    </nav>
+    <span class="header-badge"><i></i> SUBTITLE STUDIO <span>/</span> 03</span>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="eyebrow"><span></span> МОДУЛЬ 03 / КИНОСТУДИЯ <b>НОВЫЙ РАЗДЕЛ</b></div>
+      <h1>Субтитры.<br><em>Движение и стиль.</em></h1>
+      <p>Выберите анимацию произносимых слов и оформление в одном редакторе. 5 способов движения, 24 визуальных стиля, живой предпросмотр их сочетания и единое задание для Киностудии.</p>
+      <div class="intro-stats"><span><b>5</b> анимаций слов</span><i></i><span><b>24</b> стиля</span><i></i><span><b>9:16</b> живой предпросмотр</span></div>
+    </section>
+
+    <div class="workspace" id="styles">
+      <section class="library-panel" aria-labelledby="libraryTitle">
+
+        <section class="motion-library" id="motionLibrary" aria-labelledby="motionLibraryTitle">
+          <div class="heading-row"><div><span class="label">01 / АНИМАЦИЯ СЛОВ</span><h2 id="motionLibraryTitle">Как движутся слова <sup>5</sup></h2></div></div>
+          <p class="motion-note">Движение и оформление независимы. Выберите анимацию, затем любой из 24 стилей ниже.</p>
+          <div class="motion-grid" id="motionGrid" role="group" aria-label="Анимация субтитров"></div>
+        </section>
+        <div class="library-divider"></div>
+        <div class="heading-row"><div><span class="label">02 / ОФОРМЛЕНИЕ</span><h2 id="libraryTitle">Внешний вид <sup id="visibleCount">24</sup></h2></div><span class="hint">ВЫБЕРИТЕ СТИЛЬ ↗</span></div>
+        <div class="filters" id="filters" role="group" aria-label="Категории оформления">
+          <button class="filter current" data-category="all" type="button">Все <span>24</span></button>
+          <button class="filter" data-category="universal" type="button">Универсальные <span>6</span></button>
+          <button class="filter" data-category="cinema" type="button">Кино <span>5</span></button>
+          <button class="filter" data-category="advertising" type="button">Реклама <span>5</span></button>
+          <button class="filter" data-category="kinetic" type="button">Акцент на словах <span>4</span></button>
+          <button class="filter" data-category="premium" type="button">Премиальные <span>4</span></button>
+        </div>
+        <div id="styleGrid" class="style-grid"></div>
+        <p class="library-note">Все 24 стиля совместимы с каждой из 5 анимаций. Справа отображается именно выбранное сочетание. Для настоящей синхронизации загрузите таймлайн с метками слов из Киностудии.</p>
+      </section>
+
+      <aside class="preview-panel" id="preview" aria-labelledby="previewTitle">
+        <div class="heading-row"><div><span class="label">03 / ЖИВОЙ ПРЕДПРОСМОТР</span><h2 id="previewTitle">Clean White</h2></div><span class="counter" id="styleNumber">01 / 24</span></div>
+        <p class="preview-desc" id="styleDescription">Чистые белые субтитры.</p><div class="active-combo" aria-live="polite"><span class="label">ВЫБРАНО</span><strong id="activeMotionName">Karaoke Follow</strong><span class="combo-cross">+</span><strong id="activeStyleName">Clean White</strong></div>
+        <div class="background-row"><span class="label">ФОН КАДРА</span><div class="background-options" role="group" aria-label="Фон для предпросмотра">
+          <button type="button" class="background-button current" data-bg="city">Город</button>
+          <button type="button" class="background-button" data-bg="sea">Море</button>
+          <button type="button" class="background-button" data-bg="mountains">Горы</button>
+        </div></div>
+        <div class="stage-shell">
+          <div id="previewStage" class="preview-stage" role="img" aria-label="Вертикальный пример оформления субтитров на фотографии">
+            <div class="stage-background" id="stageBackground"></div>
+            <div class="stage-shade"></div>
+            <div class="stage-brand"><b>BON TOURS</b><span>REEL / PREVIEW</span></div>
+            <div id="safeGuides" class="safe-guides" hidden><span>БЕЗОПАСНАЯ ЗОНА</span></div>
+            <div id="captionTarget" class="caption-wrap pos-bottom"></div>
+            <div class="stage-footer"><span><i></i> LIVE PREVIEW</span><span id="timeStatus">0.0 с</span></div>
+          </div>
+          <div class="frame-note">Предпросмотр 9:16 · оформление без монтажа видео</div>
+        </div>
+        <div class="preview-actions">
+          <button type="button" id="playBtn" class="button-primary"><span id="playIcon">▶</span> <span id="playLabel">Воспроизвести сочетание</span></button>
+          <button type="button" id="favBtn" class="button-square" aria-label="Сохранить сочетание в избранное" title="Сохранить сочетание">☆</button>
+          <button type="button" id="resetBtn" class="button-square" aria-label="Сбросить настройки" title="Сбросить настройки">↺</button>
+        </div>
+        <div class="timeline" aria-hidden="true"><div id="progressFill"></div></div>
+
+        <div class="editor">
+          <div class="editor-head"><span class="label">ЕДИНЫЕ НАСТРОЙКИ СУБТИТРОВ</span><span>ИЗМЕНЕНИЯ ВИДНЫ СРАЗУ</span></div>
+          <label for="lineText">Основная строка</label>
+          <textarea id="lineText" rows="2" maxlength="130">Путешествие начинается здесь</textarea>
+          <label for="detailText">Вторая строка</label>
+          <input id="detailText" maxlength="110" value="Откройте для себя новые города" type="text">
+          <div class="range-row"><div><label for="sizeRange">Размер <output id="sizeValue">100%</output></label><input id="sizeRange" type="range" min="80" max="135" step="5" value="100"></div><div><label for="durationRange">Темп слов <output id="durationValue">3.0 с</output></label><input id="durationRange" type="range" min="1400" max="6000" step="200" value="3000"></div></div>
+          <div class="control-columns"><div><span class="field-label">РАСПОЛОЖЕНИЕ</span><div class="pos-options" role="group" aria-label="Положение субтитров"><button type="button" data-pos="top">Сверху</button><button type="button" data-pos="middle">Центр</button><button type="button" data-pos="bottom" class="current">Снизу</button></div></div><div><span class="field-label">ЦВЕТ АКЦЕНТА</span><div class="swatches" role="group" aria-label="Цвет акцента"><button type="button" class="swatch current" data-color="lime" aria-label="Лаймовый цвет" title="Лаймовый"></button><button type="button" class="swatch" data-color="gold" aria-label="Золотой цвет" title="Золотой"></button><button type="button" class="swatch" data-color="sky" aria-label="Голубой цвет" title="Голубой"></button><button type="button" class="swatch" data-color="white" aria-label="Белый цвет" title="Белый"></button></div></div></div>
+          <div class="check-row"><label><input type="checkbox" id="safeToggle"> Показать безопасные зоны</label><label><input type="checkbox" id="loopToggle"> Повторять подсветку</label></div>
+        </div>
+        <div class="style-info"><div><span class="label">РЕКОМЕНДАЦИЯ</span><strong id="styleUsage">Речь и пояснения</strong></div><div><span class="label">ЧИТАЕМОСТЬ</span><strong id="readability" role="status">Проверяем</strong></div></div>
+        <section class="sync-studio" id="syncStudio" aria-labelledby="syncTitle">
+          <div class="editor-head"><span class="label" id="syncTitle">СИНХРОНИЗАЦИЯ С ОЗВУЧКОЙ</span><span class="new-chip">НОВОЕ</span></div>
+          <p class="sync-note">Загрузите <code>timeline.json</code> из задания Simba (таймкоды слов Whisper), а затем необязательный WAV или MP3 финального микса. Без таймлайна действует только демонстрационный ритм. Звуковые файлы и текст остаются в браузере.</p>
+          <div class="sync-files"><label class="sync-upload">Таймлайн JSON <input type="file" id="timingFile" accept=".json,application/json"></label><label class="sync-upload">Озвучка WAV / MP3 <input type="file" id="audioFile" accept="audio/*,.wav,.mp3,.m4a,.ogg"></label></div>
+          <div id="syncStatus" class="sync-status" role="status">Таймкоды не загружены. Пока используется демонстрационная анимация.</div>
+          <div class="sync-line-row"><label for="syncLine">Фраза для проверки</label><select id="syncLine" disabled><option>Загрузите таймлайн</option></select></div>
+          <audio id="syncAudio" controls preload="metadata" hidden></audio>
+          <div class="sync-scrub"><label for="syncSeek">Положение в фразе <output id="syncClock">0.00 c</output></label><input id="syncSeek" type="range" min="0" max="1000" value="0" disabled></div>
+          <div id="wordTimings" class="word-timings" aria-label="Настоящие таймкоды слов"></div>
+          <div class="editor-head" style="margin-top:20px"><span class="label">ПЕРЕДАЧА В КИНОСТУДИЮ</span></div>
+          <p class="sync-note">Откройте действующий <code>video-spec.json</code>, чтобы перенести выбранное оформление в поле <code>subtitleStyle</code>. Остальная часть спецификации остается без изменений; таймкоды для MP4 формирует существующий Whisper.</p>
+          <label class="sync-upload">Импорт video-spec.json <input type="file" id="jobSpecFile" accept=".json,application/json"></label>
+          <div id="specStatus" class="sync-status" role="status">Спецификация не загружена.</div>
+          <button type="button" class="button-primary sync-export" id="downloadVideoSpec" disabled>Скачать video-spec.json с субтитрами ↓</button>
+        </section>
+        <p class="studio-caveat">Для настоящей синхронизации нужен подтвержденный таймлайн Whisper. Предпросмотр не выполняет распознавание речи. Применение к готовому MP4 выполняется в Киностудии с обычными проверками качества.</p>
+      </aside>
+    </div>
+
+    <section class="favorites" id="favorites">
+      <div class="favorites-header"><div><span class="label">04 / ПОДБОРКА ДЛЯ КИНОСТУДИИ</span><h2>Сохраненные сочетания <sup id="favoriteCount">0</sup></h2><p>Сохраняйте пару: анимация слов + визуальный стиль. К одному стилю можно применить разные анимации и сохранить их отдельно. Подборка хранится в браузере.</p></div><div class="exports"><button id="copyBrief" type="button" class="outline-button">Скопировать ТЗ ↗</button><button id="downloadJson" type="button" class="button-primary">Экспорт JSON ↓</button></div></div>
+      <div id="favoritesList" class="favorites-list" aria-live="polite"><p class="empty">Пока ничего не выбрано.</p></div>
+      <div class="favorites-bottom"><span id="exportStatus" role="status">Выбранные сочетания сохраняются локально, без отправки текста на сервер.</span><button type="button" id="clearFavorites">Очистить подборку</button></div>
+    </section>
+    <section class="next-module"><div><span class="label">ДРУГИЕ ИНСТРУМЕНТЫ MOTION LAB</span><h3>Титры и переходы</h3><p>Все движения и стили субтитров теперь здесь. Отдельно остались только анимации титров, цен и переходы между кадрами.</p></div><div><a href="text.html" class="outline-button">Титры и текст ↗</a><a href="index.html" class="outline-button">Переходы ↗</a></div></section>
+    <footer><span>MOTION LAB <b>×</b> BON TOURS</span><small>5 анимаций + 24 стиля · единый редактор</small><span>Киностудия · демонстрационный режим</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
