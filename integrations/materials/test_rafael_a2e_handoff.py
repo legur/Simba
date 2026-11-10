@@ -141,6 +141,7 @@ class BridgeTests(unittest.TestCase):
     def invoke(self, **params):
         return bridge.create_owner_issue(self.root,self.pid,self.plan_file,self.zip,
                                          fetch=lambda url:self.mock_media[url],
+                                         drive_check=lambda file_id, data: True,
                                          **params)
 
     def test_selected_real_frames_and_prompts_go_to_existing_universal(self):
@@ -195,7 +196,8 @@ class BridgeTests(unittest.TestCase):
         mismatched=self.mock_media[self.plan["scenes"][1]["image_url"]]
         with self.assertRaises(bridge.BridgeError):
             bridge.create_owner_issue(self.root,self.pid,self.plan_file,self.zip,
-                                      fetch=lambda _:mismatched)
+                                      fetch=lambda _:mismatched,
+                                      drive_check=lambda file_id, data: True)
 
     def test_missing_drive_readback_or_prompt_approval_blocks(self):
         self.project["assets"][1]["drive_readback_verified"]=False
@@ -218,6 +220,12 @@ class BridgeTests(unittest.TestCase):
         self.save()
         with self.assertRaises(bridge.BridgeError):
             self.invoke()
+
+    def test_live_drive_verification_required_before_export(self):
+        with self.assertRaises(bridge.BridgeError):
+            bridge.create_owner_issue(self.root,self.pid,self.plan_file,self.zip,
+                                      fetch=lambda url:self.mock_media[url],
+                                      drive_check=lambda file_id, data: False)
 
     def test_no_unverified_wix_to_paid_issue(self):
         with self.assertRaises(bridge.BridgeError):
