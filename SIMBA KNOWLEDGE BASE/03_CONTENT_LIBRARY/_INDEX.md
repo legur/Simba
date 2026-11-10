@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-11-10 | [SHOPPING IL - бонусы на туры Eshet](2026-11-10__SELLING__ESHET-SHOPPING-IL-BONUS__APPROVED.md) | APPROVED_TEXT; Rafael previews pending | sales / promotion | Eshet Tours / Shopping IL / 09–19 Nov 2026 | выбор бонуса 150 EUR/200 USD на пару или ESHET FLEX | «отлично» после уточнения применимости только к турам Eshet | high |
 | 2026-11-10 | [Злата Прага: неделя в Европе](2026-11-10__SELLING__ZLATA-PRAGUE-LAST-MINUTE__APPROVED.md) | APPROVED; FINAL_VISUAL_READY (3) | sales / last minute | Prague, Dresden, Karlovy Vary / 15–21 Nov 2026 | неделя не за все деньги мира; 599 EUR/person sharing | «3 вариант» | high |
 | 2026-11-09 | [Бутылка вина за отзыв](2026-11-09__LEO__HOTEL-REVIEWS__APPROVED.md) | APPROVED | Leo / discussion | отзывы об отелях | подарок за отзыв и достоверность рейтинга | «Отлично» после внешнего review | high |
 | 2026-11-09 | [Налог на вылет из Израиля](2026-11-09__INFO__ISRAEL-DEPARTURE-TAX__APPROVED.md) | APPROVED; FINAL_VISUAL_READY (5) | Info / polemical discussion | proposed departure tax | семейная арифметика и справедливость налога | «Отлично» после внешнего review 8.1 | high |
