@@ -45,7 +45,7 @@ jobs:
           python3 integrations/materials/catalog.py list | tee "$RUNNER_TEMP/simba-project-status.txt"
           {
             echo '### Simba project progress (local registry only)'
-            echo '\`\`\`'
+            echo '```'
             cat "$RUNNER_TEMP/simba-project-status.txt"
-            echo '\`\`\`'
+            echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
