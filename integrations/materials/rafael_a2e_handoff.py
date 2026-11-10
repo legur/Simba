@@ -192,7 +192,7 @@ def create_owner_issue(root: Path, project_id: str, plan_path: Path, zip_path: P
     if (not isinstance(specs, list) or len(specs) != len(selected)
             or not 1 <= len(specs) <= 6):
         raise BridgeError("selected storyboard and A2E scene count differ")
-    scenes, wix_hashes = [], []
+    scenes, wix_hashes, to_verify = [], [], []
     with zipfile.ZipFile(io.BytesIO(zip_bytes)) as z:
         for index, (entry, source) in enumerate(zip(specs, selected), 1):
             if (not isinstance(entry, dict)
@@ -215,11 +215,7 @@ def create_owner_issue(root: Path, project_id: str, plan_path: Path, zip_path: P
             # universal A2E. No private Google Drive link enters the issue.
             scenes.append({"name": f"scene-{index:02d}", "image_url": entry["image_url"],
                            "prompt": prompt})
-            if verify_remote:
-                raw_remote = fetch(entry["image_url"])
-                if not _wix_jpeg_match(image, raw_remote):
-                    raise BridgeError("Wix content differs from the approved selected frame")
-                wix_hashes.append(digest(raw_remote))
+            to_verify.append((entry["image_url"], image))
     cap = stages["a2e_prompts"]["max_credits"]
     quote = stages["a2e_prompts"]["quoted_credits"]
     if (type(cap) not in (int, float) or not 0 < cap <= 1000 or
@@ -239,6 +235,13 @@ def create_owner_issue(root: Path, project_id: str, plan_path: Path, zip_path: P
         raise BridgeError("downstream universal A2E contract mismatch")
     if not verify_remote:
         raise BridgeError("Wix bytes were not verified; no issue payload may be emitted")
+    # The validated universal schema has already rejected non-Wix hosts
+    # before any supplied URL can reach the network.
+    for wix_url, source in to_verify:
+        raw_remote = fetch(wix_url)
+        if not _wix_jpeg_match(source, raw_remote):
+            raise BridgeError("Wix content differs from the approved selected frame")
+        wix_hashes.append(digest(raw_remote))
     receipt = {
         "status": "OWNER_ISSUE_PAYLOAD_READY_NOT_SUBMITTED",
         "project_id": project_id, "handoff_receipt": packet["receipt_sha256"],
