@@ -326,7 +326,10 @@ class API:
             token=headers.get("Authorization","")
             if not hmac.compare_digest(token,"Bearer "+self.owner_secret):
                 raise ReceiverError("Owner authorization required")
-            result=self.relay.store.create(self.relay.root,body.get("project_id"),body.get("options"))
+            try:
+                result=self.relay.store.create(self.relay.root,body.get("project_id"),body.get("options"))
+            except Exception:
+                raise ReceiverError("Current approved studio project/choices unavailable") from None
             # Short-lived browser capability is in a URL *fragment* and is not
             # transmitted to the HTTP server as part of GET /studio.
             result["studio_url"]=self.host_origin+"/studio#"+result["session_id"]+"."+result["capability"]
@@ -334,7 +337,11 @@ class API:
         if route=="/api/motionlab/selection":
             sid=body.get("session_id")
             token=headers.get("X-Simba-Capability")
-            return 200,self.relay.store.accept(self.relay.root,sid,token,body.get("selection"))
+            try:
+                receipt=self.relay.store.accept(self.relay.root,sid,token,body.get("selection"))
+            except Exception:
+                raise ReceiverError("Connected selection not accepted or not durably stored") from None
+            return 200,receipt
         raise ReceiverError("Unsupported route")
 
     def get(self,route:str,headers:dict)->tuple[int,dict]:
@@ -344,8 +351,12 @@ class API:
             return 200,{"status":"ready","paid_calls":0}
         session=re.fullmatch(r"/api/motionlab/session/([a-f0-9]{32})",route)
         if session:
-            return 200,self.relay.store.browser_session(
-                session.group(1),headers.get("X-Simba-Capability"))
+            try:
+                item=self.relay.store.browser_session(
+                    session.group(1),headers.get("X-Simba-Capability"))
+            except Exception:
+                raise ReceiverError("Session view not authorized") from None
+            return 200,item
         m=re.fullmatch(r"/api/motionlab/status/([a-f0-9]{32})",route)
         if m:
             return 200,self.relay.store.status(m.group(1),headers.get("X-Simba-Capability"))
