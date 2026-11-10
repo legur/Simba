@@ -91,12 +91,18 @@ def run(event, out):
     def save():
         (out / 'status.json').write_text(json.dumps(state, ensure_ascii=False, indent=2), encoding='utf-8')
     try:
-        # Private Drive reference issues are resolved entirely in-memory.
-        # The approved A2E universal runner below remains the only paid path.
-        from github_a2e_private import perhaps_resolve
-        event, private_source = perhaps_resolve(event)
-        if private_source:
-            state['private_source_readback_verified'] = True
+        # Keep the legacy public-Wix Issue path free of Google/Pillow
+        # dependencies; private resolver is imported only for its own kind.
+        # Existing A2E tasks/labels remain backwards compatible.
+        try:
+            incoming = json.loads((event.get('issue') or {}).get('body') or '{}')
+        except (ValueError, TypeError):
+            incoming = {}
+        if isinstance(incoming, dict) and incoming.get('kind') == 'simba_a2e_from_private_drive':
+            from github_a2e_private import perhaps_resolve
+            event, private_source = perhaps_resolve(event)
+            if private_source:
+                state['private_source_readback_verified'] = True
         issue, cap, bodies = validate(event)
         approved_source = json.loads(event['issue']['body'])
         if 'project_id' in approved_source:
