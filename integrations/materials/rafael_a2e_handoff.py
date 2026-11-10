@@ -252,7 +252,16 @@ def create_owner_issue(root: Path, project_id: str, plan_path: Path, zip_path: P
     if (type(cap) not in (int, float) or not 0 < cap <= 1000 or
             type(quote) not in (int, float) or quote > cap):
         raise BridgeError("approved amount unavailable, over budget or over universal runner cap")
-    issue = {"kind": "simba_a2e_generate", "max_credits": cap, "scenes": scenes}
+    # Safe non-secret lineage, so the existing universal runner can preserve
+    # A2E task IDs under the right approved project after completion.
+    issue = {
+        "kind": "simba_a2e_generate",
+        "project_id": project_id,
+        "handoff_sha256": packet["receipt_sha256"],
+        "selected_storyboard": stages["storyboard"]["selected_option"],
+        "selected_prompts": stages["a2e_prompts"]["selected_option"],
+        "max_credits": cap, "scenes": scenes,
+    }
     # Run through the real downstream consumer's validator, not a parallel
     # homemade A2E request format.
     fake_event = {
