@@ -86,8 +86,10 @@ def _check_state(project: dict, hand: dict, state: dict, issue: int) -> list[dic
             or float(cap) != float(state["max_credits"])):
         raise WritebackError("recorded execution cap differs from selected user cap")
     scenes = state.get("scenes")
-    if not isinstance(scenes, list) or not 1 <= len(scenes) <= 6:
-        raise WritebackError("A2E completed scenes list missing or invalid")
+    requested = state.get("requested_scene_count")
+    if (not isinstance(scenes, list) or type(requested) is not int
+            or not 1 <= requested <= 6 or len(scenes) != requested):
+        raise WritebackError("A2E completed scenes count differs from original approved submission")
     ids = set()
     for number, row in enumerate(scenes, 1):
         if (not isinstance(row, dict) or type(row.get("number")) is not int
@@ -136,6 +138,7 @@ def _verified_video(drive, folder: str, task_id: str, *,
                 or meta.get("mimeType") != "video/mp4"
                 or folder not in (meta.get("parents") or [])
                 or not isinstance(meta.get("permissions"), list)
+                or not meta["permissions"]
                 or any(p.get("type") != "user" for p in meta["permissions"])
                 or int(meta.get("size", 0)) != existing["bytes"]
                 or (meta.get("appProperties") or {}).get("source") != "A2E"
