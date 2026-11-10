@@ -36,3 +36,4 @@ jobs:
           python -m unittest discover -s integrations/materials/motionlab/repo-tests -p 'test_motionlab_selection.py' -v
           python -m py_compile integrations/materials/motionlab/motionlab_selection.py
           node --check integrations/materials/motionlab/storyboard.js
+          node --check integrations/materials/motionlab/motionlab_host_adapter.js
