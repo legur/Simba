@@ -135,6 +135,30 @@ class PrivateResolverTests(unittest.TestCase):
         self.assertFalse(changed)
         self.assertEqual(retained,legacy)
 
+    def test_live_shape_readonly_preflight_uses_existing_validator_no_paid_calls(self):
+        report=private.dry_run_readonly(
+            self.case.pid, PLAN_ID, self.request["storyboard_file_id"],
+            root=self.case.root, drive=self.fake,
+            fetch_wix=lambda url:self.case.mock_media[url])
+        self.assertEqual(report["status"],"DRIVE_AND_WIX_SOURCES_VERIFIED_NO_A2E_EXECUTION")
+        self.assertEqual(report["selected_storyboard"],2)
+        self.assertEqual(report["selected_prompts"],1)
+        self.assertEqual(report["verified_scene_count"],3)
+        self.assertFalse(report["github_issue_created"])
+        self.assertFalse(report["actual_A2E_quote_checked"])
+        self.assertEqual(report["a2e_paid_calls"],0)
+        self.assertEqual(report["a2e_task_ids"],[])
+
+    def test_readonly_preflight_rejects_absent_approval_without_paid_call(self):
+        self.case.project["stage_handoffs"]["storyboard"]["state"]="pending"
+        self.case.save()
+        with self.assertRaises(private.PrivateBridgeError):
+            private.dry_run_readonly(
+                self.case.pid, PLAN_ID, self.request["storyboard_file_id"],
+                root=self.case.root,drive=self.fake,
+                fetch_wix=lambda url:self.case.mock_media[url])
+        self.assertEqual(self.fake.reads,0)
+
     def test_universal_run_consumes_resolved_payload_without_paid_call(self):
         # Verify the existing one-time runner remains the only paid codepath.
         resolved=self._resolve()
