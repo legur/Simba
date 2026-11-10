@@ -4,6 +4,7 @@ import { clamp, lerp, seg, ss, eo, eio } from '/engine/lib.js';
 import { animate } from '/node_modules/animejs/dist/modules/index.js';
 import { makeRoute } from '/template/inserts.js';
 import { makeCartoon } from '/template/cartoon.js';
+import { renderTransition } from '/template/transitions.js';
 
 const TL = await (await fetch('timeline.json')).json();
 const W = innerWidth, H = innerHeight;
@@ -12,6 +13,7 @@ const ctx = cv.getContext('2d');
 const C = { navy: '#0E1B30', cream: '#F4EBDD', gold: '#E2B65B', dim: 'rgba(244,235,221,.55)' };
 const TITLE = '"Playfair Display"', SANS = 'Montserrat';
 const XF = TL.crossfade;                                  // scene crossfade, seconds
+const TRANSITION_PAD = Math.max(XF, ...TL.scenes.slice(1).map(s => (s.transition?.duration_ms ?? 0) / 2000));
 const MOTION = TL.motion ?? 'anime';                       // old timelines default to the editor-approved Anime.js style
 if (!['anime', 'classic'].includes(MOTION)) throw new Error(`unknown motion style: ${MOTION}`);
 
@@ -22,7 +24,7 @@ for (const s of TL.scenes) if (!s.frames && !s.insert) IMG[s.image] ??= await lo
 // video-clip scenes: frames were extracted to JPEGs by make_video.py; prepare(t) loads the ones frame t needs
 const FR = new Map();
 const frameOf = (s, t) => `${s.frames}${String(clamp(Math.floor((t - s.t0) * s.fps), 0, s.count - 1) + 1).padStart(5, '0')}.jpg`;
-const live = t => TL.scenes.filter(s => t >= s.t0 - XF && t <= s.t1 + XF);
+const live = t => TL.scenes.filter(s => t >= s.t0 - TRANSITION_PAD && t <= s.t1 + TRANSITION_PAD);
 window.prepare = async t => {
   const want = live(t).filter(s => s.frames).map(s => frameOf(s, t));
   for (const k of FR.keys()) if (!want.includes(k)) FR.delete(k);
@@ -240,12 +242,24 @@ function render(t) {
   t = clamp(t, 0, TL.dur); texts = [];
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.globalAlpha = 1; ctx.fillStyle = C.navy; ctx.fillRect(0, 0, W, H);
   const n = TL.scenes.length;
-  TL.scenes.forEach((s, i) => {
-    if (t < s.t0 - XF || t > s.t1 + XF) return;
-    const fin = i === 0 ? 1 : seg(t, s.t0 - XF / 2, s.t0 + XF / 2);
-    const fout = i === n - 1 && !TL.offer ? 1 : 1 - seg(t, s.t1 - XF / 2, s.t1 + XF / 2);
-    drawScene(s, t, Math.min(fin, fout));
+  const boundary = TL.scenes.findIndex((s, i) => {
+    const half = (s.transition?.duration_ms ?? 0) / 2000;
+    return i > 0 && half > 0 && t >= s.t0 - half && t <= s.t0 + half;
   });
+  if (boundary > 0) {
+    const incoming = TL.scenes[boundary], half = incoming.transition.duration_ms / 2000;
+    const progress = clamp((t - (incoming.t0 - half)) / (2 * half));
+    renderTransition(ctx, TL.scenes[boundary - 1], incoming, progress,
+      incoming.transition.id, (s, alpha) => drawScene(s, t, alpha), incoming.title ?? '');
+  } else {
+    // Legacy behavior is unchanged for jobs without selected transitions.
+    TL.scenes.forEach((s, i) => {
+      if (t < s.t0 - XF || t > s.t1 + XF) return;
+      const fin = i === 0 ? 1 : seg(t, s.t0 - XF / 2, s.t0 + XF / 2);
+      const fout = i === n - 1 && !TL.offer ? 1 : 1 - seg(t, s.t1 - XF / 2, s.t1 + XF / 2);
+      drawScene(s, t, Math.min(fin, fout));
+    });
+  }
   grade();
   TL.scenes.forEach((s, i) => { if (t >= s.t0 - XF && t <= s.t1 + XF) drawTitle(s, i, t); });
   drawOffer(t); drawEnd(t); drawSub(t);
