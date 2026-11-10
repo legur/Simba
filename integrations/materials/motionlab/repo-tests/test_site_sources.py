@@ -5,9 +5,9 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
-PAGES = ("index.html", "text.html", "subtitles.html", "camera.html", "storyboard.html")
-STYLES = ("styles.css", "text.css", "subtitles.css", "camera.css", "storyboard.css")
-SCRIPTS = ("app.js", "transitions.js", "text.js", "subtitles.js", "camera.js", "storyboard.js")
+PAGES = ("index.html", "text.html", "subtitles.html", "camera.html", "storyboard.html", "creative.html")
+STYLES = ("styles.css", "text.css", "subtitles.css", "camera.css", "storyboard.css", "creative.css")
+SCRIPTS = ("app.js", "transitions.js", "text.js", "subtitles.js", "camera.js", "storyboard.js", "creative.js")
 
 
 class LocalReferences(HTMLParser):
@@ -41,6 +41,14 @@ class MotionLabSiteIntegrityTests(unittest.TestCase):
                 with self.subTest(page=name, href=reference):
                     self.assertTrue(destination.is_relative_to(ROOT), "Path escapes source root")
                     self.assertTrue(destination.is_file(), f"Missing {reference} in {name}")
+
+    def test_preproduction_creative_catalog_contract(self):
+        js = (ROOT / "creative.js").read_text(encoding="utf-8")
+        for marker in ("const OBJECTS=", "const ROUTES=", "const MUSIC=",
+                       "const TEMPLATES=", "DRAFT_NOT_DELIVERED",
+                       "rendering_authorized:false", "publishing_authorized:false"):
+            with self.subTest(marker=marker):
+                self.assertIn(marker, js)
 
     def test_storyboard_exposes_runtime_handoff_without_fake_approval(self):
         js = (ROOT / "storyboard.js").read_text(encoding="utf-8")
