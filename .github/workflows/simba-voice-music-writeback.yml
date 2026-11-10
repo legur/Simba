@@ -59,6 +59,7 @@ jobs:
     timeout-minutes: 20
     permissions:
       contents: write
+      issues: read
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
         with:
@@ -85,6 +86,10 @@ jobs:
           python -m pip install --disable-pip-version-check \
             'google-api-python-client>=2.140,<3' \
             'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+          if ! command -v ffprobe; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
           command -v ffprobe
       - name: Private Drive source and approval verification then atomic project stage write
         shell: bash
@@ -95,6 +100,7 @@ jobs:
           GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
           GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
           GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           python integrations/materials/voice_music_writeback.py \
