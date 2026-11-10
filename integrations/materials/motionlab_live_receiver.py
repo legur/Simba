@@ -154,6 +154,19 @@ class SessionStore:
         return {"receipt_id":receipt_id,"persisted":True,
                 "stage_status":"QUEUED","render_started":False}
 
+    def browser_session(self,sid:str,token:str)->dict:
+        """One-use capability opens only its own launch; expires in 20 min."""
+        if not isinstance(sid,str) or not SID.fullmatch(sid):
+            raise ReceiverError("Invalid session ID")
+        with self.open() as db:
+            row=db.execute("SELECT * FROM sessions WHERE sid=?",(sid,)).fetchone()
+        if (row is None or not self._auth(row,token)
+                or row["expires"]<_now()):
+            raise ReceiverError("Session invalid or expired")
+        return {"session_id":sid,"launch":json.loads(row["launch_json"]),
+                "expires_at_epoch":row["expires"],"status":row["status"]}
+
+
     def status(self,sid:str,token:str)->dict:
         if not SID.fullmatch(sid):
             raise ReceiverError("Invalid session ID")
@@ -313,7 +326,11 @@ class API:
             token=headers.get("Authorization","")
             if not hmac.compare_digest(token,"Bearer "+self.owner_secret):
                 raise ReceiverError("Owner authorization required")
-            return 201,self.relay.store.create(self.relay.root,body.get("project_id"),body.get("options"))
+            result=self.relay.store.create(self.relay.root,body.get("project_id"),body.get("options"))
+            # Short-lived browser capability is in a URL *fragment* and is not
+            # transmitted to the HTTP server as part of GET /studio.
+            result["studio_url"]=self.host_origin+"/studio#"+result["session_id"]+"."+result["capability"]
+            return 201,result
         if route=="/api/motionlab/selection":
             sid=body.get("session_id")
             token=headers.get("X-Simba-Capability")
@@ -325,6 +342,10 @@ class API:
             raise ReceiverError("Cross-origin request rejected")
         if route=="/api/motionlab/health":
             return 200,{"status":"ready","paid_calls":0}
+        session=re.fullmatch(r"/api/motionlab/session/([a-f0-9]{32})",route)
+        if session:
+            return 200,self.relay.store.browser_session(
+                session.group(1),headers.get("X-Simba-Capability"))
         m=re.fullmatch(r"/api/motionlab/status/([a-f0-9]{32})",route)
         if m:
             return 200,self.relay.store.status(m.group(1),headers.get("X-Simba-Capability"))
@@ -358,6 +379,36 @@ def run_server(api:API,port:int):
             except (ReceiverError,ValueError,TypeError):
                 self._send(403,{"error":"REJECTED","saved":False})
         def do_GET(self):
+            # Only these three reviewed static assets are public. Never serve
+            # private SQLite, repository files, production JSON or secrets.
+            static = {
+                "/studio": ("motionlab_host.html","text/html; charset=utf-8"),
+                "/assets/motionlab_live_host.js": ("motionlab_live_host.js","text/javascript; charset=utf-8"),
+                "/assets/motionlab_host_adapter.js": ("motionlab_host_adapter.js","text/javascript; charset=utf-8"),
+            }
+            if self.path in static:
+                name,mime=static[self.path]
+                try:
+                    raw=(HERE/"motionlab"/name).read_bytes()
+                    if not 100 <= len(raw) <= 70000:
+                        raise ValueError()
+                    self.send_response(200)
+                    self.send_header("Content-Type",mime)
+                    self.send_header("Cache-Control","no-store")
+                    self.send_header("X-Content-Type-Options","nosniff")
+                    self.send_header("Referrer-Policy","no-referrer")
+                    self.send_header("X-Frame-Options","DENY")
+                    self.send_header("Content-Security-Policy",
+                        "default-src 'none'; script-src 'self'; style-src 'self'; "
+                        "frame-src https://headless-cvcdjldqjlx-leostraveltips-140e.wix-site-host.com; "
+                        "connect-src 'self'; base-uri 'none'; form-action 'none'")
+                    self.send_header("Content-Length",str(len(raw)))
+                    self.end_headers()
+                    self.wfile.write(raw)
+                    return
+                except OSError:
+                    self._send(404,{"error":"NOT_FOUND"})
+                    return
             try:
                 status,result=api.get(self.path,self._headers())
                 self._send(status,result)
