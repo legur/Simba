@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ru">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+ <meta name="theme-color" content="#0b1118">
+ <title>Motion Lab — Конструктор раскадровки</title>
+ <meta name="description" content="Конструктор раскадровки Bon Tours с выбором камер, переходов, титров и субтитров. Возврат выбранных настроек агенту.">
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="storyboard.css">
+ <script defer src="storyboard.js"></script>
+</head>
+<body>
+ <header class="site-header">
+   <a href="index.html" class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span><span><strong>MOTION LAB</strong><small>BON TOURS / КИНОСТУДИЯ</small></span></a>
+   <nav class="nav" aria-label="Модули Motion Lab"><a href="index.html">Переходы</a><a href="text.html">Титры</a><a href="subtitles.html">Субтитры</a><a href="camera.html">Камера</a><a class="current" href="storyboard.html" aria-current="page">Раскадровка</a></nav>
+   <span class="preflight"><span class="led"></span> ПОДГОТОВКА</span>
+ </header>
+ <main>
+  <section class="hero">
+   <div class="eyebrow"><span></span> МОДУЛЬ 05 / РЕЖИССЕРСКОЕ РЕШЕНИЕ</div>
+   <h1>Все приемы.<br><em>В одной раскадровке.</em></h1>
+   <p>Автоматическая Киностудия передает сюда сцены и три варианта монтажа. Вы выбираете концепцию, настраиваете каждый кадр и возвращаете решение агенту. Рендер и публикация здесь не запускаются.</p>
+   <div class="metrics"><span><strong>3</strong> варианта подачи</span><i></i><span><strong>4</strong> библиотеки эффектов</span><i></i><span><strong id="metricScenes">6</strong> сцен</span><i></i><span>Без платных операций</span></div>
+  </section>
+  <section class="connection-strip" aria-live="polite">
+   <div class="conn-state"><span id="connLed" class="conn-led"></span><div><strong id="connectionTitle">Демонстрационный режим</strong><p id="connectionText">Настройки можно экспортировать в JSON. Для прямой передачи агент должен открыть модуль и подключить канал ответа.</p></div></div>
+   <div class="conn-actions"><label for="requestFile" class="secondary-btn file-label">Загрузить задание JSON</label><input type="file" id="requestFile" accept=".json,application/json" hidden><button type="button" id="resetDemo" class="secondary-btn">Демо</button></div>
+  </section>
+  <div class="workspace">
+   <section class="design-panel">
+    <div class="section-title"><div><span class="small-label">01 / ТРИ АЛЬТЕРНАТИВЫ</span><h2>Подача ролика</h2></div><span class="section-hint">ВЫБЕРИТЕ ОСНОВУ</span></div>
+    <div id="conceptList" class="concept-grid" role="group" aria-label="Три варианта монтажной подачи"></div>
+    <div class="section-title shots-heading"><div><span class="small-label">02 / РАСКАДРОВКА</span><h2>Сцены <sup id="sceneCount">6</sup></h2></div><div class="heading-actions"><button type="button" class="mini-btn" id="applyFavorites">Из избранного</button><button type="button" class="mini-btn" id="addScene">+ Сцена</button></div></div>
+    <p class="helper">Выберите сцену слева и настройте ее справа. Порядок определяет последовательность будущего рилса.</p>
+    <div id="sceneList" class="scene-list" role="list" aria-label="Список сцен"></div>
+    <div class="panel-note"><span class="small-label">ПРИНЦИП</span><p>Изображения и текст — референсы и существующие материалы. В этой среде мы выбираем режиссерские приемы. Озвучка, музыка, цены и утвержденный сценарий не меняются автоматически.</p></div>
+   </section>
+   <aside class="preview-panel" aria-label="Редактор выбранной сцены">
+    <div class="section-title preview-heading"><div><span class="small-label">03 / ЖИВОЙ ПРЕДПРОСМОТР</span><h2 id="previewHeading">Сцена 01</h2></div><span class="counter" id="activeCounter">01 / 06</span></div>
+    <div class="frame-shell">
+     <div id="screen" class="screen" aria-label="Макет кадра в формате 9:16">
+      <img id="previewPhoto" src="https://static.wixstatic.com/media/7fd7b8_b53b4bdba4c14271a663450044559b09~mv2.jpg" alt="Демонстрационная туристическая фотография">
+      <div class="vignette"></div><div class="topstamp">BON TOURS <span>REEL / 01</span></div>
+      <div class="frame-title" id="frameTitle">Новый год в Баварии</div>
+      <div class="frame-subtitle" id="frameSubtitle">Время путешествовать</div>
+      <div class="frame-footer"><b class="green-point"></b> ПРЕДПРОСМОТР / МАКЕТ</div>
+     </div>
+    </div>
+    <div class="play-row"><button type="button" id="playPreview" class="primary-btn">▶ Посмотреть движение</button><button type="button" id="stopPreview" class="square-btn" aria-label="Сбросить анимацию">↺</button></div>
+    <div class="editor">
+      <div class="small-label">04 / НАСТРОЙКИ КАДРА</div>
+      <label>Название сцены<input type="text" id="sceneName" maxlength="90"></label>
+      <div class="form-grid two"><label>Длительность, с<input type="number" id="sceneDuration" min="1" max="20" step="0.5"></label><label>Кадр / источник<select id="sceneImage"><option value="mountains">Горы</option><option value="city">Город</option><option value="sea">Море</option><option value="coast">Побережье</option><option value="custom">Свой источник</option></select></label></div>
+      <label>Ссылка или ID исходного кадра<input type="text" id="sceneAsset" placeholder="ID сохраненного файла / название ассета" maxlength="240"></label>
+      <div class="form-grid two"><label>Движение камеры<select id="sceneCamera"></select></label><label>Переход в этот кадр<select id="sceneTransition"></select></label></div>
+      <div class="form-grid two"><label>Анимация титра<select id="sceneTitleFx"></select></label><label>Стиль субтитров<select id="sceneSubtitleStyle"></select></label></div>
+      <div class="form-grid two"><label>Анимация слов<select id="sceneWordMotion"></select></label><label>Интенсивность, %<input id="sceneIntensity" type="range" min="0" max="100" step="5"><output id="intensityValue">50%</output></label></div>
+      <label>Титр / экранный текст<input id="sceneTitle" type="text" maxlength="140" placeholder="Только согласованный текст"></label>
+      <label>Текст субтитров (для макета)<textarea id="sceneSubtitle" rows="2" maxlength="300" placeholder="Не заменяет точную расшифровку речи"></textarea></label>
+    </div>
+   </aside>
+  </div>
+  <section class="handoff" id="handoff">
+   <div class="handoff-head"><div><span class="small-label">05 / ВОЗВРАТ В АВТОМАТИЧЕСКУЮ СРЕДУ</span><h2>Передать выбранные настройки</h2><p>После выбора результат вернется в ту же рабочую сессию, если Киностудия подключила канал приема. Без него можно скачать файл и передать его агенту.</p></div><span id="handoffBadge" class="status-chip">ЧЕРНОВИК</span></div>
+   <div class="summary" id="summary"></div>
+   <div id="validation" class="validation" role="status"></div>
+   <div class="handoff-buttons"><button type="button" class="primary-btn" id="sendToAgent" disabled>Передать выбор агенту</button><button type="button" class="secondary-btn" id="downloadJson">Скачать монтажное ТЗ JSON</button><button type="button" class="secondary-btn" id="copyBrief">Скопировать ТЗ</button></div>
+   <p class="delivery-hint" id="deliveryHint">Прямая отправка становится доступной после получения подтвержденного задания от родительской среды. Экспорт всегда остается доступным.</p>
+  </section>
+ </main>
+ <footer>Motion Lab / Bon Tours <span>ПОДГОТОВКА · Без рендера · Без публикации · Без платных операций</span></footer>
+ <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

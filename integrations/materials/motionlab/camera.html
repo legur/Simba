@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a1018">
+  <meta name="description" content="Motion Lab: 12 вариантов движения камеры для подготовки тревел-рилсов Bon Tours. Живой предпросмотр и монтажный план.">
+  <title>Motion Lab — движение камеры</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="camera.css">
+  <script defer src="camera.js"></script>
+</head>
+<body>
+  <header class="header">
+    <a class="brand" href="index.html"><span class="brand-icon"><i></i><i></i><i></i></span><span><b>MOTION LAB</b><small>BON TOURS · КИНОСТУДИЯ</small></span></a>
+    <nav class="nav" aria-label="Модули Motion Lab"><a href="index.html">Переходы <b>30</b></a><a href="text.html">Титры <b>15</b></a><a href="subtitles.html">Субтитры <b>29</b></a><a class="current" href="camera.html" aria-current="page">Камера <b>12</b></a><a href="storyboard.html">Раскадровка</a></nav>
+    <span class="header-mark">PRE-PRODUCTION <b>01</b></span>
+  </header>
+  <main>
+    <section class="intro">
+      <div class="eyebrow"><span class="line"></span> МОДУЛЬ 04 / ПОДГОТОВКА К МОНТАЖУ</div>
+      <h1>Движение камеры.<br><em>До начала монтажа.</em></h1>
+      <p>Выберите движение, проверьте его на фото, настройте длительность и интенсивность. Сохраните эффект в монтажный лист, чтобы заранее согласовать работу камеры внутри каждого кадра.</p>
+      <div class="statline"><span><strong>12</strong> движений</span><i></i><span><strong>3</strong> категории</span><i></i><span><strong>9:16</strong> по умолчанию</span><i></i><span>Без рендера MP4</span></div>
+    </section>
+    <div class="workspace">
+      <section class="library" id="library">
+        <div class="section-header"><div><span class="overline">01 / БИБЛИОТЕКА</span><h2>Движение внутри кадра <sup id="visibleCount">12</sup></h2></div><span class="hint">НАЖМИТЕ НА ЭФФЕКТ ↗</span></div>
+        <div class="filters" role="group" aria-label="Группы приемов">
+          <button class="filter selected" data-filter="all" type="button">Все <b>12</b></button>
+          <button class="filter" data-filter="cinematic" type="button">Кинематографичные <b>4</b></button>
+          <button class="filter" data-filter="motion" type="button">Движение <b>4</b></button>
+          <button class="filter" data-filter="creative" type="button">Креативные <b>4</b></button>
+        </div>
+        <div class="effect-grid" id="effectGrid" aria-live="polite"></div>
+        <p class="library-note">Демонстрация выполняется в браузере, без отправки фотографий на сервер. Имитации глубины и движения камеры отмечены отдельно: из одной фотографии нельзя восстановить настоящий 3D-облет или оптический Dolly Zoom.</p>
+      </section>
+      <aside class="preview" id="preview" aria-label="Предпросмотр движения камеры">
+        <div class="preview-title"><div><span class="overline">02 / ЖИВОЙ ПРЕДПРОСМОТР</span><h2 id="effectTitle">Cinematic Zoom</h2></div><span class="count" id="effectNumber">01 / 12</span></div>
+        <p id="effectDescription" class="effect-description">Плавное приближение без рывков.</p>
+        <div class="controls-row"><span class="overline">ФОН</span><div class="tabs" role="group" aria-label="Демонстрационная фотография"><button class="preset selected" data-image="city" type="button">Город</button><button class="preset" data-image="sea" type="button">Море</button><button class="preset" data-image="mountains" type="button">Горы</button></div></div>
+        <div class="screen-frame">
+          <div class="screen" id="screen" aria-label="Анимация движения камеры на фотографии">
+            <div class="screen-window" id="screenWindow">
+              <img id="frameImage" alt="Демонстрационная фотография путешествия" crossorigin="anonymous">
+              <div class="far-layer" id="farLayer" aria-hidden="true"></div>
+              <div class="light-layer" id="lightLayer" aria-hidden="true"></div>
+              <div class="stage-glow" aria-hidden="true"></div>
+            </div>
+            <div class="screen-head"><span>BON TOURS</span><span>SHOT / 01</span></div>
+            <div class="screen-footer"><span><i></i> LIVE PREVIEW</span><span id="timer">0.00 c</span></div>
+          </div>
+          <p class="frame-footnote">Предпросмотр камерного движения · 2D-анимация</p>
+        </div>
+        <div class="play-row"><button type="button" id="playButton" class="play">▶ &nbsp; Воспроизвести</button><button id="favoriteButton" class="small-button" title="В избранное" aria-label="Добавить в избранное" type="button">☆</button><button id="replayButton" class="small-button" title="Повторить" aria-label="Повторить" type="button">↺</button></div>
+        <div class="progress"><div id="progressFill"></div></div>
+        <div class="editor">
+          <div class="editor-heading"><span class="overline">НАСТРОЙКИ</span><span>БЕЗ РЕНДЕРА</span></div>
+          <div class="double"><label>Длительность <output id="durationLabel">3.0 с</output><input type="range" id="duration" min="1000" max="8000" step="250" value="3000"></label><label>Интенсивность <output id="intensityLabel">50%</output><input type="range" id="intensity" min="10" max="100" step="5" value="50"></label></div>
+          <div class="row-field"><span>НАПРАВЛЕНИЕ</span><div role="group" class="direction-controls" aria-label="Направление движения"><button type="button" class="dir selected" data-direction="forward">Вперед</button><button type="button" class="dir" data-direction="reverse">Обратно</button></div></div>
+          <div class="row-field"><span>СООТНОШЕНИЕ СТОРОН</span><div role="group" class="format-controls" aria-label="Формат кадра"><button type="button" class="ratio selected" data-ratio="9:16">9:16</button><button type="button" class="ratio" data-ratio="1:1">1:1</button><button type="button" class="ratio" data-ratio="16:9">16:9</button></div></div>
+          <label class="image-upload" for="imageUpload">Загрузить свою фотографию <span>JPG/PNG/WEBP · только на этом устройстве</span><input id="imageUpload" type="file" accept="image/jpeg,image/png,image/webp"></label>
+        </div>
+        <div class="preview-note" id="previewNote"><strong>ПРИМЕНЕНИЕ</strong> · Плавный проезд по фотографии, титры и рекламные планы.</div>
+      </aside>
+    </div>
+    <section class="shot-section" id="shotlist">
+      <div class="shot-heading"><div><span class="overline">03 / ПОДГОТОВКА</span><h2>Монтажный лист</h2><p>Это план, а не готовая сборка. Дайте сценам названия и назначьте выбранные движения. Ни один ролик не изменяется.</p></div><div class="shot-actions"><button type="button" id="addShot" class="secondary">+ Добавить кадр</button><button type="button" id="fillShots" class="secondary">Применить избранное</button><button type="button" id="savePlan" class="primary">Экспортировать ТЗ JSON ↓</button></div></div>
+      <div id="shotRows" class="shot-rows" aria-live="polite"></div>
+      <div class="shot-footer"><span id="shotSummary">6 планов · подготовка без рендера</span><button id="copyPlan" type="button">Скопировать текстовое ТЗ ↗</button></div>
+    </section>
+    <section class="favorites" id="favorites"><div><span class="overline">04 / ИЗБРАННОЕ</span><h2>Мои движения <sup id="favoriteCount">0</sup></h2><p>Отмечайте понравившиеся приемы. Они сохраняются локально в этом браузере.</p></div><div class="favorite-pills" id="favoriteList"><span class="empty">Пока ничего не выбрано.</span></div></section>
+    <section class="notice"><strong>ГРАНИЦА ЭТАПА</strong><span>На этой странице только выбор приемов и подготовка монтажного задания. Нет генерации видео, платных вызовов, изменения озвучки, таймкодов или публикации.</span></section>
+    <footer><b>MOTION LAB × BON TOURS</b><span>Кинематографичные приемы · подготовка к монтажу</span><a href="index.html">К библиотеке переходов ↗</a></footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

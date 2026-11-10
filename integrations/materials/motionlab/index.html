@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1018">
+  <meta name="description" content="Интерактивная библиотека 30 переходов на базе Anime.js для монтажа тревел-рилсов.">
+  <title>Motion Lab — библиотека переходов</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/animejs@4/dist/bundles/anime.umd.min.js"></script>
+  <script defer src="app.js"></script>
+
+  <style>
+    .module-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin:4px 0 32px}
+    .module-card{min-width:0;display:flex;flex-direction:column;align-items:flex-start;min-height:205px;padding:21px 22px;border:1px solid #36494c;border-radius:17px;background:linear-gradient(135deg,#1b2d2b,#131e29 75%);transition:border-color .18s,transform .18s}
+    .module-card:hover{border-color:#c9f46b;transform:translateY(-2px)}
+    .module-card-active{border-color:#6a8c5e}
+    .module-no{color:#b2cbb2;font-size:9px;font-weight:900;letter-spacing:1.15px}
+    .module-symbol{font:600 24px Unbounded,sans-serif;color:#cefb83;letter-spacing:-1.8px;margin:10px 0 8px}
+    .module-card h2{font:700 17px/1.35 Manrope,sans-serif;margin:0 0 8px;color:#f0f6eb}
+    .module-card h2 small{font:800 10px Manrope,sans-serif;color:#c9f46b;vertical-align:middle;white-space:nowrap;margin-left:4px}
+    .module-card p{font-size:11px;color:#aec1bb;line-height:1.55;margin:0 0 14px}
+    .module-go{font-size:11px;font-weight:900;color:#d5f99a;margin-top:auto}
+    @media(max-width:900px){.module-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:670px){.module-grid{grid-template-columns:1fr;gap:10px}.module-card{min-height:unset;padding:16px 17px}.module-symbol{margin:8px 0 5px;font-size:21px}}
+  </style>
+</head>
+<body>
+  <div class="ambient ambient-a" aria-hidden="true"></div><div class="ambient ambient-b" aria-hidden="true"></div>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Motion Lab — наверх"><span class="brand-mark"><span></span><span></span><span></span></span><span class="brand-text"><strong>MOTION LAB</strong><small>BON TOURS · КИНОСТУДИЯ</small></span></a>
+    <nav class="nav"><a href="#catalog">Переходы</a><a href="text.html" class="nav-new-module">Титры <b>15</b></a><a href="subtitles.html" class="nav-new-module">Субтитры <b>5 + 24</b></a><a href="camera.html" class="nav-new-module">Камера <b>12</b></a><a href="storyboard.html" class="nav-new-module">Раскадровка</a><a href="#stage-section">Предпросмотр</a><a href="#chosen">Подборка <span id="navFavs">0</span></a></nav>
+    <div class="header-chip"><span class="live-dot"></span> Anime.js v4 <span class="chip-division">/</span> 30 эффектов</div>
+  </header>
+  <main id="top">
+    <section class="intro">
+      <div class="eyebrow"><span class="eyebrow-line"></span> ИНТЕРАКТИВНАЯ ЛАБОРАТОРИЯ МОНТАЖА <span class="intro-version">V 3.0</span></div>
+      <h1>Хороший переход<br><em>видно в движении.</em></h1>
+      <p class="intro-copy">Выберите эффект, посмотрите его на настоящих фотографиях и сохраните лучшие варианты для следующего рилса. В каталоге пять тематических разделов. Никаких статичных схем: все 30 переходов воспроизводятся прямо здесь.</p>
+      <div class="intro-stats"><span><strong>30</strong> анимированных эффектов</span><i></i><span><strong>3</strong> набора сцен</span><i></i><span><strong>1</strong> монтажная подборка</span></div>
+    </section>
+    <section class="module-grid" id="modules" aria-label="Пять инструментов Motion Lab">
+      <a href="#catalog" class="module-card module-card-active" aria-label="Открыть библиотеку переходов, 30 эффектов">
+        <span class="module-no">01 / МОНТАЖ СЦЕН</span><span class="module-symbol" aria-hidden="true">⇄</span>
+        <h2>Переходы <small>30 эффектов</small></h2>
+        <p>Соединение кадров, смена локаций, маски и динамичные переходы.</p><span class="module-go">Смотреть переходы ↗</span>
+      </a>
+      <a href="text.html" class="module-card" aria-label="Открыть модуль титров и текста, 15 анимаций">
+        <span class="module-no">02 / ТИТРЫ И ОФФЕРЫ</span><span class="module-symbol" aria-hidden="true">Aa</span>
+        <h2>Титры и текст <small>15 анимаций</small></h2>
+        <p>Названия городов, заголовки, даты и цены. Без дублирования субтитров.</p><span class="module-go">Открыть титры ↗</span>
+      </a>
+      <a href="subtitles.html" class="module-card" aria-label="Открыть единый редактор субтитров, 5 анимаций и 24 стиля">
+        <span class="module-no">03 / СУБТИТРЫ</span><span class="module-symbol" aria-hidden="true">CC</span>
+        <h2>Субтитры <small>5 + 24</small></h2>
+        <p>Анимация слов и оформление в одном редакторе. Сохраняйте сочетания.</p><span class="module-go">Открыть редактор ↗</span>
+      </a>
+      <a href="camera.html" class="module-card" aria-label="Открыть библиотеку движений камеры, 12 эффектов">
+        <span class="module-no">04 / ПОДГОТОВКА К МОНТАЖУ</span><span class="module-symbol" aria-hidden="true">◉</span>
+        <h2>Движение камеры <small>12 приемов</small></h2>
+        <p>Живой предпросмотр движений внутри кадра, выбор интенсивности и монтажный лист без рендера.</p><span class="module-go">Подготовить кадры ↗</span>
+      </a>
+      <a href="storyboard.html" class="module-card" aria-label="Открыть конструктор раскадровки для подготовки к монтажу">
+        <span class="module-no">05 / АВТОМАТИЧЕСКАЯ КИНОСТУДИЯ</span><span class="module-symbol" aria-hidden="true">▣</span>
+        <h2>Раскадровка <small>Конструктор</small></h2>
+        <p>Соберите все решения по сценам и верните настройки в автоматическую среду.</p><span class="module-go">Собрать режиссерское ТЗ ↗</span>
+      </a>
+    </section>
+<div class="workspace">
+      <section class="catalog-panel" id="catalog">
+        <div class="section-row"><div><div class="tiny-label">01 / БИБЛИОТЕКА</div><h2>Переходы <span id="visibleCount">30</span></h2></div><div class="sort-note">ВЫБЕРИТЕ ЭФФЕКТ ↗</div></div>
+        <div class="filter-bar" role="group" aria-label="Фильтр переходов"><button class="filter active" data-filter="all">Все <span>30</span></button><button class="filter" data-filter="cinematic">Кинематографичные <span>6</span></button><button class="filter" data-filter="dynamic">Динамичные <span>6</span></button><button class="filter" data-filter="elegant">Элегантные <span>5</span></button><button class="filter" data-filter="creative">Креативные <span>9</span></button><button class="filter" data-filter="travel">Для путешествий <span>4</span></button></div>
+        <div class="effect-grid" id="effectGrid"></div>
+        <div class="catalog-foot"><span>Живые демонстрации. Сложные эффекты стилизованы; это не экспортируемые видеопресеты.</span><span>30 / 30</span></div>
+      </section>
+      <aside class="studio-panel" id="stage-section">
+        <div class="studio-topline"><div><div class="tiny-label">02 / ПРОСМОТР</div><h2 id="currentTitle">Crossfade</h2></div><span id="currentNumber" class="index-chip">01 / 30</span></div>
+        <div class="studio-description" id="currentDescription">Плавное растворение одной сцены в другой.</div>
+        <div class="studio-presets"><span>СЦЕНЫ</span><div class="preset-buttons" role="group" aria-label="Выбор набора сцен"><button class="preset selected" data-preset="alps">Горы</button><button class="preset" data-preset="sea">Море</button><button class="preset" data-preset="city">Города</button></div></div>
+        <div class="stage-shell">
+          <div id="previewStage" class="preview-stage portrait" role="img" aria-label="Анимация перехода между двумя туристическими фотографиями">
+            <div id="sceneA" class="scene scene-a"><div class="scene-vignette"></div><div class="scene-content"><span class="scene-kicker" id="kickerA">01 / ALPS</span><span class="scene-head" id="headA">Встречаем<br>зиму</span><span class="scene-caption" id="captionA">BAVARIA · WINTER</span></div></div>
+            <div id="sceneB" class="scene scene-b"><div class="scene-vignette"></div><div class="scene-content"><span class="scene-kicker" id="kickerB">02 / JOURNEY</span><span class="scene-head" id="headB">Время<br>открывать</span><span class="scene-caption" id="captionB">NEXT DESTINATION</span></div></div>
+            <div class="fx flash" id="flashFx"></div><div class="fx glitch" id="glitchFx"></div>
+            <div id="overlayLayers" class="overlay-layers" aria-hidden="true"></div>
+            <div class="preview-corner top-left">A <span>→</span> B</div><div class="preview-corner top-right" id="previewTimer">00:00</div>
+            <div class="stage-bottom"><span class="stage-live"><b></b> ПРЕДПРОСМОТР</span><span>60 FPS*</span></div>
+          </div>
+          <div class="stage-hint">*Частота кадров зависит от устройства и браузера.</div>
+        </div>
+        <div class="preview-actions"><button id="playButton" class="play-button"><svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M6 3.6 16 10 6 16.4z" fill="currentColor"/></svg><span>Воспроизвести</span></button><button id="favoriteButton" class="icon-button" title="Добавить в подборку" aria-label="Добавить в подборку"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="m12 3 2.8 5.8 6.4.9-4.6 4.5 1.1 6.4-5.7-3-5.7 3 1.1-6.4-4.6-4.5 6.4-.9z" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linejoin="round"/></svg></button><button id="swapButton" class="icon-button" title="Поменять кадры местами" aria-label="Поменять кадры местами"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 7h16l-4-4M20 17H4l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></button></div>
+        <div class="progress-track" aria-label="Прогресс анимации"><div id="progressFill"></div></div>
+        <div class="controls-panel">
+          <div class="control-top"><label for="durationRange">Длительность <output id="durationOutput">0.9 с</output></label><input type="range" min="400" max="2400" value="900" step="100" id="durationRange" aria-label="Длительность перехода"></div>
+          <div class="control-bottom"><span>ФОРМАТ</span><div class="format-switch" role="group" aria-label="Формат кадра"><button class="format active" data-ratio="portrait">9:16</button><button class="format" data-ratio="square">1:1</button><button class="format" data-ratio="landscape">16:9</button></div></div>
+          <label class="loop-control"><input type="checkbox" id="loopToggle"> Повторять переход</label>
+        </div>
+        <details class="custom-photos"><summary><span>Свои фотографии</span><span>ЗАГРУЗИТЬ A / B ＋</span></summary><div class="upload-grid"><label>Кадр A<input type="file" id="photoA" accept="image/*"></label><label>Кадр B<input type="file" id="photoB" accept="image/*"></label></div><p>Фотографии остаются в вашем браузере и не отправляются на сервер.</p><button id="resetPhotos" class="text-button">Вернуть демонстрационные кадры</button></details>
+        <div class="effect-meta"><div><span>ХАРАКТЕР</span><b id="characterValue">Спокойный</b></div><div><span>СЛОЖНОСТЬ</span><b id="complexityValue">Простой</b></div><div><span>ДЛЯ ЧЕГО</span><b id="usageValue">Спокойные сцены</b></div></div>
+      </aside>
+    </div>
+    <section id="chosen" class="chosen-section"><div class="chosen-head"><div><div class="tiny-label">03 / РЕШЕНИЕ</div><h2>Моя подборка <span id="chosenCount">0</span></h2><p>Отметьте звездочкой понравившиеся переходы из любой категории. Подборка сохранится в вашем браузере.</p></div><button id="copyBrief" class="export-button">Скопировать монтажное ТЗ <span>↗</span></button></div><div class="chosen-items" id="chosenItems"><p class="empty-state">Пока ничего не выбрано. Нажмите звездочку рядом с понравившимся эффектом.</p></div><div class="chosen-footer"><span id="copyStatus" aria-live="polite">Подборка сохраняется в этом браузере.</span><button id="clearFavorites">Очистить подборку</button></div></section>
+    <section id="production" class="handoff-section">
+      <div class="tiny-label">04 / ПЕРЕДАЧА В КИНОСТУДИЮ</div>
+      <h2>Из подборки — в монтаж</h2>
+      <p>Загрузите локальный <code>video-spec.json</code> существующего задания Simba. Сайт автоматически распределит выбранные эффекты по границам сцен. Проверьте переходы и скачайте обновленный файл. Озвучка, сценарий, музыка, титры и другие параметры сохраняются.</p>
+      <div class="handoff-upload">
+        <label for="specFile" class="spec-input">Выбрать video-spec.json <input type="file" id="specFile" accept=".json,application/json"></label>
+        <span id="specInfo" aria-live="polite">Файл еще не выбран. Данные останутся в браузере.</span>
+      </div>
+      <div class="handoff-controls">
+        <button type="button" id="assignFavorites">Применить подборку ко всем переходам</button>
+        <button type="button" id="downloadSpec" class="export-button" disabled>Скачать video-spec.json</button>
+        <button type="button" id="downloadPlan">Скачать план переходов JSON</button>
+      </div>
+      <div id="sceneAssignments" class="scene-assignments" aria-live="polite"><p class="empty-state">Загрузите спецификацию ролика: появятся переходы между сценами.</p></div>
+      <p id="handoffStatus" class="handoff-status" aria-live="polite">Переходы записываются в <code>scenes[1..].transition</code>. Оба рендерера используют один шаблон. Окончательный MP4 создается в Киностудии после проверки входных медиа и обязательного QA.</p>
+    </section>
+    <footer><div class="footer-brand">MOTION LAB <span>×</span> BON TOURS</div><div>Anime.js 4 · Каталог и передача переходов в Киностудию</div><a href="https://animejs.com/documentation/" target="_blank" rel="noopener noreferrer">Документация Anime.js ↗</a></footer>
+  </main>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
