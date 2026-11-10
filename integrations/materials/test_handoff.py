@@ -257,5 +257,22 @@ class StageHandoffTests(unittest.TestCase):
         self.assertFalse(result["auto_dispatched"])
         self.assertFalse(result["external_media_verified"])
 
+    def test_leo_reported_publication_is_closed_without_repeat_dispatch(self):
+        self.project['stage'] = 'PUBLICATION_REPORTED_BY_LEO__CLOSED'
+        self.project['working_asset_id'] = 'review_video'
+        self.project['approved_asset_id'] = 'review_video'
+        self.project['approvals'].update(
+            editorial='approved', editorial_evidence='Leo approved exact MP4',
+            publication='approved', publication_evidence='Leo said ролик опубликован')
+        self.project['publication_record'] = {
+            'status': 'reported_by_leo_not_verified',
+            'post_url': None, 'remote_post_verified': False}
+        self.project['missing'] = []
+        result = handoff.make_handoff(self.root, self.path, self.project)
+        self.assertEqual(result['state'], 'PUBLICATION_REPORTED_COMPLETE')
+        self.assertEqual(result['packet']['next_stage'], 'closed')
+        self.assertFalse(result['auto_dispatched'])
+        self.assertFalse(result['external_media_verified'])
+
 if __name__ == "__main__":
     unittest.main()
