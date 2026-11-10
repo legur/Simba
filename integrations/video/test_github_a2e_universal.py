@@ -31,6 +31,32 @@ class UniversalTest(unittest.TestCase):
             event['issue']['body'] = json.dumps(body)
             with self.assertRaises(ValueError): u.validate(event)
 
+    def test_verified_lineage_is_preserved_without_any_a2e_start(self):
+        event=deepcopy(self.event)
+        body=json.loads(event['issue']['body'])
+        body.update(project_id='synthetic-bridge',
+                    handoff_sha256='a'*64,
+                    selected_storyboard=2,selected_prompts=1)
+        event['issue']['body']=json.dumps(body)
+        number, ceiling, scenes=u.validate(event)
+        self.assertEqual((number,ceiling),(100,60))
+        with TemporaryDirectory() as tmp, patch.dict(u.os.environ, {'A2E_API_KEY':'sk_'+'x'*20}), patch.object(u,'price',return_value=[61]), patch.object(u.core,'a2e_start') as start:
+            result=u.run(event,Path(tmp))
+            self.assertEqual(result['status'],'STOPPED')
+            self.assertEqual(result['lineage']['project_id'],'synthetic-bridge')
+            self.assertEqual(result['lineage']['handoff_sha256'],'a'*64)
+            self.assertFalse(result['lineage']['verified_at_source'])
+            start.assert_not_called()
+
+    def test_incomplete_lineage_is_rejected(self):
+        event=deepcopy(self.event)
+        body=json.loads(event['issue']['body'])
+        body.update(project_id='../bad',handoff_sha256='z'*64,
+                    selected_storyboard=True,selected_prompts=1)
+        event['issue']['body']=json.dumps(body)
+        with self.assertRaises(ValueError):
+            u.validate(event)
+
     def test_cap_prevents_paid_start(self):
         with TemporaryDirectory() as tmp, patch.dict(u.os.environ, {'A2E_API_KEY': 'sk_' + 'x' * 20}), patch.object(u, 'price', return_value=[61]), patch.object(u.core, 'a2e_start') as start:
             result = u.run(self.event, Path(tmp))
