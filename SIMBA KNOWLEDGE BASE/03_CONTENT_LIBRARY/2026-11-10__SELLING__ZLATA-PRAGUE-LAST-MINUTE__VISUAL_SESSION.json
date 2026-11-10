@@ -1,0 +1,62 @@
+{
+  "date": "2026-11-10",
+  "approved_text_path": "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-10__SELLING__ZLATA-PRAGUE-LAST-MINUTE__APPROVED.md",
+  "text_executor": "Simba",
+  "visual_executor": "Rafael/RAFAEL_System_v6.2.md",
+  "renderer": "image_gen",
+  "status": "PREVIEWS_IN_PROGRESS",
+  "mode_selection": "UNAVAILABLE: image tool exposes no fast/thinking mode",
+  "references": {
+    "Archivarius": "4 active trusted cards read",
+    "YouMind": "manifest read; poster-flyer.json returned empty content twice; unavailable for template selection",
+    "OpenAI_examples": "EX-01 exact-text prompt mechanics; linked legacy sample images not available in renderer; no image reference passed"
+  },
+  "variants": [
+    {
+      "id": 1,
+      "name": "Price in focus",
+      "prompt": "Use case: ads-marketing. Generate ONE standalone SQUARE 1:1 preview poster for Russian-speaking adults. Not a contact sheet. Text must be large, mobile-readable and exact. Header at top: \"ПРАГА\" once. Lower-left compact information: \"15-21.11.2026\" once, \"599 € / чел.\" once and \"при двухместном размещении\" once; make the condition easily readable, not fine print. Small tasteful brand at bottom: \"Simba by Bon Tours\" once. Small clear numbered preview label at top right: \"ВАРИАНТ 1\" once. Only replace NUMBER with this variant number. No extra text, no phone, no QR, no slogan, no all-city list, no watermark, no made-up claims. Keep 6% safe margins, headline top, strong main image middle, conditions lower left. Avoid snowfall and Christmas decor. No input images or identity reference supplied; create an original adult realistic lion mascot, not a child's cartoon, not a costume.\nScene and art direction: A sophisticated high-contrast graphic travel sale advertisement, charcoal background and restrained cyan blocks, with a telephoto photographic Prague skyline softly behind. Strong oversized price but do not repeat it. Adult photoreal anthropomorphic male lion with tawny fur and full dark-gold mane in navy wool travel coat, standing on the right with a small leather suitcase. Credible lion face and paws, human upright posture. Clean modern social impact art direction.",
+      "refs": [
+        "AR-20260720-004"
+      ],
+      "renderStatus": "PENDING"
+    },
+    {
+      "id": 2,
+      "name": "Prague linocut",
+      "prompt": "Use case: ads-marketing. Generate ONE standalone SQUARE 1:1 preview poster for Russian-speaking adults. Not a contact sheet. Text must be large, mobile-readable and exact. Header at top: \"ПРАГА\" once. Lower-left compact information: \"15-21.11.2026\" once, \"599 € / чел.\" once and \"при двухместном размещении\" once; make the condition easily readable, not fine print. Small tasteful brand at bottom: \"Simba by Bon Tours\" once. Small clear numbered preview label at top right: \"ВАРИАНТ 2\" once. Only replace NUMBER with this variant number. No extra text, no phone, no QR, no slogan, no all-city list, no watermark, no made-up claims. Keep 6% safe margins, headline top, strong main image middle, conditions lower left. Avoid snowfall and Christmas decor. No input images or identity reference supplied; create an original adult realistic lion mascot, not a child's cartoon, not a costume.\nScene and art direction: Bold linocut and paper-cut Prague city poster on warm ivory paper. Large black silhouette shapes of Charles Bridge towers, Prague Castle and Prague rooflines, one red Czech tram as local accent, handprinted texture. An adult PHOTOREAL anthropomorphic male lion with tawny fur and full dark-gold mane, navy travel coat, casually standing near the tram at lower right, visually integrated by shadows. Deliberate photoreal hero against graphic printed architecture, not a cartoon lion.",
+      "refs": [
+        "AR-20260902-001"
+      ],
+      "renderStatus": "PENDING"
+    },
+    {
+      "id": 3,
+      "name": "Vintage postcard",
+      "prompt": "Use case: ads-marketing. Generate ONE standalone SQUARE 1:1 preview poster for Russian-speaking adults. Not a contact sheet. Text must be large, mobile-readable and exact. Header at top: \"ПРАГА\" once. Lower-left compact information: \"15-21.11.2026\" once, \"599 € / чел.\" once and \"при двухместном размещении\" once; make the condition easily readable, not fine print. Small tasteful brand at bottom: \"Simba by Bon Tours\" once. Small clear numbered preview label at top right: \"ВАРИАНТ 3\" once. Only replace NUMBER with this variant number. No extra text, no phone, no QR, no slogan, no all-city list, no watermark, no made-up claims. Keep 6% safe margins, headline top, strong main image middle, conditions lower left. Avoid snowfall and Christmas decor. No input images or identity reference supplied; create an original adult realistic lion mascot, not a child's cartoon, not a costume.\nScene and art direction: Mid-century travel poster, simplified flat illustration of Prague skyline viewed over the Vltava with Charles Bridge and orange rooflines. Muted petrol blue, terracotta, butter cream, balanced spacious foreground/city/background. A PHOTOREAL adult anthropomorphic male lion with tawny fur and full dark-gold mane in a brown wool blazer and ochre scarf at lower right looking toward the panorama, real fur and fabric against deliberately illustrative background. Warm approachable editorial travel art.",
+      "refs": [
+        "AR-20260720-005"
+      ],
+      "renderStatus": "PENDING"
+    },
+    {
+      "id": 4,
+      "name": "Architectural convergence",
+      "prompt": "Use case: ads-marketing. Generate ONE standalone SQUARE 1:1 preview poster for Russian-speaking adults. Not a contact sheet. Text must be large, mobile-readable and exact. Header at top: \"ПРАГА\" once. Lower-left compact information: \"15-21.11.2026\" once, \"599 € / чел.\" once and \"при двухместном размещении\" once; make the condition easily readable, not fine print. Small tasteful brand at bottom: \"Simba by Bon Tours\" once. Small clear numbered preview label at top right: \"ВАРИАНТ 4\" once. Only replace NUMBER with this variant number. No extra text, no phone, no QR, no slogan, no all-city list, no watermark, no made-up claims. Keep 6% safe margins, headline top, strong main image middle, conditions lower left. Avoid snowfall and Christmas decor. No input images or identity reference supplied; create an original adult realistic lion mascot, not a child's cartoon, not a costume.\nScene and art direction: Photographic architectural art collage, cream and charcoal with rust-orange headline. Prague Gothic bridge tower as main central vertical landmark, Prague castle and rooflines arranged along edges in controlled radial converging composition, clearly intentional montage rather than a literal map. Adult PHOTOREAL anthropomorphic lion, tawny fur full dark-gold mane wearing beige coat holding an unmarked folded map at lower right, small but integral to scene. Distinctive architectural depth, clear not cluttered.",
+      "refs": [
+        "AR-20260902-005"
+      ],
+      "renderStatus": "PENDING"
+    },
+    {
+      "id": 5,
+      "name": "Suitcase city",
+      "prompt": "Use case: ads-marketing. Generate ONE standalone SQUARE 1:1 preview poster for Russian-speaking adults. Not a contact sheet. Text must be large, mobile-readable and exact. Header at top: \"ПРАГА\" once. Lower-left compact information: \"15-21.11.2026\" once, \"599 € / чел.\" once and \"при двухместном размещении\" once; make the condition easily readable, not fine print. Small tasteful brand at bottom: \"Simba by Bon Tours\" once. Small clear numbered preview label at top right: \"ВАРИАНТ 5\" once. Only replace NUMBER with this variant number. No extra text, no phone, no QR, no slogan, no all-city list, no watermark, no made-up claims. Keep 6% safe margins, headline top, strong main image middle, conditions lower left. Avoid snowfall and Christmas decor. No input images or identity reference supplied; create an original adult realistic lion mascot, not a child's cartoon, not a costume.\nScene and art direction: Surreal high-end studio still life on warm light blue seamless background: an open cognac leather suitcase contains a miniature Prague city with bridge towers, river and terracotta rooflines as an imaginative travel diorama. Adult photoreal anthropomorphic male lion, tawny fur full dark-gold mane, navy cardigan and soft wool scarf, positioned behind at right leaning toward the suitcase as if ready to pack. Real materials, soft side lighting, tactile tiny city, playful adult travel art direction, no toys or cartoon mascot.",
+      "refs": [
+        "AR-20260720-004"
+      ],
+      "renderStatus": "PENDING"
+    }
+  ],
+  "kb_lint": "PASS: source explicit; dynamic facts dated; correct content layer; distinct material; prompts preserved; no publication claim"
+}
