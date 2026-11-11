@@ -62,7 +62,7 @@ const clamp = (x,min,max) => Math.min(max,Math.max(min,x));
 const safeText = (s,max=140) => typeof s==='string'?s.slice(0,max):'';
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nameFor = (type,id)=> CATALOG[type].find(e=>e[0]===id)?.[1]||id;
-const state = {project:null, request:null, scenes:[],selectedIndex:0,selectedOption:1,concepts:PRESETS.map(x=>({...x})),bridge:null,dirty:false,sending:false,lastAck:null,deliveryStatus:null,confirmed:false};
+const state = {project:null, request:null, scenes:[],selectedIndex:0,selectedOption:1,concepts:PRESETS.map(x=>({...x})),bridge:null,dirty:false,sending:false,lastAck:null,deliveryStatus:null,confirmed:false,confirmedAt:null};
 // Actual make_video.py capability IDs. The 12 demonstration camera IDs and
 // title transitions are not the same as production renderer options.
 const RENDER_MOVES = new Set(['none','hold','push','pull','pan-left','pan-right','rise']);
@@ -163,7 +163,7 @@ function makeScene(row,index,chosenPreset=PRESETS[0]){
  };
  return src;
 }
-function prepareDemo(){stopFilm(false);clearPreviews();state.confirmed=false;state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;state.deliveryStatus=null;clearTimeout(pendingAckTimer);setConnection('demo');render();}
+function prepareDemo(){stopFilm(false);clearPreviews();state.confirmed=false;state.confirmedAt=null;state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;state.deliveryStatus=null;clearTimeout(pendingAckTimer);setConnection('demo');render();}
 function populateSelect(id,items){$(id).replaceChildren(...items.map(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;return o}));}
 function titleChoice(index){if(film.active||film.paused)stopFilm(false);let s=state.scenes[index];state.selectedIndex=index;resetPreview();render();}
 function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="concept-support">${!RENDER_MOVES.has(c.camera)||c.titleFx!=='none'?'Есть эффекты только для предпросмотра':'Нужна проверка рендерера'}</span><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
@@ -264,7 +264,7 @@ function render(){renderConcepts();renderSceneList();renderEditor();renderSummar
 function updateKey(key,value){if(state.request&&['name','duration','image','asset','title','subtitle'].includes(key))return;const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
 function editChange(id,key,fn){$(id).addEventListener('change',()=>{const v=fn?fn($(id).value):$(id).value;updateKey(key,v);});}
 function liveChange(id,key){$(id).addEventListener('input',()=>{if(state.request&&['title','subtitle'].includes(key))return;const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
-function resetAck(){if(film.active||film.paused)stopFilm();state.confirmed=false;state.sending=false;state.lastAck=null;state.deliveryStatus=null;globalThis.MotionLabInbox?.clearRetry();clearTimeout(pendingAckTimer);}
+function resetAck(){if(film.active||film.paused)stopFilm();state.confirmed=false;state.confirmedAt=null;state.sending=false;state.lastAck=null;state.deliveryStatus=null;globalThis.MotionLabInbox?.clearRetry();clearTimeout(pendingAckTimer);}
 // Whole-film editor review: a browser approximation on verified/locally selected assets.
 // Does not generate MP4, analyze speech/music, or silently authorize Montage.
 const film={active:false,paused:false,playhead:0,raf:0,started:0,index:-1,nextIndex:-1,total:0};
@@ -400,7 +400,7 @@ function approveReview(){
  if(film.active)stopFilm();
  const error=validationError();
  if(error){say(error);return;}
- state.confirmed=true;renderSummary();
+ state.confirmed=true;state.confirmedAt=new Date().toISOString();renderSummary();
  const count=rendererIssues(state.scenes).length;
  say(count?'Монтаж визуально утвержден, но '+count+' параметров еще не поддержаны рендерером':'Вариант утвержден для сохранения. Отправка в Wix не разрешает рендер.');
 }
@@ -445,7 +445,7 @@ function parseLaunch(raw,strict){if(!raw||typeof raw!=='object'||Array.isArray(r
  return {request:{id:request_id,projectId:project_id,fingerprint:fp,stage:'edit_choice'},concepts,scenes,selected};
 }
 function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);stopFilm(false);clearPreviews();state.confirmed=false;state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
-function buildResult(){const req=state.request,bridge=Boolean(state.bridge),timestamp=new Date().toISOString();const result={
+function buildResult(){const req=state.request,bridge=Boolean(state.bridge),timestamp=state.confirmedAt||new Date().toISOString();const result={
  schema:'bontours.motionlab.storyboard.selection/v1',request_id:req?.id||null,project_id:req?.projectId||null,stage:'edit_choice',expected_input_fingerprint:req?.fingerprint||null,
  decision:{selected_option:state.selectedOption,options_presented:3,user_selected_at:timestamp,state:bridge?'USER_SELECTED_IN_CONNECTED_SESSION':'DRAFT_NOT_DELIVERED',confirmation_scope:'EDIT_CHOICES_ONLY'},
  format:'9:16',scenes:state.scenes.map((s,i)=>({scene_id:s.id,order:i+1,name:s.name,duration_seconds:s.duration,asset_id:s.asset||null,preview_image_key:s.image,
@@ -514,7 +514,7 @@ function captureEditorForLogin(){
  if(!state.request)return;
  const snapshot={at:Date.now(),request:state.request,project:state.project,scenes:state.scenes,
   concepts:state.concepts,selectedOption:state.selectedOption,selectedIndex:state.selectedIndex,
-  confirmed:state.confirmed};
+  confirmed:state.confirmed,confirmedAt:state.confirmedAt};
  const raw=JSON.stringify(snapshot);
  if(raw.length>240000)throw Error('Слишком крупное задание для временного восстановления после входа.');
  sessionStorage.setItem(WIX_EDITOR_SNAPSHOT,raw);
@@ -526,7 +526,7 @@ function restoreEditorAfterLogin(){
   const s=JSON.parse(raw);
   if(Date.now()-s.at>900000||!s.request||!Array.isArray(s.scenes)||s.scenes.length>24)return;
   state.request=s.request;state.project=s.project;state.scenes=s.scenes;state.concepts=s.concepts;
-  state.selectedOption=s.selectedOption;state.selectedIndex=s.selectedIndex;state.confirmed=Boolean(s.confirmed);
+  state.selectedOption=s.selectedOption;state.selectedIndex=s.selectedIndex;state.confirmed=Boolean(s.confirmed);state.confirmedAt=state.confirmed?s.confirmedAt:null;
   state.bridge=null;state.dirty=true;state.lastAck=null;state.deliveryStatus=null;
   setConnection('offline');render();
  }catch(e){say('Не удалось восстановить черновик после входа.');}
