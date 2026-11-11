@@ -62,7 +62,7 @@ const clamp = (x,min,max) => Math.min(max,Math.max(min,x));
 const safeText = (s,max=140) => typeof s==='string'?s.slice(0,max):'';
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nameFor = (type,id)=> CATALOG[type].find(e=>e[0]===id)?.[1]||id;
-const state = {project:null, request:null, scenes:[],selectedIndex:0,selectedOption:1,concepts:PRESETS.map(x=>({...x})),bridge:null,dirty:false,sending:false,lastAck:null,confirmed:false};
+const state = {project:null, request:null, scenes:[],selectedIndex:0,selectedOption:1,concepts:PRESETS.map(x=>({...x})),bridge:null,v2:null,dirty:false,sending:false,lastAck:null,confirmed:false};
 // Actual make_video.py capability IDs. The 12 demonstration camera IDs and
 // title transitions are not the same as production renderer options.
 const RENDER_MOVES = new Set(['none','hold','push','pull','pan-left','pan-right','rise']);
@@ -70,6 +70,7 @@ const RENDER_TRANSITIONS = new Set(CATALOG.transitions.map(x=>x[0]));
 const RENDER_STYLES = new Set(CATALOG.subtitle.filter(x=>x[0]!=='none').map(x=>x[0]));
 const RENDER_WORD_MOTIONS = new Set(CATALOG.motion.map(x=>x[0]));
 function rendererIssues(scenes){
+ if(state.v2 && globalThis.MotionLabV2?.rendererIssues)return globalThis.MotionLabV2.rendererIssues(scenes);
  const issues=[];
  scenes.forEach((s,i)=>{
   if(!RENDER_MOVES.has(s.camera))issues.push('Сцена '+(i+1)+': камера — только предпросмотр');
@@ -123,7 +124,8 @@ async function localFileChosen(file){
 }
 let toastTimer, previewTimers=[], pendingAckTimer;
 function say(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2500)}
-function choicesFromPreset(id){const p=state.concepts.find(v=>v.id===id)||state.concepts[0];state.scenes=state.scenes.map((s,i)=>({...s,camera:p.camera,transition:i===0?'none':p.transition,titleFx:p.titleFx,subtitleStyle:p.subtitleStyle,wordMotion:p.wordMotion,intensity:p.intensity}));state.selectedOption=id;state.dirty=true;resetAck();render();}
+function choicesFromPreset(id){if(state.v2)return globalThis.MotionLabV2?.choose(id);
+ const p=state.concepts.find(v=>v.id===id)||state.concepts[0];state.scenes=state.scenes.map((s,i)=>({...s,camera:p.camera,transition:i===0?'none':p.transition,titleFx:p.titleFx,subtitleStyle:p.subtitleStyle,wordMotion:p.wordMotion,intensity:p.intensity}));state.selectedOption=id;state.dirty=true;resetAck();render();}
 function makeScene(row,index,chosenPreset=PRESETS[0]){
  const source = row && typeof row==='object' ? row : {};
  const image=Object.prototype.hasOwnProperty.call(IMAGES,source.image)?source.image:['mountains','city','sea','city','coast','mountains'][index%6];
@@ -151,7 +153,7 @@ function makeScene(row,index,chosenPreset=PRESETS[0]){
  };
  return src;
 }
-function prepareDemo(){stopFilm(false);clearPreviews();state.confirmed=false;state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;clearTimeout(pendingAckTimer);setConnection('demo');render();}
+function prepareDemo(){stopFilm(false);clearPreviews();state.v2=null;state.confirmed=false;state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;clearTimeout(pendingAckTimer);setConnection('demo');render();}
 function populateSelect(id,items){$(id).replaceChildren(...items.map(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;return o}));}
 function titleChoice(index){if(film.active||film.paused)stopFilm(false);let s=state.scenes[index];state.selectedIndex=index;resetPreview();render();}
 function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="concept-support">${!RENDER_MOVES.has(c.camera)||c.titleFx!=='none'?'Есть эффекты только для предпросмотра':'Нужна проверка рендерера'}</span><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
@@ -216,12 +218,12 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  if(total>60)warns.push('План превышает 60 секунд: перед монтажом потребуется уточнение длительности.');
  const unsupported=rendererIssues(state.scenes);
  if(unsupported.length)warns.push('Есть '+unsupported.length+' несовместимых с текущим MP4 эффектов; сохраните черновик или выберите поддерживаемый вариант.');
- if(globalThis.MotionLabVisual?.changed())warns.push('Визуальные координаты сохраняются только отдельным черновиком v2; через selection/v1 не передаются.');
+ if(!state.v2 && globalThis.MotionLabVisual?.changed())warns.push('Визуальные координаты сохраняются только отдельным черновиком v2; через selection/v1 не передаются.');
  const v=$('validation');v.textContent=warns.length?warns.join(' '):'Структура готова. Возврат выбора не запускает рендер, TTS, A2E или публикацию.';v.classList.toggle('warning',warns.length>0);
  $('sendToAgent').disabled=!(state.bridge&&state.request)||!state.confirmed||state.sending||unsupported.length>0||warns.some(x=>/название|ID исходного|ID ассета/.test(x));
  const layoutDraft=Boolean(globalThis.MotionLabVisual?.changed());
- $('downloadJson').disabled=layoutDraft;
- $('downloadJson').title=layoutDraft?'Этот v1 JSON не хранит позиции текста. Скачайте визуальный черновик v2.':'Скачать настройки совместимые с v1';
+ $('downloadJson').disabled=Boolean(state.v2)||layoutDraft;
+ $('downloadJson').title=state.v2?'v1 экспорт для подключенного задания v2 запрещен':layoutDraft?'Этот v1 JSON не хранит позиции текста. Скачайте визуальный черновик v2.':'Скачать настройки совместимые с v1';
  $('downloadVisual').disabled=!layoutDraft;
  const approval=$('approvalStatus');if(approval){approval.textContent=state.confirmed?'Вариант утвержден вами, но не передан монтажеру':'Еще не утверждено';approval.classList.toggle('approved',state.confirmed);}
  const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
@@ -359,6 +361,7 @@ function startFilm(){
 }
 function approveReview(){
  if(film.active)stopFilm();
+ if(state.v2){const issue=globalThis.MotionLabV2?.reviewIssue();if(issue){say(issue);return;}}
  const error=validationError();
  if(error){say(error);return;}
  state.confirmed=true;renderSummary();
@@ -377,7 +380,7 @@ function play(){if(film.active||film.paused)stopFilm();resetPreview();const s=st
  if(s.titleFx!=='none')title.animate([{opacity:0,transform:s.titleFx==='slide-left'?'translate(-50%,-50%) translateX(20px)':'translate(-50%,-50%) translateY(16px)'},{opacity:1,transform:'translate(-50%,-50%)'}],{duration:Math.min(dur*.45,950),easing:'ease-out',fill:'forwards'});
  if(s.subtitleStyle!=='none')sub.animate([{opacity:0,transform:'translate(-50%,-50%) translateY(10px)'},{opacity:1,transform:'translate(-50%,-50%)'}],{duration:Math.min(dur*.55,1100),delay:Math.min(dur*.25,500),fill:'forwards'});
 }
-function reorder(i,delta){const j=i+delta;if(j<0||j>=state.scenes.length)return;const a=state.scenes;[a[i],a[j]]=[a[j],a[i]];state.selectedIndex=j;a[0].transition='none';if(a.length>1&&a[1].transition==='none')a[1].transition=state.concepts.find(p=>p.id===state.selectedOption).transition;state.dirty=true;resetAck();render();}
+function reorder(i,delta){if(state.request){say('Порядок утвержденных сцен заблокирован.');return;}const j=i+delta;if(j<0||j>=state.scenes.length)return;const a=state.scenes;[a[i],a[j]]=[a[j],a[i]];state.selectedIndex=j;a[0].transition='none';if(a.length>1&&a[1].transition==='none')a[1].transition=state.concepts.find(p=>p.id===state.selectedOption).transition;state.dirty=true;resetAck();render();}
 function addScene(){if(state.request){say('Утвержденные сцены изменяет Киностудия, не этот редактор.');return;}if(state.scenes.length>=LIMIT){say('Максимум 24 сцены');return;}const n=state.scenes.length,p=state.concepts.find(c=>c.id===state.selectedOption);const s=makeScene({name:`Сцена ${n+1}`,image:'city',title_text:'',subtitle_preview:''},n,p);state.scenes.push(s);state.selectedIndex=n;state.dirty=true;resetAck();render();}
 function fromSaved(){const read=key=>{try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v:[]}catch{return[]}};
  const camera=read('motionlab-camera-favorites-v1').filter(id=>known('camera',id)),transition=read('motionlab:favorites').filter(id=>known('transitions',id)),title=read('motionlab:text:favorites').filter(id=>known('title',id)),subtitle=read('motionlab:subtitle-combos:v2').filter(id=>typeof id==='string'&&id.includes('|'));
@@ -402,7 +405,7 @@ function parseLaunch(raw,strict){if(!raw||typeof raw!=='object'||Array.isArray(r
  const ids=scenes.map(s=>s.id);if(ids.some(id=>!id)||new Set(ids).size!==ids.length)throw Error('scene_id должны быть уникальными');
  return {request:{id:request_id,projectId:project_id,fingerprint:fp,stage:'edit_choice'},concepts,scenes,selected};
 }
-function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);stopFilm(false);clearPreviews();state.confirmed=false;state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
+function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);state.v2=null;stopFilm(false);clearPreviews();state.confirmed=false;state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
 function buildResult(){const req=state.request,bridge=Boolean(state.bridge),timestamp=new Date().toISOString();return {
  schema:'bontours.motionlab.storyboard.selection/v1',request_id:req?.id||null,project_id:req?.projectId||null,stage:'edit_choice',expected_input_fingerprint:req?.fingerprint||null,
  decision:{selected_option:state.selectedOption,options_presented:3,user_selected_at:timestamp,state:bridge?'USER_SELECTED_IN_CONNECTED_SESSION':'DRAFT_NOT_DELIVERED',confirmation_scope:'EDIT_CHOICES_ONLY'},
@@ -415,10 +418,10 @@ function buildResult(){const req=state.request,bridge=Boolean(state.bridge),time
  };
 }
 function validationError(){if(filmTotal()>60)return 'Сумма длительностей сцен превышает 60 секунд';if(state.scenes.some(s=>!s.name.trim()))return 'Названия сцен не могут быть пустыми';if(state.scenes.some(s=>s.image==='custom'&&!s.asset.trim()))return 'Для своего кадра необходим ID исходного файла';if(!state.scenes.length)return 'Добавьте сцену';return null;}
-function jsonDownload(){if(globalThis.MotionLabVisual?.changed()){say('Визуальные координаты не поддержаны JSON v1. Используйте отдельный черновик v2.');return;}const error=validationError();if(error){say(error);return;}const obj=buildResult();const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`motionlab-${obj.project_id||'demo'}-edit-choice.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);say('JSON сохранен');}
+function jsonDownload(){if(state.v2){say('Подключенная v2 сессия не может экспортироваться как v1');return;}if(globalThis.MotionLabVisual?.changed()){say('Визуальные координаты не поддержаны JSON v1. Используйте отдельный черновик v2.');return;}const error=validationError();if(error){say(error);return;}const obj=buildResult();const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`motionlab-${obj.project_id||'demo'}-edit-choice.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);say('JSON сохранен');}
 async function copyBrief(){const lines=[`BON TOURS / MOTION LAB — РЕЖИССЕРСКОЕ РЕШЕНИЕ`,`Проект: ${state.project?.id||'демонстрация'}`,`Вариант: ${state.selectedOption}`,`Сцен: ${state.scenes.length}`,'',...state.scenes.map((s,i)=>`${i+1}. ${s.name} (${s.duration} с): камера ${nameFor('camera',s.camera)}, переход ${i?nameFor('transitions',s.transition):'нет'}, титр ${nameFor('title',s.titleFx)}, субтитры ${nameFor('subtitle',s.subtitleStyle)} / ${nameFor('motion',s.wordMotion)}`),'','Решение только для подготовки. Рендер, TTS, A2E и публикация не разрешены.'];try{await navigator.clipboard.writeText(lines.join('\n'));say('Монтажное ТЗ скопировано')}catch{say('Копирование недоступно. Скачайте JSON')}}
 function setConnection(mode){$('connLed').className='conn-led '+(mode==='connected'?'connected':'waiting');$('connectionTitle').textContent=mode==='connected'?'Агент подключен / выбор ожидается':mode==='offline'?'Задание импортировано / офлайн':'Демонстрационный режим';$('connectionText').textContent=mode==='connected'?`Сессия ${state.request?.id||''}. После выбора отправим настройки строго инициировавшей среде и дождемся ACK.`:mode==='offline'?'Задание открыто из файла. Для возврата результата скачайте JSON и передайте его агенту.':'Вы можете проверить редактор и экспортировать JSON. Для прямого возврата агент должен запустить модуль через подтвержденный канал сообщений.';renderSummary();}
-function sendSelection(){if(globalThis.MotionLabVisual?.changed()){say('Есть визуальные правки: Montage v1 пока не принимает координаты. Скачайте черновик v2.');return;}if(!state.confirmed){say('Сначала утвердите выбранный монтаж');return;}const error=validationError();if(error){say(error);return;}if(!state.bridge||!state.request){say('Нет подключенного агентского канала. Используйте экспорт JSON.');return;}
+function sendSelection(){if(state.v2)return globalThis.MotionLabV2?.sendSelection();if(globalThis.MotionLabVisual?.changed()){say('Есть визуальные правки: Montage v1 пока не принимает координаты. Скачайте черновик v2.');return;}if(!state.confirmed){say('Сначала утвердите выбранный монтаж');return;}const error=validationError();if(error){say(error);return;}if(!state.bridge||!state.request){say('Нет подключенного агентского канала. Используйте экспорт JSON.');return;}
  const b=state.bridge,packet=buildResult();state.sending=true;state.lastAck=null;renderSummary();try{b.source.postMessage({type:'SIMBA_MOTIONLAB_SELECTION',protocol:'bontours.motionlab.bridge/v1',payload:packet},b.origin)}catch(err){state.sending=false;renderSummary();say('Не удалось отправить. Скачайте JSON.');return;}
  pendingAckTimer=setTimeout(()=>{if(!state.sending)return;state.sending=false;renderSummary();say('Подтверждение не пришло. Используйте JSON.');},9000);
 }
