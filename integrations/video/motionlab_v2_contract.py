@@ -19,6 +19,7 @@ import re
 import make_video
 import motionlab_render_contract as r
 import motionlab_layout_contract as geometry
+import motionlab_typography_contract as typography
 
 MATERIALS = "bontours.motionlab.materials.launch/v2"
 PROPOSALS = "bontours.motionlab.proposals/v2"
@@ -341,6 +342,16 @@ def validate_selection_v2(materials,proposals,selection):
                   "materials_sha256","proposals_sha256","format","decision",
                   "guards","scenes","next_stage","scene_layout",
               },
+              {
+                  "schema","project_id","request_id","expected_input_fingerprint",
+                  "materials_sha256","proposals_sha256","format","decision",
+                  "guards","scenes","next_stage","global_theme","scene_typography",
+              },
+              {
+                  "schema","project_id","request_id","expected_input_fingerprint",
+                  "materials_sha256","proposals_sha256","format","decision",
+                  "guards","scenes","next_stage","scene_layout","global_theme","scene_typography",
+              },
           )
           and selection.get("project_id")==materials["project_id"]
           and selection.get("request_id")==materials["request_id"]
@@ -390,7 +401,17 @@ def validate_selection_v2(materials,proposals,selection):
             expected=_validated_layout(proposed,materials) if proposed is not None else _defaults_layout(materials)
             check(actual==expected,
                   "VISUAL_LAYOUT_CHANGE_NOT_APPROVED")
+    if "global_theme" in selection:
+        theme=selection["global_theme"]
+        check(isinstance(theme,dict) and set(theme)=={"typography"},
+              "INVALID_GLOBAL_THEME")
+        try:
+            typography.resolve_scenes(theme["typography"],
+                                      selection["scene_typography"],materials["scenes"])
+        except typography.TypographyError as exc:
+            raise r.ContractError(exc.code,scene_id=exc.scene_id,field=exc.field) from None
     report.update({
+        "visual_typography_present":"global_theme" in selection,
         "visual_layout_present":provided is not None,
         "visual_layout_edited":edited,
         "status":"V2_SELECTION_VALIDATED_NOT_WRITTEN",
@@ -417,6 +438,9 @@ def map_selection_v2_to_spec(materials,proposals,selection,approved_spec,
           materials.get("approved_audio_sha256"),"APPROVED_AUDIO_CHANGED")
     result=copy.deepcopy(approved_spec)
     probe=probe or r._ffprobe
+    typography_scenes=(typography.resolve_scenes(
+        selection["global_theme"]["typography"],selection["scene_typography"],
+        materials["scenes"]) if "global_theme" in selection else None)
     for i,(src,edited,base,asset) in enumerate(zip(
             materials["scenes"],selection["scenes"],result["scenes"],verified_media)):
         sid=src["scene_id"]
@@ -447,6 +471,8 @@ def map_selection_v2_to_spec(materials,proposals,selection,approved_spec,
         if "scene_layout" in selection:
             base["visualLayout"]=copy.deepcopy(
                 selection["scene_layout"][i]["layout"])
+        if typography_scenes is not None:
+            base["visualTypography"]=copy.deepcopy(typography_scenes[i]["typography"])
         if edited["title_fx"]=="none":
             base.pop("title",None)
         if i==0:
