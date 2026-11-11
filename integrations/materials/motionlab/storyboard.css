@@ -213,3 +213,26 @@
 .cut-boundary-controls p{font-size:12px;line-height:1.6;color:#d1dee0}
 .cut-boundary-controls label{display:block;margin:14px 0;font-size:12px}
 .cut-boundary-controls input{display:block;max-width:220px;padding:10px;margin:8px 0;color:#f1f6f4;background:#111b25;border:1px solid #57716f;border-radius:8px}
+
+/* Optional local visual semantic review, no network-upload of media. */
+.director-vision{display:grid;gap:12px;padding:19px;margin:18px 0;border:1px solid #516f75;border-radius:14px;background:linear-gradient(135deg,#14262a,#142332);color:#edf5f4}
+.director-vision-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.director-vision-head strong{font-size:17px}
+.director-vision p{margin:0;font-size:12px;line-height:1.7;color:#c7d5da}
+.director-vision .small-label{color:#a4c5ba}
+.director-vision .vision-status{padding:9px 12px;border-left:3px solid #76a99d;background:#192e35;color:#d1e9df;font-size:12px}
+.director-vision .vision-status.director-error{border-color:#cb6767;color:#ffd0cd}
+.director-vision .vision-review{display:grid;gap:13px}
+.director-vision .vision-review[hidden]{display:none}
+.director-vision .vision-review h3{font-size:15px;margin:5px 0 0}
+.director-vision .vision-rows{display:grid;gap:10px}
+.director-vision .vision-review-row{display:grid;grid-template-columns:88px 1fr;gap:12px;align-items:start;border:1px solid #4b676d;border-radius:10px;background:#122027;padding:10px;min-width:0}
+.director-vision .vision-review-row img{display:block;width:88px;height:156px;object-fit:cover;border-radius:7px;background:#25343b}
+.director-vision .vision-review-form{display:grid;gap:8px;min-width:0}
+.director-vision .vision-review-form strong{font-size:12px;line-height:1.4;overflow-wrap:anywhere}
+.director-vision .vision-review-form label{font-size:12px;line-height:1.5;color:#ebf1ef}
+.director-vision .vision-review-form select{display:block;width:100%;max-width:420px;background:#152a35;border:1px solid #69878c;padding:8px;color:#f4faf8;border-radius:6px;font-size:12px;margin-top:5px}
+.director-vision .vision-review-form .vision-checkbox{display:flex;align-items:flex-start;gap:8px;color:#dce5e5}
+.director-vision .vision-review-form input[type=checkbox]{margin-top:3px;flex:0 0 auto;accent-color:#8bc5a3}
+.director-vision .vision-review-form small{display:block;font-size:11px;color:#b2c6d0;line-height:1.5}
+@media(max-width:600px){.director-vision{padding:12px}.director-vision .vision-review-row{grid-template-columns:66px 1fr;gap:8px;padding:8px}.director-vision .vision-review-row img{width:66px;height:116px}}
