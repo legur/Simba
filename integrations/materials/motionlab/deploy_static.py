@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and deploy the 21 public Motion Lab files to the EXISTING Wix Headless site.
+"""Build and deploy the 22 public Motion Lab files to the EXISTING Wix Headless site.
 
 GitHub is canonical. This is a destructive Wix static *drop*, so the updater
 always sends the complete allowlisted site, never a patch. No private files,
@@ -36,7 +36,7 @@ SITE_FILES = (
     "text.html", "text.css", "text.js",
     "subtitles.html", "subtitles.css", "subtitles.js",
     "camera.html", "camera.css", "camera.js",
-    "storyboard.html", "storyboard.css", "storyboard.js", "visual_editor.js", "scene_pages.js",
+    "storyboard.html", "storyboard.css", "storyboard.js", "visual_editor.js", "scene_pages.js", "motionlab_v2_ui.js",
     "creative.html", "creative.css", "creative.js",
 )
 MAX_SITE_BYTES = 20 * 1024 * 1024
