@@ -42,7 +42,7 @@
 }
 ```
 
-Это **образец формы, а не готовые данные**. Нельзя заменить placeholder фиктивной строкой и считать файл согласованным. На каждом используемом ассете `project.assets[]` должны существовать совпадающие `id`, `kind`, `state=available` и `sha256` действительных байтов. Допустимые значения `mode`: `approved_wav` (`narration` kind), `approved_clip_audio` (`animated_clip` kind при `voice_profile=none`, без новой TTS) и `no_narration` (явно `narration=null`, `voice_profile=none`). Музыка с лицензией обязательна в текущем v2 contract.
+Это **образец формы, а не готовые данные**. Нельзя заменить placeholder фиктивной строкой и считать файл согласованным. На каждом используемом ассете `project.assets[]` должны существовать совпадающие `id`, `kind`, `state=available` и SHA действительных байтов в `recorded_sha256` (существующий Montage PR #105) **или** `sha256` (новый canonical asset). Если объявлены оба поля, оба обязаны совпадать со значением в `audio_lock`; неоднозначность блокируется. Допустимые значения `mode`: `approved_wav` (`narration` kind), `approved_clip_audio` (`animated_clip` kind при `voice_profile=none`, без новой TTS) и `no_narration` (явно `narration=null`, `voice_profile=none`). Музыка с лицензией обязательна в текущем v2 contract.
 
 ## Детерминированный revision и инвалидация
 
