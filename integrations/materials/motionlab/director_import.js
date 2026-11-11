@@ -123,6 +123,72 @@
    busy=false;$('fullVideoFile').disabled=false;
   }
  }
+ function remapSrt(){
+  if(!active?.srt?.cues)return;
+  const mapped=cuts.alignCues(state.scenes.map(s=>s.clipRange||{start:0,end:0}),active.srt.cues);
+  state.scenes.forEach((s,i)=>{s.speechCue=mapped[i].phrases;});
+ }
+ async function refreshPosters(scenes){
+  const video=document.createElement('video');video.preload='auto';video.muted=true;video.playsInline=true;
+  const pending=[];
+  try{
+   await ready(video,active.url);
+   for(const scene of scenes){const ref=previewFor(scene);
+    if(!ref)throw Error('Исходный видеокадр потерян');
+    pending.push([ref,await poster(video,scene.clipRange.start,scene.clipRange.end)]);
+   }
+   const old=new Set(pending.map(([ref])=>ref.poster));
+   for(const [ref,url] of pending)ref.poster=url;
+   for(const url of old)if(url&&!state.scenes.some(scene=>previewFor(scene)?.poster===url))URL.revokeObjectURL(url);
+   render();
+  }finally{video.pause();video.removeAttribute('src');video.load();
+   for(const [ref,url] of pending)if(ref.poster!==url)URL.revokeObjectURL(url);
+  }
+ }
+ async function splitScene(index,point){
+  if(!active||state.request||state.scenes.length>=LIMIT||index<0||index>=state.scenes.length)throw Error('Нельзя разделить сцену в этой сессии');
+  const before=state.scenes[index],p=previewFor(before),range=before.clipRange;
+  if(!p||p.url!==active.url||!range)throw Error('Нет исходного MP4 для этой сцены');
+  const time=short(Number(point));
+  if(!Number.isFinite(time)||time<=range.start+1.25||time>=range.end-1.25)throw Error('Нужны минимум 1.25 секунды с каждой стороны');
+  const originalEnd=range.end;
+  const newId='shot-manual-'+Math.round(time*1000);
+  if(state.scenes.some(s=>s.id===newId))throw Error('Граница уже есть в раскадровке');
+  const after=makeScene({scene_id:newId,name:'Фрагмент после '+time+' с',
+   image:'custom',title_text:'',subtitle_preview:'',duration_s:short(originalEnd-time)},index+1);
+  after.clipRange={start:time,end:originalEnd,method:'manual-split'};
+  stopFilm(false);
+  before.clipRange.end=time;before.duration=short(time-range.start);
+  p.end=time;p.duration=before.duration;boundAsset(before,p);
+  const nextPreview={...p,poster:p.poster,start:time,end:originalEnd,duration:after.duration};
+  boundAsset(after,nextPreview);
+  state.scenes.splice(index+1,0,after);
+  localPreviews.set(after.id,nextPreview);
+  const ix=active.segments.findIndex(s=>s.id===before.id);
+  if(ix<0)throw Error('Не найдена исходная временная карта');
+  active.segments.splice(ix,1,{id:before.id,start:range.start,end:time},{id:after.id,start:time,end:originalEnd});
+  state.selectedIndex=index+1;state.dirty=true;remapSrt();globalThis.MotionLabDirector?.invalidate();resetAck();render();
+  await refreshPosters([before,after]);
+  status('Фрагмент разделен по '+time+' с. Новую границу можно настроить в редакторе перехода.');
+ }
+ async function mergeNext(index){
+  if(!active||state.request||index<0||index>=state.scenes.length-1)throw Error('Нельзя объединить эти сцены');
+  const a=state.scenes[index],b=state.scenes[index+1],p=previewFor(a),q=previewFor(b);
+  if(!p||!q||p.url!==active.url||q.url!==active.url||!a.clipRange||!b.clipRange||
+   Math.abs(a.clipRange.end-b.clipRange.start)>.11)throw Error('Объединение возможно только для соседних отрезков одного MP4');
+  if(b.clipRange.end-a.clipRange.start>20)throw Error('Объединенная сцена не может быть дольше 20 секунд');
+  stopFilm(false);
+  a.clipRange.end=b.clipRange.end;a.duration=short(a.clipRange.end-a.clipRange.start);
+  p.end=a.clipRange.end;p.duration=a.duration;boundAsset(a,p);
+  state.scenes.splice(index+1,1);localPreviews.delete(b.id);
+  const ia=active.segments.findIndex(s=>s.id===a.id),ib=active.segments.findIndex(s=>s.id===b.id);
+  if(ia<0||ib!==ia+1)throw Error('Нарушен порядок исходной временной карты');
+  active.segments.splice(ia,2,{id:a.id,start:a.clipRange.start,end:a.clipRange.end});
+  const oldPoster=q.poster;if(oldPoster&&!state.scenes.some(s=>previewFor(s)?.poster===oldPoster))URL.revokeObjectURL(oldPoster);
+  state.selectedIndex=index;state.dirty=true;remapSrt();globalThis.MotionLabDirector?.invalidate();resetAck();render();
+  await refreshPosters([a]);
+  status('Два соседних отрезка объединены. Повторите режиссерский анализ.');
+ }
  async function shiftBoundary(index,point){
   if(!active||state.request||index<=0||index>=state.scenes.length)throw Error('Эту границу нельзя редактировать');
   const prev=state.scenes[index-1],next=state.scenes[index],a=prev.clipRange,b=next.clipRange;
@@ -138,7 +204,7 @@
   prev.duration=short(a.end-a.start);next.duration=short(b.end-b.start);
   p.end=target;p.duration=prev.duration;n.start=target;n.duration=next.duration;
   pa.end=target;na.start=target;boundAsset(prev,p);boundAsset(next,n);
-  state.dirty=true;globalThis.MotionLabDirector?.invalidate();resetAck();render();
+  state.dirty=true;remapSrt();globalThis.MotionLabDirector?.invalidate();resetAck();render();
   const video=document.createElement('video');video.preload='auto';video.muted=true;video.playsInline=true;
   const updated=[];
   try{
@@ -199,9 +265,8 @@
   if(!file||file.size>200000){status('SRT должен быть не больше 200 КБ.',true);return;}
   try{
    const cues=cuts.parseSrt(await file.text());
-   const mapped=cuts.alignCues(state.scenes.map(s=>s.clipRange),cues);
-   state.scenes.forEach((s,i)=>{s.speechCue=mapped[i].phrases;});
-   active.srt={name:file.name,cues:cues.length};
+   active.srt={name:file.name,cues};
+   remapSrt();
    renderSceneList();
    status('Время и фразы '+cues.length+' субтитров сопоставлены с '+state.scenes.length+
     ' сценами. Это предоставленный SRT, а не автоматически распознанная речь.');
@@ -214,6 +279,6 @@
   $('exportContactSheet').addEventListener('click',()=>contactSheet().catch(e=>status(String(e.message||e),true)));
   $('fullVideoSrt').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(file)await acceptSrt(file);});
  }
- globalThis.MotionLabVideoImport={isOriginalTimeline,info,resetMeta,importVideo,shiftBoundary,exportMap,contactSheet};
+ globalThis.MotionLabVideoImport={isOriginalTimeline,info,resetMeta,importVideo,shiftBoundary,splitScene,mergeNext,exportMap,contactSheet};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
