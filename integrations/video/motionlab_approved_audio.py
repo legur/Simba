@@ -7,7 +7,9 @@ guess word timings, authorize render, or certify the music license.
 """
 from __future__ import annotations
 
+import argparse
 import hashlib
+import json
 from pathlib import Path
 import re
 import wave
@@ -41,7 +43,9 @@ def verify_approved_narration(project: dict, private_job: Path,
     if not isinstance(stage, dict) or stage.get("state") != "completed":
         _reject("VOICE_MUSIC_HANDOFF_NOT_COMPLETE")
     ids = stage.get("assets")
-    if not isinstance(ids, list) or not ids or len(ids) != len(set(ids)):
+    if (not isinstance(ids, list) or not ids
+            or any(not isinstance(x,str) for x in ids)
+            or len(ids) != len(set(ids))):
         _reject("VOICE_MUSIC_ASSET_BINDING_INVALID")
     matches = [x for x in project["assets"]
                if isinstance(x, dict) and x.get("kind") == "narration"
@@ -108,3 +112,28 @@ def verify_approved_narration(project: dict, private_job: Path,
         "render_authorized": False,
         "paid_calls": 0,
     }
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--project-json",required=True, type=Path,
+                        help="Trusted canonical project.json (read-only)")
+    parser.add_argument("--private-job",required=True,type=Path,
+                        help="Private directory holding a copy of approved WAV")
+    parser.add_argument("--wav-name",required=True,
+                        help="Filename only; path separators rejected")
+    args=parser.parse_args()
+    try:
+        project=json.loads(args.project_json.read_text(encoding="utf-8"))
+        report=verify_approved_narration(project,args.private_job,args.wav_name)
+    except (AudioSourceError,OSError,UnicodeError,ValueError) as error:
+        code=str(error) if isinstance(error,AudioSourceError) else "AUDIO_PREFLIGHT_SOURCE_INVALID"
+        print(json.dumps({"status":"BLOCKED","error_code":code,
+                          "render_authorized":False,"paid_calls":0}))
+        return 2
+    print(json.dumps(report,sort_keys=True))
+    return 0
+
+
+if __name__=="__main__":
+    raise SystemExit(main())
