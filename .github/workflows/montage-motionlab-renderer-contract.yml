@@ -6,6 +6,8 @@ on:
       - '.github/workflows/montage-motionlab-renderer-contract.yml'
       - 'integrations/video/motionlab_render_contract.py'
       - 'integrations/video/motionlab_v2_contract.py'
+      - 'integrations/materials/motionlab_v2_stage_writeback.py'
+      - 'integrations/video/MOTIONLAB_V2_HANDOFF.md'
       - 'integrations/video/motionlab_layout_contract.py'
       - 'integrations/video/motionlab_typography_contract.py'
       - 'integrations/video/motionlab_approved_audio.py'
