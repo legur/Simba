@@ -44,3 +44,43 @@
 #approvalStatus{font-size:11px;font-weight:800;color:#f0cc89;display:inline-block;margin-top:9px}
 #approvalStatus.approved{color:#c9f47d}
 @media(max-width:550px){.film-play-controls .primary-btn,.film-play-controls .secondary-btn{flex-basis:100%}.review-approval .primary-btn{width:100%}}
+
+/* WYSIWYG composition tools. Relative percentages stay stable in 9:16 stage. */
+.screen .editable-layer{position:absolute;left:50%;top:50%;bottom:auto;width:72%;min-height:22px;transform:translate(-50%,-50%);cursor:grab;user-select:none;touch-action:none;z-index:5}
+.screen .editable-layer:active{cursor:grabbing}
+.screen .editable-layer.active-edit{outline:1px dashed #c9f47d;outline-offset:4px;border-radius:5px}
+.screen .editable-layer:focus-visible{outline:2px solid #c9f47d;outline-offset:4px}
+.screen .frame-title{font-size:20px;line-height:1.25}
+.screen .frame-subtitle{width:72%;font-size:10px;line-height:1.35}
+.safe-frame{position:absolute;inset:8% 7%;border:1px dashed #c9f47d99;z-index:4;pointer-events:none;box-shadow:0 0 0 1000px #070e1322}
+.safe-frame:before{content:"БЕЗОПАСНАЯ ЗОНА";position:absolute;top:4px;left:5px;font-size:6px;font-weight:800;letter-spacing:.5px;color:#ceefa6}
+.visual-layer-tools{border:1px solid #46635d;border-radius:11px;background:#17322b;margin:12px 0 0;padding:12px}
+.visual-layer-tools strong{font-size:12px;display:block;margin-bottom:9px}
+.visual-layer-buttons{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.visual-layer-buttons .mini-btn{min-height:37px}
+.visual-layer-buttons .mini-btn.active{background:#c9f47d;color:#14241d;border-color:#c9f47d}
+.visual-layer-tools p{font-size:10px;color:#bfd4cd;margin:8px 0 0}
+.safe-frame-toggle{display:flex;align-items:center;gap:6px;font-size:10px;margin-left:auto;color:#d9e8df;cursor:pointer}
+.safe-frame-toggle input{accent-color:#b8e77b;width:16px;height:16px}
+.seek-label{display:block;color:#bdd9c8;font-size:11px;margin:8px 0 0}
+.film-player .film-seek{display:block;appearance:auto;width:100%;height:27px;accent-color:#c9f47d;cursor:pointer;margin:7px 0 1px}
+.cut-tools{border-top:1px solid #3f5553;padding-top:10px;margin:12px 0 0}
+.cut-tools label{font-size:10px;font-weight:800;color:#c9ddce;display:block}
+.cut-tools select{display:block;width:100%;min-height:39px;border:1px solid #50656b;background:#14242b;color:#fff;padding:7px 10px;margin:5px 0;border-radius:8px}
+.cut-choices{display:flex;gap:7px;flex-wrap:wrap;margin:9px 0}
+.cut-choices button{flex:1 1 68px;min-height:38px}
+.cut-choices button.active{border-color:#c9f47d;color:#c9f47d;background:#234039}
+.cut-tools #previewCut{width:100%;min-height:40px}
+.cut-tools button:disabled,.cut-tools select:disabled{opacity:.5;cursor:not-allowed}
+.layout-controls{border:1px solid #46635d;border-radius:11px;background:#112a2b;margin:8px 0 4px;padding:13px;min-width:0}
+.layout-controls legend{font-size:12px;font-weight:900;color:#c9f47d;padding:0 6px}
+.layout-controls>p{font-size:11px;color:#c2d3cb;margin:3px 0 10px}
+.layout-controls label{margin-top:8px}
+.layout-controls output{display:block;font-size:10px;color:#c9f47d;text-align:right;margin-top:2px}
+.layout-controls input[type=range]{accent-color:#c9f47d}
+.visual-actions{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 0}
+.visual-actions button{min-height:42px;min-width:42px}
+.visual-actions .secondary-btn{flex:1;white-space:normal}
+.visual-draft-note{font-size:10px!important;color:#efcf9a!important;margin:11px 0 0!important;line-height:1.55}
+@media(max-width:550px){.safe-frame-toggle{margin-left:0;width:100%}.cut-tools .cut-choices{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}.visual-actions button{flex:1 1 40px}.visual-actions #resetOverlay{flex:1 1 100%}}
+@media(prefers-reduced-motion:reduce){.screen .editable-layer{transition:none}}
