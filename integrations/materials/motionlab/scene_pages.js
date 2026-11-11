@@ -122,6 +122,9 @@
   $('detailDescription').textContent=kind==='scene'?'Изменения действуют только в выбранной сцене, если не нажать «Для всех».':
    kind==='cut'?'Меняйте только переход между этими двумя сценами.':'Единые шрифты и цвета применяются во всех сценах без индивидуального исключения.';
   $('detailGlobalStyle').hidden=kind==='style';
+  $('detailSceneNavigation').hidden=kind!=='scene';
+  $('previousScene').disabled=kind!=='scene'||activeIndex<=0;
+  $('nextScene').disabled=kind!=='scene'||activeIndex>=state.scenes.length-1;
   if(kind==='cut')refreshCutCards(activeIndex);
   if(kind==='style')refreshTheme();
   if(kind==='scene')syncSceneTypography();
@@ -135,6 +138,8 @@
   $('backToStoryboard').addEventListener('click',()=>goto('overview',0));
   $('editGlobalTheme').addEventListener('click',()=>goto('style',0));
   $('detailGlobalStyle').addEventListener('click',()=>goto('style',0));
+  $('previousScene').addEventListener('click',()=>{if(kind==='scene'&&activeIndex>0)goto('scene',activeIndex-1);});
+  $('nextScene').addEventListener('click',()=>{if(kind==='scene'&&activeIndex+1<state.scenes.length)goto('scene',activeIndex+1);});
   const sceneList=$('sceneList');
   sceneList.addEventListener('click',event=>{
    const scene=event.target.closest('[data-edit-scene]');
