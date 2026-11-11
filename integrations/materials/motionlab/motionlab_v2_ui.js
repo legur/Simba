@@ -166,6 +166,7 @@
  }
  function sendSelection(){
    if(state.sending)return;
+   if(state.lastAck){say('Выбор уже сохранен. Измените настройки для нового согласования.');return;}
    let selection;
    try{selection=buildSelection();}
    catch(error){say('Передача запрещена: '+error.message);return;}
