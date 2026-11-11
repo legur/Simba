@@ -32,7 +32,7 @@ test('scene page, boundary page and common-style page exist',()=>{
  'id="applyLayoutAll"','id="inheritLayout"','id="applyFontChanges"']){
   assert.ok(html.includes(marker),marker);
  }
- for(const marker of ['#scene/','#cut/','#style','openScene:index','openCut:index']){
+ for(const marker of ["return '#'+view+'/'+index", "if(view==='scene'||view==='cut')",'#style','openScene:index','openCut:index']){
   assert.ok(pages.includes(marker),marker);
  }
 });
