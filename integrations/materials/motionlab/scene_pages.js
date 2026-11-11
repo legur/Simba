@@ -44,6 +44,16 @@
   const before=state.scenes[index-1],after=state.scenes[index];
   if(!before||!after)return;
   $('cutHeading').textContent='Переход '+fmt(index-1)+' → '+fmt(index);
+  const boundaryControls=$('cutBoundaryControls'),canAdjust=Boolean(
+   globalThis.MotionLabVideoImport?.info?.()&&before.clipRange&&after.clipRange&&
+   Math.abs(before.clipRange.end-after.clipRange.start)<.11);
+  if(boundaryControls)boundaryControls.hidden=!canAdjust;
+  if(canAdjust){
+   const input=$('cutBoundarySecond');
+   input.min=String(Math.max(before.clipRange.start+1.25,after.clipRange.end-20).toFixed(2));
+   input.max=String(Math.min(after.clipRange.end-1.25,before.clipRange.start+20).toFixed(2));
+   input.value=String(after.clipRange.start);
+  }
   $('cutFromImage').src=thumb(before);$('cutToImage').src=thumb(after);
   $('cutFromLabel').textContent=fmt(index-1)+' / '+before.name;
   $('cutToLabel').textContent=fmt(index)+' / '+after.name;
@@ -146,6 +156,15 @@
    const cut=event.target.closest('[data-edit-cut]');
    if(scene){event.preventDefault();goto('scene',Number(scene.dataset.editScene));}
    else if(cut){event.preventDefault();goto('cut',Number(cut.dataset.editCut));}
+  });
+  const adjust=$('saveCutBoundary');
+  if(adjust)adjust.addEventListener('click',async()=>{
+   if(kind!=='cut')return;
+   adjust.disabled=true;
+   try{await globalThis.MotionLabVideoImport.shiftBoundary(activeIndex,Number($('cutBoundarySecond').value));
+    $('cutBoundaryStatus').textContent='Граница уточнена. Просмотрите результат.';
+   }catch(e){$('cutBoundaryStatus').textContent='Исправление не выполнено: '+String(e.message||e);}
+   finally{adjust.disabled=false;}
   });
   const editor=globalThis.MotionLabVisual;
   if(editor){
