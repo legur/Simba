@@ -7,7 +7,7 @@ from urllib.parse import urlsplit
 ROOT = Path(__file__).resolve().parents[1]
 PAGES = ("index.html", "text.html", "subtitles.html", "camera.html", "storyboard.html", "creative.html")
 STYLES = ("styles.css", "text.css", "subtitles.css", "camera.css", "storyboard.css", "creative.css")
-SCRIPTS = ("app.js", "transitions.js", "text.js", "subtitles.js", "camera.js", "storyboard.js", "visual_editor.js", "scene_pages.js", "creative.js")
+SCRIPTS = ("app.js", "transitions.js", "text.js", "subtitles.js", "camera.js", "storyboard.js", "visual_editor.js", "scene_pages.js", "motionlab_v2_ui.js", "creative.js")
 
 
 class LocalReferences(HTMLParser):
