@@ -15,12 +15,12 @@ from deploy_static import (
 
 
 class WixDeploymentSafety(unittest.TestCase):
-    def test_bundle_contains_only_the_twenty_six_public_files(self):
+    def test_bundle_contains_only_the_twenty_eight_public_files(self):
         with tempfile.TemporaryDirectory() as path:
             bundle = Path(path) / "site.zip"
             manifest = build_bundle(bundle)
             self.assertEqual(manifest["site_id"], SITE_ID)
-            self.assertEqual(len(manifest["files"]), 26)
+            self.assertEqual(len(manifest["files"]), 28)
             self.assertLess(bundle.stat().st_size, 20 * 1024 * 1024)
             with zipfile.ZipFile(bundle) as z:
                 self.assertEqual(set(z.namelist()), set(SITE_FILES))

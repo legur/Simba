@@ -20,6 +20,7 @@
   }));
  }
  function invalidate(){
+  globalThis.MotionLabVision?.reset?.();
   const hadPlans=Boolean(plans);
   editorial=null;
   const editorialStatus=$('editorialStatus');if(editorialStatus)editorialStatus.textContent='Нет загруженной редакторской аннотации.';
@@ -134,8 +135,10 @@
    }
    panel().replaceChildren(title,explanation,list);panel().hidden=false;
    status('Готовы три предложения по измеренным кадрам. Выберите вариант выше для предпросмотра.');
+   return true;
   }catch(error){
    plans=null;snapshot=null;status('Анализ не выполнен: '+String(error.message||error),true);
+   return false;
   }finally{busy=false;btn().disabled=false;}
  }
  function applyConcept(id){
@@ -157,6 +160,17 @@
   status('Вариант '+id+' применен. Просмотрите весь ролик и исправьте сцены перед утверждением.');
   return true;
  }
+ function setEditorial(data){
+  if(state.request)throw Error('Нельзя менять редакторские метки подключенного задания v1');
+  if(!globalThis.MotionLabSemantic)throw Error('Модуль проверки редакторских меток не загружен');
+  globalThis.MotionLabSemantic.validate(data,state.scenes);
+  editorial=data;plans=null;snapshot=null;
+  state.selectedOption=0;resetAck();renderConcepts();renderSummary();
+  if(panel())panel().hidden=true;
+  $('editorialStatus').textContent='Проверенные метки приняты для '+data.scenes.length+' сцен. Источник: '+data.source+'. Для рекомендаций нужен анализ кадров.';
+  status('Редакторский разбор принят. Теперь выполните измерение кадров.');
+  return true;
+ }
  function init(){
   if(!core||!btn()||!panel())return;
   btn().addEventListener('click',analyze);
@@ -165,20 +179,12 @@
    const file=picker.files?.[0];if(!file)return;
    try{
     if(file.size>100000)throw Error('Файл аннотаций слишком велик');
-    if(state.request)throw Error('Редакторские аннотации нельзя подменять внутри подключенного задания v1');
-    const data=JSON.parse(await file.text());
-    if(!globalThis.MotionLabSemantic)throw Error('Модуль редакторской проверки недоступен');
-    globalThis.MotionLabSemantic.validate(data,state.scenes);
-    editorial=data;
-    plans=null;snapshot=null;resetAck();
-    $('editorialStatus').textContent='Редакторские метки загружены и сверены с ID сцен и исходников: '+data.scenes.length+'. Перезапустите анализ кадров.';
-    status('Аннотации проверены; теперь выполните анализ реальных локальных файлов.');
-    if(panel())panel().hidden=true;
+    setEditorial(JSON.parse(await file.text()));
    }catch(e){editorial=null;$('editorialStatus').textContent='Отклонено: '+String(e.message||e);}
    picker.value='';
   });
   status('Загрузите локальные файлы для каждой сцены. Файлы остаются в браузере.');
  }
- globalThis.MotionLabDirector={analyze,applyConcept,invalidate};
+ globalThis.MotionLabDirector={analyze,applyConcept,invalidate,setEditorial};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
