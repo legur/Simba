@@ -96,6 +96,13 @@ class SessionStore:
             for field in ("proposals_json","spec_json"):
                 if field not in cols:
                     db.execute(f"ALTER TABLE sessions ADD COLUMN {field} TEXT")
+            # A crash after a remote PUT/upload has unknown outcome. Never
+            # retry PROCESSING automatically after restart: the operator
+            # must inspect GitHub/Drive and explicitly reconcile first.
+            db.execute("""UPDATE sessions
+                         SET status='BLOCKED',
+                             error_code='WORKER_INTERRUPTED_REQUIRES_RECONCILIATION'
+                         WHERE status='PROCESSING'""")
 
     @contextmanager
     def open(self):
