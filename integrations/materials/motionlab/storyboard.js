@@ -62,7 +62,7 @@ const clamp = (x,min,max) => Math.min(max,Math.max(min,x));
 const safeText = (s,max=140) => typeof s==='string'?s.slice(0,max):'';
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nameFor = (type,id)=> CATALOG[type].find(e=>e[0]===id)?.[1]||id;
-const state = {project:null, request:null, scenes:[],selectedIndex:0,selectedOption:1,concepts:PRESETS.map(x=>({...x})),bridge:null,dirty:false,sending:false,lastAck:null};
+const state = {project:null, request:null, scenes:[],selectedIndex:0,selectedOption:1,concepts:PRESETS.map(x=>({...x})),bridge:null,dirty:false,sending:false,lastAck:null,confirmed:false};
 // Actual make_video.py capability IDs. The 12 demonstration camera IDs and
 // title transitions are not the same as production renderer options.
 const RENDER_MOVES = new Set(['none','hold','push','pull','pan-left','pan-right','rise']);
@@ -150,9 +150,9 @@ function makeScene(row,index,chosenPreset=PRESETS[0]){
  };
  return src;
 }
-function prepareDemo(){clearPreviews();state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;clearTimeout(pendingAckTimer);setConnection('demo');render();}
+function prepareDemo(){stopFilm(false);clearPreviews();state.confirmed=false;state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;clearTimeout(pendingAckTimer);setConnection('demo');render();}
 function populateSelect(id,items){$(id).replaceChildren(...items.map(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;return o}));}
-function titleChoice(index){let s=state.scenes[index];state.selectedIndex=index;resetPreview();render();}
+function titleChoice(index){if(film.active)stopFilm(false);let s=state.scenes[index];state.selectedIndex=index;resetPreview();render();}
 function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="concept-support">${!RENDER_MOVES.has(c.camera)||c.titleFx!=='none'?'Есть эффекты только для предпросмотра':'Нужна проверка рендерера'}</span><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
 function scenePhoto(scene){return scene.previewUrl||IMAGES[scene.image]||IMAGES.mountains;}
 function renderSceneList(){ $('sceneCount').textContent=String(state.scenes.length);$('metricScenes').textContent=String(state.scenes.length);$('sceneList').innerHTML=state.scenes.map((s,i)=>`<div role="listitem" class="scene-card ${i===state.selectedIndex?'selected':''}"><img class="thumb" src="${esc(scenePhoto(s))}" alt="" loading="lazy" referrerpolicy="no-referrer"><div class="scene-info"><button type="button" class="scene-open" data-open="${i}" aria-label="Редактировать сцену ${i+1}"><strong>${String(i+1).padStart(2,'0')} / ${esc(s.name)}</strong><p>${s.duration.toFixed(1)} с · ${esc(nameFor('camera',s.camera))}</p></button><div class="chips"><span class="tag">${esc(i===0?'Без входа':nameFor('transitions',s.transition))}</span><span class="tag">${esc(nameFor('title',s.titleFx))}</span></div></div><div class="scene-control"><button data-up="${i}" type="button" title="Выше" ${i===0?'disabled':''}>↑</button><button data-down="${i}" type="button" title="Ниже" ${i===state.scenes.length-1?'disabled':''}>↓</button><button data-remove="${i}" type="button" title="Удалить" ${state.scenes.length<=1||state.request?'disabled':''}>×</button></div></div>`).join(''); }
@@ -190,7 +190,8 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  const unsupported=rendererIssues(state.scenes);
  if(unsupported.length)warns.push('Есть '+unsupported.length+' несовместимых с текущим MP4 эффектов; сохраните черновик или выберите поддерживаемый вариант.');
  const v=$('validation');v.textContent=warns.length?warns.join(' '):'Структура готова. Возврат выбора не запускает рендер, TTS, A2E или публикацию.';v.classList.toggle('warning',warns.length>0);
- $('sendToAgent').disabled=!(state.bridge&&state.request)||state.sending||unsupported.length>0||warns.some(x=>/название|ID исходного|ID ассета/.test(x));
+ $('sendToAgent').disabled=!(state.bridge&&state.request)||!state.confirmed||state.sending||unsupported.length>0||warns.some(x=>/название|ID исходного|ID ассета/.test(x));
+ const approval=$('approvalStatus');if(approval){approval.textContent=state.confirmed?'Вариант утвержден вами, но не передан монтажеру':'Еще не утверждено';approval.classList.toggle('approved',state.confirmed);}
  const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
  $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.sending?'Решение отправлено. Подтверждение принимающей стороны пока не получено.':state.bridge?'Канал ответа подключен. После выбора нажмите «Передать выбор агенту».':'Канала ответа нет. Экспортируйте JSON, чтобы продолжить работу в агенте.';
 }
@@ -198,9 +199,136 @@ function render(){renderConcepts();renderSceneList();renderEditor();renderSummar
 function updateKey(key,value){if(state.request&&['name','duration','image','asset','title','subtitle'].includes(key))return;const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
 function editChange(id,key,fn){$(id).addEventListener('change',()=>{const v=fn?fn($(id).value):$(id).value;updateKey(key,v);});}
 function liveChange(id,key){$(id).addEventListener('input',()=>{if(state.request&&['title','subtitle'].includes(key))return;const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
-function resetAck(){state.sending=false;state.lastAck=null;clearTimeout(pendingAckTimer);}
+function resetAck(){if(film.active)stopFilm();state.confirmed=false;state.sending=false;state.lastAck=null;clearTimeout(pendingAckTimer);}
+// Whole-film editor review: a browser approximation on verified/locally selected assets.
+// Does not generate MP4, analyze speech/music, or silently authorize Montage.
+const film={active:false,raf:0,started:0,index:-1,nextIndex:-1,total:0};
+function filmClock(seconds){const t=Math.max(0,Math.floor(seconds));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');}
+function filmTotal(){return state.scenes.reduce((sum,s)=>sum+Number(s.duration||0),0);}
+function hideNext(){
+ const layer=$('montageNext'),nextVideo=$('nextVideo');
+ layer.hidden=true;layer.style.opacity='0';layer.style.transform='none';layer.style.clipPath='none';layer.style.filter='none';
+ nextVideo.pause();$('montageFlash').hidden=true;$('montageFlash').style.opacity='0';film.nextIndex=-1;
+}
+function stopFilm(restore=true,complete=false){
+ cancelAnimationFrame(film.raf);film.raf=0;film.active=false;film.index=-1;film.nextIndex=-1;
+ const video=$('previewVideo');if(video)video.pause();
+ if($('montageNext'))hideNext();
+ if($('playFilm'))$('playFilm').textContent='▶ Просмотреть весь ролик';
+ if($('filmNow'))$('filmNow').textContent=complete?'Предпросмотр завершен':'Предпросмотр остановлен';
+ if($('filmClock'))$('filmClock').textContent=filmClock(complete?film.total:0)+' / '+filmClock(film.total);
+ if($('filmProgress'))$('filmProgress').value=complete?100:0;
+ if(restore&&state.scenes.length)renderEditor();
+}
+function filmMedia(scene,photo,video){
+ const source=previewFor(scene);
+ if(source?.type==='video'){
+  photo.hidden=true;video.hidden=false;
+  if(video.src!==source.url){video.pause();video.src=source.url;video.load();}
+ }else{
+  video.pause();video.hidden=true;photo.hidden=false;
+  photo.src=source?.type==='image'?source.url:scenePhoto(scene);
+ }
+ return Boolean(source);
+}
+function safePlayVideo(v,seek=0){
+ if(v.hidden)return;
+ const attempt=()=>{
+  try{if(Number.isFinite(seek)&&seek>0&&v.readyState>0&&Number.isFinite(v.duration))v.currentTime=Math.min(seek,Math.max(0,v.duration-.1));}catch{}
+  const p=v.play();if(p?.catch)p.catch(()=>{});
+ };
+ if(v.readyState>=1)attempt();
+ else v.addEventListener('loadedmetadata',attempt,{once:true});
+}
+function filmEnterScene(index){
+ if(index<0||index>=state.scenes.length)return;
+ hideNext();
+ const s=state.scenes[index],local=filmMedia(s,$('previewPhoto'),$('previewVideo'));
+ $('previewPhoto').getAnimations().forEach(a=>a.cancel());
+ $('previewPhoto').style.transform='none';
+ if(!s.media?.kind||!local){
+  $('mediaProvenance').textContent=local?'Локальная копия для предпросмотра':'Демонстрационный фон: не представлен оригинальный кадр этой сцены.';
+ }else $('mediaProvenance').textContent='Локальная копия источника для предпросмотра. Полный QA выполняет Montage.';
+ const carry=index>0?Math.min(.85,state.scenes[index-1].duration*.35):0;
+ safePlayVideo($('previewVideo'),carry);
+ $('frameTitle').textContent=s.titleFx==='none'?'':s.title;
+ $('frameSubtitle').textContent=s.subtitleStyle==='none'?'':s.subtitle;
+ $('frameTitle').style.opacity=s.titleFx==='none'?'0':'1';
+ $('frameSubtitle').style.opacity=s.subtitleStyle==='none'?'0':'1';
+ $('frameSubtitle').className='frame-subtitle '+(s.subtitleStyle==='luxury'||s.subtitleStyle==='gold-card'?'gold':'');
+ $('filmNow').textContent='Сцена '+(index+1)+' / '+state.scenes.length+': '+s.name;
+ const n=state.scenes.filter(scene=>!previewFor(scene)).length;
+ $('filmAccuracy').textContent='Предпросмотр без отдельной озвучки и музыкального микса. '+(n?'Оригиналы не загружены для '+n+' сцен; там используются макеты. ':'')+'Сложные переходы показаны приближенно; точный MP4 создается в Montage.';
+ film.index=index;
+}
+function filmIncoming(index){
+ if(film.nextIndex===index)return;
+ const s=state.scenes[index],layer=$('montageNext');
+ filmMedia(s,$('nextPhoto'),$('nextVideo'));film.nextIndex=index;layer.hidden=false;
+ layer.style.opacity='0';layer.style.transform='none';layer.style.clipPath='none';layer.style.filter='none';
+ safePlayVideo($('nextVideo'));
+}
+function filmTransitionFrame(id,progress){
+ const layer=$('montageNext'),flash=$('montageFlash'),p=clamp(progress,0,1);
+ layer.style.transform='none';layer.style.filter='none';layer.style.clipPath='none';flash.hidden=true;flash.style.opacity='0';
+ if(id==='none'){layer.style.opacity=p>=1?'1':'0';return;}
+ if(id==='push'||id==='whip'){
+  layer.style.opacity='1';layer.style.transform='translateX('+Math.round((1-p)*100)+'%)';
+  if(id==='whip')layer.style.filter='blur('+Math.round((1-p)*7)+'px)';
+ }else if(id==='zoom'){
+  layer.style.opacity=String(p);layer.style.transform='scale('+(1.16-.16*p)+')';
+ }else if(id==='circle'){
+  layer.style.opacity='1';layer.style.clipPath='circle('+(p*78).toFixed(2)+'% at 50% 50%)';
+ }else if(id==='diagonal'){
+  layer.style.opacity='1';layer.style.clipPath='polygon(0 0,'+(p*200-100)+'% 0,'+(p*200)+'% 100%,0 100%)';
+ }else if(id==='blur'){
+  layer.style.opacity=String(p);layer.style.filter='blur('+(1-p)*12+'px)';
+ }else if(id==='flash'){
+  layer.style.opacity=String(p);flash.hidden=false;flash.style.opacity=String(Math.sin(Math.PI*p)*.85);
+ }else{
+  // Honest approximation for Canvas2D transition algorithms not simulated exactly in this browser.
+  layer.style.opacity=String(p);
+ }
+}
+function filmFrame(now){
+ if(!film.active)return;
+ const t=(now-film.started)/1000;
+ if(t>=film.total){stopFilm(true,true);return;}
+ let position=0,index=0;
+ for(let i=0;i<state.scenes.length;i++){const d=state.scenes[i].duration;if(t<position+d||i===state.scenes.length-1){index=i;break;}position+=d;}
+ if(index!==film.index)filmEnterScene(index);
+ const length=state.scenes[index].duration,into=t-position;
+ const next=index+1;
+ const transition=next<state.scenes.length?state.scenes[next].transition:'none';
+ const span=next<state.scenes.length&&transition!=='none'?Math.min(.9,length*.35):0;
+ if(span>0&&into>=length-span){
+  filmIncoming(next);filmTransitionFrame(transition,(into-(length-span))/span);
+ }else if(film.nextIndex!==-1)hideNext();
+ $('filmClock').textContent=filmClock(t)+' / '+filmClock(film.total);
+ $('filmProgress').value=100*t/film.total;
+ film.raf=requestAnimationFrame(filmFrame);
+}
+function startFilm(){
+ if(film.active)return;
+ resetPreview();
+ const total=filmTotal();
+ if(!Number.isFinite(total)||total<=0||!state.scenes.length){say('Нет сцен для просмотра');return;}
+ film.active=true;film.index=-1;film.nextIndex=-1;film.total=total;film.started=performance.now();
+ $('playFilm').textContent='■ Остановить просмотр';
+ $('filmClock').textContent='00:00 / '+filmClock(total);
+ film.raf=requestAnimationFrame(filmFrame);
+}
+function approveReview(){
+ if(film.active)stopFilm();
+ const error=validationError();
+ if(error){say(error);return;}
+ state.confirmed=true;renderSummary();
+ const count=rendererIssues(state.scenes).length;
+ say(count?'Монтаж визуально утвержден, но '+count+' параметров еще не поддержаны рендерером':'Вариант утвержден. Передача возможна только через подключенный Montage.');
+}
+
 function resetPreview(){previewTimers.forEach(t=>clearTimeout(t));previewTimers=[];$('previewPhoto').getAnimations().forEach(a=>a.cancel());$('frameTitle').getAnimations().forEach(a=>a.cancel());$('frameSubtitle').getAnimations().forEach(a=>a.cancel());$('previewPhoto').style.transform='scale(1.06)';const v=$('previewVideo');if(!v.hidden){v.pause();try{v.currentTime=0;}catch{}}$('frameTitle').style.opacity='1';$('frameSubtitle').style.opacity='1';}
-function play(){resetPreview();const s=state.scenes[state.selectedIndex];if(matchMedia('(prefers-reduced-motion: reduce)').matches){say('Анимация ограничена настройками доступности');return;}
+function play(){if(film.active)stopFilm();resetPreview();const s=state.scenes[state.selectedIndex];if(matchMedia('(prefers-reduced-motion: reduce)').matches){say('Анимация ограничена настройками доступности');return;}
  const img=$('previewPhoto'),title=$('frameTitle'),sub=$('frameSubtitle');if(!$('previewVideo').hidden){const p=$('previewVideo').play();if(p?.catch)p.catch(()=>say('Локальное видео не воспроизводится'));}const amount=s.intensity/100,dur=clamp(s.duration*1000,750,5000);
  const x=s.camera==='pan'?18*amount:s.camera==='roll'?5*amount:s.camera==='float'?8*amount:s.camera==='tilt'?0:0;
  const y=s.camera==='tilt'?22*amount:s.camera==='float'?9*amount:0;
@@ -235,7 +363,7 @@ function parseLaunch(raw,strict){if(!raw||typeof raw!=='object'||Array.isArray(r
  const ids=scenes.map(s=>s.id);if(ids.some(id=>!id)||new Set(ids).size!==ids.length)throw Error('scene_id должны быть уникальными');
  return {request:{id:request_id,projectId:project_id,fingerprint:fp,stage:'edit_choice'},concepts,scenes,selected};
 }
-function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);clearPreviews();state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
+function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);stopFilm(false);clearPreviews();state.confirmed=false;state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
 function buildResult(){const req=state.request,bridge=Boolean(state.bridge),timestamp=new Date().toISOString();return {
  schema:'bontours.motionlab.storyboard.selection/v1',request_id:req?.id||null,project_id:req?.projectId||null,stage:'edit_choice',expected_input_fingerprint:req?.fingerprint||null,
  decision:{selected_option:state.selectedOption,options_presented:3,user_selected_at:timestamp,state:bridge?'USER_SELECTED_IN_CONNECTED_SESSION':'DRAFT_NOT_DELIVERED',confirmation_scope:'EDIT_CHOICES_ONLY'},
@@ -247,11 +375,11 @@ function buildResult(){const req=state.request,bridge=Boolean(state.bridge),time
  next_stage:'MONTAGE_PLANNING_REVIEW'
  };
 }
-function validationError(){if(state.scenes.some(s=>!s.name.trim()))return 'Названия сцен не могут быть пустыми';if(state.scenes.some(s=>s.image==='custom'&&!s.asset.trim()))return 'Для своего кадра необходим ID исходного файла';if(!state.scenes.length)return 'Добавьте сцену';return null;}
+function validationError(){if(filmTotal()>60)return 'Сумма длительностей сцен превышает 60 секунд';if(state.scenes.some(s=>!s.name.trim()))return 'Названия сцен не могут быть пустыми';if(state.scenes.some(s=>s.image==='custom'&&!s.asset.trim()))return 'Для своего кадра необходим ID исходного файла';if(!state.scenes.length)return 'Добавьте сцену';return null;}
 function jsonDownload(){const error=validationError();if(error){say(error);return;}const obj=buildResult();const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`motionlab-${obj.project_id||'demo'}-edit-choice.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);say('JSON сохранен');}
 async function copyBrief(){const lines=[`BON TOURS / MOTION LAB — РЕЖИССЕРСКОЕ РЕШЕНИЕ`,`Проект: ${state.project?.id||'демонстрация'}`,`Вариант: ${state.selectedOption}`,`Сцен: ${state.scenes.length}`,'',...state.scenes.map((s,i)=>`${i+1}. ${s.name} (${s.duration} с): камера ${nameFor('camera',s.camera)}, переход ${i?nameFor('transitions',s.transition):'нет'}, титр ${nameFor('title',s.titleFx)}, субтитры ${nameFor('subtitle',s.subtitleStyle)} / ${nameFor('motion',s.wordMotion)}`),'','Решение только для подготовки. Рендер, TTS, A2E и публикация не разрешены.'];try{await navigator.clipboard.writeText(lines.join('\n'));say('Монтажное ТЗ скопировано')}catch{say('Копирование недоступно. Скачайте JSON')}}
 function setConnection(mode){$('connLed').className='conn-led '+(mode==='connected'?'connected':'waiting');$('connectionTitle').textContent=mode==='connected'?'Агент подключен / выбор ожидается':mode==='offline'?'Задание импортировано / офлайн':'Демонстрационный режим';$('connectionText').textContent=mode==='connected'?`Сессия ${state.request?.id||''}. После выбора отправим настройки строго инициировавшей среде и дождемся ACK.`:mode==='offline'?'Задание открыто из файла. Для возврата результата скачайте JSON и передайте его агенту.':'Вы можете проверить редактор и экспортировать JSON. Для прямого возврата агент должен запустить модуль через подтвержденный канал сообщений.';renderSummary();}
-function sendSelection(){const error=validationError();if(error){say(error);return;}if(!state.bridge||!state.request){say('Нет подключенного агентского канала. Используйте экспорт JSON.');return;}
+function sendSelection(){if(!state.confirmed){say('Сначала утвердите выбранный монтаж');return;}const error=validationError();if(error){say(error);return;}if(!state.bridge||!state.request){say('Нет подключенного агентского канала. Используйте экспорт JSON.');return;}
  const b=state.bridge,packet=buildResult();state.sending=true;state.lastAck=null;renderSummary();try{b.source.postMessage({type:'SIMBA_MOTIONLAB_SELECTION',protocol:'bontours.motionlab.bridge/v1',payload:packet},b.origin)}catch(err){state.sending=false;renderSummary();say('Не удалось отправить. Скачайте JSON.');return;}
  pendingAckTimer=setTimeout(()=>{if(!state.sending)return;state.sending=false;renderSummary();say('Подтверждение не пришло. Используйте JSON.');},9000);
 }
@@ -278,6 +406,9 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  editChange('sceneName','name');editChange('sceneDuration','duration',v=>clamp(Number(v)||3,1,20));editChange('sceneImage','image');editChange('sceneAsset','asset');editChange('sceneCamera','camera');editChange('sceneTransition','transition');editChange('sceneTitleFx','titleFx');editChange('sceneSubtitleStyle','subtitleStyle');editChange('sceneWordMotion','wordMotion');editChange('sceneIntensity','intensity',v=>clamp(Number(v),0,100));
  $('sceneIntensity').addEventListener('input',e=>{$('intensityValue').textContent=e.target.value+'%';});liveChange('sceneTitle','title');liveChange('sceneSubtitle','subtitle');
  $('playPreview').addEventListener('click',play);$('stopPreview').addEventListener('click',resetPreview);
+ $('playFilm').addEventListener('click',()=>film.active?stopFilm():startFilm());
+ $('stopFilm').addEventListener('click',()=>stopFilm());
+ $('approveChoice').addEventListener('click',approveReview);
  $('localSceneFile').addEventListener('change',async e=>{
   const file=e.target.files?.[0];e.target.value='';if(!file)return;
   $('localMediaStatus').textContent='Проверка файла в браузере...';
@@ -286,7 +417,7 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  $('resetDemo').addEventListener('click',()=>{if(state.bridge){say('Активное задание агента. Демо не заменяет его.');return;}prepareDemo();say('Открыт демонстрационный проект');});
  $('requestFile').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>300_000){say('Максимальный размер задания 300 КБ');return;}try{const source=JSON.parse(await file.text());if(state.bridge){say('Задание от агента активно. Импорт недоступен.');return;}loadLaunch(source,null);}catch(err){say('Ошибка JSON: '+err.message);}});
  $('downloadJson').addEventListener('click',jsonDownload);$('copyBrief').addEventListener('click',copyBrief);$('sendToAgent').addEventListener('click',sendSelection);
- window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);clearPreviews();});prepareDemo();
+ window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);stopFilm(false);clearPreviews();});prepareDemo();
  // Creative templates apply ONLY to the local demo. Agent launch with three options remains authoritative.
  const creativeId=new URLSearchParams(location.search).get('creativePreset');
  const creativeSuggestions={

@@ -41,6 +41,11 @@
     <div class="frame-shell">
      <div id="screen" class="screen" aria-label="Макет кадра в формате 9:16">
       <img id="previewPhoto" src="https://static.wixstatic.com/media/7fd7b8_b53b4bdba4c14271a663450044559b09~mv2.jpg" alt="Демонстрационная туристическая фотография"><video id="previewVideo" muted playsinline preload="metadata" hidden aria-label="Локально выбранный видеоклип"></video>
+      <div id="montageNext" class="montage-next" hidden aria-hidden="true">
+       <img id="nextPhoto" alt="" hidden>
+       <video id="nextVideo" muted playsinline preload="metadata" hidden></video>
+      </div>
+      <div id="montageFlash" class="montage-flash" hidden aria-hidden="true"></div>
       <div class="vignette"></div><div class="topstamp">BON TOURS <span>REEL / 01</span></div>
       <div class="frame-title" id="frameTitle">Новый год в Баварии</div>
       <div class="frame-subtitle" id="frameSubtitle">Время путешествовать</div>
@@ -49,6 +54,15 @@
     </div>
     <p class="media-provenance" id="mediaProvenance" role="status">Показан демонстрационный фон. Это не исходный MP4.</p>
     <div class="play-row"><button type="button" id="playPreview" class="primary-btn">▶ Посмотреть движение</button><button type="button" id="stopPreview" class="square-btn" aria-label="Сбросить анимацию">↺</button></div>
+    <div class="film-player" aria-label="Общий предпросмотр монтажного решения">
+      <div class="film-player-heading"><div><span class="small-label">ПОЛНЫЙ МОНТАЖНЫЙ ПРОСМОТР</span><strong id="filmNow">Все сцены · пока не воспроизводится</strong></div><span id="filmClock">00:00 / 00:00</span></div>
+      <div class="film-play-controls">
+       <button id="playFilm" type="button" class="primary-btn">▶ Просмотреть весь ролик</button>
+       <button id="stopFilm" type="button" class="secondary-btn">■ Остановить</button>
+      </div>
+      <progress id="filmProgress" max="100" value="0" aria-label="Прогресс монтажа"></progress>
+      <p id="filmAccuracy" class="film-accuracy">Предпросмотр без утвержденной озвучки и музыки. Некоторые сложные переходы показаны приближенно; финальный результат определяется рендерером.</p>
+    </div>
     <div class="editor">
       <div class="small-label">04 / НАСТРОЙКИ КАДРА</div>
       <label>Название сцены<input type="text" id="sceneName" maxlength="90"></label>
@@ -70,7 +84,13 @@
    <div class="handoff-head"><div><span class="small-label">05 / ВОЗВРАТ В АВТОМАТИЧЕСКУЮ СРЕДУ</span><h2>Передать выбранные настройки</h2><p>После выбора результат вернется в ту же рабочую сессию, если Киностудия подключила канал приема. Без него можно скачать файл и передать его агенту.</p></div><span id="handoffBadge" class="status-chip">ЧЕРНОВИК</span></div>
    <div class="summary" id="summary"></div>
    <div id="validation" class="validation" role="status"></div>
-   <div class="handoff-buttons"><button type="button" class="primary-btn" id="sendToAgent" disabled>Передать выбор агенту</button><button type="button" class="secondary-btn" id="downloadJson">Скачать монтажное ТЗ JSON</button><button type="button" class="secondary-btn" id="copyBrief">Скопировать ТЗ</button></div>
+   <div class="review-approval">
+     <strong>Согласование перед монтажом</strong>
+     <p>Проверьте последовательность, переходы, субтитры и титры. Любое изменение сбрасывает подтверждение.</p>
+     <button type="button" class="primary-btn" id="approveChoice">✓ Утвердить выбранный монтаж</button>
+     <span id="approvalStatus" role="status">Еще не утверждено</span>
+    </div>
+    <div class="handoff-buttons"><button type="button" class="primary-btn" id="sendToAgent" disabled>Передать выбор агенту</button><button type="button" class="secondary-btn" id="downloadJson">Скачать монтажное ТЗ JSON</button><button type="button" class="secondary-btn" id="copyBrief">Скопировать ТЗ</button></div>
    <p class="delivery-hint" id="deliveryHint">Прямая отправка становится доступной после получения подтвержденного задания от родительской среды. Экспорт всегда остается доступным.</p>
   </section>
  </main>
