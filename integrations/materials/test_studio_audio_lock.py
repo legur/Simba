@@ -129,6 +129,18 @@ class StudioAudioLockTests(unittest.TestCase):
         _, issues = handoff._validate_stage(self.project, "edit_choice", later, new)
         self.assertIn("stale", " ".join(issues))
 
+    def test_existing_montage_recorded_sha256_is_compatible(self):
+        wav = self.project["assets"][0]
+        music = self.project["assets"][1]
+        wav["recorded_sha256"] = wav.pop("sha256")
+        music["recorded_sha256"] = music.pop("sha256")
+        self.assertEqual(self.inspect()["status"], "VALID_METADATA")
+
+    def test_conflicting_dual_audio_hashes_fail_closed(self):
+        self.project["assets"][0]["recorded_sha256"] = sha("contradiction")
+        self.assertEqual(self.inspect()["status"], "BLOCKED")
+        self.assertIn("metadata SHA", " ".join(self.inspect()["issues"]))
+
     def test_music_asset_sha_change_blocks(self):
         self.project["assets"][1]["sha256"] = sha("different music file")
         self.assertIn("metadata SHA", " ".join(self.inspect()["issues"]))
