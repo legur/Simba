@@ -16,6 +16,8 @@
  <script defer src="director_semantic.js"></script>
  <script defer src="director_analysis.js"></script>
  <script defer src="director_import.js"></script>
+ <script defer src="director_vision_core.js"></script>
+ <script defer src="director_vision.js"></script>
 </head>
 <body>
  <header class="site-header">
@@ -49,6 +51,21 @@
        </div>
        <label class="director-editorial-upload">Дополнительно: SRT с настоящими временами реплик<input id="fullVideoSrt" type="file" accept=".srt,text/plain" aria-describedby="fullVideoStatus"></label>
        <p class="source-notice">Речь не распознается автоматически. При наличии SRT фразы связываются со сценами по времени; звук готового MP4 можно прослушать при неизменном порядке сцен.</p>
+      </section>
+      <section class="director-vision" aria-label="Смысловые подсказки для реальных кадров">
+       <div class="director-vision-head">
+        <strong>Что показано в каждой сцене?</strong>
+        <span class="small-label">ВИЗУАЛЬНЫЕ ПОДСКАЗКИ · БЕЗ РУЧНОГО JSON</span>
+       </div>
+       <p>Если исходный MP4 совпал по SHA-256 с ранее разобранными роликами, появятся сохраненные рекомендации ChatGPT для этих кадров. Для других роликов можно запустить локальную модель CLIP. Модель скачивается только после нажатия; кадры обрабатываются в браузере. Это НЕ живой вызов ChatGPT и не распознавание речи, цен или текста.</p>
+       <button type="button" class="secondary-btn" id="recognizeScenes">Распознать сцены локально (CLIP)</button>
+       <p id="visionStatus" class="vision-status" role="status" aria-live="polite">Сначала загрузите полный MP4 или локальные кадры.</p>
+       <div id="visionReview" class="vision-review" hidden>
+        <h3 id="visionReviewHeading"></h3>
+        <p>Проверьте все предложенные категории. На рекламных экранах, особенно с ценой и телефоном, оставьте защиту читаемости. Отметьте, есть ли в самом MP4 уже напечатанный текст. Классификатор делает предположения, не подтверждает содержание автоматически.</p>
+        <div id="visionRows" class="vision-rows"></div>
+        <button id="visionCommit" type="button" class="primary-btn">Подтвердить категории и получить 3 варианта монтажа</button>
+       </div>
       </section>
       <section class="director-analyze" aria-label="Локальный анализ реальных кадров">
       <div><strong>Режиссерский разбор исходников</strong><p>После загрузки своих фото и видео для всех сцен можно измерить свет, детализацию и изменения видеокадров, затем получить три монтажных варианта. Анализ происходит только в браузере, без передачи файлов.</p></div>
