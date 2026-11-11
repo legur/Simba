@@ -5,7 +5,9 @@ on:
     paths:
       - '.github/workflows/montage-motionlab-renderer-contract.yml'
       - 'integrations/video/motionlab_render_contract.py'
+      - 'integrations/video/motionlab_v2_contract.py'
       - 'integrations/video/tests/test_motionlab_render_contract.py'
+      - 'integrations/video/tests/test_motionlab_v2_contract.py'
       - 'integrations/video/make_video.py'
       - 'integrations/video/template/film.js'
       - 'integrations/video/MOTIONLAB_RENDERER_CONTRACT.md'
@@ -39,9 +41,11 @@ jobs:
         run: python -m pip install numpy soundfile
       - name: Syntax and existing renderer contract
         run: |
-          python -m py_compile integrations/video/make_video.py integrations/video/motionlab_render_contract.py
+          python -m py_compile integrations/video/make_video.py integrations/video/motionlab_render_contract.py integrations/video/motionlab_v2_contract.py
           node --check integrations/video/template/film.js
           python -m unittest discover -s integrations/video/tests -p 'test_motion_lab_transitions.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_subtitle_styles.py' -v
       - name: New Motion Lab source-pinned zero-paid renderer preflight
-        run: python -m unittest discover -s integrations/video/tests -p 'test_motionlab_render_contract.py' -v
+        run: |
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_render_contract.py' -v
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_v2_contract.py' -v
