@@ -6,7 +6,14 @@
  const root=()=>document.getElementById('overviewWorkspace');
  const detail=()=>document.getElementById('detailView');
  const $=id=>document.getElementById(id);
- const scenePanel=()=>document.querySelector('#detailSlot .preview-panel');
+ // Exactly one preview player: move the real DOM node between overview and
+ // focused editor so local browser-only video Blob URLs and playhead survive.
+ const scenePanel=()=>document.querySelector('.preview-panel');
+ function placePreview(inDetail){
+  const panel=scenePanel();
+  const destination=inDetail?$('detailSlot'):root();
+  if(panel&&panel.parentElement!==destination)destination.appendChild(panel);
+ }
  let kind='overview',activeIndex=0,rerendering=false;
  const fmt=i=>String(i+1).padStart(2,'0');
  function thumb(scene) {
@@ -91,13 +98,17 @@
   const result=parse();kind=result.view;activeIndex=result.index;
   const editing=kind!=='overview';
   document.body.classList.toggle('detail-open',editing);
+  // Restore the full film player on the storyboard, not just in an editor.
+  // Reparent before showing either view so the player is never left hidden.
+  stopFilm(false);
+  placePreview(editing);
   detail().hidden=!editing;root().hidden=editing;
   if(!editing){
-   $('detailSlot').appendChild(scenePanel()||document.querySelector('.preview-panel'));
-   // Keep media/bridge DOM mounted, but away from the scene overview.
+   // Overview has the scene list on the left and the whole-montage preview
+   // on the right, just as it did before the dedicated page navigation.
+   renderEditor();
    return;
   }
-  stopFilm(false);
   state.selectedIndex=kind==='cut'?Math.max(1,activeIndex):kind==='style'?0:activeIndex;
   renderEditor();renderSceneList();
   detail().classList.remove('mode-scene','mode-cut','mode-style');
@@ -120,8 +131,8 @@
  function init(){
   const aside=document.querySelector('#overviewWorkspace .preview-panel');
   if(!aside)return;
-  $('detailSlot').appendChild(aside);
-  root().classList.add('overview-only');
+  // Do NOT detach the preview at startup: the user must see it immediately.
+  root().classList.remove('overview-only');
   $('backToStoryboard').addEventListener('click',()=>goto('overview',0));
   $('editGlobalTheme').addEventListener('click',()=>goto('style',0));
   $('detailGlobalStyle').addEventListener('click',()=>goto('style',0));
