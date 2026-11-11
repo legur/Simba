@@ -44,6 +44,7 @@ const selection={
 };
 
 function harness(fetchImpl) {
+  globalThis.window={location:{origin:'https://studio-owner.example'}};
   const listeners=new Map(),sent=[],events=[];
   const parent={
     addEventListener(name,fn){listeners.set(name,fn);},
