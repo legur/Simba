@@ -64,6 +64,7 @@ jobs:
             node --check "integrations/materials/motionlab/$file"
           done
           node --test integrations/materials/motionlab/repo-tests/test_creative_catalog.mjs
+          node --test integrations/materials/motionlab/repo-tests/test_storyboard_internal.mjs
       - name: Validation summary
         if: ${{ success() }}
         run: |
