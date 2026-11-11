@@ -95,7 +95,7 @@ def _clips(project: dict) -> list[dict]:
                 or not isinstance(a.get("recorded_sha256"), str)
                 or not SHA.fullmatch(a["recorded_sha256"])
                 or type(duration) not in (int, float) or not math.isfinite(duration)
-                or not 3 <= duration <= 10
+                or not 3 <= duration <= 15
                 or not isinstance(a.get("drive_file_id"), str)):
             raise MotionLabStageError("A2E clip not backed by verified private archive receipt")
         result.append(a)
