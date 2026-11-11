@@ -145,6 +145,16 @@ def inspect_v2_audio(project: dict, source_revision: str) -> dict[str, Any]:
         return _blocked("VOICE_MUSIC_NOT_APPROVED")
     if record.get("schema") != STAGE_SCHEMA:
         return _blocked("V2_VOICE_MUSIC_SCHEMA_REQUIRED")
+    if (not isinstance(record.get("approval_evidence"), str)
+            or not record["approval_evidence"].strip()):
+        return _blocked("VOICE_MUSIC_APPROVAL_EVIDENCE_MISSING")
+    if (record.get("texts_presented") != 3
+            or record.get("music_presented") != 3
+            or type(record.get("text_option")) is not int
+            or record["text_option"] not in (1, 2, 3)
+            or type(record.get("music_option")) is not int
+            or record["music_option"] not in (1, 2, 3)):
+        return _blocked("VOICE_MUSIC_SELECTED_OPTIONS_NOT_VERIFIED")
     issues = validate(project, record, source_revision)
     if issues:
         return _blocked("V2_CANONICAL_AUDIO_NOT_VERIFIED", issues)
