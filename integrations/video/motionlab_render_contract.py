@@ -30,6 +30,7 @@ if str(HERE) not in sys.path:
 import motionlab_selection as selector
 import make_video
 import motionlab_layout_contract as layout_contract
+import motionlab_typography_contract as typography_contract
 
 SHA = re.compile(r"^[0-9a-f]{64}$")
 SAFE_FILE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]*\.mp4$")
@@ -40,7 +41,8 @@ MAX_CLIP_DURATION = 15.0
 MAX_SCENES = 8
 ARTIFACTS = ("make_video.py", "template/film.js",
              "template/transitions.js", "template/subtitle_styles.js",
-             "motionlab_layout_contract.py")
+             "motionlab_layout_contract.py",
+             "motionlab_typography_contract.py")
 
 
 class ContractError(ValueError):
@@ -104,6 +106,7 @@ def renderer_capabilities() -> dict:
             "scope": "global_one_style_and_motion_per_film",
         },
         "visual_layout": layout_contract.capabilities(),
+        "typography": typography_contract.renderer_capability(),
         "graphics": {"creative_plan": "demo_only_not_supported"},
         "whisper_word_timing": "renderer_generated_not_editor_provided",
         "trim": "v1_does_not_accept_in_out_changes",
