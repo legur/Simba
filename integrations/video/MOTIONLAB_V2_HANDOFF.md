@@ -390,3 +390,35 @@ QA-preview после live подключенного v2.
 - Each browser submission carries a non-secret `delivery_id` (monotonic per page). An ACK must echo the same ID; an ACK for an edited, timed-out, or superseded choice is ignored. The main editor locks on submit and stays immutable after a server receipt. A new edit requires a newly authenticated session.
 - The real renderer refuses to interpret `voice.source=existing_approved_wav` as a new Simba/Edge TTS request. **Direct WAV reuse is still unimplemented and render authorization remains false.** This is an intentional zero-paid fail-closed gate rather than a claimed audio integration.
 - The current PR #105 is draft and not mergeable against latest `main` until branch conflicts are reconciled. No real owner HTTPS deployment, Wix publication, MP4 client render, voice reuse or final QA has been completed. Do not conflate an offline JS smoke result with full GitHub CI.
+
+
+## Existing narration WAV — verified source preflight (zero paid)
+
+New `motionlab_approved_audio.py` performs a **read-only** SHA-256, file size,
+24 kHz/16-bit PCM and duration check of an *actual existing* WAV staged
+privately from Google Drive, against the canonical `project.json`
+`voice_music` handoff (exactly one narration asset). Neither the approved
+audio bytes nor private paths are written to GitHub or returned in the result.
+
+Example on an **owner-controlled environment**, with actual files already
+staged (no dummy files or automated Drive downloading):
+
+```sh
+python integrations/video/motionlab_approved_audio.py \
+  --project-json /srv/simba/main-checkout/campaigns/PROJECT/project.json \
+  --private-job /srv/simba/private/jobs/PROJECT \
+  --wav-name approved.wav
+```
+
+A successful report is
+`EXISTING_APPROVED_WAV_SOURCE_VERIFIED_NOT_RENDER_READY`, with a canonical
+`asset_id`, SHA-256 and duration; `render_authorized=false`.
+Mismatches, missing canonical voice approval, symlink traversal or absent
+file stop the preflight. This does **not** split the approved narration
+into lines, provide voice word timestamps, validate the licensed music,
+synchronize offer/end screens, or certify the full 60-second MP4 timeline.
+
+The renderer separately rejects any
+`voice.source=existing_approved_wav` until a **direct WAV mixer** with
+verified transcript/time alignment is implemented. Never bypass this by
+allowing default new TTS.
