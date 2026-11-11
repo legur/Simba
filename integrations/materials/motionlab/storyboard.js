@@ -156,7 +156,32 @@ function populateSelect(id,items){$(id).replaceChildren(...items.map(([value,lab
 function titleChoice(index){if(film.active||film.paused)stopFilm(false);let s=state.scenes[index];state.selectedIndex=index;resetPreview();render();}
 function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="concept-support">${!RENDER_MOVES.has(c.camera)||c.titleFx!=='none'?'Есть эффекты только для предпросмотра':'Нужна проверка рендерера'}</span><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
 function scenePhoto(scene){return scene.previewUrl||IMAGES[scene.image]||IMAGES.mountains;}
-function renderSceneList(){ $('sceneCount').textContent=String(state.scenes.length);$('metricScenes').textContent=String(state.scenes.length);$('sceneList').innerHTML=state.scenes.map((s,i)=>`<div role="listitem" class="scene-card ${i===state.selectedIndex?'selected':''}"><img class="thumb" src="${esc(scenePhoto(s))}" alt="" loading="lazy" referrerpolicy="no-referrer"><div class="scene-info"><button type="button" class="scene-open" data-open="${i}" aria-label="Редактировать сцену ${i+1}"><strong>${String(i+1).padStart(2,'0')} / ${esc(s.name)}</strong><p>${s.duration.toFixed(1)} с · ${esc(nameFor('camera',s.camera))}</p></button><div class="chips"><span class="tag">${esc(i===0?'Без входа':nameFor('transitions',s.transition))}</span><span class="tag">${esc(nameFor('title',s.titleFx))}</span></div></div><div class="scene-control"><button data-up="${i}" type="button" title="Выше" ${i===0?'disabled':''}>↑</button><button data-down="${i}" type="button" title="Ниже" ${i===state.scenes.length-1?'disabled':''}>↓</button><button data-remove="${i}" type="button" title="Удалить" ${state.scenes.length<=1||state.request?'disabled':''}>×</button></div></div>`).join(''); }
+function renderSceneList(){
+ $('sceneCount').textContent=String(state.scenes.length);$('metricScenes').textContent=String(state.scenes.length);
+ $('sceneList').innerHTML=state.scenes.map((scene,index)=>{
+  const num=String(index+1).padStart(2,'0');
+  const source=previewFor(scene);
+  const cover=source?.type==='image'?source.url:scenePhoto(scene);
+  const customized=Boolean(scene.visualLayout&&Object.keys(scene.visualLayout).length||scene.visualTypography&&Object.keys(scene.visualTypography).length);
+  const card=`<div role="listitem" class="scene-card ${index===state.selectedIndex?'selected':''}">
+   <img class="thumb" src="${esc(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">
+   <div class="scene-info">
+    <strong>${num} / ${esc(scene.name)}</strong>
+    <p>${scene.duration.toFixed(1)} с · ${esc(nameFor('camera',scene.camera))}${source?.type==='video'?' · Локальное видео':''}</p>
+    <div class="chips"><span class="tag">${esc(nameFor('title',scene.titleFx))}</span>${customized?'<span class="tag">Индивидуальные настройки</span>':''}</div>
+    <button type="button" class="page-edit-btn" data-edit-scene="${index}" aria-label="Открыть редактор сцены ${num}">✎ Редактировать сцену</button>
+   </div>
+   <div class="scene-control">
+    <button data-up="${index}" type="button" title="Выше" ${index===0?'disabled':''}>↑</button>
+    <button data-down="${index}" type="button" title="Ниже" ${index===state.scenes.length-1?'disabled':''}>↓</button>
+    <button data-remove="${index}" type="button" title="Удалить" ${state.scenes.length<=1||state.request?'disabled':''}>×</button>
+   </div>
+  </div>`;
+  const next=index+1;
+  const cut=next<state.scenes.length?`<div class="cut-between" role="group" aria-label="Переход между сценами ${num} и ${String(next+1).padStart(2,'0')}"><button type="button" data-edit-cut="${next}" aria-label="Изменить переход между сценами ${num} и ${String(next+1).padStart(2,'0')}">✦ Переход ${num} → ${String(next+1).padStart(2,'0')}: ${esc(nameFor('transitions',state.scenes[next].transition))} · Редактировать</button></div>`:'';
+  return card+cut;
+ }).join('');
+}
 function setField(id,value){const n=$(id);if(n)n.value=value;}
 function renderEditor(){const s=state.scenes[state.selectedIndex];if(!s)return;
  $('previewHeading').textContent='Сцена '+String(state.selectedIndex+1).padStart(2,'0');$('activeCounter').textContent=`${String(state.selectedIndex+1).padStart(2,'0')} / ${String(state.scenes.length).padStart(2,'0')}`;
@@ -202,7 +227,7 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
  $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.sending?'Решение отправлено. Подтверждение принимающей стороны пока не получено.':state.bridge?'Канал ответа подключен. После выбора нажмите «Передать выбор агенту».':'Канала ответа нет. Экспортируйте JSON, чтобы продолжить работу в агенте.';
 }
-function render(){renderConcepts();renderSceneList();renderEditor();renderSummary();}
+function render(){renderConcepts();renderSceneList();renderEditor();renderSummary();globalThis.MotionLabPages?.sync?.();}
 function updateKey(key,value){if(state.request&&['name','duration','image','asset','title','subtitle'].includes(key))return;const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
 function editChange(id,key,fn){$(id).addEventListener('change',()=>{const v=fn?fn($(id).value):$(id).value;updateKey(key,v);});}
 function liveChange(id,key){$(id).addEventListener('input',()=>{if(state.request&&['title','subtitle'].includes(key))return;const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
