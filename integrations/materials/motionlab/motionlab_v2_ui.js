@@ -11,6 +11,11 @@
  const SHA=/^[a-f0-9]{64}$/;
  let active=null;
  let timer=null;
+ let deliveryCounter=0;
+ let pendingDeliveryId=null;
+ function cancelPending(){
+   clearTimeout(timer);timer=null;pendingDeliveryId=null;
+ }
  const clone=x=>JSON.parse(JSON.stringify(x));
  function fail(msg){throw new Error(msg);}
  function assert(condition,message){if(!condition)fail(message);}
@@ -170,22 +175,25 @@
    let selection;
    try{selection=buildSelection();}
    catch(error){say('Передача запрещена: '+error.message);return;}
-   state.sending=true;state.lastAck=null;renderSummary();
+   state.sending=true;state.lastAck=null;
+   const deliveryId='d'+(++deliveryCounter);
+   pendingDeliveryId=deliveryId;
+   renderSummary();
    try{
      active.channel.source.postMessage({
        type:'SIMBA_MOTIONLAB_V2_SELECTION',protocol:PROTOCOL,
        request_id:active.materials.request_id,
        project_id:active.materials.project_id,
-       payload:{selection},
+       payload:{selection,delivery_id:deliveryId},
      },active.channel.origin);
    }catch{
-     state.sending=false;renderSummary();say('Не удалось отправить v2 выбор');
+     cancelPending();state.sending=false;renderSummary();say('Не удалось отправить v2 выбор');
      return;
    }
    clearTimeout(timer);
    timer=setTimeout(()=>{
-     if(!state.sending)return;
-     state.sending=false;renderSummary();
+     if(!state.sending||pendingDeliveryId!==deliveryId)return;
+     cancelPending();state.sending=false;renderSummary();
      say('Нет серверного ACK. Решение не считается переданным.');
    },9000);
  }
@@ -220,7 +228,7 @@
      assert(q.option===i+1&&Array.isArray(q.scenes)&&q.scenes.length===m.scenes.length,
        'Недостаточно сцен в концепции '+(i+1));
    }
-   stopFilm(false);clearPreviews();
+   stopFilm(false);clearPreviews();cancelPending();
    globalThis.MotionLabVisual?.resetForProject?.();
    active={materials:m,proposals:p,materialsSha:payload.materials_sha256,
        proposalsSha:payload.proposals_sha256,channel:{source:event.source,origin:event.origin}};
@@ -258,8 +266,9 @@
    }else if(msg.type==='SIMBA_MOTIONLAB_V2_ACK'&&active&&
      event.source===active.channel.source&&event.origin===active.channel.origin&&
      msg.project_id===active.materials.project_id&&
-     msg.request_id===active.materials.request_id){
-     clearTimeout(timer);state.sending=false;
+     msg.request_id===active.materials.request_id&&state.sending===true&&
+     pendingDeliveryId!==null&&msg.payload?.delivery_id===pendingDeliveryId){
+     cancelPending();state.sending=false;
      const receipt=msg.payload?.receipt_id;
      if(msg.payload?.accepted===true&&typeof receipt==='string'&&
        receipt.startsWith('motionlab:v2:')&&receipt.length<=180){
@@ -280,7 +289,7 @@
        'per_scene_layout','global_typography','scene_typography','durable_ack'],
    },origin);
  }
- globalThis.MotionLabV2={choose,rendererIssues,reviewIssue,sendSelection};
+ globalThis.MotionLabV2={choose,rendererIssues,reviewIssue,sendSelection,cancelPending};
  window.addEventListener('message',incoming);
  window.addEventListener('pagehide',()=>clearTimeout(timer));
  ready();
