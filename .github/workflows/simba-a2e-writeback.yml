@@ -1,0 +1,179 @@
+name: Simba A2E verified clips → project stage writeback (NO PAID CALLS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: "Existing approved Simba project ID"
+        required: true
+        type: string
+      owner_issue:
+        description: "Original owner-approved universal A2E Issue number"
+        required: true
+        type: string
+      universal_run:
+        description: "Completed universal A2E GitHub Actions run ID"
+        required: true
+        type: string
+  pull_request:
+    paths:
+      - '.github/workflows/simba-a2e-writeback.yml'
+      - 'integrations/materials/a2e_writeback.py'
+      - 'integrations/materials/test_a2e_writeback.py'
+      - 'integrations/materials/handoff.py'
+      - 'integrations/video/a2e_drive_archiver.py'
+      - 'integrations/video/github_a2e_universal.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-a2e-stage-writeback
+  cancel-in-progress: false
+
+jobs:
+  offline_tests:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check 'Pillow>=11,<13'
+      - name: Verify MP4 archive → approved stage receipt; never call paid providers
+        run: python -m unittest discover -s integrations/materials -p test_a2e_writeback.py -v
+
+  writeback:
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.repository == 'legur/Simba' &&
+      github.actor == 'legur' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Verify trusted main checkout and project path
+        shell: bash
+        env:
+          PROJECT_ID: ${{ inputs.project_id }}
+          SOURCE_RUN: ${{ inputs.universal_run }}
+          OWNER_ISSUE: ${{ inputs.owner_issue }}
+        run: |
+          set -euo pipefail
+          [[ "$PROJECT_ID" =~ ^[a-z0-9][a-z0-9-]{0,63}$ ]]
+          [[ "$SOURCE_RUN" =~ ^[0-9]{1,15}$ ]]
+          [[ "$OWNER_ISSUE" =~ ^[0-9]{1,10}$ ]]
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          test -f "campaigns/$PROJECT_ID/project.json"
+      - name: Verify actual successful owner A2E workflow run (never trust unverified artifact)
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_RUN: ${{ inputs.universal_run }}
+          OWNER_ISSUE: ${{ inputs.owner_issue }}
+        run: |
+          set -euo pipefail
+          gh api "repos/legur/Simba/actions/runs/$SOURCE_RUN" > "$RUNNER_TEMP/a2e-run-metadata.json"
+          python - "$RUNNER_TEMP/a2e-run-metadata.json" <<'PY'
+          import json,sys
+          doc=json.load(open(sys.argv[1],encoding='utf-8'))
+          if not (
+              doc.get('event')=='issues'
+              and doc.get('conclusion')=='success'
+              and doc.get('status')=='completed'
+              and doc.get('name')=='Simba A2E universal image-to-video'
+              and doc.get('path')=='.github/workflows/simba-a2e-universal.yml'
+              and (doc.get('actor') or {}).get('login')=='legur'
+              and (doc.get('head_repository') or {}).get('full_name')=='legur/Simba'
+              and doc.get('head_branch')=='main'
+          ):
+              raise SystemExit('Untrusted or incomplete universal A2E run; no writeback')
+          print('Verified completed original A2E owner run metadata')
+          PY
+          gh run download "$SOURCE_RUN" -R legur/Simba \
+            --name "simba-a2e-universal-$OWNER_ISSUE" \
+            --dir "$RUNNER_TEMP/a2e-source"
+          test -f "$RUNNER_TEMP/a2e-source/status.json"
+          test ! -L "$RUNNER_TEMP/a2e-source/status.json"
+      - name: Install Google OAuth and real MP4 ffprobe verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --disable-pip-version-check \
+            'google-api-python-client>=2.140,<3' \
+            'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+          sudo apt-get update -qq
+          sudo apt-get install -y ffmpeg
+          command -v ffprobe
+      - name: Read-only A2E status + full Drive MP4 checks then atomic project.json update
+        env:
+          PROJECT_ID: ${{ inputs.project_id }}
+          SOURCE_RUN: ${{ inputs.universal_run }}
+          OWNER_ISSUE: ${{ inputs.owner_issue }}
+          A2E_API_KEY: ${{ secrets.A2E_API_KEY }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python integrations/materials/a2e_writeback.py \
+            --project "$PROJECT_ID" \
+            --state-json "$RUNNER_TEMP/a2e-source/status.json" \
+            --owner-issue "$OWNER_ISSUE" \
+            --source-run "$SOURCE_RUN" \
+            --apply --report "$RUNNER_TEMP/a2e-stage-writeback.json"
+          test "$(git diff --name-only | wc -l)" -eq 1
+          test "$(git diff --name-only)" = "campaigns/$PROJECT_ID/project.json"
+          python integrations/materials/catalog.py check
+          python integrations/materials/handoff.py --report-only "$PROJECT_ID"
+      - name: Commit only verified project record (next-stage dispatcher already exists)
+        shell: bash
+        env:
+          PROJECT_ID: ${{ inputs.project_id }}
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$GITHUB_SHA"
+          git config user.name "simba-studio-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "campaigns/$PROJECT_ID/project.json"
+          test "$(git diff --cached --name-only)" = "campaigns/$PROJECT_ID/project.json"
+          git commit -m "chore(studio): verified A2E archived clips for $PROJECT_ID; route voice and music"
+          git push origin HEAD:main
+      - name: Redacted writeback summary (no media, source ZIP or credentials)
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/a2e-stage-writeback.json" ]; then
+            echo '### Simba A2E archived MP4 → voice/music' >> "$GITHUB_STEP_SUMMARY"
+            python - "$RUNNER_TEMP/a2e-stage-writeback.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          row=json.load(open(sys.argv[1],encoding='utf-8'))
+          for k in ('status','project_id','archived_mp4_count','next_recipient','paid_calls','project_written'):
+              print(f'{k}: {row.get(k)}')
+          PY
+          fi
+      - name: Preserve only non-media status receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simba-a2e-writeback-summary
+          path: ${{ runner.temp }}/a2e-stage-writeback.json
+          retention-days: 14
+          if-no-files-found: warn

@@ -7,6 +7,14 @@ on:
       - 'integrations/materials/test_dispatcher.py'
       - 'integrations/materials/auto_script.py'
       - 'integrations/materials/test_auto_script.py'
+      - 'integrations/materials/chatgpt_rafael.py'
+      - 'integrations/materials/test_chatgpt_rafael.py'
+      - 'integrations/materials/rafael_archive.py'
+      - 'integrations/materials/test_rafael_archive.py'
+      - 'integrations/materials/chatgpt_triptychs.py'
+      - 'integrations/materials/test_chatgpt_triptychs.py'
+      - 'integrations/materials/rafael_a2e_handoff.py'
+      - 'integrations/materials/test_rafael_a2e_handoff.py'
       - 'integrations/materials/catalog.py'
       - 'integrations/materials/handoff.py'
       - 'integrations/materials/test_catalog.py'
@@ -19,6 +27,14 @@ on:
       - 'integrations/materials/test_dispatcher.py'
       - 'integrations/materials/auto_script.py'
       - 'integrations/materials/test_auto_script.py'
+      - 'integrations/materials/chatgpt_rafael.py'
+      - 'integrations/materials/test_chatgpt_rafael.py'
+      - 'integrations/materials/rafael_archive.py'
+      - 'integrations/materials/test_rafael_archive.py'
+      - 'integrations/materials/chatgpt_triptychs.py'
+      - 'integrations/materials/test_chatgpt_triptychs.py'
+      - 'integrations/materials/rafael_a2e_handoff.py'
+      - 'integrations/materials/test_rafael_a2e_handoff.py'
       - '.github/workflows/simba-video-stage-dispatch.yml'
 
 permissions:
@@ -40,6 +56,16 @@ jobs:
       - run: python3 integrations/materials/catalog.py check
       - name: Verify local-AI drafting privacy, first-stage gate and source checks
         run: python3 -m unittest discover -s integrations/materials -p test_auto_script.py -v
+      - name: Test ChatGPT Rafael image packaging (offline; no paid API)
+        run: |
+          python3 -m pip install --disable-pip-version-check 'Pillow>=11,<13'
+          python3 -m unittest discover -s integrations/materials -p test_chatgpt_rafael.py -v
+      - name: Verify ChatGPT Rafael private Drive archive and remote checksum gates
+        run: python3 -m unittest discover -s integrations/materials -p test_rafael_archive.py -v
+      - name: Verify imported ChatGPT triptychs yield 9 distinct real scene files
+        run: python3 -m unittest discover -s integrations/materials -p test_chatgpt_triptychs.py -v
+      - name: Verify approved storyboard and selected prompts match existing universal A2E (offline only)
+        run: python3 -m unittest discover -s integrations/materials -p test_rafael_a2e_handoff.py -v
       - name: Preview existing project routing (read-only)
         run: python3 integrations/materials/dispatcher.py --all
 

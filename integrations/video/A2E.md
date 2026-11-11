@@ -364,3 +364,106 @@ the status to `AUTO_ARCHIVE_ACTIVE`.
 `simba-a2e-universal.yml` и `github_a2e_universal.py` принимают от одной до шести сцен любого проекта через owner-authored issue. Содержимое issue: JSON с `kind: simba_a2e_generate`, `max_credits` и `scenes` (`name`, чистый Wix Media `image_url`, английский `prompt`). Выбор Лео после показа сцен, объема и лимита является разрешением запуска; label `a2e-generate-approved` ставится только для этого конкретного утвержденного issue. Исходные изображения, анимация, модель и лимит не меняются после выбора без нового согласования. Текущий runner использует модель `a2e`, 5 секунд, один выход на сцену и стандартный negative prompt; другие модели пока не поддерживаются.
 
 Перед запуском требуется поиск готовых материалов, точный расчет и проверка истории. Runner ограничивает стоимость, повторно проверяет цену, записывает маркер до платного POST и не повторяет неопределенные запросы. Изображение, уже найденное в истории A2E, останавливает запуск для ручной проверки и повторного использования. Каждый issue используется один раз; прерванный запуск нельзя автоматически повторять. Результаты и журнал сохраняются в Actions artifact на 30 дней, постоянное архивирование зависит от отдельного A2E Drive archiver и требует проверки его работы. Наличие кода и offline-тестов не доказывает работоспособность удаленной генерации: `CODE_READY / LIVE_TEST_PENDING`.
+
+## Приватный маршрут Rafael → существующий universal A2E (10.11.2026, PR №105)
+
+**Без второго A2E-раннера.** Добавлен `integrations/video/github_a2e_private.py`.
+Это только резолвер приватного источника, вызываемый перед
+`github_a2e_universal.run`. Старый формат Issue
+`simba_a2e_generate` по-прежнему поддерживается и не меняет модель,
+срок клипа или предел расходов.
+
+Для нового проекта Issue, созданная владельцем репозитория `legur`,
+может содержать **только неперсональные ID**:
+
+```json
+{
+  "kind": "simba_a2e_from_private_drive",
+  "project_id": "approved-project-id",
+  "plan_file_id": "<реальный Google Drive ID утвержденного приватного плана>",
+  "storyboard_file_id": "<реальный Google Drive ID оригинального ZIP Рафаэля>"
+}
+```
+
+Значения в угловых скобках — только поясняющие обозначения. Реальные
+ID появляются после сохранения файлов, совпадают с `project.json`
+и заранее выбранными `stage_handoffs.script/storyboard/a2e_prompts`.
+**Никогда** не подменять отсутствие согласования фиктивными ID или
+результатами теста.
+
+После выбора Лео варианта раскадровки, комплекта английских motion prompts
+и точного кредитного лимита сохраняется `stage_handoffs`. Выбор в
+рамках объявленного лимита является разрешением; нового вопроса перед
+тем же объемом работ не задавать. Механизм требует установленной **самим
+владельцем** метки `a2e-generate-approved`, которая запускает
+старый защищенный Workflow. Это технический триггер, не право
+потратить больше согласованного и не автоматическая публикация.
+
+GitHub Actions с существующими Google OAuth secrets выполняет только
+read-only get/readback двух файлов из папки
+`Simba Private AI Drafts`: проверяет родительскую папку, SHA-256 и
+MD5 реальных байтов, последовательность выбранного storyboard option,
+и JSON выбранных English prompts. Отдельный read-only GET проверяет
+доступность каждого Wix Media URL и примерное визуальное совпадение
+изображения с утвержденным JPG из ZIP. Затем в памяти строится
+старый `simba_a2e_generate` без попадания контента в публичный Issue
+или артефакты. Дальше действует исключительно прежний universal runner:
+повторный точный quote, cap, поиск прежних task ID, durable start
+journal, один платный start, статус и скачивание MP4. Архивирование
+производится по прежнему A2E Drive workflow; стоимость не повторять
+при неопределенном результате.
+
+Для этой ветки новые offline tests со смоделированным Drive и настоящими
+синтетическими JPG/PNG/ZIP успешно проверяют безопасность перехода.
+**Ни один новый owner Issue с реальным одобренным проектом и ни одна
+новая платная генерация A2E в рамках PR №105 не запускались**.
+До полноценной проверки production-path статус
+`PRIVATE_BRIDGE_CODE_READY / LIVE_SOURCE_PENDING`.
+
+## Read-only production preflight — 10.11.2026 (PR №105)
+
+New workflow: `.github/workflows/simba-a2e-private-preflight.yml`.
+
+After `project.json` contains **three real Leo-approved stages**
+`script → storyboard → a2e_prompts` and both private Drive
+files are archived with matching SHA-256 and file IDs, the owner may
+launch the **read-only** GitHub Actions `workflow_dispatch` with only:
+`project_id`, `plan_file_id`, `storyboard_file_id`.
+The workflow accepts only `legur` on `main`, has `contents: read`
+only and **does not inject A2E_API_KEY**, any GitHub Issues write token,
+or Media Manager upload tokens.
+
+Command used by the workflow:
+
+```sh
+python integrations/video/github_a2e_private.py \
+  --project "<approved-project-id>" \
+  --plan-file-id "<approved-private-plan-drive-id>" \
+  --storyboard-file-id "<approved-private-rafael-zip-drive-id>"
+```
+
+All values must come from actually existing approved artifacts, not
+from synthetic demo credentials, example IDs or previous projects.
+This command reads the private Google Drive archive and prompt JSON,
+checks the `stage_handoffs` ledger, verifies Wix-hosted images, and
+validates the final request body using the **old** universal A2E
+schema. Output is only a redacted status and counts:
+`DRIVE_AND_WIX_SOURCES_VERIFIED_NO_A2E_EXECUTION`, or
+`BLOCKED_READ_ONLY_PREFLIGHT`. It **does not** quote costs, create a
+GitHub Issue, add labels, call A2E, animate, download MP4 or publish.
+The actual free A2E quote and charged generation remain under the
+existing `a2e-generate-approved` issue workflow.
+
+**Snapshot of actual projects (10.11.2026):**
+`prague-new-year-2027` has completed publication-reported status;
+`bavaria-new-year-2027` has an editorial-approved final MP4 and
+publication still pending. Neither project has a new three-stage
+`stage_handoffs` chain. They must **not** be repurposed as a fresh
+billable Rafael-to-A2E test. The archived `smoke-chatgpt-rafael`
+triptychs are not an approved real tour, and their ZIP expressly says
+`approval_recorded=false`. No approved new production test source
+currently exists in the known `campaigns` catalog.
+
+This PR's preflight tests have synthetic actual media bytes and mock
+Drive/Wix; a live on-`main` owner preflight awaits real stage approvals
+and merge, and is not an asserted successful A2E generation.

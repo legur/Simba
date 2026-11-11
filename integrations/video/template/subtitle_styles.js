@@ -75,12 +75,12 @@ function rowsForWords(g,visibleWords,maxWidth){
  * Render an already aligned subtitle line with validated Motion Lab style.
  * line.words: [[displayWord, absoluteStartSeconds], ...] (from Whisper).
  */
-export function drawStyledSubtitle(g,line,t,config,W,H){
+export function drawStyledSubtitle(g,line,t,config,W,H,layout=null,typography=null){
   if(!line||!Array.isArray(line.words)||!line.words.length||!config)return;
   const style=STYLE_IDS.includes(config.style)?config.style:'clean';
   const motion=MOTION_IDS.includes(config.motion)?config.motion:'karaoke';
   const accent=COLOR_MAP[config.color]||COLOR_MAP.lime;
-  const factor=limit(Number(config.scale_percent)||100,80,135)/100;
+  const factor=limit(Number(config.scale_percent)||100,80,135)/100 * (layout ? layout.scale / 100 : 1) * (typography ? typography.size / 100 : 1);
   const size=Math.round(50*factor*W/1080);
   const words=line.words.map(([w,start],i)=>({
     index:i,text:uppercase(style)?String(w).toUpperCase():String(w),start:Number(start)
@@ -95,17 +95,34 @@ export function drawStyledSubtitle(g,line,t,config,W,H){
   const opacity=limit((t-line.t0)/.14,0,1)*limit((line.t1-t)/.14,0,1);
   if(opacity<=0)return;
   const top=H*.26,center=H*.52,bottom=Number.isFinite(line.y)?line.y:H*.74;
-  const cy=config.position==='top'?top:config.position==='middle'?center:bottom;
-  const font=textFont(style,size);
+  const cy=layout ? H * layout.y / 100 : config.position==='top'?top:config.position==='middle'?center:bottom;
+  const cx=layout ? W * layout.x / 100 : W / 2;
+  const font=typography ? `700 ${size}px "${typography.family}"` : textFont(style,size);
   g.save();g.globalAlpha*=opacity;g.font=font;g.textAlign='left';g.textBaseline='middle';
-  const rows=rowsForWords(g,display,W*.82);
   const lineHeight=Math.round(size*1.32),paddingY=Math.round(size*.43),paddingX=Math.round(size*.65);
+  // Layout preview is 72% max wrap width, centered at an exact frame-% X.
+  // Constrain actual width further as necessary for 6% safe horizontal inset.
+  const maxWordsWidth = layout
+    ? Math.min(W * .72,
+      2 * Math.min(cx - W * .06, W * .94 - cx) - paddingX * 2)
+    : W * .82;
+  if (layout && maxWordsWidth <= 0) {
+    g.restore();
+    throw new Error('Unsafe Motion Lab subtitle X');
+  }
+  const rows=rowsForWords(g,display,maxWordsWidth);
   const widths=rows.map(row=>row.reduce((sum,item,i)=>sum+item.width+(i?g.measureText(' ').width:0),0));
   const bodyWidth=Math.max(1,...widths);
   const blockWidth=Math.min(W*.94,bodyWidth+paddingX*2);
   const blockHeight=rows.length*lineHeight+paddingY*2;
-  const left=limit((W-blockWidth)/2,12,W-blockWidth-12);
-  const y=limit(cy-blockHeight/2,H*.11,H*.83-blockHeight);
+  const left=layout ? cx-blockWidth/2 : limit((W-blockWidth)/2,12,W-blockWidth-12);
+  const y=layout ? cy-blockHeight/2 : limit(cy-blockHeight/2,H*.11,H*.83-blockHeight);
+  if (layout && (left < W*.06 || left + blockWidth > W*.94 ||
+                 y < H*.06 || y + blockHeight > H*.94 ||
+                 bodyWidth > maxWordsWidth)) {
+    g.restore();
+    throw new Error('Motion Lab subtitle exceeds safe overlay bounds');
+  }
   const box={x:left,y,width:blockWidth,height:blockHeight};
   background(g,style,box,accent,W,H,W/1080);
 
@@ -120,10 +137,10 @@ export function drawStyledSubtitle(g,line,t,config,W,H){
   const normalColor=['price-tag'].includes(style)?'#10251d':
     ['gold-card','luxury'].includes(style)?'#ffdc9a':
     style==='neon'?'#b7faff':'#f5f4ed';
-  const inactiveColor=style==='spotlight'?'rgba(226,233,231,.55)':normalColor;
+  const inactiveColor=typography ? typography.color : (style==='spotlight'?'rgba(226,233,231,.55)':normalColor);
   rows.forEach((row,r)=>{
     const rowWidth=widths[r];
-    let x=style==='two-line'?left+paddingX:Math.max(left+paddingX,(W-rowWidth)/2);
+    let x=style==='two-line'?left+paddingX:Math.max(left+paddingX,(cx-rowWidth/2));
     const baseline=y+paddingY+lineHeight*(r+.5);
     row.forEach((word)=>{
       const current=word.index===active;
