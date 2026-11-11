@@ -166,6 +166,35 @@
   if(!layer.drag||layer.drag.pointerId!==event.pointerId)return;
   layer.drag=null;state.dirty=true;resetAck();renderSummary();
  }
+ function visualCommand(input){
+  const raw=String(input||'').trim().toLowerCase().replace(/ё/g,'е');
+  const status=$('visualCommandStatus');
+  const reply=(ok,message)=>{status.textContent=message;status.classList.toggle('command-error',!ok);return ok;};
+  if(!raw)return reply(false,'Введите команду для титра или субтитров.');
+  const subtitle=/субтитр/.test(raw);
+  const title=/титр|заголов/.test(raw)&&!subtitle;
+  const kind=subtitle?'subtitle':title?'title':layer.kind;
+  const reset=/верн|сброс|исходн|по умолчанию/.test(raw);
+  const up=/подним|выше|вверх/.test(raw);
+  const down=/опуст|ниже|вниз/.test(raw);
+  const left=/влево|левее|налево/.test(raw);
+  const right=/вправо|правее|направо/.test(raw);
+  const larger=/крупнее|увелич|больше/.test(raw);
+  const smaller=/мельче|уменьш|меньше/.test(raw);
+  const actions=[reset,up,down,left,right,larger,smaller].filter(Boolean).length;
+  if(actions!==1)return reply(false,'Поддерживается одна правка: выше, ниже, левее, правее, крупнее, мельче или вернуть положение.');
+  const qty=/на\s+(\d{1,2})\s*%?/.exec(raw);
+  const step=qty?Number(qty[1]):5;
+  if(step<1||step>40)return reply(false,'Укажите величину изменения от 1% до 40%.');
+  select(kind);
+  if(reset){inheritLayout(kind);return reply(true,'Исходное положение восстановлено только в этой сцене.');}
+  const val=get(current(),kind);
+  const patch=up?{y:val.y-step}:down?{y:val.y+step}:left?{x:val.x-step}:right?{x:val.x+step}:
+   larger?{scale:val.scale+Math.max(5,Math.round(step/5)*5)}:{scale:val.scale-Math.max(5,Math.round(step/5)*5)};
+  edit(kind,patch);
+  const target=kind==='title'?'Титр':'Субтитры';
+  return reply(true,target+': изменение применено только к этой сцене. Посмотрите результат в кадре.');
+ }
  function saveDraft(){
   const out={
    schema:'bontours.motionlab.visual-layout-draft/v2',
@@ -302,6 +331,8 @@
   for(const button of $$('[data-cut-effect]'))button.addEventListener('click',()=>chooseCut(button.dataset.cutEffect));
   $('previewCut').addEventListener('click',previewCut);
   $('filmSeek').addEventListener('input',e=>{clearTimeout(cutStopTimer);seek(Number(e.target.value));});
+   $('applyVisualCommand').addEventListener('click',()=>visualCommand($('visualCommand').value));
+   $('visualCommand').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();visualCommand(e.currentTarget.value);}});
   window.addEventListener('pagehide',()=>clearTimeout(cutStopTimer));
   refresh(current());populateCuts();
  }
