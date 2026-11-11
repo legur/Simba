@@ -121,6 +121,18 @@
       <label>Ссылка или ID исходного кадра<input type="text" id="sceneAsset" placeholder="ID сохраненного файла / название ассета" maxlength="240"></label>
       <label>Локальный предпросмотр своего кадра или клипа (не загружается в Wix)<input type="file" id="localSceneFile" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime,.jpg,.jpeg,.png,.webp,.mp4,.mov,.m4v,.webm"></label>
       <p id="localMediaStatus" class="source-notice" role="status">Выберите локальную копию соответствующего ассета. Только предпросмотр.</p>
+       <div id="importSceneControls" class="cut-boundary-controls" hidden>
+        <h4>Уточнить разбиение готового MP4</h4>
+        <p>Разделите этот отрезок на два в нужную секунду, либо объедините его со следующим. Это настоящие временные интервалы одного локального видео. Звук не перекодируется.</p>
+        <label>Разделить в момент, секунда от начала ролика
+         <input id="splitSceneSecond" type="number" step="0.05" min="0" max="60">
+        </label>
+        <div class="full-video-actions">
+         <button type="button" id="splitImportedScene" class="secondary-btn">Разделить фрагмент</button>
+         <button type="button" id="mergeImportedScene" class="secondary-btn">Объединить со следующим</button>
+        </div>
+        <p id="importSceneStatus" role="status" aria-live="polite">Сохраненные границы появятся в карте сцен.</p>
+       </div>
       <div class="form-grid two"><label>Движение камеры<select id="sceneCamera"></select></label><label>Переход в этот кадр<select id="sceneTransition"></select></label></div>
       <div class="form-grid two"><label>Анимация титра<select id="sceneTitleFx"></select></label><label>Стиль субтитров<select id="sceneSubtitleStyle"></select></label></div>
       <div class="form-grid two"><label>Анимация слов<select id="sceneWordMotion"></select></label><label>Интенсивность, %<input id="sceneIntensity" type="range" min="0" max="100" step="5"><output id="intensityValue">50%</output></label></div>
