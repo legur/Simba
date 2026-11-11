@@ -109,6 +109,7 @@ def renderer_capabilities() -> dict:
         "typography": typography_contract.renderer_capability(),
         "graphics": {"creative_plan": "demo_only_not_supported"},
         "whisper_word_timing": "renderer_generated_not_editor_provided",
+        "preapproved_wav_reuse": "blocked_until_verified_direct_wav_input",
         "trim": "v1_does_not_accept_in_out_changes",
         "publication_authorized": False,
     }
