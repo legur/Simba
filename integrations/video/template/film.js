@@ -13,6 +13,27 @@ const cv = document.getElementById('c'); cv.width = W; cv.height = H;
 const ctx = cv.getContext('2d');
 const C = { navy: '#0E1B30', cream: '#F4EBDD', gold: '#E2B65B', dim: 'rgba(244,235,221,.55)' };
 const TITLE = '"Playfair Display"', SANS = 'Montserrat';
+// Typography is accepted only after strict Python v2 source binding.
+// For bundled/custom fonts, fail instead of silently substituting an unrelated face.
+const SAFE_TYPO_FAMILIES = new Set(['Unbounded','Manrope','Arial','Georgia']);
+const fontFor = (style, fallback) => {
+  if (!style) return fallback;
+  if (!SAFE_TYPO_FAMILIES.has(style.family)) throw new Error('Unsupported Motion Lab font');
+  return '"' + style.family + '"';
+};
+const ensureApprovedFonts = async () => {
+  const requested = new Set(TL.scenes.flatMap(s => Object.values(s.visualTypography || {}).map(t => t.family)));
+  const bundled = [...requested].filter(f => f === 'Unbounded' || f === 'Manrope');
+  if (!bundled.length) return;
+  await document.fonts.ready;
+  for (const family of bundled) {
+    const faces = [...document.fonts].filter(f => f.family.replace(/^["']|["']$/g,'') === family);
+    if (!faces.length) throw new Error('Motion Lab font unavailable: ' + family);
+    await document.fonts.load('700 32px "' + family + '"');
+    if (!faces.some(f => f.status === 'loaded')) throw new Error('Motion Lab font failed to load: ' + family);
+  }
+};
+await ensureApprovedFonts();
 const XF = TL.crossfade;                                  // scene crossfade, seconds
 const TRANSITION_PAD = Math.max(XF, ...TL.scenes.slice(1).map(s => (s.transition?.duration_ms ?? 0) / 2000));
 const MOTION = TL.motion ?? 'anime';                       // old timelines default to the editor-approved Anime.js style
@@ -166,7 +187,10 @@ function drawTitle(s, i, t) {
   // A v2 layout changes ONLY geometry, not the approved title or its timing.
   // Preserve the historical title position when no layout was approved.
   const layer = s.visualLayout?.title;
-  const size = layer ? Math.round(92 * layer.scale / 100) : 92;
+  const typo = s.visualTypography?.title;
+  const titleFont = fontFor(typo, TITLE);
+  const titleColor = typo?.color ?? C.cream;
+  const size = Math.round((layer ? 92 * layer.scale / 100 : 92) * (typo?.size ?? 100) / 100);
   const step = Math.round(108 * size / 92);
   const centerX = layer ? W * layer.x / 100 : W / 2;
   const centerY = layer ? H * layer.y / 100 : 300;
@@ -174,7 +198,7 @@ function drawTitle(s, i, t) {
     ? Math.min(W * .72, 2 * Math.min(centerX - W * .06, W * .94 - centerX))
     : W - 160;
   if (layer && usableWidth <= 0) throw new Error('Unsafe Motion Lab title X');
-  ctx.save(); ctx.globalAlpha = a; ctx.font = `700 ${size}px ${TITLE}`;
+  ctx.save(); ctx.globalAlpha = a; ctx.font = `700 ${size}px ${titleFont}`;
   const lines = wrap(ctx, s.title.split(/\s+/), usableWidth);
   const firstY = layer ? centerY - (lines.length - 1) * step / 2 : 300;
   if (layer) {
@@ -186,7 +210,7 @@ function drawTitle(s, i, t) {
     }
   }
   lines.forEach((ln, k) => rise(ctx, ln.join(' '), centerX, firstY + k * step,
-    `700 ${size}px ${TITLE}`, C.cream,
+    `700 ${size}px ${titleFont}`, titleColor,
     seg(t, s.t0 + .15 + k * .18, s.t0 + .85 + k * .18),
     'center', `title${i}-${k}`));
   const rp = revealProgress(seg(t, s.t0 + .5, s.t0 + 1.1));
@@ -204,7 +228,7 @@ function drawSub(t) {
     // global and are not overridden by a scene's geometry.
     const active = TL.scenes.find(s => t >= s.t0 && t < s.t1);
     drawStyledSubtitle(ctx, L, t, TL.subtitleStyle, W, H,
-      active?.visualLayout?.subtitle ?? null);
+      active?.visualLayout?.subtitle ?? null, active?.visualTypography?.subtitle ?? null);
     return;
   }
   const a = Math.min(seg(t, L.t0, L.t0 + .15), 1 - seg(t, L.t1 - .15, L.t1));
