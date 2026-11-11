@@ -232,14 +232,15 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  if(overview)overview.inert=v2Locked;
  if(detail)detail.inert=v2Locked;
  if($('approveChoice'))$('approveChoice').disabled=v2Locked;
- if(v2Locked&&state.v2){
-   $('deliveryHint').textContent=state.lastAck
-     ?'Решение сохранено. Для нового варианта создайте новую защищенную сессию; этот выбор неизменяем.'
-     :'Идет сохранение решения. Редактирование временно заблокировано до ответа сервера.';
- }
  const approval=$('approvalStatus');if(approval){approval.textContent=state.confirmed?'Вариант утвержден вами, но не передан монтажеру':'Еще не утверждено';approval.classList.toggle('approved',state.confirmed);}
  const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
- $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.sending?'Решение отправлено. Подтверждение принимающей стороны пока не получено.':state.bridge?'Канал ответа подключен. После выбора нажмите «Передать выбор агенту».':'Канала ответа нет. Экспортируйте JSON, чтобы продолжить работу в агенте.';
+ $('deliveryHint').textContent=v2Locked?
+    (state.lastAck?`Выбор сохранен (${state.lastAck}). Для изменений нужна новая защищенная сессия.`:
+      'Решение передается на сервер. Пока статус неизвестен, редактирование заблокировано.'):
+    state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:
+    state.sending?'Решение отправлено. Подтверждение принимающей стороны пока не получено.':
+    state.bridge?'Канал ответа подключен. После выбора нажмите «Передать выбор агенту».':
+    'Канала ответа нет. Экспортируйте JSON, чтобы продолжить работу в агенте.';
 }
 function render(){renderConcepts();renderSceneList();renderEditor();renderSummary();globalThis.MotionLabPages?.sync?.();}
 function updateKey(key,value){if(state.request&&['name','duration','image','asset','title','subtitle'].includes(key))return;const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
