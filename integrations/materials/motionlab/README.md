@@ -15,7 +15,7 @@
 ## Исходный код опубликованного Motion Lab
 
 **Канонический исходный код сайта хранится в этой папке GitHub**.
-В репозитории теперь 22 статических файла. Пять старых модулей и новая библиотека графики/ритма размещаются на прежнем Wix Headless сайте. После изменения канонические файлы публикуются отдельным шагом:
+В репозитории теперь 25 статических файлов. Пять старых модулей и новая библиотека графики/ритма размещаются на прежнем Wix Headless сайте. После изменения канонические файлы публикуются отдельным шагом:
 
 | Экран | HTML | CSS | JS |
 |---|---|---|---|
@@ -23,13 +23,13 @@
 | Титры (15) | `text.html` | `text.css` | `text.js` |
 | Субтитры (5 + 24) | `subtitles.html` | `subtitles.css` | `subtitles.js` |
 | Движение камеры (12) | `camera.html` | `camera.css` | `camera.js` |
-| Раскадровка и визуальный редактор | `storyboard.html` | `storyboard.css` | `storyboard.js`, `visual_editor.js`, `scene_pages.js`, `motionlab_v2_ui.js` |
+| Раскадровка и визуальный редактор | `storyboard.html` | `storyboard.css` | `storyboard.js`, `visual_editor.js`, `scene_pages.js`, `director_core.js`, `director_semantic.js`, `director_analysis.js`, `motionlab_v2_ui.js` |
 | Объекты (15), маршруты (10), музыкальные схемы (8), шаблоны (5) | `creative.html` | `creative.css` | `creative.js` |
 
 **Wix:** https://headless-cvcdjldqjlx-leostraveltips-140e.wix-site-host.com/
 — существующий siteId `795efbc2-50c4-435e-939e-537cb2df75c7`.
 
-Для публикации берите **только** перечисленный 22 файла, с их исходными
+Для публикации берите **только** перечисленный 25 файлов, с их исходными
 именами в корне ZIP либо файлового bundle; загружайте на **существующий**
 Wix Headless site как static files. `README.md`, Python, тесты, `demo-launch.json`,
 `motionlab_host_adapter.js` и workflow относятся к стороне Simba и не
@@ -39,7 +39,7 @@ Wix Headless site как static files. `README.md`, Python, тесты, `demo-la
 
 Workflow: `.github/workflows/motionlab-wix-deploy.yml`. После **push/merge
 в `main`**, затрагивающего файлы Motion Lab HTML/CSS/JS или сам workflow,
-он проверяет все 22 публичных файла; публикационный шаг временно приостановлен (см. ниже) и не публикует их на **существующий Wix
+он проверяет все 25 публичных файлов; публикационный шаг временно приостановлен (см. ниже) и не публикует их на **существующий Wix
 siteId** `795efbc2-50c4-435e-939e-537cb2df75c7`. PR запускает
 только проверку, без доступа к секрету и без публикации. В ручном
 `workflow_dispatch` по умолчанию выполняется только проверка; для
@@ -67,7 +67,7 @@ siteId** `795efbc2-50c4-435e-939e-537cb2df75c7`. PR запускает
 Технические ограничения и защиты:
 
 - Из `integrations/materials/motionlab/` в Wix отправляются **строго**
-  22 публичных файла: HTML/CSS/JS шести экранов. `README.md`, GitHub
+  25 публичных файлов: HTML/CSS/JS шести экранов. `README.md`, GitHub
   workflow, `demo-launch.json`, `motionlab_host_adapter.js`, Python,
   тесты и приватные ассеты не попадают в статический сайт.
 - Wix **static drop заменяет весь набор** файлов. Перед передачей
