@@ -422,3 +422,26 @@ The renderer separately rejects any
 `voice.source=existing_approved_wav` until a **direct WAV mixer** with
 verified transcript/time alignment is implemented. Never bypass this by
 allowing default new TTS.
+
+
+## 11.11.2026 — Locked Studio audio → trusted v2 session gate (Montage PR #105)
+
+**Status:** implemented in draft branch, **not production ready**. Requires Studio PR #127 `studio_audio_lock.py` to be present in the deployment checkout (it is intentionally *not copied* into Montage files). At `stage_v2.source_context()`, before generating `materials.launch/v2`, Montage checks canonical `voice_music.audio_lock` via `inspect_v2_audio`, then reads real private files through `motionlab_v2_audio_gate.verify_private_audio_manifest()`. Without the Studio module, lock, private files or matching hashes, the session is rejected as `V2_APPROVED_AUDIO_SOURCE_NOT_VERIFIED`. No fallback to legacy v1 approval.
+
+The trusted job folder `<private-root>/<project-id>/` (outside repository checkout) must contain the already-required `approved-video-spec.json`, `verified-media.json` and a local **server-only** `approved-audio-files.json`. Example of the latter, with *illustrative* values only:
+
+```json
+{
+  "audio_revision_sha256": "<actual Studio canonical audio_lock.audio_revision_sha256>",
+  "narration_file": "approved.wav",
+  "music_file": "approved-music.mp3"
+}
+```
+
+The names are local filenames inside the private job, not URLs or absolute paths. `no_narration` requires `narration_file: null`. `approved_clip_audio` is **blocked pending a distinct clip-source gate**; don't mislabel an extracted clip as an approved WAV. No media bytes, local filenames or bearer credentials go to Wix/GitHub via the public `materials.launch/v2`.
+
+Byte receipt `APPROVED_AUDIO_BYTES_VERIFIED_NOT_ALIGNED` proves the WAV/music hashes correspond to Studio-approved metadata; it is **not** proof of ASR alignment, decoded music integrity, audio-mix approval or render-readiness. The launch carries only `audio_revision_sha256`, this byte receipt status and `audio_alignment_status: TIMINGS_NOT_VERIFIED`.
+
+**New fail-closed final review guard:** `check_current_v2(..., selection=...)` blocks `TIMINGS_NOT_VERIFIED`. Phase A trusted session and Phase B Motion Lab proposals can be prepared once actual files exist, but Phase C final visual approval cannot succeed until Montage supplies independently verified `audio_alignment/v1`. Merely attaching a user SRT or supplying syntactically plausible timestamps must not flip the status. No automatic TTS, paid calls, MP4 render, approval or publication was authorized.
+
+Added regression tests: `test_motionlab_v2_audio_gate.py` (actual test WAV + mock canonical Studio metadata, tampered audio, manifest revisions and traversal); these **do not establish** true cross-PR integration. Next integration requires combining Studio PR #127 with Montage PR #105, production word aligner + independent audio QA, verified review-timing handoff and complete E2E tests. Do not merge conflicting draft #105 into `main` until reconciled with current Motion Lab + Studio.
