@@ -18,6 +18,7 @@ import re
 
 import make_video
 import motionlab_render_contract as r
+import motionlab_layout_contract as geometry
 
 MATERIALS = "bontours.motionlab.materials.launch/v2"
 PROPOSALS = "bontours.motionlab.proposals/v2"
@@ -229,6 +230,40 @@ def validate_effects(scenes,materials):
     return tuple(signatures)
 
 
+def _validated_layout(items, materials):
+    try:
+        return geometry.canonical_scene_layouts(items, materials["scenes"])
+    except geometry.LayoutError as exc:
+        raise r.ContractError(exc.code, scene_id=exc.scene_id,
+                              field=exc.field) from None
+
+
+def _defaults_layout(materials):
+    return [{
+        "scene_id":source["scene_id"],
+        "asset_id":source["asset_id"],
+        "layout":{
+            "title":dict(geometry.DEFAULTS["title"]),
+            "subtitle":dict(geometry.DEFAULTS["subtitle"]),
+        },
+    } for source in materials["scenes"]]
+
+
+def _preflight_visual_collisions(items, materials):
+    for item,source in zip(items,materials["scenes"]):
+        title=item["layout"]["title"]
+        subtitle=item["layout"]["subtitle"]
+        if (source["locked"]["title_text"].strip()
+                and source["locked"]["subtitle_preview"].strip()
+                and abs(title["y"]-subtitle["y"]) <
+                    max(12, (title["scale"]+subtitle["scale"])/16)):
+            raise r.ContractError(
+                "VISUAL_LAYOUT_TEXT_COLLISION",
+                scene_id=source["scene_id"],
+                field="scene_layout.title/subtitle",
+            )
+
+
 def validate_proposals_v2(materials,proposals):
     validate_materials(materials)
     check(isinstance(proposals,dict) and proposals.get("schema")==PROPOSALS
@@ -263,7 +298,10 @@ def validate_proposals_v2(materials,proposals):
     names=set();signatures=set();recommended=0
     for i,option in enumerate(options,1):
         check(isinstance(option,dict) and
-              set(option)=={"option","title","rationale","recommended","scenes"}
+              set(option) in (
+                  {"option","title","rationale","recommended","scenes"},
+                  {"option","title","rationale","recommended","scenes","scene_layout"},
+              )
               and type(option["option"]) is int and option["option"]==i
               and description(option["title"],3,90)
               and description(option["rationale"],20,800)
@@ -274,6 +312,10 @@ def validate_proposals_v2(materials,proposals):
         names.add(name)
         recommended+=int(option["recommended"])
         signature=validate_effects(option["scenes"],materials)
+        if "scene_layout" in option:
+            proposed=_validated_layout(option["scene_layout"],materials)
+            _preflight_visual_collisions(proposed,materials)
+            signature=signature+(canonical(proposed),)
         check(signature not in signatures,"THREE_DISTINCT_OPTIONS_REQUIRED")
         signatures.add(signature)
     check(recommended==1,"EXACTLY_ONE_RECOMMENDED_REQUIRED")
@@ -288,11 +330,18 @@ def validate_proposals_v2(materials,proposals):
 def validate_selection_v2(materials,proposals,selection):
     report=validate_proposals_v2(materials,proposals)
     check(isinstance(selection,dict) and selection.get("schema")==SELECTION
-          and set(selection)=={
-              "schema","project_id","request_id","expected_input_fingerprint",
-              "materials_sha256","proposals_sha256","format","decision",
-              "guards","scenes","next_stage",
-          }
+          and set(selection) in (
+              {
+                  "schema","project_id","request_id","expected_input_fingerprint",
+                  "materials_sha256","proposals_sha256","format","decision",
+                  "guards","scenes","next_stage",
+              },
+              {
+                  "schema","project_id","request_id","expected_input_fingerprint",
+                  "materials_sha256","proposals_sha256","format","decision",
+                  "guards","scenes","next_stage","scene_layout",
+              },
+          )
           and selection.get("project_id")==materials["project_id"]
           and selection.get("request_id")==materials["request_id"]
           and selection.get("expected_input_fingerprint")==
@@ -308,7 +357,8 @@ def validate_selection_v2(materials,proposals,selection):
           and decision["selected_option"] in (1,2,3)
           and decision.get("options_presented")==3
           and decision.get("state")=="USER_SELECTED_IN_CONNECTED_SESSION"
-          and decision.get("explicit_approval") is True,
+          and decision.get("explicit_approval") is True
+          and type(decision.get("visual_layout_edited")) is bool,
           "EXPLICIT_USER_APPROVAL_REQUIRED")
     try:
         instant=datetime.fromisoformat(decision["user_selected_at"].replace("Z","+00:00"))
@@ -326,7 +376,23 @@ def validate_selection_v2(materials,proposals,selection):
               "preserve_approved_narration")),
           "UNAUTHORIZED_EXECUTION_GUARDS")
     validate_effects(selection.get("scenes"),materials)
+    edited=decision["visual_layout_edited"]
+    chosen=proposals["proposals"][decision["selected_option"]-1]
+    proposed=chosen.get("scene_layout")
+    provided=selection.get("scene_layout")
+    if provided is None:
+        check(not edited and proposed is None,
+              "VISUAL_LAYOUT_MISSING_FROM_SELECTION")
+    else:
+        actual=_validated_layout(provided,materials)
+        _preflight_visual_collisions(actual,materials)
+        if not edited:
+            expected=_validated_layout(proposed,materials) if proposed is not None else _defaults_layout(materials)
+            check(actual==expected,
+                  "VISUAL_LAYOUT_CHANGE_NOT_APPROVED")
     report.update({
+        "visual_layout_present":provided is not None,
+        "visual_layout_edited":edited,
         "status":"V2_SELECTION_VALIDATED_NOT_WRITTEN",
         "receipt_id":"motionlab:v2:"+digest(selection),
         "selected_option":decision["selected_option"],
@@ -365,6 +431,8 @@ def map_selection_v2_to_spec(materials,proposals,selection,approved_spec,
               "MISSING_OR_INVALID_MEDIA_BINDING",sid)
         check("in" not in base and "out" not in base,
               "TRIM_REQUIRES_V2_EXTENSION",sid)
+        check("visualLayout" not in base,
+              "UNAPPROVED_LAYOUT_ALREADY_PRESENT",sid)
         check((base.get("title") or "")==src["locked"]["title_text"],
               "IMMUTABLE_TEXT_CHANGED",sid)
         lines=base.get("lines",[])
@@ -376,6 +444,9 @@ def map_selection_v2_to_spec(materials,proposals,selection,approved_spec,
         base["cameraEffect"]={"id":edited["camera"]["id"],
                               "intensity_percent":edited["camera"]["intensity_percent"]}
         base["titleEffect"]=edited["title_fx"]
+        if "scene_layout" in selection:
+            base["visualLayout"]=copy.deepcopy(
+                selection["scene_layout"][i]["layout"])
         if edited["title_fx"]=="none":
             base.pop("title",None)
         if i==0:
