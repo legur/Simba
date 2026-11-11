@@ -20,6 +20,7 @@
   }));
  }
  function invalidate(){
+  globalThis.MotionLabVision?.reset?.();
   const hadPlans=Boolean(plans);
   editorial=null;
   const editorialStatus=$('editorialStatus');if(editorialStatus)editorialStatus.textContent='Нет загруженной редакторской аннотации.';
