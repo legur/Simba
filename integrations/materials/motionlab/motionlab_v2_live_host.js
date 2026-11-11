@@ -99,7 +99,9 @@ export function connectV2LiveMotionLab({
     if (data.type === 'SIMBA_MOTIONLAB_V2_READY') {
       // Before START, the iframe has not received private project identifiers.
       // Only the verified iframe Window + exact origin may announce readiness.
-      if (data.request_id != null || data.project_id != null || receivedReady) return;
+      if (receivedReady ||
+          (data.request_id != null && data.request_id !== session.launch.request_id) ||
+          (data.project_id != null && data.project_id !== session.launch.project_id)) return;
       receivedReady=true;
       send('SIMBA_MOTIONLAB_V2_START',{
         materials:session.launch, proposals:session.proposals,
