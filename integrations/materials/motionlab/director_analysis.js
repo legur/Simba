@@ -19,9 +19,15 @@
   }));
  }
  function invalidate(){
+  const hadPlans=Boolean(plans);
   plans=null;snapshot=null;
   if(panel())panel().hidden=true;
-  status('Для рекомендаций нужны локальные файлы каждой сцены. Материалы остаются в браузере.');
+  if(hadPlans && !state.request){
+   state.concepts=PRESETS.map(c=>({...c}));
+   state.selectedOption=0;
+   resetAck();renderConcepts();renderSummary();
+  }
+  status('После изменения исходников нужно заново выполнить анализ. Материалы остаются в браузере.');
  }
  function frame(node){
   const c=document.createElement('canvas');c.width=48;c.height=84;
