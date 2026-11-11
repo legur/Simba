@@ -6,7 +6,7 @@ on:
       - '.github/workflows/motionlab-wix-inbox.yml'
       - 'integrations/materials/motionlab/queue/**'
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '7,37 * * * *'
   workflow_dispatch:
     inputs:
       dry_run:
