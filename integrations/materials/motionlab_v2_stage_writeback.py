@@ -83,10 +83,21 @@ def source_context(root:Path,private_root:Path,project_id:str,request_id:str):
             raise V2SourceError("F2U asset fingerprint or duration changed")
     if spec.get("packageId")!=project_id:
         raise V2SourceError("Approved spec package differs from canonical project")
+    # Owner-controlled staged files; never accept filenames or hashes from Wix.
+    # Studio owns the metadata contract (PR #127); Montage verifies bytes.
+    try:
+        import motionlab_v2_audio_gate as audio_gate
+        audio_receipt = audio_gate.verify_private_audio_manifest(project, job)
+    except (ImportError, ValueError):
+        raise V2SourceError("V2_APPROVED_AUDIO_SOURCE_NOT_VERIFIED") from None
+
     materials=v2.make_materials_v2(project_id,request_id,packet["receipt_sha256"],
                                    spec,media,job)
+    materials["audio_revision_sha256"] = audio_receipt["audio_revision_sha256"]
+    materials["audio_preflight_status"] = audio_receipt["status"]
+    materials["audio_alignment_status"] = "TIMINGS_NOT_VERIFIED"
     return {"project":project,"packet":packet,"job":job,"spec":spec,
-            "media":media,"materials":materials}
+            "media":media,"materials":materials,"audio_receipt":audio_receipt}
 
 
 def check_current_v2(root:Path,private_root:Path,project_id:str,
