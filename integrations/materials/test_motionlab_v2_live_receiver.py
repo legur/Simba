@@ -270,6 +270,20 @@ class V2LiveReceiverTests(unittest.TestCase):
         self.assertEqual(row["applied_commit"],"f"*40)
         self.assertFalse(relay.process_once())
 
+    def test_restarted_worker_does_not_repeat_ambiguous_external_upload(self):
+        self.store.set_proposals_v2(self.fx.f.root,self.session["session_id"],self.proposals)
+        self.submit()
+        # Simulate a crash after the worker claims the task, before the
+        # remote provider outcome becomes known.
+        claimed=self.store.next_pending()
+        self.assertEqual(claimed["status"],"QUEUED")
+        restarted=live.SessionStore(self.db,self.root)
+        current=restarted.status(self.session["session_id"],self.session["capability"])
+        self.assertEqual(current["status"],"BLOCKED")
+        self.assertEqual(current["error_code"],"WORKER_INTERRUPTED_REQUIRES_RECONCILIATION")
+        self.assertIsNone(restarted.next_pending())
+        self.assertFalse(current["project_applied"])
+
     def test_after_ack_source_change_blocks_cas_not_false_applied(self):
         self.store.set_proposals_v2(self.fx.f.root,self.session["session_id"],self.proposals)
         self.submit()
