@@ -45,11 +45,12 @@ export function connectV2LiveMotionLab({
     payload,
   }, MOTION_LAB_ORIGIN);
 
-  async function deliver(selection) {
+  async function deliver(selection, deliveryId) {
     if (busy || stopped) return;
     busy = true;
     try {
-      if (!selection || selection.schema !== SELECTION_V2 ||
+      if (!/^d[1-9][0-9]{0,8}$/.test(deliveryId ?? '') ||
+          !selection || selection.schema !== SELECTION_V2 ||
           selection.request_id !== session.launch.request_id ||
           selection.project_id !== session.launch.project_id ||
           selection.expected_input_fingerprint !==
@@ -77,13 +78,14 @@ export function connectV2LiveMotionLab({
       if (result.persisted !== true || typeof result.receipt_id !== 'string' ||
           !result.receipt_id) throw new Error('Durable receipt not confirmed');
       send('SIMBA_MOTIONLAB_V2_ACK', {
-        accepted: true, receipt_id:result.receipt_id,
+        accepted: true, delivery_id:deliveryId, receipt_id:result.receipt_id,
         state:'SELECTION_DURABLY_QUEUED_NOT_APPLIED',
       });
       notify('saved',{receipt_id:result.receipt_id});
     } catch {
       send('SIMBA_MOTIONLAB_V2_ACK', {
-        accepted:false, state:'RECEIVER_REJECTED_OR_UNAVAILABLE',
+        accepted:false, delivery_id:deliveryId,
+        state:'RECEIVER_REJECTED_OR_UNAVAILABLE',
       });
       notify('save_failed');
     } finally {
@@ -113,7 +115,7 @@ export function connectV2LiveMotionLab({
         data.request_id === session.launch.request_id &&
         data.project_id === session.launch.project_id &&
         data.type === 'SIMBA_MOTIONLAB_V2_SELECTION') {
-      void deliver(data.payload?.selection);
+      void deliver(data.payload?.selection, data.payload?.delivery_id);
     }
   }
   hostWindow.addEventListener('message',onMessage);
