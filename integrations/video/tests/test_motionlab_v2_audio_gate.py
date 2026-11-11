@@ -5,6 +5,7 @@ PR #127 is merged, an additional real cross-module integration test is needed.
 """
 from __future__ import annotations
 import hashlib
+import json
 import importlib.util
 from pathlib import Path
 import sys
@@ -102,6 +103,35 @@ class AudioGateTests(unittest.TestCase):
         word["word_start_ms"] = 290
         with self.assertRaisesRegex(gate.AudioGateError, "AUDIO_ALIGNMENT_WORD_TIMES_INVALID"):
             gate.validate_alignment_evidence(p, valid, expected)
+
+
+    def test_private_revision_pinned_manifest_readback(self):
+        (self.root / "approved-audio-files.json").write_text(json.dumps({
+            "audio_revision_sha256": "b" * 64,
+            "narration_file": "n.wav",
+            "music_file": "music.mp3",
+        }), encoding="utf-8")
+        result = gate.verify_private_audio_manifest(self.project, self.root)
+        self.assertEqual(result["status"], "APPROVED_AUDIO_BYTES_VERIFIED_NOT_ALIGNED")
+        self.assertFalse(result["render_authorized"])
+
+    def test_private_manifest_revision_change_blocks(self):
+        (self.root / "approved-audio-files.json").write_text(json.dumps({
+            "audio_revision_sha256": "d" * 64,
+            "narration_file": "n.wav",
+            "music_file": "music.mp3",
+        }), encoding="utf-8")
+        with self.assertRaisesRegex(gate.AudioGateError, "PRIVATE_AUDIO_MANIFEST_REVISION_STALE"):
+            gate.verify_private_audio_manifest(self.project, self.root)
+
+    def test_private_manifest_path_traversal_blocks(self):
+        (self.root / "approved-audio-files.json").write_text(json.dumps({
+            "audio_revision_sha256": "b" * 64,
+            "narration_file": "../stolen.wav",
+            "music_file": "music.mp3",
+        }), encoding="utf-8")
+        with self.assertRaisesRegex(gate.AudioGateError, "UNSAFE_AUDIO_FILENAME"):
+            gate.verify_private_audio_manifest(self.project, self.root)
 
 
 if __name__ == "__main__":
