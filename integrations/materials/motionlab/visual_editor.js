@@ -309,9 +309,13 @@
   get,dirty,changed,typography,isOverride,
   theme:kind=>({...shared.text[kind]}),
   globalLayout:kind=>({...shared.layout[kind]}),
-  resetForProject:()=>{for(const kind of ['title','subtitle']){
-    shared.layout[kind]={...defaults[kind]};shared.text[kind]={...baseText[kind]};
-  }},
+  resetForProject:()=>{
+    // Safe production starting point: browser-native faces that Montage
+    // can reproduce without an unlicensed or missing downloaded font.
+    for(const kind of ['title','subtitle'])shared.layout[kind]={...defaults[kind]};
+    shared.text.title={family:'Georgia',color:'#ffffff',size:100};
+    shared.text.subtitle={family:'Arial',color:'#ffffff',size:100};
+  },
   selectedKind:()=>layer.kind,
   setTheme,applyTypographyAll,setSceneTypography,inheritTypography,inheritLayout,applyLayoutToAll,resetTheme,
   render:refresh,renderStage:renderLayout,populateCuts,pauseFilm,init,seek,saveDraft
