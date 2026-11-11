@@ -54,9 +54,8 @@ export function connectV2LiveMotionLab({
           selection.project_id !== session.launch.project_id ||
           selection.expected_input_fingerprint !==
             session.launch.expected_input_fingerprint ||
-          selection.proposals_sha256 !== session.proposals_sha256 && // optional server echo
-            selection.proposals_sha256 !== session.proposals.proposals_sha256 &&
-            selection.proposals_sha256 !== session.selection_proposals_sha256 ||
+          selection.proposals_sha256 !== session.proposals_sha256 ||
+          selection.materials_sha256 !== session.proposals.materials_sha256 ||
           selection.decision?.explicit_approval !== true ||
           selection.decision?.state !== 'USER_SELECTED_IN_CONNECTED_SESSION' ||
           selection.decision?.visual_layout_edited !== false &&
