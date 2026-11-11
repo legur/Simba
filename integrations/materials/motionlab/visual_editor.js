@@ -180,6 +180,7 @@
   film.total=total;
   film.playhead=clamp(Number(t)||0,0,Math.max(0,total-.03));
   film.started=performance.now()-film.playhead*1000;
+  film.index=-1; // seeking must reload the real video at the selected offset
   film.active=true;
   filmFrame(performance.now()); // paints exactly one frame before pausing
   cancelAnimationFrame(film.raf);film.raf=0;
@@ -187,6 +188,7 @@
   $('previewVideo').pause();$('nextVideo').pause();
   $('playFilm').textContent='▶ Продолжить';
   $('filmNow').textContent+=' · пауза';
+  $('filmSeek').max=String(film.total);
   $('filmSeek').value=String(film.playhead);
   if(film.index>=0){
    state.selectedIndex=film.index;
