@@ -457,6 +457,8 @@ def map_selection_v2_to_spec(materials,proposals,selection,approved_spec,
               "TRIM_REQUIRES_V2_EXTENSION",sid)
         check("visualLayout" not in base,
               "UNAPPROVED_LAYOUT_ALREADY_PRESENT",sid)
+        check("visualTypography" not in base,
+              "UNAPPROVED_TYPOGRAPHY_ALREADY_PRESENT",sid)
         check((base.get("title") or "")==src["locked"]["title_text"],
               "IMMUTABLE_TEXT_CHANGED",sid)
         lines=base.get("lines",[])
