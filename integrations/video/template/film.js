@@ -163,18 +163,50 @@ function drawTitle(s, i, t) {
   if (s.titleEffect && s.titleEffect !== 'fade-rise') throw new Error('Unverified Motion Lab title effect: '+s.titleEffect);
   const a = 1 - seg(t, s.t1 - .3, s.t1 + XF * .5);
   if (a <= 0) return;
-  ctx.save(); ctx.globalAlpha = a; ctx.font = `700 92px ${TITLE}`;
-  const lines = wrap(ctx, s.title.split(/\s+/), W - 160);
-  lines.forEach((ln, k) => rise(ctx, ln.join(' '), W / 2, 300 + k * 108, `700 92px ${TITLE}`, C.cream, seg(t, s.t0 + .15 + k * .18, s.t0 + .85 + k * .18), 'center', `title${i}-${k}`));
-  const rp = revealProgress(seg(t, s.t0 + .5, s.t0 + 1.1)), ry = 300 + lines.length * 108 - 50;
-  ctx.fillStyle = C.gold; ctx.fillRect(W / 2 - 70 * rp, ry, 140 * rp, 4);
+  // A v2 layout changes ONLY geometry, not the approved title or its timing.
+  // Preserve the historical title position when no layout was approved.
+  const layer = s.visualLayout?.title;
+  const size = layer ? Math.round(92 * layer.scale / 100) : 92;
+  const step = Math.round(108 * size / 92);
+  const centerX = layer ? W * layer.x / 100 : W / 2;
+  const centerY = layer ? H * layer.y / 100 : 300;
+  const usableWidth = layer
+    ? Math.min(W * .72, 2 * Math.min(centerX - W * .06, W * .94 - centerX))
+    : W - 160;
+  if (layer && usableWidth <= 0) throw new Error('Unsafe Motion Lab title X');
+  ctx.save(); ctx.globalAlpha = a; ctx.font = `700 ${size}px ${TITLE}`;
+  const lines = wrap(ctx, s.title.split(/\s+/), usableWidth);
+  const firstY = layer ? centerY - (lines.length - 1) * step / 2 : 300;
+  if (layer) {
+    if (firstY - size * .9 < H * .06 ||
+        firstY + (lines.length - 1) * step + size * .3 > H * .94 ||
+        lines.some(ln => ctx.measureText(ln.join(' ')).width > usableWidth)) {
+      ctx.restore();
+      throw new Error('Motion Lab title exceeds safe overlay bounds');
+    }
+  }
+  lines.forEach((ln, k) => rise(ctx, ln.join(' '), centerX, firstY + k * step,
+    `700 ${size}px ${TITLE}`, C.cream,
+    seg(t, s.t0 + .15 + k * .18, s.t0 + .85 + k * .18),
+    'center', `title${i}-${k}`));
+  const rp = revealProgress(seg(t, s.t0 + .5, s.t0 + 1.1));
+  const ry = firstY + lines.length * step - 50 * size / 92;
+  ctx.fillStyle = C.gold;
+  ctx.fillRect(centerX - 70 * rp, ry, 140 * rp, 4);
   ctx.restore();
 }
 
 // ---------------------------------------------------------------- subtitles (karaoke: the spoken word turns gold)
 function drawSub(t) {
   const L = TL.lines.find(l => t >= l.t0 && t < l.t1); if (!L) return;
-  if (TL.subtitleStyle) { drawStyledSubtitle(ctx, L, t, TL.subtitleStyle, W, H); return; }
+  if (TL.subtitleStyle) {
+    // Per-scene WYSIWYG position/scale; subtitle style and word timing remain
+    // global and are not overridden by a scene's geometry.
+    const active = TL.scenes.find(s => t >= s.t0 && t < s.t1);
+    drawStyledSubtitle(ctx, L, t, TL.subtitleStyle, W, H,
+      active?.visualLayout?.subtitle ?? null);
+    return;
+  }
   const a = Math.min(seg(t, L.t0, L.t0 + .15), 1 - seg(t, L.t1 - .15, L.t1));
   ctx.save(); ctx.font = `600 50px ${SANS}`; ctx.textBaseline = 'middle';
   const lines = wrap(ctx, L.words.map(w => w[0]), W - 200), lh = 66, padX = 34, padY = 26;
