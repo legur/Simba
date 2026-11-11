@@ -110,6 +110,11 @@ def check_current_v2(root:Path,private_root:Path,project_id:str,
     v2.validate_proposals_v2(materials,proposals)
     if selection is None:
         return ctx,None,None
+    # Product decision: accurately synchronized word timings must exist
+    # before the owner can finalize a visual WYSIWYG selection.
+    # A byte-verified WAV is not an ASR/forced-alignment receipt.
+    if ctx["materials"].get("audio_alignment_status") != "AUDIO_ALIGNMENT_VERIFIED":
+        raise V2SourceError("TIMINGS_NOT_VERIFIED")
     spec,report=v2.map_selection_v2_to_spec(
         materials,proposals,selection,ctx["spec"],ctx["media"],ctx["job"])
     # Whole source file copied into the private store at ACK (not the repository).
