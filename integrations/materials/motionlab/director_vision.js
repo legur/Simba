@@ -135,7 +135,8 @@
    globalThis.MotionLabDirector.setEditorial(doc);
    $('visionCommit').disabled=true;
    status('Редакторские категории подтверждены. Выполняется анализ реальных пикселей для трех монтажных предложений...');
-   await globalThis.MotionLabDirector.analyze();
+   const completed=await globalThis.MotionLabDirector.analyze();
+   if(!completed){$('visionCommit').disabled=false;status('Метки приняты, но расчет трех предложений завершился ошибкой. Проверьте диагностическое сообщение в блоке анализа кадров.',true);return;}
    status('Проверенные категории учтены. Из трех предложений выберите вариант и просмотрите его по сценам.');
   }catch(e){status('Метки не применены: '+String(e.message||e),true);}
  }
