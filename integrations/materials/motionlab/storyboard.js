@@ -87,8 +87,13 @@ function rendererIssues(scenes){
 const localPreviews=new Map();
 function clearPreviews(){
  globalThis.MotionLabDirector?.invalidate();
- for(const p of localPreviews.values())URL.revokeObjectURL(p.url);
- localPreviews.clear();const v=$('previewVideo');if(v){v.pause();v.removeAttribute('src');}
+ const urls=new Set();
+ for(const p of localPreviews.values()){if(p.url)urls.add(p.url);if(p.poster)urls.add(p.poster);}
+ for(const url of urls)URL.revokeObjectURL(url);
+ localPreviews.clear();
+ const audio=$('importedFilmAudio');if(audio){audio.pause();audio.removeAttribute('src');audio.load();}
+ globalThis.MotionLabVideoImport?.resetMeta?.();
+ const v=$('previewVideo');if(v){v.pause();v.removeAttribute('src');}
 }
 function previewFor(s){const p=localPreviews.get(s.id);return p&&p.assetId===s.asset?p:null;}
 async function localFileChosen(file){
@@ -117,7 +122,10 @@ async function localFileChosen(file){
    if(expected?.duration_s&&Math.abs(expected.duration_s-duration)>.45)throw Error('Длительность отличается от утвержденного ассета');
   }
   if(!state.scenes.includes(scene)||state.scenes[state.selectedIndex]!==scene)throw Error('Сцена изменилась: выберите файл снова');
-  const old=localPreviews.get(scene.id);if(old)URL.revokeObjectURL(old.url);
+  const old=localPreviews.get(scene.id);
+   if(old){for(const previous of [old.url,old.poster]){
+    if(previous&&![...localPreviews.entries()].some(([id,other])=>id!==scene.id&&(other.url===previous||other.poster===previous)))URL.revokeObjectURL(previous);
+   }}
   localPreviews.set(scene.id,{url,assetId:scene.asset,type,duration,shaVerified});added=true;
   globalThis.MotionLabDirector?.invalidate();
   renderEditor();say(shaVerified?'Локальный файл совпал по SHA-256':'Локальный файл открыт. SHA-256 не подтвержден');
@@ -165,13 +173,13 @@ function renderSceneList(){
  $('sceneList').innerHTML=state.scenes.map((scene,index)=>{
   const num=String(index+1).padStart(2,'0');
   const source=previewFor(scene);
-  const cover=source?.type==='image'?source.url:scenePhoto(scene);
+  const cover=source?.poster||(source?.type==='image'?source.url:scenePhoto(scene));
   const customized=Boolean(scene.visualLayout&&Object.keys(scene.visualLayout).length||scene.visualTypography&&Object.keys(scene.visualTypography).length);
   const card=`<div role="listitem" class="scene-card ${index===state.selectedIndex?'selected':''}">
    <img class="thumb" src="${esc(cover)}" alt="" loading="lazy" referrerpolicy="no-referrer">
    <div class="scene-info">
     <strong>${num} / ${esc(scene.name)}</strong>
-    <p>${scene.duration.toFixed(1)} с · ${esc(nameFor('camera',scene.camera))}${source?.type==='video'?' · Локальное видео':''}</p>
+    <p>${scene.duration.toFixed(1)} с · ${esc(nameFor('camera',scene.camera))}${source?.type==='video'?' · Локальное видео':''}${scene.speechCue?' · SRT связан':''}</p>
     <div class="chips"><span class="tag">${esc(nameFor('title',scene.titleFx))}</span>${customized?'<span class="tag">Индивидуальные настройки</span>':''}</div>
     <button type="button" class="page-edit-btn" data-edit-scene="${index}" aria-label="Открыть редактор сцены ${num}">✎ Редактировать сцену</button>
    </div>
@@ -201,11 +209,14 @@ function renderEditor(){const s=state.scenes[state.selectedIndex];if(!s)return;
  const p=$('previewPhoto'),v=$('previewVideo'),local=previewFor(s);
  if(local?.type==='video'){
   p.hidden=true;v.hidden=false;if(v.src!==local.url){v.pause();v.src=local.url;v.load();}
+   const target=(local.start||0)+Math.min(.15,local.duration?local.duration*.05:.15);
+   const setPosition=()=>{if(!v.hidden&&!film.active){try{if(Math.abs(v.currentTime-target)>.11)v.currentTime=target;}catch{}}};
+   if(v.readyState>=1)setPosition();else v.addEventListener('loadedmetadata',setPosition,{once:true});
  }else{
   v.pause();v.hidden=true;p.hidden=false;p.src=local?.type==='image'?local.url:scenePhoto(s);
  }
  $('mediaProvenance').textContent=local?local.shaVerified?'Локальная копия сверена по SHA-256. Финальная проверка остается у Montage.':'Локальный предпросмотр. SHA-256 не подтвержден. Файл не загружен в Wix.':'Демонстрационное изображение. Реальный исходник не проверен.';
- $('localMediaStatus').textContent=local?'Локальный '+(local.type==='video'?'MP4/видео':'кадр')+' · '+(local.duration?local.duration.toFixed(2)+' с · ':'')+(local.shaVerified?'SHA совпадает':'SHA не подтвержден'):'Можно выбрать локальную копию '+(s.asset||s.id)+' для предпросмотра. Она останется в браузере.';
+ $('localMediaStatus').textContent=local?'Локальный '+(local.type==='video'?'MP4/видео':'кадр')+' · '+(local.duration?local.duration.toFixed(2)+' с · ':'')+(local.sourceSha?'SHA исходника вычислен, но не сверен с утвержденным':local.shaVerified?'SHA совпадает':'SHA не подтвержден'):'Можно выбрать локальную копию '+(s.asset||s.id)+' для предпросмотра. Она останется в браузере.';
  $('localMediaStatus').classList.toggle('verified',Boolean(local?.shaVerified));
  $('frameTitle').textContent=s.titleFx==='none'?'':s.title;$('frameSubtitle').textContent=s.subtitleStyle==='none'?'':s.subtitle;
  $('frameSubtitle').className='frame-subtitle editable-layer '+(s.subtitleStyle==='luxury'||s.subtitleStyle==='gold-card'?'gold':'');
@@ -214,6 +225,7 @@ function renderEditor(){const s=state.scenes[state.selectedIndex];if(!s)return;
 function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);$('summary').innerHTML=[`Сцен: ${state.scenes.length}`,`Длительность: ${total.toFixed(1)} с`,`Вариант: ${state.selectedOption}`,state.project?`Проект: ${esc(state.project.id)}`:'Демо без проекта'].map(s=>`<span>${s}</span>`).join('');
  let warns=[];
  if(!state.request) warns.push('Только предпросмотр. Для передачи автоматической среде нужно получить задание с ID и fingerprint.');
+ if(globalThis.MotionLabVideoImport?.info?.())warns.push('MP4 разбит по визуальным стыкам. Границы проверяются человеком; selection/v1 не содержит временных интервалов. Используйте карту сцен.');
  if(state.scenes.some(s=>!s.name.trim()))warns.push('У каждой сцены должно быть название.');
  if(state.scenes.some(s=>s.image==='custom'&&!s.asset.trim()))warns.push('Для собственных кадров нужен ID исходного материала.');
  if(state.bridge && state.scenes.some(s=>!s.asset.trim()))warns.push('Для передачи агенту нужен ID ассета каждой сцены.');
@@ -224,8 +236,8 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  const v=$('validation');v.textContent=warns.length?warns.join(' '):'Структура готова. Возврат выбора не запускает рендер, TTS, A2E или публикацию.';v.classList.toggle('warning',warns.length>0);
  $('sendToAgent').disabled=!(state.bridge&&state.request)||!state.confirmed||state.sending||unsupported.length>0||warns.some(x=>/название|ID исходного|ID ассета/.test(x));
  const layoutDraft=Boolean(globalThis.MotionLabVisual?.changed());
- $('downloadJson').disabled=layoutDraft;
- $('downloadJson').title=layoutDraft?'Этот v1 JSON не хранит позиции текста. Скачайте визуальный черновик v2.':'Скачать настройки совместимые с v1';
+ $('downloadJson').disabled=layoutDraft||Boolean(globalThis.MotionLabVideoImport?.info?.());
+ $('downloadJson').title=globalThis.MotionLabVideoImport?.info?.()?'Для целого MP4 нужен export scene-map/v1, который сохраняет интервалы':layoutDraft?'Этот v1 JSON не хранит позиции текста. Скачайте визуальный черновик v2.':'Скачать настройки совместимые с v1';
  $('downloadVisual').disabled=!layoutDraft;
  const approval=$('approvalStatus');if(approval){approval.textContent=state.confirmed?'Вариант утвержден вами, но не передан монтажеру':'Еще не утверждено';approval.classList.toggle('approved',state.confirmed);}
  const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
