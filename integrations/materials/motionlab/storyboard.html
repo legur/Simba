@@ -40,24 +40,29 @@
     <div class="section-title preview-heading"><div><span class="small-label">03 / ЖИВОЙ ПРЕДПРОСМОТР</span><h2 id="previewHeading">Сцена 01</h2></div><span class="counter" id="activeCounter">01 / 06</span></div>
     <div class="frame-shell">
      <div id="screen" class="screen" aria-label="Макет кадра в формате 9:16">
-      <img id="previewPhoto" src="https://static.wixstatic.com/media/7fd7b8_b53b4bdba4c14271a663450044559b09~mv2.jpg" alt="Демонстрационная туристическая фотография">
+      <img id="previewPhoto" src="https://static.wixstatic.com/media/7fd7b8_b53b4bdba4c14271a663450044559b09~mv2.jpg" alt="Демонстрационная туристическая фотография"><video id="previewVideo" muted playsinline preload="metadata" hidden aria-label="Локально выбранный видеоклип"></video>
       <div class="vignette"></div><div class="topstamp">BON TOURS <span>REEL / 01</span></div>
       <div class="frame-title" id="frameTitle">Новый год в Баварии</div>
       <div class="frame-subtitle" id="frameSubtitle">Время путешествовать</div>
       <div class="frame-footer"><b class="green-point"></b> ПРЕДПРОСМОТР / МАКЕТ</div>
      </div>
     </div>
+    <p class="media-provenance" id="mediaProvenance" role="status">Показан демонстрационный фон. Это не исходный MP4.</p>
     <div class="play-row"><button type="button" id="playPreview" class="primary-btn">▶ Посмотреть движение</button><button type="button" id="stopPreview" class="square-btn" aria-label="Сбросить анимацию">↺</button></div>
     <div class="editor">
       <div class="small-label">04 / НАСТРОЙКИ КАДРА</div>
       <label>Название сцены<input type="text" id="sceneName" maxlength="90"></label>
       <div class="form-grid two"><label>Длительность, с<input type="number" id="sceneDuration" min="1" max="20" step="0.5"></label><label>Кадр / источник<select id="sceneImage"><option value="mountains">Горы</option><option value="city">Город</option><option value="sea">Море</option><option value="coast">Побережье</option><option value="custom">Свой источник</option></select></label></div>
       <label>Ссылка или ID исходного кадра<input type="text" id="sceneAsset" placeholder="ID сохраненного файла / название ассета" maxlength="240"></label>
+      <label>Локальный предпросмотр своего кадра или клипа (не загружается в Wix)<input type="file" id="localSceneFile" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime,.jpg,.jpeg,.png,.webp,.mp4,.mov,.m4v,.webm"></label>
+      <p id="localMediaStatus" class="source-notice" role="status">Выберите локальную копию соответствующего ассета. Только предпросмотр.</p>
       <div class="form-grid two"><label>Движение камеры<select id="sceneCamera"></select></label><label>Переход в этот кадр<select id="sceneTransition"></select></label></div>
       <div class="form-grid two"><label>Анимация титра<select id="sceneTitleFx"></select></label><label>Стиль субтитров<select id="sceneSubtitleStyle"></select></label></div>
       <div class="form-grid two"><label>Анимация слов<select id="sceneWordMotion"></select></label><label>Интенсивность, %<input id="sceneIntensity" type="range" min="0" max="100" step="5"><output id="intensityValue">50%</output></label></div>
       <label>Титр / экранный текст<input id="sceneTitle" type="text" maxlength="140" placeholder="Только согласованный текст"></label>
       <label>Текст субтитров (для макета)<textarea id="sceneSubtitle" rows="2" maxlength="300" placeholder="Не заменяет точную расшифровку речи"></textarea></label>
+      <p id="approvedSourceLock" class="source-notice" hidden>Утвержденные текст, исходный файл и длительность защищены. Изменения исходника выполняет Киностудия, а не Motion Lab.</p>
+      <div id="renderSupport" class="render-support" role="status">Поддержка рендерера: проверяется. Эффект в демонстрации не равен готовому эффекту MP4.</div>
     </div>
    </aside>
   </div>

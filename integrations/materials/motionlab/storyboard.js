@@ -63,6 +63,63 @@ const safeText = (s,max=140) => typeof s==='string'?s.slice(0,max):'';
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nameFor = (type,id)=> CATALOG[type].find(e=>e[0]===id)?.[1]||id;
 const state = {project:null, request:null, scenes:[],selectedIndex:0,selectedOption:1,concepts:PRESETS.map(x=>({...x})),bridge:null,dirty:false,sending:false,lastAck:null};
+// Actual make_video.py capability IDs. The 12 demonstration camera IDs and
+// title transitions are not the same as production renderer options.
+const RENDER_MOVES = new Set(['none','hold','push','pull','pan-left','pan-right','rise']);
+const RENDER_TRANSITIONS = new Set(CATALOG.transitions.map(x=>x[0]));
+const RENDER_STYLES = new Set(CATALOG.subtitle.filter(x=>x[0]!=='none').map(x=>x[0]));
+const RENDER_WORD_MOTIONS = new Set(CATALOG.motion.map(x=>x[0]));
+function rendererIssues(scenes){
+ const issues=[];
+ scenes.forEach((s,i)=>{
+  if(!RENDER_MOVES.has(s.camera))issues.push('Сцена '+(i+1)+': камера — только предпросмотр');
+  if(s.title)issues.push('Сцена '+(i+1)+': анимация титра пока не поддержана в MP4');
+  if(i>0&&!RENDER_TRANSITIONS.has(s.transition))issues.push('Сцена '+(i+1)+': переход не поддержан');
+  if(!RENDER_STYLES.has(s.subtitleStyle))issues.push('Сцена '+(i+1)+': стиль субтитров не поддержан');
+  if(!RENDER_WORD_MOTIONS.has(s.wordMotion))issues.push('Сцена '+(i+1)+': анимация слов не поддержана');
+ });
+ if(new Set(scenes.map(s=>s.subtitleStyle+'|'+s.wordMotion)).size>1)issues.push('Рендерер допускает только один стиль субтитров на весь ролик');
+ if(scenes.length>8)issues.push('Рендерер сейчас ограничен восемью сценами');
+ return issues;
+}
+// Local previews bind to scene + approved asset ID and never enter returned JSON.
+const localPreviews=new Map();
+function clearPreviews(){
+ for(const p of localPreviews.values())URL.revokeObjectURL(p.url);
+ localPreviews.clear();const v=$('previewVideo');if(v){v.pause();v.removeAttribute('src');}
+}
+function previewFor(s){const p=localPreviews.get(s.id);return p&&p.assetId===s.asset?p:null;}
+async function localFileChosen(file){
+ if(!file)return;const scene=state.scenes[state.selectedIndex];if(!scene)return;
+ const ext=file.name.toLowerCase().split('.').pop();
+ const type=['mp4','mov','m4v','webm'].includes(ext)?'video':['jpg','jpeg','png','webp'].includes(ext)?'image':null;
+ if(!type||file.size<1||file.size>(type==='video'?200:30)*1024*1024)throw Error('Разрешены JPG/PNG/WebP до 30 МБ и MP4/MOV/WebM до 200 МБ');
+ const expected=scene.media||null;
+ if(expected?.kind&&expected.kind!==type)throw Error('Тип файла не совпадает с утвержденным');
+ const url=URL.createObjectURL(file);let added=false;
+ try{
+  let shaVerified=false,duration=null;
+  if(expected?.asset_sha256){
+   if(!globalThis.crypto?.subtle)throw Error('Для SHA-256 нужен защищенный HTTPS');
+   const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await file.arrayBuffer()))).map(n=>n.toString(16).padStart(2,'0')).join('');
+   if(hash!==expected.asset_sha256.toLowerCase())throw Error('SHA-256 локального файла отличается от задания');
+   shaVerified=true;
+  }
+  if(type==='video'){
+   duration=await new Promise((ok,bad)=>{
+    const v=document.createElement('video');v.preload='metadata';v.muted=true;const timer=setTimeout(()=>bad(Error('Метаданные видео не загрузились')),9000);
+    v.onloadedmetadata=()=>{clearTimeout(timer);ok(v.duration);v.removeAttribute('src');v.load();};
+    v.onerror=()=>{clearTimeout(timer);bad(Error('Видеофайл не читается браузером'));};v.src=url;
+   });
+   if(!Number.isFinite(duration)||duration<=0)throw Error('Нет правильной длительности');
+   if(expected?.duration_s&&Math.abs(expected.duration_s-duration)>.45)throw Error('Длительность отличается от утвержденного ассета');
+  }
+  if(!state.scenes.includes(scene)||state.scenes[state.selectedIndex]!==scene)throw Error('Сцена изменилась: выберите файл снова');
+  const old=localPreviews.get(scene.id);if(old)URL.revokeObjectURL(old.url);
+  localPreviews.set(scene.id,{url,assetId:scene.asset,type,duration,shaVerified});added=true;
+  renderEditor();say(shaVerified?'Локальный файл совпал по SHA-256':'Локальный файл открыт. SHA-256 не подтвержден');
+ }finally{if(!added)URL.revokeObjectURL(url);}
+}
 let toastTimer, previewTimers=[], pendingAckTimer;
 function say(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2500)}
 function choicesFromPreset(id){const p=state.concepts.find(v=>v.id===id)||state.concepts[0];state.scenes=state.scenes.map((s,i)=>({...s,camera:p.camera,transition:i===0?'none':p.transition,titleFx:p.titleFx,subtitleStyle:p.subtitleStyle,wordMotion:p.wordMotion,intensity:p.intensity}));state.selectedOption=id;state.dirty=true;resetAck();render();}
@@ -75,6 +132,12 @@ function makeScene(row,index,chosenPreset=PRESETS[0]){
    duration:clamp(Number(source.duration_s||source.seconds||3)||3,1,20),
    image,
    asset:safeText(source.asset_id||source.asset_ref||'',240),
+   // Optional read-only preview metadata; never exported in selection/v1.
+   media:source.media&&typeof source.media==='object'&&!Array.isArray(source.media)?{
+    kind:['image','video'].includes(source.media.kind)?source.media.kind:null,
+    asset_sha256:typeof source.media.asset_sha256==='string'&&/^[0-9a-f]{64}$/i.test(source.media.asset_sha256)?source.media.asset_sha256.toLowerCase():null,
+    duration_s:typeof source.media.duration_s==='number'&&Number.isFinite(source.media.duration_s)&&source.media.duration_s>0?source.media.duration_s:null
+   }:null,
    previewUrl:(typeof source.preview_url==='string' && /^https:\/\//i.test(source.preview_url) && source.preview_url.length<700)?source.preview_url:null,
    title:safeText(source.title_text??source.title??DEMO[index%DEMO.length][1],140),
    subtitle:safeText(source.subtitle_preview??source.subtitle??DEMO[index%DEMO.length][2],300),
@@ -87,19 +150,34 @@ function makeScene(row,index,chosenPreset=PRESETS[0]){
  };
  return src;
 }
-function prepareDemo(){state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;clearTimeout(pendingAckTimer);setConnection('demo');render();}
+function prepareDemo(){clearPreviews();state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;clearTimeout(pendingAckTimer);setConnection('demo');render();}
 function populateSelect(id,items){$(id).replaceChildren(...items.map(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;return o}));}
 function titleChoice(index){let s=state.scenes[index];state.selectedIndex=index;resetPreview();render();}
-function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
+function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="concept-support">${!RENDER_MOVES.has(c.camera)||c.titleFx!=='none'?'Есть эффекты только для предпросмотра':'Нужна проверка рендерера'}</span><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
 function scenePhoto(scene){return scene.previewUrl||IMAGES[scene.image]||IMAGES.mountains;}
-function renderSceneList(){ $('sceneCount').textContent=String(state.scenes.length);$('metricScenes').textContent=String(state.scenes.length);$('sceneList').innerHTML=state.scenes.map((s,i)=>`<div role="listitem" class="scene-card ${i===state.selectedIndex?'selected':''}"><img class="thumb" src="${esc(scenePhoto(s))}" alt="" loading="lazy" referrerpolicy="no-referrer"><div class="scene-info"><button type="button" class="scene-open" data-open="${i}" aria-label="Редактировать сцену ${i+1}"><strong>${String(i+1).padStart(2,'0')} / ${esc(s.name)}</strong><p>${s.duration.toFixed(1)} с · ${esc(nameFor('camera',s.camera))}</p></button><div class="chips"><span class="tag">${esc(i===0?'Без входа':nameFor('transitions',s.transition))}</span><span class="tag">${esc(nameFor('title',s.titleFx))}</span></div></div><div class="scene-control"><button data-up="${i}" type="button" title="Выше" ${i===0?'disabled':''}>↑</button><button data-down="${i}" type="button" title="Ниже" ${i===state.scenes.length-1?'disabled':''}>↓</button><button data-remove="${i}" type="button" title="Удалить" ${state.scenes.length<=1||state.bridge?'disabled':''}>×</button></div></div>`).join(''); }
+function renderSceneList(){ $('sceneCount').textContent=String(state.scenes.length);$('metricScenes').textContent=String(state.scenes.length);$('sceneList').innerHTML=state.scenes.map((s,i)=>`<div role="listitem" class="scene-card ${i===state.selectedIndex?'selected':''}"><img class="thumb" src="${esc(scenePhoto(s))}" alt="" loading="lazy" referrerpolicy="no-referrer"><div class="scene-info"><button type="button" class="scene-open" data-open="${i}" aria-label="Редактировать сцену ${i+1}"><strong>${String(i+1).padStart(2,'0')} / ${esc(s.name)}</strong><p>${s.duration.toFixed(1)} с · ${esc(nameFor('camera',s.camera))}</p></button><div class="chips"><span class="tag">${esc(i===0?'Без входа':nameFor('transitions',s.transition))}</span><span class="tag">${esc(nameFor('title',s.titleFx))}</span></div></div><div class="scene-control"><button data-up="${i}" type="button" title="Выше" ${i===0?'disabled':''}>↑</button><button data-down="${i}" type="button" title="Ниже" ${i===state.scenes.length-1?'disabled':''}>↓</button><button data-remove="${i}" type="button" title="Удалить" ${state.scenes.length<=1||state.request?'disabled':''}>×</button></div></div>`).join(''); }
 function setField(id,value){const n=$(id);if(n)n.value=value;}
 function renderEditor(){const s=state.scenes[state.selectedIndex];if(!s)return;
  $('previewHeading').textContent='Сцена '+String(state.selectedIndex+1).padStart(2,'0');$('activeCounter').textContent=`${String(state.selectedIndex+1).padStart(2,'0')} / ${String(state.scenes.length).padStart(2,'0')}`;
  setField('sceneName',s.name);setField('sceneDuration',s.duration);setField('sceneImage',s.image);setField('sceneAsset',s.asset);setField('sceneCamera',s.camera);setField('sceneTransition',s.transition);setField('sceneTitleFx',s.titleFx);setField('sceneSubtitleStyle',s.subtitleStyle);setField('sceneWordMotion',s.wordMotion);setField('sceneIntensity',s.intensity);setField('sceneTitle',s.title);setField('sceneSubtitle',s.subtitle);
  $('intensityValue').textContent=s.intensity+'%';$('sceneTransition').disabled=state.selectedIndex===0;
- $('addScene').disabled=Boolean(state.bridge);
- const p=$('previewPhoto');p.src=scenePhoto(s);$('frameTitle').textContent=s.titleFx==='none'?'':s.title;$('frameSubtitle').textContent=s.subtitleStyle==='none'?'':s.subtitle;
+ const lock=Boolean(state.request);
+ ['sceneName','sceneDuration','sceneAsset','sceneTitle','sceneSubtitle'].forEach(id=>{$(id).readOnly=lock;});
+ $('sceneImage').disabled=lock;$('approvedSourceLock').hidden=!lock;
+ const issues=rendererIssues(state.scenes);
+ $('renderSupport').classList.toggle('ready',issues.length===0);
+ $('renderSupport').textContent=issues.length?'ЭФФЕКТЫ ТОЛЬКО ДЛЯ ПРЕДПРОСМОТРА: '+issues.slice(0,4).join('; ')+(issues.length>4?' и еще '+(issues.length-4):'')+'. Нельзя передавать на автоматический рендер.':'Для этих параметров нет известных блокировок; приемник Montage все равно выполняет техническую проверку.';
+ $('addScene').disabled=Boolean(state.request);
+ const p=$('previewPhoto'),v=$('previewVideo'),local=previewFor(s);
+ if(local?.type==='video'){
+  p.hidden=true;v.hidden=false;if(v.src!==local.url){v.pause();v.src=local.url;v.load();}
+ }else{
+  v.pause();v.hidden=true;p.hidden=false;p.src=local?.type==='image'?local.url:scenePhoto(s);
+ }
+ $('mediaProvenance').textContent=local?local.shaVerified?'Локальная копия сверена по SHA-256. Финальная проверка остается у Montage.':'Локальный предпросмотр. SHA-256 не подтвержден. Файл не загружен в Wix.':'Демонстрационное изображение. Реальный исходник не проверен.';
+ $('localMediaStatus').textContent=local?'Локальный '+(local.type==='video'?'MP4/видео':'кадр')+' · '+(local.duration?local.duration.toFixed(2)+' с · ':'')+(local.shaVerified?'SHA совпадает':'SHA не подтвержден'):'Можно выбрать локальную копию '+(s.asset||s.id)+' для предпросмотра. Она останется в браузере.';
+ $('localMediaStatus').classList.toggle('verified',Boolean(local?.shaVerified));
+ $('frameTitle').textContent=s.titleFx==='none'?'':s.title;$('frameSubtitle').textContent=s.subtitleStyle==='none'?'':s.subtitle;
  $('frameSubtitle').className='frame-subtitle '+(s.subtitleStyle==='luxury'||s.subtitleStyle==='gold-card'?'gold':'');
 }
 function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);$('summary').innerHTML=[`Сцен: ${state.scenes.length}`,`Длительность: ${total.toFixed(1)} с`,`Вариант: ${state.selectedOption}`,state.project?`Проект: ${esc(state.project.id)}`:'Демо без проекта'].map(s=>`<span>${s}</span>`).join('');
@@ -109,19 +187,21 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  if(state.scenes.some(s=>s.image==='custom'&&!s.asset.trim()))warns.push('Для собственных кадров нужен ID исходного материала.');
  if(state.bridge && state.scenes.some(s=>!s.asset.trim()))warns.push('Для передачи агенту нужен ID ассета каждой сцены.');
  if(total>60)warns.push('План превышает 60 секунд: перед монтажом потребуется уточнение длительности.');
+ const unsupported=rendererIssues(state.scenes);
+ if(unsupported.length)warns.push('Есть '+unsupported.length+' несовместимых с текущим MP4 эффектов; сохраните черновик или выберите поддерживаемый вариант.');
  const v=$('validation');v.textContent=warns.length?warns.join(' '):'Структура готова. Возврат выбора не запускает рендер, TTS, A2E или публикацию.';v.classList.toggle('warning',warns.length>0);
- $('sendToAgent').disabled=!(state.bridge&&state.request)||state.sending||warns.some(x=>/название|ID исходного|ID ассета/.test(x));
+ $('sendToAgent').disabled=!(state.bridge&&state.request)||state.sending||unsupported.length>0||warns.some(x=>/название|ID исходного|ID ассета/.test(x));
  const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
  $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.sending?'Решение отправлено. Подтверждение принимающей стороны пока не получено.':state.bridge?'Канал ответа подключен. После выбора нажмите «Передать выбор агенту».':'Канала ответа нет. Экспортируйте JSON, чтобы продолжить работу в агенте.';
 }
 function render(){renderConcepts();renderSceneList();renderEditor();renderSummary();}
-function updateKey(key,value){const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
+function updateKey(key,value){if(state.request&&['name','duration','image','asset','title','subtitle'].includes(key))return;const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
 function editChange(id,key,fn){$(id).addEventListener('change',()=>{const v=fn?fn($(id).value):$(id).value;updateKey(key,v);});}
-function liveChange(id,key){$(id).addEventListener('input',()=>{const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
+function liveChange(id,key){$(id).addEventListener('input',()=>{if(state.request&&['title','subtitle'].includes(key))return;const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
 function resetAck(){state.sending=false;state.lastAck=null;clearTimeout(pendingAckTimer);}
-function resetPreview(){previewTimers.forEach(t=>clearTimeout(t));previewTimers=[];$('previewPhoto').getAnimations().forEach(a=>a.cancel());$('frameTitle').getAnimations().forEach(a=>a.cancel());$('frameSubtitle').getAnimations().forEach(a=>a.cancel());$('previewPhoto').style.transform='scale(1.06)';$('frameTitle').style.opacity='1';$('frameSubtitle').style.opacity='1';}
+function resetPreview(){previewTimers.forEach(t=>clearTimeout(t));previewTimers=[];$('previewPhoto').getAnimations().forEach(a=>a.cancel());$('frameTitle').getAnimations().forEach(a=>a.cancel());$('frameSubtitle').getAnimations().forEach(a=>a.cancel());$('previewPhoto').style.transform='scale(1.06)';const v=$('previewVideo');if(!v.hidden){v.pause();try{v.currentTime=0;}catch{}}$('frameTitle').style.opacity='1';$('frameSubtitle').style.opacity='1';}
 function play(){resetPreview();const s=state.scenes[state.selectedIndex];if(matchMedia('(prefers-reduced-motion: reduce)').matches){say('Анимация ограничена настройками доступности');return;}
- const img=$('previewPhoto'),title=$('frameTitle'),sub=$('frameSubtitle');const amount=s.intensity/100,dur=clamp(s.duration*1000,750,5000);
+ const img=$('previewPhoto'),title=$('frameTitle'),sub=$('frameSubtitle');if(!$('previewVideo').hidden){const p=$('previewVideo').play();if(p?.catch)p.catch(()=>say('Локальное видео не воспроизводится'));}const amount=s.intensity/100,dur=clamp(s.duration*1000,750,5000);
  const x=s.camera==='pan'?18*amount:s.camera==='roll'?5*amount:s.camera==='float'?8*amount:s.camera==='tilt'?0:0;
  const y=s.camera==='tilt'?22*amount:s.camera==='float'?9*amount:0;
  const scale=s.camera==='push-through'?1.05+.32*amount:s.camera==='cinematic-zoom'?1.05+.18*amount:s.camera==='dolly-zoom'?1.08+.14*amount:s.camera==='speed-ramp'?1.05+.22*amount:1.08+.08*amount;
@@ -131,7 +211,7 @@ function play(){resetPreview();const s=state.scenes[state.selectedIndex];if(matc
  if(s.subtitleStyle!=='none')sub.animate([{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:Math.min(dur*.55,1100),delay:Math.min(dur*.25,500),fill:'forwards'});
 }
 function reorder(i,delta){const j=i+delta;if(j<0||j>=state.scenes.length)return;const a=state.scenes;[a[i],a[j]]=[a[j],a[i]];state.selectedIndex=j;a[0].transition='none';if(a.length>1&&a[1].transition==='none')a[1].transition=state.concepts.find(p=>p.id===state.selectedOption).transition;state.dirty=true;resetAck();render();}
-function addScene(){if(state.bridge){say('Агент передал утвержденный набор сцен. Добавление выполняется в сценарии.');return;}if(state.scenes.length>=LIMIT){say('Максимум 24 сцены');return;}const n=state.scenes.length,p=state.concepts.find(c=>c.id===state.selectedOption);const s=makeScene({name:`Сцена ${n+1}`,image:'city',title_text:'',subtitle_preview:''},n,p);state.scenes.push(s);state.selectedIndex=n;state.dirty=true;resetAck();render();}
+function addScene(){if(state.request){say('Утвержденные сцены изменяет Киностудия, не этот редактор.');return;}if(state.scenes.length>=LIMIT){say('Максимум 24 сцены');return;}const n=state.scenes.length,p=state.concepts.find(c=>c.id===state.selectedOption);const s=makeScene({name:`Сцена ${n+1}`,image:'city',title_text:'',subtitle_preview:''},n,p);state.scenes.push(s);state.selectedIndex=n;state.dirty=true;resetAck();render();}
 function fromSaved(){const read=key=>{try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v:[]}catch{return[]}};
  const camera=read('motionlab-camera-favorites-v1').filter(id=>known('camera',id)),transition=read('motionlab:favorites').filter(id=>known('transitions',id)),title=read('motionlab:text:favorites').filter(id=>known('title',id)),subtitle=read('motionlab:subtitle-combos:v2').filter(id=>typeof id==='string'&&id.includes('|'));
  const has=Boolean(camera.length||transition.length||title.length||subtitle.length);if(!has){say('В библиотеках пока нет избранных эффектов');return;}
@@ -155,7 +235,7 @@ function parseLaunch(raw,strict){if(!raw||typeof raw!=='object'||Array.isArray(r
  const ids=scenes.map(s=>s.id);if(ids.some(id=>!id)||new Set(ids).size!==ids.length)throw Error('scene_id должны быть уникальными');
  return {request:{id:request_id,projectId:project_id,fingerprint:fp,stage:'edit_choice'},concepts,scenes,selected};
 }
-function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
+function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);clearPreviews();state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
 function buildResult(){const req=state.request,bridge=Boolean(state.bridge),timestamp=new Date().toISOString();return {
  schema:'bontours.motionlab.storyboard.selection/v1',request_id:req?.id||null,project_id:req?.projectId||null,stage:'edit_choice',expected_input_fingerprint:req?.fingerprint||null,
  decision:{selected_option:state.selectedOption,options_presented:3,user_selected_at:timestamp,state:bridge?'USER_SELECTED_IN_CONNECTED_SESSION':'DRAFT_NOT_DELIVERED',confirmation_scope:'EDIT_CHOICES_ONLY'},
@@ -192,16 +272,21 @@ function announceReady(){const target=window.parent!==window?window.parent:windo
 function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sceneTransition',[['none','Без перехода (первая сцена)'],...CATALOG.transitions]);populateSelect('sceneTitleFx',CATALOG.title);populateSelect('sceneSubtitleStyle',CATALOG.subtitle);populateSelect('sceneWordMotion',CATALOG.motion);
  $('conceptList').addEventListener('click',ev=>{const btn=ev.target.closest('[data-option]');if(btn)choicesFromPreset(Number(btn.dataset.option));});
  $('sceneList').addEventListener('click',ev=>{const up=ev.target.closest('[data-up]'),down=ev.target.closest('[data-down]'),rem=ev.target.closest('[data-remove]'),open=ev.target.closest('[data-open]');
- if(up){reorder(Number(up.dataset.up),-1);return;}if(down){reorder(Number(down.dataset.down),1);return;}if(rem){const i=Number(rem.dataset.remove);if(state.bridge||state.scenes.length===1)return;state.scenes.splice(i,1);state.selectedIndex=clamp(state.selectedIndex,0,state.scenes.length-1);state.scenes[0].transition='none';resetAck();render();return;}if(open){titleChoice(Number(open.dataset.open));return;}
+ if(up){reorder(Number(up.dataset.up),-1);return;}if(down){reorder(Number(down.dataset.down),1);return;}if(rem){const i=Number(rem.dataset.remove);if(state.request||state.scenes.length===1)return;state.scenes.splice(i,1);state.selectedIndex=clamp(state.selectedIndex,0,state.scenes.length-1);state.scenes[0].transition='none';resetAck();render();return;}if(open){titleChoice(Number(open.dataset.open));return;}
  });
  $('addScene').addEventListener('click',addScene);$('applyFavorites').addEventListener('click',fromSaved);
  editChange('sceneName','name');editChange('sceneDuration','duration',v=>clamp(Number(v)||3,1,20));editChange('sceneImage','image');editChange('sceneAsset','asset');editChange('sceneCamera','camera');editChange('sceneTransition','transition');editChange('sceneTitleFx','titleFx');editChange('sceneSubtitleStyle','subtitleStyle');editChange('sceneWordMotion','wordMotion');editChange('sceneIntensity','intensity',v=>clamp(Number(v),0,100));
  $('sceneIntensity').addEventListener('input',e=>{$('intensityValue').textContent=e.target.value+'%';});liveChange('sceneTitle','title');liveChange('sceneSubtitle','subtitle');
  $('playPreview').addEventListener('click',play);$('stopPreview').addEventListener('click',resetPreview);
+ $('localSceneFile').addEventListener('change',async e=>{
+  const file=e.target.files?.[0];e.target.value='';if(!file)return;
+  $('localMediaStatus').textContent='Проверка файла в браузере...';
+  try{await localFileChosen(file);}catch(error){$('localMediaStatus').textContent='Не принят: '+error.message;say(error.message);}
+ });
  $('resetDemo').addEventListener('click',()=>{if(state.bridge){say('Активное задание агента. Демо не заменяет его.');return;}prepareDemo();say('Открыт демонстрационный проект');});
  $('requestFile').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>300_000){say('Максимальный размер задания 300 КБ');return;}try{const source=JSON.parse(await file.text());if(state.bridge){say('Задание от агента активно. Импорт недоступен.');return;}loadLaunch(source,null);}catch(err){say('Ошибка JSON: '+err.message);}});
  $('downloadJson').addEventListener('click',jsonDownload);$('copyBrief').addEventListener('click',copyBrief);$('sendToAgent').addEventListener('click',sendSelection);
- window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>clearTimeout(pendingAckTimer));prepareDemo();
+ window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);clearPreviews();});prepareDemo();
  // Creative templates apply ONLY to the local demo. Agent launch with three options remains authoritative.
  const creativeId=new URLSearchParams(location.search).get('creativePreset');
  const creativeSuggestions={
