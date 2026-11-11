@@ -36,6 +36,6 @@ jobs:
           python -m unittest discover -s integrations/materials/motionlab/repo-tests -p 'test_motionlab_selection.py' -v
           python -m py_compile integrations/materials/motionlab/motionlab_selection.py
           python -m unittest discover -s integrations/materials/motionlab/repo-tests -p 'test_site_sources.py' -v
-          for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js motionlab_host_adapter.js; do
+          for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js motionlab_v2_ui.js motionlab_host_adapter.js; do
             node --check "integrations/materials/motionlab/$file"
           done
