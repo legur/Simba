@@ -190,6 +190,15 @@
          <div><img id="cutToImage" alt="Кадр после перехода"><span id="cutToLabel">Сцена 02</span></div>
        </div>
        <p>Переход хранится у входящей сцены и меняется только для этой пары. Выберите вариант и нажмите «Посмотреть переход» в предпросмотре.</p>
+       <div id="cutBoundaryControls" class="cut-boundary-controls" hidden>
+         <h4>Исправить точную границу двух фрагментов</h4>
+         <p>Положение найдено автоматически по изменению кадров и может быть неточным. Перенос изменяет конец предыдущего и начало следующего фрагмента исходного MP4 без перекодирования.</p>
+         <label>Время стыка от начала исходного ролика, сек.
+          <input type="number" id="cutBoundarySecond" step="0.05" min="1" max="60">
+         </label>
+         <button type="button" id="saveCutBoundary" class="secondary-btn">Изменить границу и обновить кадры</button>
+         <p id="cutBoundaryStatus" role="status" aria-live="polite">Редактируйте границу после просмотра двух реальных кадров.</p>
+        </div>
        <div id="allTransitions" class="transition-grid" role="group" aria-label="Все доступные переходы"></div>
        <div class="source-notice">Переходы в браузере показаны приближенно. Точный результат проверяет Montage на реальном рендерере.</div>
       </section>
