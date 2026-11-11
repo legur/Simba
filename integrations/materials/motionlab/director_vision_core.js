@@ -46,7 +46,7 @@
   for(let i=0;i<scenes.length;i++){
    const s=scenes[i],start=item.bounds[i],end=item.bounds[i+1],p=String(i+1).padStart(2,'0');
    if(s?.id!==`shot-${p}-${cents(start)}`||
-    s.asset!==`local-sha256:${sha}:${millis(start)}-${millis(end)}`||
+    s.asset!==`local-sha256:${sha}:${millis(s.clipRange?.start)}-${millis(s.clipRange?.end)}`||
     !s.clipRange||Math.abs(s.clipRange.start-start)>.025||Math.abs(s.clipRange.end-end)>.025)return null;
   }
   return scenes.map((s,i)=>({
