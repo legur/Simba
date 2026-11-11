@@ -95,16 +95,22 @@ export function connectV2LiveMotionLab({
     if (stopped || event.origin !== MOTION_LAB_ORIGIN ||
         event.source !== targetWindow) return;
     const data=event.data;
-    if (!data || data.protocol !== BRIDGE_V2 ||
-        data.request_id !== session.launch.request_id ||
-        data.project_id !== session.launch.project_id) return;
+    if (!data || data.protocol !== BRIDGE_V2) return;
     if (data.type === 'SIMBA_MOTIONLAB_V2_READY') {
+      // Before START, the iframe has not received private project identifiers.
+      // Only the verified iframe Window + exact origin may announce readiness.
+      if (data.request_id != null || data.project_id != null || receivedReady) return;
       receivedReady=true;
       send('SIMBA_MOTIONLAB_V2_START',{
         materials:session.launch, proposals:session.proposals,
+        materials_sha256:session.proposals.materials_sha256,
+        proposals_sha256:session.proposals_sha256,
       });
       notify('editing',{ready:true});
-    } else if (data.type === 'SIMBA_MOTIONLAB_V2_SELECTION') {
+    } else if (receivedReady &&
+        data.request_id === session.launch.request_id &&
+        data.project_id === session.launch.project_id &&
+        data.type === 'SIMBA_MOTIONLAB_V2_SELECTION') {
       void deliver(data.payload?.selection);
     }
   }
