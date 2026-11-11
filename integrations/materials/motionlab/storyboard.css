@@ -175,3 +175,18 @@
 .visual-command-box #visualCommandStatus{color:#bce5b8}
 .visual-command-box #visualCommandStatus.command-error{color:#f4c9a9}
 @media(max-width:560px){.visual-command-row{flex-direction:column}.detail-scene-navigation{width:100%}}
+
+
+/* Analysis works only with local, user-supplied images/video; not semantic AI. */
+.director-analyze{margin:18px 0;padding:16px;border:1px solid #4d716d;border-radius:14px;background:#132930;display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.director-analyze>div:first-child{flex:1 1 240px}
+.director-analyze strong{display:block;font-size:15px;color:#f3f8f5}
+.director-analyze p{color:#b9d6d1;font-size:12px;line-height:1.65;margin:6px 0 0}
+#directorStatus{flex-basis:100%;margin:0;color:#c2ebad}
+#directorStatus.director-error{color:#f2b8a3}
+.director-report{flex-basis:100%;border-radius:10px;border:1px solid #43645d;padding:13px;background:#0b2027}
+.director-report[hidden]{display:none}
+.director-report>strong{font-size:13px}
+.director-scene-results{max-height:260px;overflow:auto;margin-top:10px}
+.director-scene-results p{border-top:1px solid #315159;padding:8px 0;margin:0;font-size:11px}
+@media(max-width:560px){.director-analyze>.secondary-btn{width:100%}}
