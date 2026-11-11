@@ -107,7 +107,9 @@ class PrivateBundleTests(unittest.TestCase):
         self.assertEqual(self.output.read_bytes(),before)
 
     def test_tampered_media_cannot_be_packed(self):
-        (self.job/"clip-2.mp4").write_bytes(b"tampered")
+        clip=self.job/"clip-2.mp4"
+        raw=clip.read_bytes()
+        clip.write_bytes(b"X"+raw[1:])  # same length, changed full-byte SHA
         with self.assertRaises(r.ContractError) as e:
             pack.build_private_analysis_bundle(self.materials,self.asset,self.job,self.output)
         self.assertEqual(e.exception.code,"MEDIA_SHA256_MISMATCH")
