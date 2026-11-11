@@ -44,6 +44,10 @@ class TypographyV2Tests(unittest.TestCase):
         (self.f.job/"video-spec.json").write_text(json.dumps(result,ensure_ascii=False))
         verified=make_video.load_spec(self.f.job)
         self.assertEqual(verified["scenes"][1]["visualTypography"]["title"]["size"],110)
+        # Synthetic fixture has no real speech timestamps; bypass only those in this
+        # zero-paid timeline propagation check, not the locked approved source.
+        for scene in verified['scenes']:
+            scene['lines']=[]
         video_timeline=make_video.timeline(verified)
         self.assertEqual(video_timeline["scenes"][1]["visualTypography"]["title"]["color"],"#123456")
 
