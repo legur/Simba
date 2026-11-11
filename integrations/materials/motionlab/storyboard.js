@@ -472,7 +472,23 @@ function validationError(){if(![1,2,3].includes(state.selectedOption))return 'В
 function jsonDownload(){if(globalThis.MotionLabVideoImport?.info?.()){say('Импортированному MP4 нужна карта сцен с временными интервалами.');return;}if(globalThis.MotionLabVisual?.changed()){say('Визуальные координаты не поддержаны JSON v1. Используйте отдельный черновик v2.');return;}const error=validationError();if(error){say(error);return;}const obj=buildResult();const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`motionlab-${obj.project_id||'demo'}-edit-choice.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);say('JSON сохранен');}
 async function copyBrief(){const lines=[`BON TOURS / MOTION LAB — РЕЖИССЕРСКОЕ РЕШЕНИЕ`,`Проект: ${state.project?.id||'демонстрация'}`,`Вариант: ${state.selectedOption}`,`Сцен: ${state.scenes.length}`,'',...state.scenes.map((s,i)=>`${i+1}. ${s.name} (${s.duration} с): камера ${nameFor('camera',s.camera)}, переход ${i?nameFor('transitions',s.transition):'нет'}, титр ${nameFor('title',s.titleFx)}, субтитры ${nameFor('subtitle',s.subtitleStyle)} / ${nameFor('motion',s.wordMotion)}`),'','Решение только для подготовки. Рендер, TTS, A2E и публикация не разрешены.'];try{await navigator.clipboard.writeText(lines.join('\n'));say('Монтажное ТЗ скопировано')}catch{say('Копирование недоступно. Скачайте JSON')}}
 function setConnection(mode){$('connLed').className='conn-led '+(mode==='connected'?'connected':'waiting');$('connectionTitle').textContent=mode==='connected'?'Агент подключен / выбор ожидается':mode==='offline'?'Задание импортировано / офлайн':'Демонстрационный режим';$('connectionText').textContent=mode==='connected'?`Сессия ${state.request?.id||''}. После выбора отправим настройки строго инициировавшей среде и дождемся ACK.`:mode==='offline'?'Задание импортировано. Чтобы сохранить и автоматически передать выбор, войдите в Wix.':'Вы можете проверить редактор и экспортировать JSON. Для прямого возврата агент должен запустить модуль через подтвержденный канал сообщений.';renderSummary();}
-function sendSelection(){if(globalThis.MotionLabVisual?.changed()){say('Есть визуальные правки: Montage v1 пока не принимает координаты. Скачайте черновик v2.');return;}if(!state.confirmed){say('Сначала утвердите выбранный монтаж');return;}const error=validationError();if(error){say(error);return;}if(!state.bridge||!state.request){say('Нет подключенного агентского канала. Используйте экспорт JSON.');return;}
+function sendSelection(){
+ if(!state.confirmed){say('Сначала утвердите выбранный монтаж');return;}
+ const error=validationError();if(error){say(error);return;}
+ if(!state.request){say('Сначала загрузите проверенное задание проекта');return;}
+ if(!state.bridge){
+  const queue=globalThis.MotionLabInbox;
+  if(!queue?.isLoggedIn()){say('Для автоматической передачи войдите в Wix.');return;}
+  const packet=buildResult();
+  state.sending=true;state.deliveryStatus=null;renderSummary();
+  queue.submit(packet).then(receipt=>{
+   state.deliveryStatus={deliveryId:receipt.deliveryId,status:'PENDING'};
+   say('Выбор сохранен на Wix. GitHub еще не подтвердил прием.');
+  }).catch(err=>say('Выбор не подтвержден: '+String(err.message||err)))
+   .finally(()=>{state.sending=false;renderSummary();});
+  return;
+ }
+ if(globalThis.MotionLabVisual?.changed()){say('Агентский канал v1 не принимает визуальные координаты. Используйте Wix-очередь.');return;}
  const b=state.bridge,packet=buildResult();state.sending=true;state.lastAck=null;renderSummary();try{b.source.postMessage({type:'SIMBA_MOTIONLAB_SELECTION',protocol:'bontours.motionlab.bridge/v1',payload:packet},b.origin)}catch(err){state.sending=false;renderSummary();say('Не удалось отправить. Скачайте JSON.');return;}
  pendingAckTimer=setTimeout(()=>{if(!state.sending)return;state.sending=false;renderSummary();say('Подтверждение не пришло. Используйте JSON.');},9000);
 }
@@ -490,6 +506,54 @@ function onMessage(e){if(!goodSource(e))return;const host=expectedHostOrigin();i
  }
 }
 function announceReady(){const target=window.parent!==window?window.parent:window.opener;const host=expectedHostOrigin();if(!target||!host)return;target.postMessage({type:'SIMBA_MOTIONLAB_READY',protocol:'bontours.motionlab.bridge/v1',capabilities:['three_edit_options','per_scene_settings','json_export','explicit_user_selection','ack_required'],module_version:'1.0'},host);}
+
+const WIX_EDITOR_SNAPSHOT='simba:motionlab:wix-editor-snapshot:v1';
+function captureEditorForLogin(){
+ if(globalThis.MotionLabVideoImport?.info?.())throw Error('Войдите в Wix до импорта локального MP4; видеобайты не сохраняются.');
+ if(globalThis.MotionLabVisual?.changed())throw Error('Войдите в Wix до настройки визуальных координат, иначе правки могут потеряться.');
+ if(!state.request)return;
+ const snapshot={at:Date.now(),request:state.request,project:state.project,scenes:state.scenes,
+  concepts:state.concepts,selectedOption:state.selectedOption,selectedIndex:state.selectedIndex,
+  confirmed:state.confirmed};
+ const raw=JSON.stringify(snapshot);
+ if(raw.length>240000)throw Error('Слишком крупное задание для временного восстановления после входа.');
+ sessionStorage.setItem(WIX_EDITOR_SNAPSHOT,raw);
+}
+function restoreEditorAfterLogin(){
+ const raw=sessionStorage.getItem(WIX_EDITOR_SNAPSHOT);if(!raw)return;
+ sessionStorage.removeItem(WIX_EDITOR_SNAPSHOT);
+ try{
+  const s=JSON.parse(raw);
+  if(Date.now()-s.at>900000||!s.request||!Array.isArray(s.scenes)||s.scenes.length>24)return;
+  state.request=s.request;state.project=s.project;state.scenes=s.scenes;state.concepts=s.concepts;
+  state.selectedOption=s.selectedOption;state.selectedIndex=s.selectedIndex;state.confirmed=Boolean(s.confirmed);
+  state.bridge=null;state.dirty=true;state.lastAck=null;state.deliveryStatus=null;
+  setConnection('offline');render();
+ }catch(e){say('Не удалось восстановить черновик после входа.');}
+}
+async function checkWixDelivery(){
+ const queue=globalThis.MotionLabInbox;
+ const receipt=queue?.receipt();
+ if(!receipt){say('Нет сохраненной квитанции Wix.');return;}
+ try{
+  const item=await queue.getStatus(receipt.deliveryId);
+  if(state.request?.projectId===receipt.projectId&&state.request?.fingerprint===receipt.sourceFingerprint){
+   state.deliveryStatus={deliveryId:receipt.deliveryId,status:item.state};renderSummary();
+  }
+  say(item.state==='SAVED_IN_GITHUB_PENDING_MONTAGE'?
+   'GitHub получил выбор. Монтаж технически еще не подтвержден.':
+   item.state==='PENDING'?'Выбор хранится на Wix. GitHub еще не подтвердил прием.':
+   'Статус приема: '+String(item.state));
+ }catch(e){say('Проверка Wix не удалась: '+String(e.message||e));}
+}
+async function initWixInbox(){
+ try{
+  const completed=await globalThis.MotionLabInbox?.completeLogin();
+  restoreEditorAfterLogin();
+  if(completed)say('Вход Wix выполнен. Можно сохранять выбор в закрытую очередь.');
+ }catch(e){say('Ошибка входа Wix: '+String(e.message||e));}
+ renderSummary();
+}
 function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sceneTransition',[['none','Без перехода (первая сцена)'],...CATALOG.transitions]);populateSelect('sceneTitleFx',CATALOG.title);populateSelect('sceneSubtitleStyle',CATALOG.subtitle);populateSelect('sceneWordMotion',CATALOG.motion);
  $('conceptList').addEventListener('click',ev=>{const btn=ev.target.closest('[data-option]');if(btn)choicesFromPreset(Number(btn.dataset.option));});
  $('sceneList').addEventListener('click',ev=>{const up=ev.target.closest('[data-up]'),down=ev.target.closest('[data-down]'),rem=ev.target.closest('[data-remove]'),open=ev.target.closest('[data-open]');
@@ -524,7 +588,9 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  $('resetDemo').addEventListener('click',()=>{if(state.bridge){say('Активное задание агента. Демо не заменяет его.');return;}prepareDemo();say('Открыт демонстрационный проект');});
  $('requestFile').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>300_000){say('Максимальный размер задания 300 КБ');return;}try{const source=JSON.parse(await file.text());if(state.bridge){say('Задание от агента активно. Импорт недоступен.');return;}loadLaunch(source,null);}catch(err){say('Ошибка JSON: '+err.message);}});
  $('downloadJson').addEventListener('click',jsonDownload);$('copyBrief').addEventListener('click',copyBrief);$('sendToAgent').addEventListener('click',sendSelection);
- window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);stopFilm(false);clearPreviews();});prepareDemo();
+ $('wixLogin').addEventListener('click',async()=>{try{captureEditorForLogin();await globalThis.MotionLabInbox.startLogin();}catch(e){say('Вход Wix: '+String(e.message||e));}});
+ $('checkWixStatus').addEventListener('click',checkWixDelivery);
+ window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);stopFilm(false);clearPreviews();});prepareDemo();void initWixInbox();
  // Creative templates apply ONLY to the local demo. Agent launch with three options remains authoritative.
  const creativeId=new URLSearchParams(location.search).get('creativePreset');
  const creativeSuggestions={
