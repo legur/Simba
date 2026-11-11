@@ -37,7 +37,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate the 19-file static bundle
+    name: Validate the 20-file static bundle
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -60,16 +60,17 @@ jobs:
           python3 integrations/materials/motionlab/deploy_static.py build --bundle "$RUNNER_TEMP/motionlab-site.zip"
       - name: Check public JavaScript syntax
         run: |
-          for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js creative.js; do
+          for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js visual_editor.js creative.js; do
             node --check "integrations/materials/motionlab/$file"
           done
           node --test integrations/materials/motionlab/repo-tests/test_creative_catalog.mjs
           node --test integrations/materials/motionlab/repo-tests/test_storyboard_internal.mjs
           node --test integrations/materials/motionlab/repo-tests/test_director_preview.mjs
+          node --test integrations/materials/motionlab/repo-tests/test_visual_editor.mjs
       - name: Validation summary
         if: ${{ success() }}
         run: |
-          echo '19 public website files validated. No Wix changes in this job.' >> "$GITHUB_STEP_SUMMARY"
+          echo '20 public website files validated. No Wix changes in this job.' >> "$GITHUB_STEP_SUMMARY"
 
   deploy:
     name: Wix CLI staging preview (production unchanged)
