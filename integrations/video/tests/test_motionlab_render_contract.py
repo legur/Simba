@@ -8,6 +8,8 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -175,6 +177,39 @@ class MotionLabRendererContractTests(unittest.TestCase):
         (self.job/"video-spec.json").write_text(json.dumps(spec, ensure_ascii=False))
         parsed = make_video.load_spec(self.job)
         self.assertEqual(parsed["scenes"][0]["cameraEffect"]["id"], "cinematic-zoom")
+
+    def test_real_ffprobe_mp4_and_full_sha_readback_without_paid_services(self):
+        if not shutil.which("ffmpeg") or not shutil.which("ffprobe"):
+            self.skipTest("ffmpeg/ffprobe not available")
+        for i in range(2):
+            name = f"scene-{i+1:02d}.mp4"
+            path = self.job / name
+            subprocess.run(
+                ["ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
+                 "-f", "lavfi", "-i", "color=c=blue:s=160x284:r=8:d=5",
+                 "-an", "-c:v", "mpeg4", "-q:v", "7", str(path)],
+                check=True, capture_output=True, timeout=30,
+            )
+            probed = bridge._ffprobe(path)
+            self.assertEqual(probed["width"], 160)
+            self.assertEqual(probed["height"], 284)
+            self.assertFalse(probed["has_audio"])
+            self.assertAlmostEqual(probed["duration_s"], 5.0, delta=.15)
+            sha = hashlib.sha256(path.read_bytes()).hexdigest()
+            asset_id = f"verified-a2e-{i+1}"
+            self.assets[asset_id]["sha256"] = sha
+            self.assets[asset_id]["duration_s"] = probed["duration_s"]
+            self.launch["scenes"][i]["media"]["asset_sha256"] = sha
+            self.launch["scenes"][i]["media"]["duration_s"] = probed["duration_s"]
+            self.choice["scenes"][i]["duration_seconds"] = probed["duration_s"]
+        spec, status = bridge.map_selection_to_spec(
+            self.launch, self.choice, self.approved_spec,
+            self.job, self.assets,
+        )
+        self.assertEqual(status["status"], "VIDEO_SPEC_MAPPED_NOT_RENDERED")
+        self.assertEqual(len(spec["scenes"]), 2)
+        self.assertEqual(status["paid_calls"], 0)
+        self.assertFalse(status["render_authorized"])
 
     def test_preview_only_camera_title_subtitle_and_transition_fail_closed(self):
         self.choice["scenes"][0]["camera"]["id"] = "orbit"
