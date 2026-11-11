@@ -41,3 +41,45 @@ One image, absurd editorial still-life: Leo staring at a single enormous overstu
 - Show five actual visual previews, not just concepts.
 - Status remains FIVE_PREVIEWS_READY only when renderer returned five assets; a final master image requires separate final render after user selects V1–V5 and exact saved specification is reloaded.
 - No public publication authorization implied.
+
+
+## PREVIEW RENDER RESULTS — actual evidence, 2026-11-11
+
+RENDERER: ChatGPT image generation in this conversation. Model/mode not independently selectable or verifiable. Generated source images were portrait 1024×1536 (not square); square preview crops 1024×1024 were produced in this conversation. Final production must be a separate native square rendering after user selection; source tall renders / crops are not final masters.
+
+Display: `sandbox:/mnt/data/simba_posters_5_previews.jpg`, five labeled square crop previews.
+
+The actual generated images diverge from the initial planned five concepts. The following **actual candidates** supersede initial preview concept IDs for selection (retain original specs above as historical concept plan only).
+
+### Actual #1 — Главная афиша услуг
+- Source: `/mnt/data/a_bright_high_contrast_colorful_cinematic_high.png`
+- Preview: `/mnt/data/simba_posters/preview_1.jpg`
+- Rendering content: Leo at travel agency desk in formal jacket, checklist, cruise ship, tropical backdrop, large header "НОВЫЕ УСЛУГИ BON TOURS", second line "ШУТОЧНЫЙ ПРЕЙСКУРАНТ ТУРАГЕНТА".
+- Final production brief on selection: square 1:1; preserve recognizable Leo from saved self photo, central office persona, bold humorous but premium headline EXACTLY "НОВЫЕ УСЛУГИ BON TOURS", small subtitle EXACTLY "ШУТОЧНЫЙ ПРЕЙСКУРАНТ ТУРАГЕНТА", compact "Simba by Bon Tours" brand and NO EXTRA TEXT. Do not add list.
+
+### Actual #2 — Детектив отеля
+- Source: `/mnt/data/a_vibrant_highly_detailed_hyper_realistic_comedi.png`
+- Preview: `/mnt/data/simba_posters/preview_2.jpg`
+- Rendering content: Leo wearing fedora and trench coat with magnifying glass and blurred hotel photo; colorful resort scene. Headline "Я НЕ ПОМНЮ НАЗВАНИЕ ОТЕЛЯ, НО ВЫ ЕГО ТОЧНО ЗНАЕТЕ", lower punch "$199".
+- Final production brief on selection: square 1:1, same detective gag and Leo identity; simplify to large legible headline EXACTLY "НАЙДУ ВАШ ОТЕЛЬ ПО ПАЛЬМЕ", price EXACTLY "$199", small "Simba by Bon Tours"; no tiny checklist, no extra text.
+
+### Actual #3 — 11 услуг / beach menu
+- Source: `/mnt/data/a_bright_colorful_highly_polished_advertising_po.png`
+- Preview: `/mnt/data/simba_posters/preview_3.jpg`
+- Rendering content: Leo arms crossed, 11-services beach display and cruise. Large headline "11 УСЛУГ, КОТОРЫЕ ВЫ НЕ ПРОСИЛИ".
+- Final production brief on selection: square 1:1; identifiable Leo in resort / cruise setting, title EXACTLY "11 УСЛУГ, КОТОРЫЕ ВЫ НЕ ПРОСИЛИ", subtitle EXACTLY "Шуточный прейскурант турагента", brand EXACTLY "Simba by Bon Tours", NO EXTRA TEXT and no small printed service list.
+
+### Actual #4 — Переговоры с Нептуном
+- Source: `/mnt/data/a_vibrant_highly_detailed_cinematic_comic_photor.png`
+- Preview: `/mnt/data/simba_posters/preview_4.jpg`
+- Rendering content: Leo and Neptune at negotiating table on cruise liner, humorous stormy sea, big title "ХОЧУ КРУИЗ, НО ЧТОБЫ МОРЕ НЕ КАЧАЛОСЬ", secondary "ПЕРЕГОВОРЫ С НЕПТУНОМ — $500".
+- Final production brief on selection: square 1:1, recognizable Leo opposite mythological Neptune at one negotiation table, sea behind; premium editorial satirical style; headline EXACTLY "ПЕРЕГОВОРЫ С НЕПТУНОМ", second line EXACTLY "$500", brand EXACTLY "Simba by Bon Tours", NO EXTRA TEXT.
+
+### Actual #5 — Переговоры с авиакомпанией
+- Source: `/mnt/data/a_vibrant_highly_detailed_photorealistic_comic_s.png`
+- Preview: `/mnt/data/simba_posters/preview_5.jpg`
+- Rendering content: Leo at airport desk joking with airport agent to move flight from 11:30 to 14:00 because of hairdresser. Title "А ВЫ НЕ МОЖЕТЕ ДОГОВОРИТЬСЯ С АВИАКОМПАНИЕЙ?".
+- Final production brief on selection: native square 1:1, identifiable Leo at airline service desk, gate departure board humorously changing 11:30 to 14:00; title EXACTLY "ПОДВИНЬТЕ РЕЙС. У МЕНЯ ПАРИКМАХЕР", small price EXACTLY "$350", small "Simba by Bon Tours", no other text.
+
+Preview_count: 5 actual squared crops. Preview review status: READY_FOR_LEO_SELECTION (no final selected). Source large images were vertical / text-heavy; final native square and text accuracy QA required.
+Reference trace: Archivarius AR-20260720-004 was consulted for art-direction, but actual previews use the renderer's vivid travel-ad aesthetic and do not demonstrably adopt its minimal graphic direction; do NOT claim reference materially used in actual rendering. YouMind: none.
