@@ -75,12 +75,12 @@ function rowsForWords(g,visibleWords,maxWidth){
  * Render an already aligned subtitle line with validated Motion Lab style.
  * line.words: [[displayWord, absoluteStartSeconds], ...] (from Whisper).
  */
-export function drawStyledSubtitle(g,line,t,config,W,H,layout=null){
+export function drawStyledSubtitle(g,line,t,config,W,H,layout=null,typography=null){
   if(!line||!Array.isArray(line.words)||!line.words.length||!config)return;
   const style=STYLE_IDS.includes(config.style)?config.style:'clean';
   const motion=MOTION_IDS.includes(config.motion)?config.motion:'karaoke';
   const accent=COLOR_MAP[config.color]||COLOR_MAP.lime;
-  const factor=limit(Number(config.scale_percent)||100,80,135)/100 * (layout ? layout.scale / 100 : 1);
+  const factor=limit(Number(config.scale_percent)||100,80,135)/100 * (layout ? layout.scale / 100 : 1) * (typography ? typography.size / 100 : 1);
   const size=Math.round(50*factor*W/1080);
   const words=line.words.map(([w,start],i)=>({
     index:i,text:uppercase(style)?String(w).toUpperCase():String(w),start:Number(start)
@@ -97,7 +97,7 @@ export function drawStyledSubtitle(g,line,t,config,W,H,layout=null){
   const top=H*.26,center=H*.52,bottom=Number.isFinite(line.y)?line.y:H*.74;
   const cy=layout ? H * layout.y / 100 : config.position==='top'?top:config.position==='middle'?center:bottom;
   const cx=layout ? W * layout.x / 100 : W / 2;
-  const font=textFont(style,size);
+  const font=typography ? `700 ${size}px "${typography.family}"` : textFont(style,size);
   g.save();g.globalAlpha*=opacity;g.font=font;g.textAlign='left';g.textBaseline='middle';
   const lineHeight=Math.round(size*1.32),paddingY=Math.round(size*.43),paddingX=Math.round(size*.65);
   // Layout preview is 72% max wrap width, centered at an exact frame-% X.
@@ -137,7 +137,7 @@ export function drawStyledSubtitle(g,line,t,config,W,H,layout=null){
   const normalColor=['price-tag'].includes(style)?'#10251d':
     ['gold-card','luxury'].includes(style)?'#ffdc9a':
     style==='neon'?'#b7faff':'#f5f4ed';
-  const inactiveColor=style==='spotlight'?'rgba(226,233,231,.55)':normalColor;
+  const inactiveColor=typography ? typography.color : (style==='spotlight'?'rgba(226,233,231,.55)':normalColor);
   rows.forEach((row,r)=>{
     const rowWidth=widths[r];
     let x=style==='two-line'?left+paddingX:Math.max(left+paddingX,(cx-rowWidth/2));
