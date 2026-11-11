@@ -139,7 +139,8 @@ test('three genuine proposals and owner approval transfer exact scene typography
  assert.equal(sel.guards.run_render,false);
  assert.equal(sel.guards.auto_publish,false);
  h.send('SIMBA_MOTIONLAB_V2_ACK',{
-   accepted:true,receipt_id:'motionlab:v2:'+'1'.repeat(64),
+   accepted:true,delivery_id:emitted.data.payload.delivery_id,
+   receipt_id:'motionlab:v2:'+'1'.repeat(64),
  });
  assert.ok(h.state.lastAck?.startsWith('motionlab:v2:'));
 });
@@ -152,4 +153,30 @@ test('no approval cannot be transmitted; unedited layout is precisely flagged',(
  const selection=h.messages.at(-1).data.payload.selection;
  assert.equal(selection.decision.visual_layout_edited,false);
  assert.equal(selection.decision.explicit_approval,true);
+});
+
+test('stale ACK cannot approve a visual choice changed after submission',()=>{
+ const h=harness();h.prepare();
+ h.state.confirmed=true;
+ h.bridge.sendSelection();
+ const first=h.messages.at(-1).data.payload.delivery_id;
+ h.bridge.cancelPending();
+ h.state.sending=false;h.state.confirmed=false;
+ h.send('SIMBA_MOTIONLAB_V2_ACK',{
+   accepted:true,delivery_id:first,receipt_id:'motionlab:v2:'+'2'.repeat(64),
+ });
+ assert.equal(h.state.lastAck??null,null,
+   'previous approval must not be attributed to a newer edit');
+ h.state.confirmed=true;
+ h.bridge.sendSelection();
+ const second=h.messages.at(-1).data.payload.delivery_id;
+ assert.notEqual(second,first);
+ h.send('SIMBA_MOTIONLAB_V2_ACK',{
+   accepted:true,delivery_id:first,receipt_id:'motionlab:v2:'+'2'.repeat(64),
+ });
+ assert.equal(h.state.lastAck??null,null);
+ h.send('SIMBA_MOTIONLAB_V2_ACK',{
+   accepted:true,delivery_id:second,receipt_id:'motionlab:v2:'+'3'.repeat(64),
+ });
+ assert.ok(h.state.lastAck?.endsWith('3'.repeat(64)));
 });
