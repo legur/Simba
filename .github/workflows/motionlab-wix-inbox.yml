@@ -5,8 +5,8 @@ on:
     paths:
       - '.github/workflows/motionlab-wix-inbox.yml'
       - 'integrations/materials/motionlab/queue/**'
-  schedule:
-    - cron: '7,37 * * * *'
+  # Scheduled polling disabled: former member-login transport retired.
+  # Enable only after trusted no-login server receiver in issue #136.
   workflow_dispatch:
     inputs:
       dry_run:
@@ -40,7 +40,8 @@ jobs:
   inbox:
     needs: validate
     # No external polling or writes until Wix login + member allowlist are configured.
-    if: ${{ github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && vars.MOTIONLAB_INBOX_ENABLED == 'true') }}
+    # Diagnostic read-only dry runs; no GitHub branch creation or Wix ACK.
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run == true }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
