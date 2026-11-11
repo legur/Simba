@@ -340,11 +340,59 @@
   window.addEventListener('pagehide',()=>clearTimeout(cutStopTimer));
   refresh(current());populateCuts();
  }
+ // Local draft only. This does NOT give Montage v2 layout authority.
+ function exportLocalDraft(){
+  return {
+   schema:'bontours.motionlab.visual-local-draft/v1',
+   global_theme:{
+    layout:{title:{...shared.layout.title},subtitle:{...shared.layout.subtitle}},
+    text:{title:{...shared.text.title},subtitle:{...shared.text.subtitle}}
+   },
+   scenes:state.scenes.map(s=>({
+    scene_id:s.id,
+    layout:s.visualLayout?structuredClone(s.visualLayout):{},
+    text:s.visualTypography?structuredClone(s.visualTypography):{}
+   })),
+   render_authorized:false
+  };
+ }
+ function importLocalDraft(draft,scenes){
+  if(!draft||draft.schema!=='bontours.motionlab.visual-local-draft/v1'||
+     draft.render_authorized!==false||
+     !Array.isArray(draft.scenes)||draft.scenes.length!==scenes.length||
+     !draft.global_theme?.layout||!draft.global_theme?.text)
+   throw Error('INVALID_VISUAL_LOCAL_DRAFT');
+  for(let i=0;i<scenes.length;i++)
+   if(draft.scenes[i]?.scene_id!==scenes[i].id)throw Error('SCENE_IDS_CHANGED');
+  const cleanText=(kind,v)=>({
+   family:FONTS.has(v?.family)?v.family:baseText[kind].family,
+   color:color(v?.color),
+   size:Math.round(clamp(Number(v?.size)||100,70,140)/5)*5
+  });
+  for(const kind of ['title','subtitle']){
+   shared.layout[kind]=normalized(kind,draft.global_theme.layout[kind]||defaults[kind]);
+   shared.text[kind]=cleanText(kind,draft.global_theme.text[kind]||baseText[kind]);
+  }
+  for(let i=0;i<scenes.length;i++){
+   const item=draft.scenes[i];
+   for(const field of ['visualLayout','visualTypography'])delete scenes[i][field];
+   for(const kind of ['title','subtitle']){
+    if(item.layout?.[kind]){
+     if(!scenes[i].visualLayout)scenes[i].visualLayout={};
+     scenes[i].visualLayout[kind]=normalized(kind,item.layout[kind]);
+    }
+    if(item.text?.[kind]){
+     if(!scenes[i].visualTypography)scenes[i].visualTypography={};
+     scenes[i].visualTypography[kind]=cleanText(kind,item.text[kind]);
+    }
+   }
+  }
+ }
  globalThis.MotionLabVisual={
   get,dirty,changed,typography,isOverride,
   theme:kind=>({...shared.text[kind]}),selectedKind:()=>layer.kind,
   setTheme,applyTypographyAll,setSceneTypography,inheritTypography,inheritLayout,applyLayoutToAll,resetTheme,
-  render:refresh,renderStage:renderLayout,populateCuts,pauseFilm,init,seek,saveDraft
+  render:refresh,renderStage:renderLayout,populateCuts,pauseFilm,init,seek,saveDraft,exportLocalDraft,importLocalDraft
  };
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
