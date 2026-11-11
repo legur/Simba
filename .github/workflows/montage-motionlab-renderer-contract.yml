@@ -6,12 +6,16 @@ on:
       - '.github/workflows/montage-motionlab-renderer-contract.yml'
       - 'integrations/video/motionlab_render_contract.py'
       - 'integrations/video/motionlab_v2_contract.py'
+      - 'integrations/video/motionlab_layout_contract.py'
       - 'integrations/video/tests/test_motionlab_render_contract.py'
       - 'integrations/video/tests/test_motionlab_v2_contract.py'
+      - 'integrations/video/tests/test_motionlab_visual_layout.py'
+      - 'integrations/video/tests/test_motionlab_subtitle_geometry.mjs'
       - 'integrations/video/motionlab_analysis_bundle.py'
       - 'integrations/video/tests/test_motionlab_analysis_bundle.py'
       - 'integrations/video/make_video.py'
       - 'integrations/video/template/film.js'
+      - 'integrations/video/template/subtitle_styles.js'
       - 'integrations/video/MOTIONLAB_RENDERER_CONTRACT.md'
       - 'integrations/materials/motionlab/motionlab_selection.py'
   push:
@@ -51,12 +55,14 @@ jobs:
           command -v ffprobe
       - name: Syntax and existing renderer contract
         run: |
-          python -m py_compile integrations/video/make_video.py integrations/video/motionlab_render_contract.py integrations/video/motionlab_v2_contract.py integrations/video/motionlab_analysis_bundle.py
+          python -m py_compile integrations/video/make_video.py integrations/video/motionlab_render_contract.py integrations/video/motionlab_v2_contract.py integrations/video/motionlab_layout_contract.py integrations/video/motionlab_analysis_bundle.py
           node --check integrations/video/template/film.js
+          node --experimental-default-type=module --test integrations/video/tests/test_motionlab_subtitle_geometry.mjs
           python -m unittest discover -s integrations/video/tests -p 'test_motion_lab_transitions.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_subtitle_styles.py' -v
       - name: New Motion Lab source-pinned zero-paid renderer preflight
         run: |
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_render_contract.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_v2_contract.py' -v
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_visual_layout.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_analysis_bundle.py' -v
