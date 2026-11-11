@@ -16,3 +16,31 @@
 .effect-support{display:inline-block;font:800 9px/1.2 Manrope,sans-serif;border:1px solid #8b6a39;color:#f4d498;border-radius:5px;padding:3px 6px}
 .effect-support.renderable{border-color:#4f7f5a;color:#c2f0c0}
 .concept .concept-support{margin:3px 0;color:#e7c990;font-size:10px}
+
+/* Whole-film director review. Visual simulation only, not an MP4 encoder. */
+.screen .montage-next{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:0;overflow:hidden}
+.screen .montage-next[hidden],.screen .montage-flash[hidden]{display:none}
+.screen .montage-next>img,.screen .montage-next>video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.screen .montage-next>img[hidden],.screen .montage-next>video[hidden]{display:none}
+.screen .montage-flash{position:absolute;inset:0;z-index:2;background:#fff;pointer-events:none;opacity:0}
+.screen .vignette{z-index:2;pointer-events:none}
+.screen .topstamp,.screen .frame-title,.screen .frame-subtitle,.screen .frame-footer{z-index:3}
+.film-player{border:1px solid #466464;background:#13272e;border-radius:12px;margin:12px 0 19px;padding:14px}
+.film-player-heading{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px}
+.film-player-heading strong{display:block;font-size:12px;margin-top:4px}
+#filmClock{color:var(--lime);font-weight:900;font-size:12px;white-space:nowrap}
+.film-play-controls{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.film-play-controls .primary-btn{flex:1 1 180px}
+.film-play-controls .secondary-btn{flex:0 1 auto}
+.film-player progress{display:block;appearance:none;width:100%;height:7px;border:0;border-radius:5px;overflow:hidden;background:#34505b}
+.film-player progress::-webkit-progress-bar{background:#34505b}
+.film-player progress::-webkit-progress-value{background:var(--lime)}
+.film-player progress::-moz-progress-bar{background:var(--lime)}
+.film-accuracy{font-size:10px;color:#e0cda6;line-height:1.6;margin:10px 0 0}
+.review-approval{background:#152b25;border:1px solid #526b52;padding:15px;border-radius:12px;margin-top:17px}
+.review-approval>strong{display:block;font-size:13px}
+.review-approval p{color:#bad0c5;font-size:11px;margin:5px 0 11px}
+.review-approval .primary-btn{margin-right:12px}
+#approvalStatus{font-size:11px;font-weight:800;color:#f0cc89;display:inline-block;margin-top:9px}
+#approvalStatus.approved{color:#c9f47d}
+@media(max-width:550px){.film-play-controls .primary-btn,.film-play-controls .secondary-btn{flex-basis:100%}.review-approval .primary-btn{width:100%}}

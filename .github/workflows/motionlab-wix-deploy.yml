@@ -65,6 +65,7 @@ jobs:
           done
           node --test integrations/materials/motionlab/repo-tests/test_creative_catalog.mjs
           node --test integrations/materials/motionlab/repo-tests/test_storyboard_internal.mjs
+          node --test integrations/materials/motionlab/repo-tests/test_director_preview.mjs
       - name: Validation summary
         if: ${{ success() }}
         run: |
