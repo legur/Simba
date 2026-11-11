@@ -64,7 +64,7 @@ function harness(fetchImpl) {
         protocol,type,
         request_id:session.launch.request_id,
         project_id:session.launch.project_id,
-        payload:{selection:sel},
+        payload:{selection:sel,delivery_id:'d1'},
       },
     });
   };
@@ -115,6 +115,7 @@ test('v2 connected explicit approval -> durable receiver ACK, not fake APPLIED',
                    selection.scene_layout);
   const ack=h.sent.find(x=>x.data.type==='SIMBA_MOTIONLAB_V2_ACK');
   assert.equal(ack.data.payload.accepted,true);
+  assert.equal(ack.data.payload.delivery_id,'d1');
   assert.equal(ack.data.payload.state,'SELECTION_DURABLY_QUEUED_NOT_APPLIED');
   assert.equal(ack.origin,MOTION_LAB_ORIGIN);
   assert.ok(!h.sent.some(x=>x.data.type==='SIMBA_MOTIONLAB_ACK'));
