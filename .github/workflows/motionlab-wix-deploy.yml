@@ -68,6 +68,7 @@ jobs:
           node --test integrations/materials/motionlab/repo-tests/test_director_preview.mjs
           node --test integrations/materials/motionlab/repo-tests/test_visual_editor.mjs
           node --test integrations/materials/motionlab/repo-tests/test_scene_pages.mjs
+          node --test integrations/materials/motionlab/repo-tests/test_motionlab_v2_ui.mjs
       - name: Validation summary
         if: ${{ success() }}
         run: |
