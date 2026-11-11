@@ -11,6 +11,7 @@ import argparse, asyncio, difflib, glob, hashlib, json, os, re, shutil, subproce
 from pathlib import Path
 
 import motionlab_layout_contract as layout_contract
+import motionlab_typography_contract as typography_contract
 
 for _s in (sys.stdout, sys.stderr): _s.reconfigure(encoding='utf-8', errors='replace')   # Windows consoles default to a code page
 HERE = Path(__file__).resolve().parent
@@ -161,6 +162,12 @@ def load_spec(job: Path):
                 sc['visualLayout'] = layout_contract.validate_scene_layout(
                     sc['visualLayout'], f'clip-{i + 1:02d}')
             except layout_contract.LayoutError as exc:
+                raise Stop(f'video-spec.json scene {i + 1}: {exc.code} ({exc.field})') from None
+        if 'visualTypography' in sc:
+            need(bool(sc.get('clip')), f'scene {i + 1}: typography only supported on verified F2U clips')
+            try:
+                sc['visualTypography'] = typography_contract.validate_theme(sc['visualTypography'])
+            except typography_contract.TypographyError as exc:
                 raise Stop(f'video-spec.json scene {i + 1}: {exc.code} ({exc.field})') from None
         need(all(isinstance(l.get('text'), str) and l['text'].strip() for l in sc.get('lines', [])), f'scene {i + 1}: every line needs "text"')
     o = s.get('offer')
@@ -493,7 +500,7 @@ def timeline(spec):
             end = speak(ls, t + (.5 if i == 0 else .35), 1420) - .35 + .5
             if sc.get('title'): end = max(end, t0 + 1.1 + need_read(sc['title']))
             t = max(end, t0 + (c['dur'] if c else sc.get('minDur', 2.8)))
-        s = {'image': sc.get('image', sc.get('clip')), 'move': sc.get('move', 'push'), 'focus': sc.get('focus', [.5, .5]), 'title': sc.get('title'), 'cameraEffect': sc.get('cameraEffect'), 'titleEffect': sc.get('titleEffect'), 'visualLayout': sc.get('visualLayout'), 't0': round(t0, 3), 't1': round(t, 3), 'transition': sc.get('transition')}
+        s = {'image': sc.get('image', sc.get('clip')), 'move': sc.get('move', 'push'), 'focus': sc.get('focus', [.5, .5]), 'title': sc.get('title'), 'cameraEffect': sc.get('cameraEffect'), 'titleEffect': sc.get('titleEffect'), 'visualLayout': sc.get('visualLayout'), 'visualTypography': sc.get('visualTypography'), 't0': round(t0, 3), 't1': round(t, 3), 'transition': sc.get('transition')}
         if c: s.update(frames=c['frames'], count=c['count'], fps=c['fps'])
         if sc.get('insert'): s['insert'] = sc['insert']
         scenes.append(s)
