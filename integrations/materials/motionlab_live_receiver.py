@@ -123,11 +123,12 @@ class SessionStore:
                 "expires_at_epoch":created+SESSION_TTL_SECONDS,
                 "status":"READY_FOR_BROWSER"}
 
-    def create_v2(self,root:Path,project_id:str,proposals:dict)->dict:
-        """Owner creates a session after Motion Lab actually authored proposals.
+    def create_v2(self,root:Path,project_id:str)->dict:
+        """Phase A: create source-pinned session BEFORE Motion Lab drafts.
 
-        No artificial options passed from Montage. All private MP4 and
-        approved spec originate in the trusted server-side project folder.
+        v2 does NOT fabricate Montage options. Owner securely provides the
+        resulting materials.launch to the visual agent, then uploads actual
+        Motion Lab proposals in a separate authenticated phase.
         """
         if self.private_root is None:
             raise ReceiverError("Protected private project storage unavailable")
@@ -135,22 +136,48 @@ class SessionStore:
         request_id="studio-"+sid
         ctx=stage_v2.source_context(root,self.private_root,project_id,request_id)
         materials=ctx["materials"]
-        v2.validate_proposals_v2(materials,proposals)
         created=_now()
         token=secrets.token_urlsafe(32)
         with self.open() as db:
             db.execute("""INSERT INTO sessions(
-                sid,token_hash,project_id,launch_json,proposals_json,
+                sid,token_hash,project_id,launch_json,
                 created,expires,status
-            ) VALUES(?,?,?,?,?,?,?,?)""",(
+            ) VALUES(?,?,?,?,?,?,?)""",(
                 sid,hashlib.sha256(token.encode()).hexdigest(),project_id,
-                _json_bytes(materials).decode(),
-                _json_bytes(proposals).decode(),created,
+                _json_bytes(materials).decode(),created,
                 created+SESSION_TTL_SECONDS,"OPEN"))
         return {"session_id":sid,"capability":token,"launch":materials,
-                "proposals":proposals,
                 "expires_at_epoch":created+SESSION_TTL_SECONDS,
-                "status":"READY_FOR_BROWSER_V2"}
+                "status":"AWAITING_REAL_MOTIONLAB_PROPOSALS"}
+
+    def set_proposals_v2(self,root:Path,sid:str,proposals:dict)->dict:
+        """Phase B: owner-verified actual agent proposal set, not a browser draft."""
+        if not isinstance(sid,str) or not SID.fullmatch(sid):
+            raise ReceiverError("Invalid v2 session ID")
+        if not isinstance(proposals,dict):
+            raise ReceiverError("Motion Lab proposals required")
+        raw=_json_bytes(proposals).decode()
+        if len(raw.encode())>MAX_BODY:
+            raise ReceiverError("Motion Lab v2 proposals exceed private limit")
+        with self.open() as db:
+            db.execute("BEGIN IMMEDIATE")
+            row=db.execute("SELECT * FROM sessions WHERE sid=?",(sid,)).fetchone()
+            if not row or row["status"]!="OPEN" or row["expires"]<_now():
+                raise ReceiverError("Session is no longer accepting proposals")
+            launch=json.loads(row["launch_json"])
+            if launch.get("schema")!=v2.MATERIALS or self.private_root is None:
+                raise ReceiverError("Not a protected v2 session")
+            if row["proposals_json"]:
+                if row["proposals_json"]==raw:
+                    db.execute("COMMIT")
+                    return {"proposals_saved":True,"status":"READY_FOR_SELECTION",
+                            "idempotent":True}
+                raise ReceiverError("Cannot replace already reviewed proposals")
+            stage_v2.check_current_v2(root,self.private_root,row["project_id"],launch,proposals)
+            db.execute("UPDATE sessions SET proposals_json=? WHERE sid=? AND proposals_json IS NULL",
+                       (raw,sid))
+            db.execute("COMMIT")
+        return {"proposals_saved":True,"status":"READY_FOR_SELECTION","idempotent":False}
 
     @staticmethod
     def _auth(row, token: str) -> bool:
