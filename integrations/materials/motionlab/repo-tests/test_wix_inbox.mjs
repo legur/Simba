@@ -109,3 +109,19 @@ test('Refuse unsourced or altered request fingerprints', async () => {
   await assert.rejects(a.api.submit(x), /исходной версией/);
   assert.equal(a.calls.length, 0);
 });
+
+test('The same approved selection retries with exactly one delivery ID', async () => {
+  const a = rig({insertFails: true});
+  const first = await a.api.submit(clean(selected));
+  const second = await a.api.submit(clean(selected));
+  assert.equal(second.deliveryId, first.deliveryId);
+  assert.equal(a.calls.length, 4);
+  assert.equal(JSON.parse(a.calls[0].opts.body).dataItem.id,
+               JSON.parse(a.calls[2].opts.body).dataItem.id);
+});
+test('Storyboard approval timestamp remains stable until new user edit', () => {
+  const storyboard = fs.readFileSync(new URL('../storyboard.js', import.meta.url), 'utf8');
+  assert.match(storyboard, /state\.confirmedAt=new Date\(\)\.toISOString\(\)/);
+  assert.match(storyboard, /timestamp=state\.confirmedAt\|\|new Date\(\)\.toISOString\(\)/);
+  assert.match(storyboard, /state\.confirmedAt=null;state\.sending=false/);
+});
