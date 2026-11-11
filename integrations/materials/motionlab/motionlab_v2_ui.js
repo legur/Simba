@@ -54,6 +54,14 @@
        !permitted(caps.subtitle?.motions,s.wordMotion))
        issues.push('Сцена '+(i+1)+': стиль/анимация субтитров недоступны');
    });
+   const ui=globalThis.MotionLabVisual;
+   const loaded=caps.typography?.native_families_ready||[];
+   if(ui?.typography){
+     for(const [i,s] of rows.entries())for(const kind of ['title','subtitle']){
+       if(!loaded.includes(ui.typography(s,kind)?.family))
+         issues.push('Сцена '+(i+1)+': шрифт '+kind+' требует установки в рендерере');
+     }
+   }
    if(new Set(rows.map(s=>s.subtitleStyle+'|'+s.wordMotion)).size!==1)
      issues.push('Субтитры должны иметь единый стиль и движение слов');
    if(rows.length!==active.materials.scenes.length)issues.push('Число сцен изменено');
