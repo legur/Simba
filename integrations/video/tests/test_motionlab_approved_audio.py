@@ -75,7 +75,7 @@ class ApprovedWavSourceTests(unittest.TestCase):
             writer.setnchannels(1)
             writer.setsampwidth(2)
             writer.setframerate(16000)
-            writer.writeframes(b"\\x00\\x04"*16000)
+            writer.writeframes(b"\x00\x04"*16000)
         sha=hashlib.sha256(self.path.read_bytes()).hexdigest()
         self.asset["id"]="narration-"+sha[:24]
         self.asset["recorded_sha256"]=sha
