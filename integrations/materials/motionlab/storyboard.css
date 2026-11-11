@@ -206,3 +206,10 @@
 .full-video-import #fullVideoStatus{color:#c7e3d8;font-weight:600}
 .full-video-import #fullVideoStatus.director-error{color:#ffbcb2}
 @media(max-width:640px){.full-video-import{padding:12px}.full-video-import .full-video-actions .secondary-btn{width:100%}}
+
+.cut-boundary-controls{margin:20px 0;padding:14px;border:1px solid #54736f;border-radius:12px;background:#182630;color:#ecf4ec}
+.cut-boundary-controls[hidden]{display:none}
+.cut-boundary-controls h4{font-size:14px;margin:0 0 8px}
+.cut-boundary-controls p{font-size:12px;line-height:1.6;color:#d1dee0}
+.cut-boundary-controls label{display:block;margin:14px 0;font-size:12px}
+.cut-boundary-controls input{display:block;max-width:220px;padding:10px;margin:8px 0;color:#f1f6f4;background:#111b25;border:1px solid #57716f;border-radius:8px}
