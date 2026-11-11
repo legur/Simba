@@ -38,6 +38,8 @@ HERE=Path(__file__).resolve().parent
 if str(HERE) not in sys.path:
     sys.path.insert(0,str(HERE))
 import motionlab_stage_writeback as stage
+import motionlab_v2_stage_writeback as stage_v2
+import motionlab_v2_contract as v2
 import rafael_archive
 import auto_script
 
@@ -68,7 +70,8 @@ def _safe_repository_content(root: Path, project: str) -> Path:
 
 class SessionStore:
     """Single-owner SQLite queue; never store raw credentials in the DB."""
-    def __init__(self, filename: Path):
+    def __init__(self, filename: Path, private_root: Path | None = None):
+        self.private_root=Path(private_root).resolve() if private_root is not None else None
         # Never follow a caller-supplied symlink into a shared directory.
         filename=filename.expanduser()
         if filename.is_symlink():
@@ -89,6 +92,10 @@ class SessionStore:
               );
               CREATE INDEX IF NOT EXISTS sessions_status ON sessions(status);
             """)
+            cols={x["name"] for x in db.execute("PRAGMA table_info(sessions)").fetchall()}
+            for field in ("proposals_json","spec_json"):
+                if field not in cols:
+                    db.execute(f"ALTER TABLE sessions ADD COLUMN {field} TEXT")
 
     @contextmanager
     def open(self):
@@ -115,6 +122,35 @@ class SessionStore:
         return {"session_id":sid,"capability":token,"launch":launch,
                 "expires_at_epoch":created+SESSION_TTL_SECONDS,
                 "status":"READY_FOR_BROWSER"}
+
+    def create_v2(self,root:Path,project_id:str,proposals:dict)->dict:
+        """Owner creates a session after Motion Lab actually authored proposals.
+
+        No artificial options passed from Montage. All private MP4 and
+        approved spec originate in the trusted server-side project folder.
+        """
+        if self.private_root is None:
+            raise ReceiverError("Protected private project storage unavailable")
+        sid=secrets.token_hex(16)
+        request_id="studio-"+sid
+        ctx=stage_v2.source_context(root,self.private_root,project_id,request_id)
+        materials=ctx["materials"]
+        v2.validate_proposals_v2(materials,proposals)
+        created=_now()
+        token=secrets.token_urlsafe(32)
+        with self.open() as db:
+            db.execute("""INSERT INTO sessions(
+                sid,token_hash,project_id,launch_json,proposals_json,
+                created,expires,status
+            ) VALUES(?,?,?,?,?,?,?,?)""",(
+                sid,hashlib.sha256(token.encode()).hexdigest(),project_id,
+                _json_bytes(materials).decode(),
+                _json_bytes(proposals).decode(),created,
+                created+SESSION_TTL_SECONDS,"OPEN"))
+        return {"session_id":sid,"capability":token,"launch":materials,
+                "proposals":proposals,
+                "expires_at_epoch":created+SESSION_TTL_SECONDS,
+                "status":"READY_FOR_BROWSER_V2"}
 
     @staticmethod
     def _auth(row, token: str) -> bool:
@@ -144,12 +180,25 @@ class SessionStore:
             # Recheck canonical stage at the moment of accepting; no stale
             # source fingerprint can become a valid user decision.
             _,project,packet=stage._open_stage(root,row["project_id"])
-            stage._verify_launch(root,row["project_id"],launch,packet,project)
-            receipt=stage._check_choice(launch,selection,project)
+            spec_raw=None
+            if launch.get("schema")==v2.MATERIALS:
+                if not row["proposals_json"] or self.private_root is None:
+                    raise ReceiverError("Motion Lab v2 private proposals unavailable")
+                proposals=json.loads(row["proposals_json"])
+                ctx,spec,receipt=stage_v2.check_current_v2(
+                    root,self.private_root,row["project_id"],
+                    launch,proposals,selection)
+                spec_raw=_json_bytes(spec).decode()
+                if len(spec_raw.encode())>MAX_BODY:
+                    raise ReceiverError("Verified v2 spec exceeds private receipt limit")
+            else:
+                stage._verify_launch(root,row["project_id"],launch,packet,project)
+                receipt=stage._check_choice(launch,selection,project)
             receipt_id=receipt["receipt_id"]
             db.execute("""UPDATE sessions SET selection_json=?,receipt_id=?,
-                       status='QUEUED' WHERE sid=? AND status='OPEN'""",
-                       (raw.decode(),receipt_id,sid))
+                       spec_json=?,status='QUEUED'
+                       WHERE sid=? AND status='OPEN'""",
+                       (raw.decode(),receipt_id,spec_raw,sid))
             db.execute("COMMIT")
         return {"receipt_id":receipt_id,"persisted":True,
                 "stage_status":"QUEUED","render_started":False}
@@ -163,8 +212,11 @@ class SessionStore:
         if (row is None or not self._auth(row,token)
                 or row["expires"]<_now()):
             raise ReceiverError("Session invalid or expired")
-        return {"session_id":sid,"launch":json.loads(row["launch_json"]),
+        result={"session_id":sid,"launch":json.loads(row["launch_json"]),
                 "expires_at_epoch":row["expires"],"status":row["status"]}
+        if row["proposals_json"]:
+            result["proposals"]=json.loads(row["proposals_json"])
+        return result
 
 
     def status(self,sid:str,token:str)->dict:
@@ -198,7 +250,7 @@ class SessionStore:
 
 def _drive_json(drive, sid: str, kind: str, payload: bytes) -> tuple[str,str]:
     """Create-once or resume by deterministic name; no blind repeat upload."""
-    if kind not in ("launch","selection") or not SID.fullmatch(sid):
+    if kind not in ("launch","selection","materials","proposals","selection-v2","video-spec") or not SID.fullmatch(sid):
         raise ReceiverError("Invalid private source name")
     folder=rafael_archive.ARCHIVE_FOLDER
     name=f"Simba_MotionLab_{sid}_{kind}.json"
