@@ -200,6 +200,133 @@ function updateKey(key,value){if(state.request&&['name','duration','image','asse
 function editChange(id,key,fn){$(id).addEventListener('change',()=>{const v=fn?fn($(id).value):$(id).value;updateKey(key,v);});}
 function liveChange(id,key){$(id).addEventListener('input',()=>{if(state.request&&['title','subtitle'].includes(key))return;const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
 function resetAck(){if(film.active)stopFilm(false);state.confirmed=false;state.sending=false;state.lastAck=null;clearTimeout(pendingAckTimer);}
+// Whole-film editor review: a browser approximation on verified/locally selected assets.
+// Does not generate MP4, analyze speech/music, or silently authorize Montage.
+const film={active:false,raf:0,started:0,index:-1,nextIndex:-1,total:0};
+function filmClock(seconds){const t=Math.max(0,Math.floor(seconds));return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0');}
+function filmTotal(){return state.scenes.reduce((sum,s)=>sum+Number(s.duration||0),0);}
+function hideNext(){
+ const layer=$('montageNext'),nextVideo=$('nextVideo');
+ layer.hidden=true;layer.style.opacity='0';layer.style.transform='none';layer.style.clipPath='none';layer.style.filter='none';
+ nextVideo.pause();$('montageFlash').hidden=true;$('montageFlash').style.opacity='0';film.nextIndex=-1;
+}
+function stopFilm(restore=true,complete=false){
+ cancelAnimationFrame(film.raf);film.raf=0;film.active=false;film.index=-1;film.nextIndex=-1;
+ const video=$('previewVideo');if(video)video.pause();
+ if($('montageNext'))hideNext();
+ if($('playFilm'))$('playFilm').textContent='▶ Просмотреть весь ролик';
+ if($('filmNow'))$('filmNow').textContent=complete?'Предпросмотр завершен':'Предпросмотр остановлен';
+ if($('filmClock'))$('filmClock').textContent=filmClock(complete?film.total:0)+' / '+filmClock(film.total);
+ if($('filmProgress'))$('filmProgress').value=complete?100:0;
+ if(restore&&state.scenes.length)renderEditor();
+}
+function filmMedia(scene,photo,video){
+ const source=previewFor(scene);
+ if(source?.type==='video'){
+  photo.hidden=true;video.hidden=false;
+  if(video.src!==source.url){video.pause();video.src=source.url;video.load();}
+ }else{
+  video.pause();video.hidden=true;photo.hidden=false;
+  photo.src=source?.type==='image'?source.url:scenePhoto(scene);
+ }
+ return Boolean(source);
+}
+function safePlayVideo(v,seek=0){
+ if(v.hidden)return;
+ const attempt=()=>{
+  try{if(Number.isFinite(seek)&&seek>0&&v.readyState>0&&Number.isFinite(v.duration))v.currentTime=Math.min(seek,Math.max(0,v.duration-.1));}catch{}
+  const p=v.play();if(p?.catch)p.catch(()=>{});
+ };
+ if(v.readyState>=1)attempt();
+ else v.addEventListener('loadedmetadata',attempt,{once:true});
+}
+function filmEnterScene(index){
+ if(index<0||index>=state.scenes.length)return;
+ hideNext();
+ const s=state.scenes[index],local=filmMedia(s,$('previewPhoto'),$('previewVideo'));
+ $('previewPhoto').getAnimations().forEach(a=>a.cancel());
+ $('previewPhoto').style.transform='none';
+ if(!s.media?.kind||!local){
+  $('mediaProvenance').textContent=local?'Локальная копия для предпросмотра':'Демонстрационный фон: не представлен оригинальный кадр этой сцены.';
+ }else $('mediaProvenance').textContent='Локальная копия источника для предпросмотра. Полный QA выполняет Montage.';
+ const carry=index>0?Math.min(.85,state.scenes[index-1].duration*.35):0;
+ safePlayVideo($('previewVideo'),carry);
+ $('frameTitle').textContent=s.titleFx==='none'?'':s.title;
+ $('frameSubtitle').textContent=s.subtitleStyle==='none'?'':s.subtitle;
+ $('frameTitle').style.opacity=s.titleFx==='none'?'0':'1';
+ $('frameSubtitle').style.opacity=s.subtitleStyle==='none'?'0':'1';
+ $('frameSubtitle').className='frame-subtitle '+(s.subtitleStyle==='luxury'||s.subtitleStyle==='gold-card'?'gold':'');
+ $('filmNow').textContent='Сцена '+(index+1)+' / '+state.scenes.length+': '+s.name;
+ const n=state.scenes.filter(scene=>!previewFor(scene)).length;
+ $('filmAccuracy').textContent='Предпросмотр без отдельной озвучки и музыкального микса. '+(n?'Оригиналы не загружены для '+n+' сцен; там используются макеты. ':'')+'Сложные переходы показаны приближенно; точный MP4 создается в Montage.';
+ film.index=index;
+}
+function filmIncoming(index){
+ if(film.nextIndex===index)return;
+ const s=state.scenes[index],layer=$('montageNext');
+ filmMedia(s,$('nextPhoto'),$('nextVideo'));film.nextIndex=index;layer.hidden=false;
+ layer.style.opacity='0';layer.style.transform='none';layer.style.clipPath='none';layer.style.filter='none';
+ safePlayVideo($('nextVideo'));
+}
+function filmTransitionFrame(id,progress){
+ const layer=$('montageNext'),flash=$('montageFlash'),p=clamp(progress,0,1);
+ layer.style.transform='none';layer.style.filter='none';layer.style.clipPath='none';flash.hidden=true;flash.style.opacity='0';
+ if(id==='none'){layer.style.opacity=p>=1?'1':'0';return;}
+ if(id==='push'||id==='whip'){
+  layer.style.opacity='1';layer.style.transform='translateX('+Math.round((1-p)*100)+'%)';
+  if(id==='whip')layer.style.filter='blur('+Math.round((1-p)*7)+'px)';
+ }else if(id==='zoom'){
+  layer.style.opacity=String(p);layer.style.transform='scale('+(1.16-.16*p)+')';
+ }else if(id==='circle'){
+  layer.style.opacity='1';layer.style.clipPath='circle('+(p*78).toFixed(2)+'% at 50% 50%)';
+ }else if(id==='diagonal'){
+  layer.style.opacity='1';layer.style.clipPath='polygon(0 0,'+(p*200-100)+'% 0,'+(p*200)+'% 100%,0 100%)';
+ }else if(id==='blur'){
+  layer.style.opacity=String(p);layer.style.filter='blur('+(1-p)*12+'px)';
+ }else if(id==='flash'){
+  layer.style.opacity=String(p);flash.hidden=false;flash.style.opacity=String(Math.sin(Math.PI*p)*.85);
+ }else{
+  // Honest approximation for Canvas2D transition algorithms not simulated exactly in this browser.
+  layer.style.opacity=String(p);
+ }
+}
+function filmFrame(now){
+ if(!film.active)return;
+ const t=(now-film.started)/1000;
+ if(t>=film.total){stopFilm(true,true);return;}
+ let position=0,index=0;
+ for(let i=0;i<state.scenes.length;i++){const d=state.scenes[i].duration;if(t<position+d||i===state.scenes.length-1){index=i;break;}position+=d;}
+ if(index!==film.index)filmEnterScene(index);
+ const length=state.scenes[index].duration,into=t-position;
+ const next=index+1;
+ const transition=next<state.scenes.length?state.scenes[next].transition:'none';
+ const span=next<state.scenes.length&&transition!=='none'?Math.min(.9,length*.35):0;
+ if(span>0&&into>=length-span){
+  filmIncoming(next);filmTransitionFrame(transition,(into-(length-span))/span);
+ }else if(film.nextIndex!==-1)hideNext();
+ $('filmClock').textContent=filmClock(t)+' / '+filmClock(film.total);
+ $('filmProgress').value=100*t/film.total;
+ film.raf=requestAnimationFrame(filmFrame);
+}
+function startFilm(){
+ if(film.active)return;
+ resetPreview();
+ const total=filmTotal();
+ if(!Number.isFinite(total)||total<=0||!state.scenes.length){say('Нет сцен для просмотра');return;}
+ film.active=true;film.index=-1;film.nextIndex=-1;film.total=total;film.started=performance.now();
+ $('playFilm').textContent='■ Остановить просмотр';
+ $('filmClock').textContent='00:00 / '+filmClock(total);
+ film.raf=requestAnimationFrame(filmFrame);
+}
+function approveReview(){
+ if(film.active)stopFilm();
+ const error=validationError();
+ if(error){say(error);return;}
+ state.confirmed=true;renderSummary();
+ const count=rendererIssues(state.scenes).length;
+ say(count?'Монтаж визуально утвержден, но '+count+' параметров еще не поддержаны рендерером':'Вариант утвержден. Передача возможна только через подключенный Montage.');
+}
+
 function resetPreview(){previewTimers.forEach(t=>clearTimeout(t));previewTimers=[];$('previewPhoto').getAnimations().forEach(a=>a.cancel());$('frameTitle').getAnimations().forEach(a=>a.cancel());$('frameSubtitle').getAnimations().forEach(a=>a.cancel());$('previewPhoto').style.transform='scale(1.06)';const v=$('previewVideo');if(!v.hidden){v.pause();try{v.currentTime=0;}catch{}}$('frameTitle').style.opacity='1';$('frameSubtitle').style.opacity='1';}
 function play(){if(film.active)stopFilm();resetPreview();const s=state.scenes[state.selectedIndex];if(matchMedia('(prefers-reduced-motion: reduce)').matches){say('Анимация ограничена настройками доступности');return;}
  const img=$('previewPhoto'),title=$('frameTitle'),sub=$('frameSubtitle');if(!$('previewVideo').hidden){const p=$('previewVideo').play();if(p?.catch)p.catch(()=>say('Локальное видео не воспроизводится'));}const amount=s.intensity/100,dur=clamp(s.duration*1000,750,5000);
