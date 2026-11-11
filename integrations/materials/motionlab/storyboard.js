@@ -225,6 +225,18 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  $('downloadJson').disabled=Boolean(state.v2)||layoutDraft;
  $('downloadJson').title=state.v2?'v1 экспорт для подключенного задания v2 запрещен':layoutDraft?'Этот v1 JSON не хранит позиции текста. Скачайте визуальный черновик v2.':'Скачать настройки совместимые с v1';
  $('downloadVisual').disabled=!layoutDraft;
+ // Once a v2 selection is submitted, it may already be durably queued.
+ // Never allow browser edits to an in-flight or accepted immutable approval.
+ const v2Locked=Boolean(state.v2&&(state.sending||state.lastAck));
+ const overview=$('overviewWorkspace'),detail=$('detailView');
+ if(overview)overview.inert=v2Locked;
+ if(detail)detail.inert=v2Locked;
+ if($('approveChoice'))$('approveChoice').disabled=v2Locked;
+ if(v2Locked&&state.v2){
+   $('deliveryHint').textContent=state.lastAck
+     ?'Решение сохранено. Для нового варианта создайте новую защищенную сессию; этот выбор неизменяем.'
+     :'Идет сохранение решения. Редактирование временно заблокировано до ответа сервера.';
+ }
  const approval=$('approvalStatus');if(approval){approval.textContent=state.confirmed?'Вариант утвержден вами, но не передан монтажеру':'Еще не утверждено';approval.classList.toggle('approved',state.confirmed);}
  const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
  $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.sending?'Решение отправлено. Подтверждение принимающей стороны пока не получено.':state.bridge?'Канал ответа подключен. После выбора нажмите «Передать выбор агенту».':'Канала ответа нет. Экспортируйте JSON, чтобы продолжить работу в агенте.';
