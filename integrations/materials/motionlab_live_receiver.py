@@ -364,19 +364,45 @@ class Relay:
             launch=json.loads(row["launch_json"])
             choice=json.loads(row["selection_json"])
             _,project,packet=stage._open_stage(self.root,row["project_id"])
-            stage._verify_launch(self.root,row["project_id"],launch,packet,project)
-            result=stage._check_choice(launch,choice,project)
-            if result["receipt_id"]!=row["receipt_id"]:
-                raise ReceiverError("Selection receipt changed after acceptance")
-            drive=self.drive_factory()
-            rafael_archive.check_private_folder(drive,rafael_archive.ARCHIVE_FOLDER)
-            lid,lsha=_drive_json(drive,sid,"launch",row["launch_json"].encode())
-            cid,csha=_drive_json(drive,sid,"selection",row["selection_json"].encode())
-            _,candidate,report=stage.build_candidate(
-                self.root,row["project_id"],launch_file_id=lid,launch_sha256=lsha,
-                selection_file_id=cid,selection_sha256=csha,drive=drive)
-            if report.get("selection_receipt_id")!=row["receipt_id"]:
-                raise ReceiverError("Canonical write-back receipt differs")
+            if launch.get("schema")==v2.MATERIALS:
+                if (not row["proposals_json"] or not row["spec_json"]
+                        or self.store.private_root is None):
+                    raise ReceiverError("Verified v2 proposal and spec required")
+                proposals=json.loads(row["proposals_json"])
+                frozen_spec=json.loads(row["spec_json"])
+                ctx,confirmed,report=stage_v2.check_current_v2(
+                    self.root,self.store.private_root,row["project_id"],
+                    launch,proposals,choice)
+                if confirmed!=frozen_spec or report["receipt_id"]!=row["receipt_id"]:
+                    raise ReceiverError("Verified v2 private source or spec changed")
+                drive=self.drive_factory()
+                rafael_archive.check_private_folder(drive,rafael_archive.ARCHIVE_FOLDER)
+                refs={}
+                for kind,raw in (
+                    ("materials",row["launch_json"]),
+                    ("proposals",row["proposals_json"]),
+                    ("selection-v2",row["selection_json"]),
+                    ("video-spec",row["spec_json"]),
+                ):
+                    fid,sha=_drive_json(drive,sid,kind,raw.encode())
+                    refs[kind]={"id":fid,"sha256":sha}
+                candidate,report=stage_v2.build_candidate_v2(
+                    self.root,self.store.private_root,row["project_id"],
+                    launch,proposals,choice,frozen_spec,refs,row["receipt_id"])
+            else:
+                stage._verify_launch(self.root,row["project_id"],launch,packet,project)
+                result=stage._check_choice(launch,choice,project)
+                if result["receipt_id"]!=row["receipt_id"]:
+                    raise ReceiverError("Selection receipt changed after acceptance")
+                drive=self.drive_factory()
+                rafael_archive.check_private_folder(drive,rafael_archive.ARCHIVE_FOLDER)
+                lid,lsha=_drive_json(drive,sid,"launch",row["launch_json"].encode())
+                cid,csha=_drive_json(drive,sid,"selection",row["selection_json"].encode())
+                _,candidate,report=stage.build_candidate(
+                    self.root,row["project_id"],launch_file_id=lid,launch_sha256=lsha,
+                    selection_file_id=cid,selection_sha256=csha,drive=drive)
+                if report.get("selection_receipt_id")!=row["receipt_id"]:
+                    raise ReceiverError("Canonical write-back receipt differs")
             commit=self.commit_project(self.root,row["project_id"],candidate)
             self.store.finish(sid,status="APPLIED",commit=commit)
         except Exception:
@@ -413,10 +439,35 @@ class API:
             # transmitted to the HTTP server as part of GET /studio.
             result["studio_url"]=self.host_origin+"/studio#"+result["session_id"]+"."+result["capability"]
             return 201,result
-        if route=="/api/motionlab/selection":
+        if route=="/api/motionlab/v2/session":
+            token=headers.get("Authorization","")
+            if not hmac.compare_digest(token,"Bearer "+self.owner_secret):
+                raise ReceiverError("Owner authorization required")
+            try:
+                result=self.relay.store.create_v2(
+                    self.relay.root,body.get("project_id"))
+            except Exception:
+                raise ReceiverError("Current approved v2 project/private media unavailable") from None
+            result["studio_url"]=self.host_origin+"/studio#"+result["session_id"]+"."+result["capability"]
+            return 201,result
+        if route=="/api/motionlab/v2/proposals":
+            token=headers.get("Authorization","")
+            if not hmac.compare_digest(token,"Bearer "+self.owner_secret):
+                raise ReceiverError("Owner authorization required")
+            try:
+                result=self.relay.store.set_proposals_v2(
+                    self.relay.root,body.get("session_id"),body.get("proposals"))
+            except Exception:
+                raise ReceiverError("Motion Lab proposals invalid or private source changed") from None
+            return 200,result
+        if route in ("/api/motionlab/selection","/api/motionlab/v2/selection"):
             sid=body.get("session_id")
             token=headers.get("X-Simba-Capability")
             try:
+                if route=="/api/motionlab/v2/selection":
+                    current=self.relay.store.browser_session(sid,token)
+                    if current["launch"].get("schema")!=v2.MATERIALS:
+                        raise ReceiverError("V2 selection cannot use a v1 session")
                 receipt=self.relay.store.accept(self.relay.root,sid,token,body.get("selection"))
             except Exception:
                 raise ReceiverError("Connected selection not accepted or not durably stored") from None
@@ -535,7 +586,10 @@ def main(argv=None):
         raise ReceiverError("Private SQLite state must be outside GitHub checkout")
     if not 1<=args.port<=65535:
         raise ReceiverError("Invalid listening port")
-    relay=Relay(root,SessionStore(args.sqlite))
+    private_root=os.environ.get("SIMBA_MOTIONLAB_PRIVATE_JOBS_ROOT") or None
+    if private_root and Path(private_root).resolve().is_relative_to(root):
+        raise ReceiverError("Private job storage must be outside checkout")
+    relay=Relay(root,SessionStore(args.sqlite,private_root))
     if args.drain_once:
         print(json.dumps({"processed":relay.process_once(),"paid_calls":0}))
         return 0
