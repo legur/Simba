@@ -234,6 +234,7 @@ function renderEditor(){const s=state.scenes[state.selectedIndex];if(!s)return;
  $('mediaProvenance').textContent=local?local.shaVerified?'Локальная копия сверена по SHA-256. Финальная проверка остается у Montage.':'Локальный предпросмотр. SHA-256 не подтвержден. Файл не загружен в Wix.':'Демонстрационное изображение. Реальный исходник не проверен.';
  $('localMediaStatus').textContent=local?'Локальный '+(local.type==='video'?'MP4/видео':'кадр')+' · '+(local.duration?local.duration.toFixed(2)+' с · ':'')+(local.sourceSha?'SHA исходника вычислен, но не сверен с утвержденным':local.shaVerified?'SHA совпадает':'SHA не подтвержден'):'Можно выбрать локальную копию '+(s.asset||s.id)+' для предпросмотра. Она останется в браузере.';
  $('localMediaStatus').classList.toggle('verified',Boolean(local?.shaVerified));
+ const speech=$('importSpeechCue');if(speech){speech.hidden=!s.speechCue;speech.textContent=s.speechCue?'Речь из загруженного SRT для этого интервала: '+s.speechCue:'';}
  $('frameTitle').textContent=s.titleFx==='none'?'':s.title;$('frameSubtitle').textContent=s.subtitleStyle==='none'?'':s.subtitle;
  $('frameSubtitle').className='frame-subtitle editable-layer '+(s.subtitleStyle==='luxury'||s.subtitleStyle==='gold-card'?'gold':'');
  globalThis.MotionLabVisual?.render(s);
