@@ -69,7 +69,12 @@ def _recorded_asset(project: dict, record: dict, item: object, kind: str,
         asset = matches[0]
         if asset.get("kind") != kind or asset.get("state") != "available":
             issues.append(prefix + ": wrong kind or unavailable asset")
-        if not _sha(asset.get("sha256")) or asset["sha256"] != locked_sha:
+        # Existing Montage draft #105 stores verified WAV bytes as
+        # recorded_sha256; newer canonical assets may instead use sha256.
+        # Both names refer to the *same real file bytes*; disagreement
+        # must block rather than choosing whichever field happens to fit.
+        hashes = [asset[key] for key in ("recorded_sha256", "sha256") if key in asset]
+        if not hashes or any(not _sha(value) or value != locked_sha for value in hashes):
             issues.append(prefix + ": asset metadata SHA-256 missing or different from lock")
 
 
