@@ -233,7 +233,7 @@ function render(){renderConcepts();renderSceneList();renderEditor();renderSummar
 function updateKey(key,value){if(state.request&&['name','duration','image','asset','title','subtitle'].includes(key))return;const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
 function editChange(id,key,fn){$(id).addEventListener('change',()=>{const v=fn?fn($(id).value):$(id).value;updateKey(key,v);});}
 function liveChange(id,key){$(id).addEventListener('input',()=>{if(state.request&&['title','subtitle'].includes(key))return;const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
-function resetAck(){if(film.active||film.paused)stopFilm();state.confirmed=false;state.sending=false;state.lastAck=null;clearTimeout(pendingAckTimer);}
+function resetAck(){if(film.active||film.paused)stopFilm();globalThis.MotionLabV2?.cancelPending?.();state.confirmed=false;state.sending=false;state.lastAck=null;clearTimeout(pendingAckTimer);}
 // Whole-film editor review: a browser approximation on verified/locally selected assets.
 // Does not generate MP4, analyze speech/music, or silently authorize Montage.
 const film={active:false,paused:false,playhead:0,raf:0,started:0,index:-1,nextIndex:-1,total:0};
