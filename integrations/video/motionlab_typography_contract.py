@@ -78,6 +78,8 @@ def renderer_capability() -> dict:
         "size_percent": {"min": 70, "max": 140, "step": 5},
         "global_theme": "validated",
         "scene_overrides": "validated",
+        "native_families_ready": ["Arial", "Georgia"],
+        "custom_font_files_required": ["Manrope", "Unbounded"],
         "connected_v2_selection": "not_integrated",
         "font_loading_and_visual_parity": "not_verified",
         "render_authorized": False,
