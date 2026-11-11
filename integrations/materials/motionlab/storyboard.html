@@ -11,6 +11,8 @@
  <script defer src="storyboard.js"></script>
  <script defer src="visual_editor.js"></script>
  <script defer src="scene_pages.js"></script>
+ <script defer src="director_core.js"></script>
+ <script defer src="director_analysis.js"></script>
 </head>
 <body>
  <header class="site-header">
@@ -32,6 +34,12 @@
   <div class="workspace" id="overviewWorkspace">
    <section class="design-panel">
     <div class="section-title"><div><span class="small-label">01 / ТРИ АЛЬТЕРНАТИВЫ</span><h2>Подача ролика</h2></div><span class="section-hint">ВЫБЕРИТЕ ОСНОВУ</span></div>
+    <section class="director-analyze" aria-label="Локальный анализ реальных кадров">
+      <div><strong>Режиссерский разбор исходников</strong><p>После загрузки своих фото и видео для всех сцен можно измерить свет, детализацию и изменения видеокадров, затем получить три монтажных варианта. Анализ происходит только в браузере, без передачи файлов.</p></div>
+      <button type="button" id="analyzeLocalAssets" class="secondary-btn">Проанализировать локальные кадры</button>
+      <p id="directorStatus" role="status" aria-live="polite">Загрузите локальные файлы для каждой сцены.</p>
+      <div id="directorReport" class="director-report" hidden></div>
+    </section>
     <div id="conceptList" class="concept-grid" role="group" aria-label="Три варианта монтажной подачи"></div>
     <div class="section-title shots-heading"><div><span class="small-label">02 / РАСКАДРОВКА</span><h2>Сцены <sup id="sceneCount">6</sup></h2></div><div class="heading-actions"><button type="button" class="mini-btn" id="editGlobalTheme">Единый стиль ролика</button><button type="button" class="mini-btn" id="applyFavorites">Из избранного</button><button type="button" class="mini-btn" id="addScene">+ Сцена</button></div></div>
     <p class="helper">Нажмите «Редактировать сцену» или кнопку между двумя сценами для настройки перехода. Шрифты и оформление задаются общим стилем, но отдельные сцены могут иметь исключения.</p>
