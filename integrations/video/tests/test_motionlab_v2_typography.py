@@ -69,6 +69,16 @@ class TypographyV2Tests(unittest.TestCase):
         self.f.spec["scenes"][0]["visualTypography"]=self.f.selection["global_theme"]["typography"]
         self.f.blocked("UNAPPROVED_TYPOGRAPHY_ALREADY_PRESENT")
 
+    def test_preapproved_wav_never_falls_back_to_new_tts(self):
+        self.enable_typography()
+        mapped,report=self.f.mapped()
+        self.assertEqual(mapped["voice"]["source"],"existing_approved_wav")
+        self.assertFalse(report["preapproved_wav_reuse_verified"])
+        self.assertFalse(report["render_authorized"])
+        with self.assertRaises(make_video.Stop) as caught:
+            make_video.voice_provider(mapped)
+        self.assertIn("refusing new TTS",str(caught.exception))
+
     def test_invalid_raw_spec_typography_fails_closed(self):
         self.f.spec["scenes"][0]["visualTypography"]={
             "title":{"family":"Arial","color":"not-color","size":100},
