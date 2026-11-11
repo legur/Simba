@@ -13,6 +13,7 @@ import sys
 from pathlib import Path
 
 import catalog
+import studio_audio_lock
 
 # Completed producer -> next consumer. The stage order follows VIDEO_PIPELINE.md.
 STAGES = (
@@ -130,6 +131,18 @@ def _validate_stage(project: dict, name: str, record: dict, expected_input: str)
     if name == "voice_music" and record.get("voice_profile") != "none":
         if "narration" not in {item["kind"] for item in selected}:
             problems.append("voice_music: narration asset required for approved voice")
+    if name == "voice_music":
+        # Legacy stages remain readable, but any explicitly declared v2 lock
+        # is mandatory and rigorously checked against canonical asset metadata.
+        # For new v2 host sessions call inspect_v2_audio, which additionally
+        # REQUIRES a lock and never asserts external byte verification.
+        if record.get("schema") == studio_audio_lock.STAGE_SCHEMA or "audio_lock" in record:
+            if record.get("schema") != studio_audio_lock.STAGE_SCHEMA:
+                problems.append("voice_music: audio_lock requires Studio v2 stage schema")
+            problems.extend(studio_audio_lock.validate(
+                project, record, source_fingerprint(project)))
+        elif record.get("schema") is not None:
+            problems.append("voice_music: unsupported named contract schema")
     if name == "a2e_clips":
         for asset_id in record.get("assets", []) if isinstance(record.get("assets"), list) else []:
             item = next((a for a in project["assets"] if a.get("id") == asset_id), None)
