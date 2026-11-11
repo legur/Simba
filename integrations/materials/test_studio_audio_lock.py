@@ -181,6 +181,17 @@ class StudioAudioLockTests(unittest.TestCase):
         self.record["state"] = "pending"
         self.assertEqual(self.inspect()["reason"], "VOICE_MUSIC_NOT_APPROVED")
 
+    def test_missing_owner_approval_blocks_standalone_v2_inspection(self):
+        self.record["approval_evidence"] = ""
+        self.assertEqual(self.inspect()["reason"], "VOICE_MUSIC_APPROVAL_EVIDENCE_MISSING")
+
+    def test_missing_three_choices_blocks_standalone_v2_inspection(self):
+        self.record["texts_presented"] = 2
+        self.assertEqual(self.inspect()["reason"], "VOICE_MUSIC_SELECTED_OPTIONS_NOT_VERIFIED")
+        self.record["texts_presented"] = 3
+        self.record["music_option"] = 4
+        self.assertEqual(self.inspect()["reason"], "VOICE_MUSIC_SELECTED_OPTIONS_NOT_VERIFIED")
+
     def test_schema_and_lock_do_not_modify_canonical_project(self):
         snapshot = copy.deepcopy(self.project)
         self.inspect()
