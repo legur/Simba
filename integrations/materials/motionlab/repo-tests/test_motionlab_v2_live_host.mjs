@@ -92,6 +92,8 @@ test('v2 READY sends exact source-pinned materials + Motion Lab authored proposa
   assert.equal(sent.origin,MOTION_LAB_ORIGIN);
   assert.deepEqual(sent.data.payload.materials,session.launch);
   assert.deepEqual(sent.data.payload.proposals,session.proposals);
+  assert.equal(sent.data.payload.materials_sha256,session.proposals.materials_sha256);
+  assert.equal(sent.data.payload.proposals_sha256,session.proposals_sha256);
   h.bridge.stop();
 });
 
@@ -154,5 +156,15 @@ test('browser shows status only when server confirms canonical project commit',a
   const s=await h.bridge.status();
   assert.equal(s.project_applied,false);
   assert.ok(!h.events.some(x=>x.type==='montage_handoff_applied'));
+  h.bridge.stop();
+});
+
+test('v2 READY without source IDs is valid only from the exact editor origin and window',()=>{
+  const h=harness(async()=>{throw Error('no request needed')});
+  h.msg('SIMBA_MOTIONLAB_V2_READY',selection,MOTION_LAB_ORIGIN,h.iframe,BRIDGE_V2);
+  assert.equal(h.sent.filter(x=>x.data.type==='SIMBA_MOTIONLAB_V2_START').length,1);
+  h.msg('SIMBA_MOTIONLAB_V2_READY');
+  assert.equal(h.sent.filter(x=>x.data.type==='SIMBA_MOTIONLAB_V2_START').length,1,
+               'Repeated READY must not reload the approved edit');
   h.bridge.stop();
 });
