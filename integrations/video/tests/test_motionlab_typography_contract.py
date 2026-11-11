@@ -1,5 +1,8 @@
 """Fail-closed contract tests for Motion Lab global style and per-scene exceptions."""
 import unittest
+from pathlib import Path
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import motionlab_typography_contract as typo
 
 
