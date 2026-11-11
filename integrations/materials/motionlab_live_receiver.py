@@ -243,6 +243,7 @@ class SessionStore:
                 "expires_at_epoch":row["expires"],"status":row["status"]}
         if row["proposals_json"]:
             result["proposals"]=json.loads(row["proposals_json"])
+            result["proposals_sha256"]=v2.digest(result["proposals"])
         return result
 
 
@@ -525,6 +526,7 @@ def run_server(api:API,port:int):
             static = {
                 "/studio": ("motionlab_host.html","text/html; charset=utf-8"),
                 "/assets/motionlab_live_host.js": ("motionlab_live_host.js","text/javascript; charset=utf-8"),
+                "/assets/motionlab_v2_live_host.js": ("motionlab_v2_live_host.js","text/javascript; charset=utf-8"),
                 "/assets/motionlab_host_adapter.js": ("motionlab_host_adapter.js","text/javascript; charset=utf-8"),
                 "/assets/motionlab_host_page.js": ("motionlab_host_page.js","text/javascript; charset=utf-8"),
                 "/assets/motionlab_host.css": ("motionlab_host.css","text/css; charset=utf-8"),
