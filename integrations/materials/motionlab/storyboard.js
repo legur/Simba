@@ -201,11 +201,27 @@ function renderEditor(){const s=state.scenes[state.selectedIndex];if(!s)return;
  $('intensityValue').textContent=s.intensity+'%';$('sceneTransition').disabled=state.selectedIndex===0;
  const lock=Boolean(state.request);
  ['sceneName','sceneDuration','sceneAsset','sceneTitle','sceneSubtitle'].forEach(id=>{$(id).readOnly=lock;});
- $('sceneImage').disabled=lock;$('approvedSourceLock').hidden=!lock;
+ $('sceneImage').disabled=lock||Boolean(globalThis.MotionLabVideoImport?.info?.());
+ $('sceneDuration').readOnly=lock||Boolean(globalThis.MotionLabVideoImport?.info?.());
+ $('sceneAsset').readOnly=lock||Boolean(globalThis.MotionLabVideoImport?.info?.());
+ $('approvedSourceLock').hidden=!lock;
  const issues=rendererIssues(state.scenes);
  $('renderSupport').classList.toggle('ready',issues.length===0);
  $('renderSupport').textContent=issues.length?'ЭФФЕКТЫ ТОЛЬКО ДЛЯ ПРЕДПРОСМОТРА: '+issues.slice(0,4).join('; ')+(issues.length>4?' и еще '+(issues.length-4):'')+'. Нельзя передавать на автоматический рендер.':'Для этих параметров нет известных блокировок; приемник Montage все равно выполняет техническую проверку.';
- $('addScene').disabled=Boolean(state.request);
+ $('addScene').disabled=Boolean(state.request||globalThis.MotionLabVideoImport?.info?.());
+ const importControls=$('importSceneControls'),clip=s.clipRange;
+ if(importControls){
+  const importMode=Boolean(globalThis.MotionLabVideoImport?.info?.()&&clip);
+  importControls.hidden=!importMode;
+  if(importMode){
+   const input=$('splitSceneSecond');
+   input.min=String((clip.start+1.25).toFixed(2));input.max=String((clip.end-1.25).toFixed(2));
+   input.value=String(((clip.start+clip.end)/2).toFixed(2));
+   $('splitImportedScene').disabled=clip.end-clip.start<2.6||state.scenes.length>=LIMIT;
+   const next=state.scenes[state.selectedIndex+1];
+   $('mergeImportedScene').disabled=!next?.clipRange||Math.abs(clip.end-next.clipRange.start)>.11||(next.clipRange.end-clip.start>20);
+  }
+ }
  const p=$('previewPhoto'),v=$('previewVideo'),local=previewFor(s);
  if(local?.type==='video'){
   p.hidden=true;v.hidden=false;if(v.src!==local.url){v.pause();v.src=local.url;v.load();}
@@ -403,7 +419,7 @@ function play(){if(film.active||film.paused)stopFilm();resetPreview();const s=st
  if(s.subtitleStyle!=='none')sub.animate([{opacity:0,transform:'translate(-50%,-50%) translateY(10px)'},{opacity:1,transform:'translate(-50%,-50%)'}],{duration:Math.min(dur*.55,1100),delay:Math.min(dur*.25,500),fill:'forwards'});
 }
 function reorder(i,delta){globalThis.MotionLabDirector?.invalidate();const j=i+delta;if(j<0||j>=state.scenes.length)return;const a=state.scenes;[a[i],a[j]]=[a[j],a[i]];state.selectedIndex=j;a[0].transition='none';if(a.length>1&&a[1].transition==='none')a[1].transition=(state.concepts.find(p=>p.id===state.selectedOption)||PRESETS[0]).transition;state.dirty=true;resetAck();render();}
-function addScene(){globalThis.MotionLabDirector?.invalidate();if(state.request){say('Утвержденные сцены изменяет Киностудия, не этот редактор.');return;}if(state.scenes.length>=LIMIT){say('Максимум 24 сцены');return;}const n=state.scenes.length,p=state.concepts.find(c=>c.id===state.selectedOption);const s=makeScene({name:`Сцена ${n+1}`,image:'city',title_text:'',subtitle_preview:''},n,p);state.scenes.push(s);state.selectedIndex=n;state.dirty=true;resetAck();render();}
+function addScene(){globalThis.MotionLabDirector?.invalidate();if(globalThis.MotionLabVideoImport?.info?.()){say('Для MP4 используйте Разделить фрагмент, а не добавить отдельное демо.');return;}if(state.request){say('Утвержденные сцены изменяет Киностудия, не этот редактор.');return;}if(state.scenes.length>=LIMIT){say('Максимум 24 сцены');return;}const n=state.scenes.length,p=state.concepts.find(c=>c.id===state.selectedOption);const s=makeScene({name:`Сцена ${n+1}`,image:'city',title_text:'',subtitle_preview:''},n,p);state.scenes.push(s);state.selectedIndex=n;state.dirty=true;resetAck();render();}
 function fromSaved(){const read=key=>{try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v:[]}catch{return[]}};
  const camera=read('motionlab-camera-favorites-v1').filter(id=>known('camera',id)),transition=read('motionlab:favorites').filter(id=>known('transitions',id)),title=read('motionlab:text:favorites').filter(id=>known('title',id)),subtitle=read('motionlab:subtitle-combos:v2').filter(id=>typeof id==='string'&&id.includes('|'));
  const has=Boolean(camera.length||transition.length||title.length||subtitle.length);if(!has){say('В библиотеках пока нет избранных эффектов');return;}
@@ -477,6 +493,20 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
   const file=e.target.files?.[0];e.target.value='';if(!file)return;
   $('localMediaStatus').textContent='Проверка файла в браузере...';
   try{await localFileChosen(file);}catch(error){$('localMediaStatus').textContent='Не принят: '+error.message;say(error.message);}
+ });
+ $('splitImportedScene').addEventListener('click',async()=>{
+  const button=$('splitImportedScene');button.disabled=true;
+  try{await globalThis.MotionLabVideoImport?.splitScene(state.selectedIndex,Number($('splitSceneSecond').value));
+   $('importSceneStatus').textContent='Готово. Новую границу можно менять в редакторе перехода.';
+  }catch(e){$('importSceneStatus').textContent='Разрез не выполнен: '+String(e.message||e);}
+  finally{button.disabled=false;}
+ });
+ $('mergeImportedScene').addEventListener('click',async()=>{
+  const button=$('mergeImportedScene');button.disabled=true;
+  try{await globalThis.MotionLabVideoImport?.mergeNext(state.selectedIndex);
+   $('importSceneStatus').textContent='Фрагменты объединены.';
+  }catch(e){$('importSceneStatus').textContent='Объединение не выполнено: '+String(e.message||e);}
+  finally{button.disabled=false;}
  });
  $('resetDemo').addEventListener('click',()=>{if(state.bridge){say('Активное задание агента. Демо не заменяет его.');return;}prepareDemo();say('Открыт демонстрационный проект');});
  $('requestFile').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>300_000){say('Максимальный размер задания 300 КБ');return;}try{const source=JSON.parse(await file.text());if(state.bridge){say('Задание от агента активно. Импорт недоступен.');return;}loadLaunch(source,null);}catch(err){say('Ошибка JSON: '+err.message);}});
