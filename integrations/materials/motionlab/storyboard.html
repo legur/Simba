@@ -123,6 +123,10 @@
     <header class="detail-bar">
       <button type="button" id="backToStoryboard" class="secondary-btn">← Назад к раскадровке</button>
       <div><span id="detailKicker" class="small-label">РЕДАКТОР СЦЕНЫ</span><h2 id="detailHeading">Выбранная сцена</h2><p id="detailDescription">Настройки применяются только к выбранной сцене, если не указано другое.</p></div>
+      <div class="detail-scene-navigation" id="detailSceneNavigation" role="group" aria-label="Переключение сцен" hidden>
+       <button type="button" id="previousScene" class="mini-btn">← Предыдущая</button>
+       <button type="button" id="nextScene" class="mini-btn">Следующая →</button>
+      </div>
       <button type="button" id="detailGlobalStyle" class="mini-btn">Стиль всего ролика</button>
     </header>
     <div class="detail-body">
@@ -176,6 +180,12 @@
          <button type="button" id="inheritLayout" class="secondary-btn">Вернуть положение из общего стиля</button>
          <button type="button" id="inheritFont" class="secondary-btn">Вернуть общий шрифт и цвет</button>
        </div>
+       <div class="visual-command-box">
+         <label for="visualCommand">Быстрая правка текстом (только эта сцена)</label>
+         <p>Например: «Подними титр на 10%», «Субтитры ниже», «Увеличь титр», «Верни положение субтитров».</p>
+         <div class="visual-command-row"><input id="visualCommand" type="text" maxlength="160" autocomplete="off" placeholder="Как изменить надпись?"><button type="button" id="applyVisualCommand" class="secondary-btn">Применить</button></div>
+         <p id="visualCommandStatus" role="status" aria-live="polite">Команды изменяют только расположение или размер текста. Сам текст и соседние сцены не меняются.</p>
+        </div>
        <p class="source-notice" id="scopeState">Выбрано общее оформление.</p>
        <p class="source-notice">Это визуальный предпросмотр. Настраиваемые координаты и шрифты пока требуют поддержки в контракте Montage v2.</p>
       </section>

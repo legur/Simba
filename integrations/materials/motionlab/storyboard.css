@@ -161,3 +161,17 @@
  .detail-bar>button{width:100%}
  .detail-sidepanel{padding:14px}
 }
+
+
+/* Focused scene navigation and per-scene correction commands. */
+.detail-scene-navigation{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.detail-scene-navigation[hidden]{display:none}
+.detail-scene-navigation button:disabled{opacity:.4;cursor:not-allowed}
+.visual-command-box{margin:18px 0 12px;padding:14px;border:1px solid #4a6c69;border-radius:12px;background:#132a30}
+.visual-command-box>label{display:block;font-weight:800;font-size:13px;margin-bottom:5px}
+.visual-command-box>p{margin:7px 0;font-size:11px;line-height:1.55;color:#c4dad7}
+.visual-command-row{display:flex;gap:9px;align-items:stretch}
+.visual-command-row input{min-width:0;flex:1}
+.visual-command-box #visualCommandStatus{color:#bce5b8}
+.visual-command-box #visualCommandStatus.command-error{color:#f4c9a9}
+@media(max-width:560px){.visual-command-row{flex-direction:column}.detail-scene-navigation{width:100%}}
