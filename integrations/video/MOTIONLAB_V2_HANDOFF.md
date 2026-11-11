@@ -30,8 +30,7 @@ verified F2U MP4 + approved audio/text
 
 **Нельзя** выдать `ACK` за `APPLIED`, а `APPLIED` за
 готовое видео. Ни один шаг v2 не разрешает платный TTS/A2E,
-авторендер или публикацию. Временно живой PR #105 принимает только
-старый `launch/v1 → selection/v1`; он пока НЕ работает с v2.
+авторендер или публикацию. В черновой ветке PR #105 теперь реализованы `selection/v2` и подключенный браузерный мост; в production Wix/owner HTTPS host они еще не развернуты.
 
 ### A. `bontours.motionlab.materials.launch/v2` — только Montage
 
@@ -383,3 +382,11 @@ layout должен совпадать с выбранной концепцие�
 с реальным клиентским видео еще не проведен; требуется
 QA-preview после live подключенного v2.
 
+
+## Integration checkpoint — 11.11.2026 (not production live)
+
+- Motion Lab v2 UI is implemented in `integrations/materials/motionlab/motionlab_v2_ui.js` and linked into the static Wix build. Existing scene/cut editors and visual layout/theme controls remain the only editing UI.
+- The private owner host sends trusted materials/proposal SHA hashes in the v2 START payload. Selection includes the current rendered values for every scene, global typography and per-scene exceptions, never raw private videos.
+- Each browser submission carries a non-secret `delivery_id` (monotonic per page). An ACK must echo the same ID; an ACK for an edited, timed-out, or superseded choice is ignored. The main editor locks on submit and stays immutable after a server receipt. A new edit requires a newly authenticated session.
+- The real renderer refuses to interpret `voice.source=existing_approved_wav` as a new Simba/Edge TTS request. **Direct WAV reuse is still unimplemented and render authorization remains false.** This is an intentional zero-paid fail-closed gate rather than a claimed audio integration.
+- The current PR #105 is draft and not mergeable against latest `main` until branch conflicts are reconciled. No real owner HTTPS deployment, Wix publication, MP4 client render, voice reuse or final QA has been completed. Do not conflate an offline JS smoke result with full GitHub CI.
