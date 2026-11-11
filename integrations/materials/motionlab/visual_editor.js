@@ -307,7 +307,12 @@
  }
  globalThis.MotionLabVisual={
   get,dirty,changed,typography,isOverride,
-  theme:kind=>({...shared.text[kind]}),selectedKind:()=>layer.kind,
+  theme:kind=>({...shared.text[kind]}),
+  globalLayout:kind=>({...shared.layout[kind]}),
+  resetForProject:()=>{for(const kind of ['title','subtitle']){
+    shared.layout[kind]={...defaults[kind]};shared.text[kind]={...baseText[kind]};
+  }},
+  selectedKind:()=>layer.kind,
   setTheme,applyTypographyAll,setSceneTypography,inheritTypography,inheritLayout,applyLayoutToAll,resetTheme,
   render:refresh,renderStage:renderLayout,populateCuts,pauseFilm,init,seek,saveDraft
  };
