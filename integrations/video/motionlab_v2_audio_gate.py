@@ -131,9 +131,14 @@ def verify_private_audio_manifest(project: dict, private_dir: Path) -> dict:
     The browser sends no filenames or SHA. Missing/invalid manifest blocks
     creating v2 session. Keys are deliberately not returned to the browser.
     """
-    manifest_path = _safe_file(private_dir, "approved-audio-files.json")
-    if manifest_path.stat().st_size > 8192:
-        _fail("PRIVATE_AUDIO_MANIFEST_TOO_LARGE")
+    root = Path(private_dir)
+    manifest_path = root / "approved-audio-files.json"
+    if (root.is_symlink() or not root.is_dir()
+            or manifest_path.is_symlink() or not manifest_path.is_file()
+            or manifest_path.resolve().parent != root.resolve()):
+        _fail("PRIVATE_AUDIO_MANIFEST_UNAVAILABLE")
+    if not 2 <= manifest_path.stat().st_size <= 8192:
+        _fail("PRIVATE_AUDIO_MANIFEST_SIZE_INVALID")
     try:
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     except (UnicodeError, ValueError, OSError):
