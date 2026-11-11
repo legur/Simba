@@ -11,6 +11,9 @@
  <script defer src="storyboard.js"></script>
  <script defer src="visual_editor.js"></script>
  <script defer src="scene_pages.js"></script>
+ <script defer src="director_core.js"></script>
+ <script defer src="director_semantic.js"></script>
+ <script defer src="director_analysis.js"></script>
  <script defer src="motionlab_v2_ui.js"></script>
 </head>
 <body>
@@ -33,6 +36,16 @@
   <div class="workspace" id="overviewWorkspace">
    <section class="design-panel">
     <div class="section-title"><div><span class="small-label">01 / ТРИ АЛЬТЕРНАТИВЫ</span><h2>Подача ролика</h2></div><span class="section-hint">ВЫБЕРИТЕ ОСНОВУ</span></div>
+    <section class="director-analyze" aria-label="Локальный анализ реальных кадров">
+      <div><strong>Режиссерский разбор исходников</strong><p>После загрузки своих фото и видео для всех сцен можно измерить свет, детализацию и изменения видеокадров, затем получить три монтажных варианта. Анализ происходит только в браузере, без передачи файлов.</p></div>
+      <button type="button" id="analyzeLocalAssets" class="secondary-btn">Проанализировать локальные кадры</button>
+      <label class="director-editorial-upload">Редакторская карта сцен (JSON, необязательно)
+       <input id="editorialManifest" type="file" accept=".json,application/json" aria-describedby="editorialStatus">
+      </label>
+      <p id="editorialStatus" class="director-editorial-status" role="status">Нет загруженной редакторской аннотации. Метки должны быть подтверждены человеком или предварительно просмотрены ChatGPT, а ID сцен и материалов обязаны совпадать.</p>
+      <p id="directorStatus" role="status" aria-live="polite">Загрузите локальные файлы для каждой сцены.</p>
+      <div id="directorReport" class="director-report" hidden></div>
+    </section>
     <div id="conceptList" class="concept-grid" role="group" aria-label="Три варианта монтажной подачи"></div>
     <div class="section-title shots-heading"><div><span class="small-label">02 / РАСКАДРОВКА</span><h2>Сцены <sup id="sceneCount">6</sup></h2></div><div class="heading-actions"><button type="button" class="mini-btn" id="editGlobalTheme">Единый стиль ролика</button><button type="button" class="mini-btn" id="applyFavorites">Из избранного</button><button type="button" class="mini-btn" id="addScene">+ Сцена</button></div></div>
     <p class="helper">Нажмите «Редактировать сцену» или кнопку между двумя сценами для настройки перехода. Шрифты и оформление задаются общим стилем, но отдельные сцены могут иметь исключения.</p>
@@ -124,6 +137,10 @@
     <header class="detail-bar">
       <button type="button" id="backToStoryboard" class="secondary-btn">← Назад к раскадровке</button>
       <div><span id="detailKicker" class="small-label">РЕДАКТОР СЦЕНЫ</span><h2 id="detailHeading">Выбранная сцена</h2><p id="detailDescription">Настройки применяются только к выбранной сцене, если не указано другое.</p></div>
+      <div class="detail-scene-navigation" id="detailSceneNavigation" role="group" aria-label="Переключение сцен" hidden>
+       <button type="button" id="previousScene" class="mini-btn">← Предыдущая</button>
+       <button type="button" id="nextScene" class="mini-btn">Следующая →</button>
+      </div>
       <button type="button" id="detailGlobalStyle" class="mini-btn">Стиль всего ролика</button>
     </header>
     <div class="detail-body">
@@ -177,6 +194,12 @@
          <button type="button" id="inheritLayout" class="secondary-btn">Вернуть положение из общего стиля</button>
          <button type="button" id="inheritFont" class="secondary-btn">Вернуть общий шрифт и цвет</button>
        </div>
+       <div class="visual-command-box">
+         <label for="visualCommand">Быстрая правка текстом (только эта сцена)</label>
+         <p>Например: «Подними титр на 10%», «Субтитры ниже», «Увеличь титр», «Верни положение субтитров».</p>
+         <div class="visual-command-row"><input id="visualCommand" type="text" maxlength="160" autocomplete="off" placeholder="Как изменить надпись?"><button type="button" id="applyVisualCommand" class="secondary-btn">Применить</button></div>
+         <p id="visualCommandStatus" role="status" aria-live="polite">Команды изменяют только расположение или размер текста. Сам текст и соседние сцены не меняются.</p>
+        </div>
        <p class="source-notice" id="scopeState">Выбрано общее оформление.</p>
        <p class="source-notice">Это визуальный предпросмотр. Настраиваемые координаты и шрифты пока требуют поддержки в контракте Montage v2.</p>
       </section>
