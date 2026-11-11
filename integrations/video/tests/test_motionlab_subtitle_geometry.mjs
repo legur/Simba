@@ -71,3 +71,14 @@ test('legacy subtitle render remains usable without WYSIWYG layout', () => {
   assert.ok(ctx.drawn.length>0);
   assert.equal(ctx.state.saves,ctx.state.restores);
 });
+
+test('explicit Motion Lab typography reaches Canvas2D word colors, size and family', () => {
+  const base=context(), themed=context();
+  const position={x:50,y:82,scale:100};
+  drawStyledSubtitle(base,line,1,config,1080,1920,position);
+  drawStyledSubtitle(themed,line,1,config,1080,1920,position,
+    {family:'Georgia',color:'#cdefab',size:120});
+  assert.deepEqual(themed.drawn.map(x=>x.word),base.drawn.map(x=>x.word));
+  assert.ok(themed.drawn.some(x=>x.word==='Первый'));
+  assert.equal(themed.state.saves,themed.state.restores);
+});
