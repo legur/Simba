@@ -264,6 +264,10 @@ def voice_provider(spec):
     setting = spec.get('voice') or {}
     if not isinstance(setting, dict):
         raise Stop('video-spec.json: voice must be an object')
+    # A Motion Lab v2 handoff may explicitly reference preapproved narration.
+    # Never interpret that as an instruction to synthesize replacement speech.
+    if setting.get('source') == 'existing_approved_wav':
+        raise Stop('Approved WAV reuse is not yet verified for this renderer; refusing new TTS')
     provider = setting.get('provider', 'simba')
     if provider not in ('simba', 'edge'):
         raise Stop('video-spec.json: voice.provider must be "simba" or explicit "edge"')
