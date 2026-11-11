@@ -155,3 +155,181 @@ Wix браузере, успешное обновление production \`main\`,
 статического Wix Headless Motion Lab через GitHub Actions ранее
 заблокирована \`403 VELO.APP_PROJECT_READ\`. Этот companion host
 не меняет/не обходит права и не устраняет Wix deploy issue.
+
+## V2: новая рабочая цепочка Motion Lab → защищенный приемник (11.11.2026)
+
+**Код объединен в черновой PR #105 вместе с renderer v2 из PR #115.
+Проверен офлайн, НО НЕ РАЗВЕРНУТ НА ВНЕШНЕМ HTTPS HOST.** Внутренние
+файлы `storyboard.html/css/js`, `visual_editor.js`, `scene_pages.js`
+Motion Lab не изменялись.
+
+В v2 **три рекомендации пишет только Motion Lab** после доступа к
+оригинальным MP4 Ф2У. Монтажер не передает фиктивные варианты. В
+действующем Wix UI PR #118 еще нет v2 connected bridge, поэтому
+новый host *не* переводит `visual-layout-draft/v2` в подтвержденный
+выбор и *не* создает ложного `ACK`.
+
+### Приватные источники на owner HTTPS host
+
+На сервере требуется переменная окружения:
+
+`SIMBA_MOTIONLAB_PRIVATE_JOBS_ROOT=/srv/simba/private/jobs`
+
+Это отдельная приватная папка **вне** публичного Git checkout.
+Для проекта `<project_id>` в ней должны находиться:
+
+```text
+/srv/simba/private/jobs/<project_id>/
+    approved-video-spec.json
+    verified-media.json
+    scene-01.mp4
+    scene-02.mp4
+    ...
+```
+
+`approved-video-spec.json` — фактический ранее утвержденный
+`video-spec.json` с неизменными voice/music, sourcePost,
+lines/say/asr, title, offer/end. Файл должен иметь
+`packageId=<project_id>`; пока аудиомедиа и полный таймлайн
+не проверены, он является лишь **источником для zero-paid mapper**,
+не прямым разрешением запускать renderer.
+
+`verified-media.json` — приватный доверенный массив по каждой
+сцене **в том же порядке**, что в `a2e_clips.assets[]`:
+
+```json
+[{
+  "scene_id":"clip-01","asset_id":"<actual approved asset id>",
+  "file":"scene-01.mp4",
+  "sha256":"<actual full SHA256>",
+  "duration_s":5.0
+}]
+```
+
+Это не ввод от браузера. Сервер повторно сверяет имена,
+`asset_id`, реальные bytes MP4 и ffprobe, длительность,
+`recorded_sha256` в canonical `project.json`, финальный
+`voice_music` handoff и текущий stage fingerprint. Нет файлов,
+разрешений или серверной переменной — **v2 session не создается**.
+
+### Две owner-фазы, затем клиентское подтверждение
+
+**Фаза A.** Доверенный процесс (не UI) вызывает
+`POST /api/motionlab/v2/session` с
+`Authorization: Bearer <SIMBA_MOTIONLAB_OWNER_TOKEN>`:
+
+```json
+{"project_id":"<approved-project>"}
+```
+
+Ответ включает `launch` схемы
+`bontours.motionlab.materials.launch/v2`, `session_id`,
+`studio_url` с токеном в URL fragment, `capability` (только
+короткоживущая личная сессия), статус
+`AWAITING_REAL_MOTIONLAB_PROPOSALS`. На этом этапе
+`options[3]` НЕТ. Срок действия 20 минут; аналитика реальных
+видео и подготовка предложений должны проходить в пределах этой
+сессии или должна быть создана новая сессия и документы.
+
+**Фаза B.** Владелец/доверенная среда **после фактического
+просмотра видео** передает три рекомендации Motion Lab через
+`POST /api/motionlab/v2/proposals` с тем же owner bearer:
+
+```json
+{"session_id":"<session id>","proposals":{
+  "schema":"bontours.motionlab.proposals/v2",
+  "...":"полная реальная схема из MOTIONLAB_V2_HANDOFF.md"
+}}
+```
+
+Нельзя сначала создать предложения, а затем переименовать
+`request_id`: SHA материалов и `request_id` должны
+совпасть с **конкретной** фазой A. Сервер проверяет три
+**различных** варианта, одну рекомендацию, правильные
+возможности рендерера и анализ-аттестации, затем надежно
+фиксирует набор в SQLite. Заменить уже сохраненные
+предложения другим набором нельзя.
+
+**Фаза C.** Когда в отдельном UI Motion Lab будет реализован
+согласованный v2 мост, редактор получает
+`SIMBA_MOTIONLAB_V2_START` с материалами/предложениями,
+наглядно показывает их, принимает поправки Лео (в том числе
+`scene_layout[]`) и **только после нового явного подтверждения**
+отправляет `SIMBA_MOTIONLAB_V2_SELECTION`, protocol
+`bontours.motionlab.bridge/v2`.
+
+Owner-host-адаптер `motionlab_v2_live_host.js` принимает
+сообщения только от проверенного Wix `origin` и
+`iframe.contentWindow`; отбрасывает старые v1 сообщения,
+черновики и выбор без `explicit_approval`, `guards=false`
+или без всех измененных `scene_layout[]`. Затем вызывает
+`POST /api/motionlab/v2/selection` с **только одноразовой
+session capability** (никаких owner/GitHub/Drive ключей).
+Backend повторно проверяет source, proposals SHA, WYSIWYG
+и mapped `video-spec.json` и записывает в SQLite
+`selection_json`, `spec_json`, `receipt_id`
+одной транзакцией c `synchronous=FULL`. Только после
+ее COMMIT отправляется `SIMBA_MOTIONLAB_V2_ACK accepted=true`.
+
+### После ACK: worker + GitHub CAS
+
+Существующий v1 Relay/SQLite/Drive/GitHub CAS расширен
+для v2, **второго исполнителя/очереди нет**. Worker:
+1. Еще раз сверяет `project.json`, approved private MP4
+   и spec; проверяет, что bytes mapped spec не изменились.
+2. Сохраняет **четыре приватных JSON** в уже существующую
+   закрытую папку Drive, с точной проверкой SHA256/MD5
+   после чтения:
+   `materials`, `proposals`, `selection-v2`,
+   `video-spec`. Никакие MP4 не переносятся в GitHub.
+3. `motionlab_v2_stage_writeback.build_candidate_v2`
+   записывает лишь asset `edit_plan` и
+   `stage_handoffs.edit_choice=approved`, включая SHA
+   четырех приватных источников; проверяет действительный
+   `handoff.make_handoff → MONTAGE_RENDERER`.
+4. Только фактически успешный GitHub CAS `project.json`
+   отмечает статус `APPLIED`. Любая неясная ошибка —
+   `BLOCKED`, без повторной отправки TTS/A2E/публикации.
+
+**`ACK ≠ APPLIED ≠ SPEC_READY ≠ MP4_QA_PASS`.**
+При успешной записи spec в приватный Drive пользователь
+утвердил монтаж, но **полный фильм еще НЕ создавался**;
+проверка повторного использования утвержденного WAV, реальных
+offer/end таймингов и QA по-прежнему отдельная стадия.
+
+### Текущее ограничение интерфейса и изменения PR #118
+
+На Wix уже работают отдельные страницы сцены/стыка,
+ручное размещение текста и экспорт черновика v2. В нем
+появились также `global_theme` и per-scene font/color
+исключения. **Данный v2 receiver умышленно блокирует
+неизвестные `global_theme` / `font_family` / `color` /
+price/end-layout поля**, пока не утверждены их семантика
+в renderer capabilities. Отказ лучше потери дизайна в MP4.
+
+Встроенный редактор PR #118 **еще не отправляет**
+`SIMBA_MOTIONLAB_V2_READY` и
+`SIMBA_MOTIONLAB_V2_SELECTION`. Если он сообщает старый
+`READY`, защищенный v2 host **ничего не сохраняет**.
+В этот момент в статусе отображается
+«ожидается поддержка v2 Motion Lab»; **не заявлять живой
+end-to-end**. Подключение UI выполняет только его владелец.
+
+### Статус по проверкам
+
+- `test_motionlab_v2_live_receiver.py`:
+  authenticated owner-only двухфазная сессия, настоящий
+  SQLite receipt, private spec snapshot, SHA MP4 source,
+  WYSIWYG, отказ при stale/draft/подмене, mock Drive
+  четыре файла и GitHub CAS; никаких реальных клиентских
+  секретов.
+- `repo-tests/test_motionlab_v2_live_host.mjs`:
+  origin+source v2 postMessage, отсутствие v1 fallback,
+  отрицательный ACK при сбоях, проверка persisted
+  до ответа.
+- CI бесплатно; TTS/A2E/публикация не вызываются.
+- Реальный внешний HTTPS deployment, автоматическая
+  передача реальных MP4 в соседний ChatGPT, live Wix
+  v2 connected integration, **реальный client video render**
+  пока не выполнены.
+
