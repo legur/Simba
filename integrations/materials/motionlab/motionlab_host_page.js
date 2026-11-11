@@ -1,4 +1,5 @@
 import { connectLiveMotionLab } from '/assets/motionlab_live_host.js';
+import { connectV2LiveMotionLab } from '/assets/motionlab_v2_live_host.js';
 
 const el = id => document.getElementById(id);
 const status = text => { el('status').textContent = text; };
@@ -35,6 +36,11 @@ async function start() {
     return;
   }
   const ownerSession = { ...result, capability };
+  const isV2 = result.launch.schema === 'bontours.motionlab.materials.launch/v2';
+  if (isV2 && (!result.proposals || !result.proposals_sha256)) {
+    error('Исходники проверены, но три рекомендации еще не переданы агентом Motion Lab. Дождитесь настоящих предложений и откройте ссылку повторно.');
+    return;
+  }
   const frame = el('editor');
   let connection;
   let polling = false;
@@ -67,7 +73,7 @@ async function start() {
     }
     polling = false;
   }
-  connection = connectLiveMotionLab({
+  connection = (isV2 ? connectV2LiveMotionLab : connectLiveMotionLab)({
     targetWindow: frame.contentWindow,
     session: ownerSession,
     onStatus(event) {
@@ -78,6 +84,8 @@ async function start() {
         status('Выбор не подтвержден. Можно отправить его повторно.');
       } else if (event.type === 'editing') {
         status('Сессия подключена. Выберите оформление в Motion Lab.');
+      } else if (event.type === 'awaiting_v2_motionlab_ui') {
+        status('Защищенная v2-сессия подготовлена. Motion Lab еще не объявил поддержку нового соединения. Отправка и ACK не выполняются.');
       } else if (event.type === 'montage_handoff_applied') {
         status('Выбор записан в проект. Запуск задания монтажеру проверяется отдельно.');
       }
