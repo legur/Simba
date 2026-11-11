@@ -23,7 +23,7 @@ const element=id=>{
  return registry.get(id);
 };
 const ctx=createContext({
- document:{readyState:'loading',getElementById:element,querySelectorAll(){return []},createElement(){return {value:'',textContent:''}}},
+ document:{readyState:'loading',addEventListener(){},getElementById:element,querySelectorAll(){return []},createElement(){return {value:'',textContent:''}}},
  window:{addEventListener(){}},
  performance:{now(){return 0}},
  cancelAnimationFrame(){},requestAnimationFrame(){return 1},
