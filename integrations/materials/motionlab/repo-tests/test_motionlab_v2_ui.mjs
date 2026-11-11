@@ -25,6 +25,7 @@ const fixtures=()=>{
      title_fx:{renderable:['fade-rise','none']},
      transition:{renderable:['crossfade','whip','postcard']},
      subtitle:{styles:['clean'],motions:['karaoke']},
+     typography:{native_families_ready:['Arial','Georgia']},
    },
  };
  const proposals={
@@ -54,6 +55,7 @@ function harness(){
    get:(scene,kind)=>scene.visualLayout?.[kind]||({title:{x:50,y:47,scale:100},
      subtitle:{x:50,y:82,scale:100}})[kind],
    theme:kind=>({...theme[kind]}),
+   typography:(scene,kind)=>scene.visualTypography?.[kind]||theme[kind],
    resetForProject(){},
  };
  const context={
@@ -179,4 +181,15 @@ test('stale ACK cannot approve a visual choice changed after submission',()=>{
    accepted:true,delivery_id:second,receipt_id:'motionlab:v2:'+'3'.repeat(64),
  });
  assert.ok(h.state.lastAck?.endsWith('3'.repeat(64)));
+});
+
+test('uninstalled custom typeface cannot be approved even if browser preview draws it',()=>{
+ const h=harness();h.prepare();
+ h.state.scenes[0].visualTypography={
+   title:{family:'Unbounded',color:'#ffffff',size:100},
+ };
+ assert.match(h.bridge.reviewIssue(),/шрифт title требует установки/);
+ h.state.confirmed=true;
+ h.bridge.sendSelection();
+ assert.equal(h.messages.filter(x=>x.data.type==='SIMBA_MOTIONLAB_V2_SELECTION').length,0);
 });
