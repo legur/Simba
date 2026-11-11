@@ -103,7 +103,7 @@ class V2ContractTests(unittest.TestCase):
             "decision":{
                 "selected_option":1,"options_presented":3,
                 "state":"USER_SELECTED_IN_CONNECTED_SESSION",
-                "explicit_approval":True,
+                "explicit_approval":True,"visual_layout_edited":False,
                 "user_selected_at":datetime.now(timezone.utc).isoformat(),
             },
             "guards":{
