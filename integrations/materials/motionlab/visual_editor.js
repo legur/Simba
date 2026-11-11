@@ -279,7 +279,8 @@
  }
  function pauseFilm(){
   if(!film.active)return;
-  const t=clamp((performance.now()-film.started)/1000,0,film.total);
+  const audio=$('importedFilmAudio');
+  const t=clamp(audio?.src&&globalThis.MotionLabVideoImport?.isOriginalTimeline?.()&&!audio.paused?audio.currentTime:(performance.now()-film.started)/1000,0,film.total);
   seek(t);
  }
  function seek(t){
@@ -288,6 +289,7 @@
   cancelAnimationFrame(film.raf);film.raf=0;
   film.total=total;
   film.playhead=clamp(Number(t)||0,0,Math.max(0,total-.03));
+   const audio=$('importedFilmAudio');if(audio){audio.pause();if(audio.src){try{audio.currentTime=film.playhead;}catch{}}}
   film.started=performance.now()-film.playhead*1000;
   film.index=-1; // seeking must reload the real video at the selected offset
   film.active=true;

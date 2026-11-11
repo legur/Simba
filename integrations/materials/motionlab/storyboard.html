@@ -12,8 +12,10 @@
  <script defer src="visual_editor.js"></script>
  <script defer src="scene_pages.js"></script>
  <script defer src="director_core.js"></script>
+ <script defer src="director_import_core.js"></script>
  <script defer src="director_semantic.js"></script>
  <script defer src="director_analysis.js"></script>
+ <script defer src="director_import.js"></script>
 </head>
 <body>
  <header class="site-header">
@@ -35,7 +37,20 @@
   <div class="workspace" id="overviewWorkspace">
    <section class="design-panel">
     <div class="section-title"><div><span class="small-label">01 / ТРИ АЛЬТЕРНАТИВЫ</span><h2>Подача ролика</h2></div><span class="section-hint">ВЫБЕРИТЕ ОСНОВУ</span></div>
-    <section class="director-analyze" aria-label="Локальный анализ реальных кадров">
+    <section class="full-video-import" aria-label="Автоматическое разбиение готового MP4">
+       <div class="full-video-heading"><strong>Начать с готового ролика</strong><span class="small-label">НАСТОЯЩИЙ MP4 → МОНТАЖНАЯ КАРТА</span></div>
+       <p>Выберите полный ролик до 60 секунд и 200 МБ. В браузере будут найдены возможные монтажные стыки и показаны настоящие кадры каждой сцены. Исходный MP4 не отправляется на сервер. Границы проверяются человеком, это не восстановление оригинальных клипов A2E.</p>
+       <label class="director-editorial-upload">Полный видеоролик MP4/WebM<input id="fullVideoFile" type="file" accept=".mp4,.webm,.m4v,video/mp4,video/webm" aria-describedby="fullVideoStatus"></label>
+       <p id="fullVideoStatus" role="status" aria-live="polite">Исходное видео еще не выбрано.</p>
+       <p id="fullVideoSummary" hidden class="full-video-summary"></p>
+       <div class="full-video-actions">
+        <button type="button" id="exportContactSheet" class="secondary-btn">Скачать реальные кадры для ChatGPT</button>
+        <button type="button" id="exportSceneMap" class="secondary-btn">Скачать карту сцен JSON</button>
+       </div>
+       <label class="director-editorial-upload">Дополнительно: SRT с настоящими временами реплик<input id="fullVideoSrt" type="file" accept=".srt,text/plain" aria-describedby="fullVideoStatus"></label>
+       <p class="source-notice">Речь не распознается автоматически. При наличии SRT фразы связываются со сценами по времени; звук готового MP4 можно прослушать при неизменном порядке сцен.</p>
+      </section>
+      <section class="director-analyze" aria-label="Локальный анализ реальных кадров">
       <div><strong>Режиссерский разбор исходников</strong><p>После загрузки своих фото и видео для всех сцен можно измерить свет, детализацию и изменения видеокадров, затем получить три монтажных варианта. Анализ происходит только в браузере, без передачи файлов.</p></div>
       <button type="button" id="analyzeLocalAssets" class="secondary-btn">Проанализировать локальные кадры</button>
       <label class="director-editorial-upload">Редакторская карта сцен (JSON, необязательно)
@@ -78,7 +93,8 @@
     </div>
     <p class="media-provenance" id="mediaProvenance" role="status">Показан демонстрационный фон. Это не исходный MP4.</p>
     <div class="play-row"><button type="button" id="playPreview" class="primary-btn">▶ Посмотреть движение</button><button type="button" id="stopPreview" class="square-btn" aria-label="Сбросить анимацию">↺</button></div>
-    <div class="film-player" aria-label="Общий предпросмотр монтажного решения">
+    <audio id="importedFilmAudio" preload="metadata" hidden aria-label="Исходная звуковая дорожка импортированного MP4"></audio>
+     <div class="film-player" aria-label="Общий предпросмотр монтажного решения">
       <div class="film-player-heading"><div><span class="small-label">ПОЛНЫЙ МОНТАЖНЫЙ ПРОСМОТР</span><strong id="filmNow">Все сцены · пока не воспроизводится</strong></div><span id="filmClock">00:00 / 00:00</span></div>
       <div class="film-play-controls">
        <button id="playFilm" type="button" class="primary-btn">▶ Просмотреть весь ролик</button>
@@ -96,7 +112,7 @@
         </div>
         <button type="button" id="previewCut" class="secondary-btn">▶ Посмотреть этот переход</button>
       </div>
-      <p id="filmAccuracy" class="film-accuracy">Предпросмотр без утвержденной озвучки и музыки. Некоторые сложные переходы показаны приближенно; финальный результат определяется рендерером.</p>
+      <p id="filmAccuracy" class="film-accuracy">Предпросмотр позволяет прослушивать оригинальный звук загруженного MP4 при неизменном порядке сцен. Монтажные переходы показаны приближенно; финальный результат определяет Montage.</p>
     </div>
     <div class="editor">
       <div class="small-label">04 / НАСТРОЙКИ КАДРА</div>
@@ -105,6 +121,19 @@
       <label>Ссылка или ID исходного кадра<input type="text" id="sceneAsset" placeholder="ID сохраненного файла / название ассета" maxlength="240"></label>
       <label>Локальный предпросмотр своего кадра или клипа (не загружается в Wix)<input type="file" id="localSceneFile" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm,video/quicktime,.jpg,.jpeg,.png,.webp,.mp4,.mov,.m4v,.webm"></label>
       <p id="localMediaStatus" class="source-notice" role="status">Выберите локальную копию соответствующего ассета. Только предпросмотр.</p>
+       <p id="importSpeechCue" class="source-notice" hidden aria-live="polite"></p>
+       <div id="importSceneControls" class="cut-boundary-controls" hidden>
+        <h4>Уточнить разбиение готового MP4</h4>
+        <p>Разделите этот отрезок на два в нужную секунду, либо объедините его со следующим. Это настоящие временные интервалы одного локального видео. Звук не перекодируется.</p>
+        <label>Разделить в момент, секунда от начала ролика
+         <input id="splitSceneSecond" type="number" step="0.05" min="0" max="60">
+        </label>
+        <div class="full-video-actions">
+         <button type="button" id="splitImportedScene" class="secondary-btn">Разделить фрагмент</button>
+         <button type="button" id="mergeImportedScene" class="secondary-btn">Объединить со следующим</button>
+        </div>
+        <p id="importSceneStatus" role="status" aria-live="polite">Сохраненные границы появятся в карте сцен.</p>
+       </div>
       <div class="form-grid two"><label>Движение камеры<select id="sceneCamera"></select></label><label>Переход в этот кадр<select id="sceneTransition"></select></label></div>
       <div class="form-grid two"><label>Анимация титра<select id="sceneTitleFx"></select></label><label>Стиль субтитров<select id="sceneSubtitleStyle"></select></label></div>
       <div class="form-grid two"><label>Анимация слов<select id="sceneWordMotion"></select></label><label>Интенсивность, %<input id="sceneIntensity" type="range" min="0" max="100" step="5"><output id="intensityValue">50%</output></label></div>
@@ -174,6 +203,15 @@
          <div><img id="cutToImage" alt="Кадр после перехода"><span id="cutToLabel">Сцена 02</span></div>
        </div>
        <p>Переход хранится у входящей сцены и меняется только для этой пары. Выберите вариант и нажмите «Посмотреть переход» в предпросмотре.</p>
+       <div id="cutBoundaryControls" class="cut-boundary-controls" hidden>
+         <h4>Исправить точную границу двух фрагментов</h4>
+         <p>Положение найдено автоматически по изменению кадров и может быть неточным. Перенос изменяет конец предыдущего и начало следующего фрагмента исходного MP4 без перекодирования.</p>
+         <label>Время стыка от начала исходного ролика, сек.
+          <input type="number" id="cutBoundarySecond" step="0.05" min="1" max="60">
+         </label>
+         <button type="button" id="saveCutBoundary" class="secondary-btn">Изменить границу и обновить кадры</button>
+         <p id="cutBoundaryStatus" role="status" aria-live="polite">Редактируйте границу после просмотра двух реальных кадров.</p>
+        </div>
        <div id="allTransitions" class="transition-grid" role="group" aria-label="Все доступные переходы"></div>
        <div class="source-notice">Переходы в браузере показаны приближенно. Точный результат проверяет Montage на реальном рендерере.</div>
       </section>
