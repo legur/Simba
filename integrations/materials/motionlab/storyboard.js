@@ -63,6 +63,25 @@ const safeText = (s,max=140) => typeof s==='string'?s.slice(0,max):'';
 const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const nameFor = (type,id)=> CATALOG[type].find(e=>e[0]===id)?.[1]||id;
 const state = {project:null, request:null, scenes:[],selectedIndex:0,selectedOption:1,concepts:PRESETS.map(x=>({...x})),bridge:null,dirty:false,sending:false,lastAck:null};
+// Actual make_video.py capability IDs. The 12 demonstration camera IDs and
+// title transitions are not the same as production renderer options.
+const RENDER_MOVES = new Set(['none','hold','push','pull','pan-left','pan-right','rise']);
+const RENDER_TRANSITIONS = new Set(CATALOG.transitions.map(x=>x[0]));
+const RENDER_STYLES = new Set(CATALOG.subtitle.filter(x=>x[0]!=='none').map(x=>x[0]));
+const RENDER_WORD_MOTIONS = new Set(CATALOG.motion.map(x=>x[0]));
+function rendererIssues(scenes){
+ const issues=[];
+ scenes.forEach((s,i)=>{
+  if(!RENDER_MOVES.has(s.camera))issues.push('Сцена '+(i+1)+': камера — только предпросмотр');
+  if(s.title)issues.push('Сцена '+(i+1)+': анимация титра пока не поддержана в MP4');
+  if(i>0&&!RENDER_TRANSITIONS.has(s.transition))issues.push('Сцена '+(i+1)+': переход не поддержан');
+  if(!RENDER_STYLES.has(s.subtitleStyle))issues.push('Сцена '+(i+1)+': стиль субтитров не поддержан');
+  if(!RENDER_WORD_MOTIONS.has(s.wordMotion))issues.push('Сцена '+(i+1)+': анимация слов не поддержана');
+ });
+ if(new Set(scenes.map(s=>s.subtitleStyle+'|'+s.wordMotion)).size>1)issues.push('Рендерер допускает только один стиль субтитров на весь ролик');
+ if(scenes.length>8)issues.push('Рендерер сейчас ограничен восемью сценами');
+ return issues;
+}
 let toastTimer, previewTimers=[], pendingAckTimer;
 function say(message){const el=$('toast');el.textContent=message;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2500)}
 function choicesFromPreset(id){const p=state.concepts.find(v=>v.id===id)||state.concepts[0];state.scenes=state.scenes.map((s,i)=>({...s,camera:p.camera,transition:i===0?'none':p.transition,titleFx:p.titleFx,subtitleStyle:p.subtitleStyle,wordMotion:p.wordMotion,intensity:p.intensity}));state.selectedOption=id;state.dirty=true;resetAck();render();}
@@ -90,15 +109,21 @@ function makeScene(row,index,chosenPreset=PRESETS[0]){
 function prepareDemo(){state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;clearTimeout(pendingAckTimer);setConnection('demo');render();}
 function populateSelect(id,items){$(id).replaceChildren(...items.map(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;return o}));}
 function titleChoice(index){let s=state.scenes[index];state.selectedIndex=index;resetPreview();render();}
-function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
+function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="concept-support">${!RENDER_MOVES.has(c.camera)||c.titleFx!=='none'?'Есть эффекты только для предпросмотра':'Нужна проверка рендерера'}</span><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
 function scenePhoto(scene){return scene.previewUrl||IMAGES[scene.image]||IMAGES.mountains;}
-function renderSceneList(){ $('sceneCount').textContent=String(state.scenes.length);$('metricScenes').textContent=String(state.scenes.length);$('sceneList').innerHTML=state.scenes.map((s,i)=>`<div role="listitem" class="scene-card ${i===state.selectedIndex?'selected':''}"><img class="thumb" src="${esc(scenePhoto(s))}" alt="" loading="lazy" referrerpolicy="no-referrer"><div class="scene-info"><button type="button" class="scene-open" data-open="${i}" aria-label="Редактировать сцену ${i+1}"><strong>${String(i+1).padStart(2,'0')} / ${esc(s.name)}</strong><p>${s.duration.toFixed(1)} с · ${esc(nameFor('camera',s.camera))}</p></button><div class="chips"><span class="tag">${esc(i===0?'Без входа':nameFor('transitions',s.transition))}</span><span class="tag">${esc(nameFor('title',s.titleFx))}</span></div></div><div class="scene-control"><button data-up="${i}" type="button" title="Выше" ${i===0?'disabled':''}>↑</button><button data-down="${i}" type="button" title="Ниже" ${i===state.scenes.length-1?'disabled':''}>↓</button><button data-remove="${i}" type="button" title="Удалить" ${state.scenes.length<=1||state.bridge?'disabled':''}>×</button></div></div>`).join(''); }
+function renderSceneList(){ $('sceneCount').textContent=String(state.scenes.length);$('metricScenes').textContent=String(state.scenes.length);$('sceneList').innerHTML=state.scenes.map((s,i)=>`<div role="listitem" class="scene-card ${i===state.selectedIndex?'selected':''}"><img class="thumb" src="${esc(scenePhoto(s))}" alt="" loading="lazy" referrerpolicy="no-referrer"><div class="scene-info"><button type="button" class="scene-open" data-open="${i}" aria-label="Редактировать сцену ${i+1}"><strong>${String(i+1).padStart(2,'0')} / ${esc(s.name)}</strong><p>${s.duration.toFixed(1)} с · ${esc(nameFor('camera',s.camera))}</p></button><div class="chips"><span class="tag">${esc(i===0?'Без входа':nameFor('transitions',s.transition))}</span><span class="tag">${esc(nameFor('title',s.titleFx))}</span></div></div><div class="scene-control"><button data-up="${i}" type="button" title="Выше" ${i===0?'disabled':''}>↑</button><button data-down="${i}" type="button" title="Ниже" ${i===state.scenes.length-1?'disabled':''}>↓</button><button data-remove="${i}" type="button" title="Удалить" ${state.scenes.length<=1||state.request?'disabled':''}>×</button></div></div>`).join(''); }
 function setField(id,value){const n=$(id);if(n)n.value=value;}
 function renderEditor(){const s=state.scenes[state.selectedIndex];if(!s)return;
  $('previewHeading').textContent='Сцена '+String(state.selectedIndex+1).padStart(2,'0');$('activeCounter').textContent=`${String(state.selectedIndex+1).padStart(2,'0')} / ${String(state.scenes.length).padStart(2,'0')}`;
  setField('sceneName',s.name);setField('sceneDuration',s.duration);setField('sceneImage',s.image);setField('sceneAsset',s.asset);setField('sceneCamera',s.camera);setField('sceneTransition',s.transition);setField('sceneTitleFx',s.titleFx);setField('sceneSubtitleStyle',s.subtitleStyle);setField('sceneWordMotion',s.wordMotion);setField('sceneIntensity',s.intensity);setField('sceneTitle',s.title);setField('sceneSubtitle',s.subtitle);
  $('intensityValue').textContent=s.intensity+'%';$('sceneTransition').disabled=state.selectedIndex===0;
- $('addScene').disabled=Boolean(state.bridge);
+ const lock=Boolean(state.request);
+ ['sceneName','sceneDuration','sceneAsset','sceneTitle','sceneSubtitle'].forEach(id=>{$(id).readOnly=lock;});
+ $('sceneImage').disabled=lock;$('approvedSourceLock').hidden=!lock;
+ const issues=rendererIssues(state.scenes);
+ $('renderSupport').classList.toggle('ready',issues.length===0);
+ $('renderSupport').textContent=issues.length?'ЭФФЕКТЫ ТОЛЬКО ДЛЯ ПРЕДПРОСМОТРА: '+issues.slice(0,4).join('; ')+(issues.length>4?' и еще '+(issues.length-4):'')+'. Нельзя передавать на автоматический рендер.':'Для этих параметров нет известных блокировок; приемник Montage все равно выполняет техническую проверку.';
+ $('addScene').disabled=Boolean(state.request);
  const p=$('previewPhoto');p.src=scenePhoto(s);$('frameTitle').textContent=s.titleFx==='none'?'':s.title;$('frameSubtitle').textContent=s.subtitleStyle==='none'?'':s.subtitle;
  $('frameSubtitle').className='frame-subtitle '+(s.subtitleStyle==='luxury'||s.subtitleStyle==='gold-card'?'gold':'');
 }
@@ -109,15 +134,17 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  if(state.scenes.some(s=>s.image==='custom'&&!s.asset.trim()))warns.push('Для собственных кадров нужен ID исходного материала.');
  if(state.bridge && state.scenes.some(s=>!s.asset.trim()))warns.push('Для передачи агенту нужен ID ассета каждой сцены.');
  if(total>60)warns.push('План превышает 60 секунд: перед монтажом потребуется уточнение длительности.');
+ const unsupported=rendererIssues(state.scenes);
+ if(unsupported.length)warns.push('Есть '+unsupported.length+' несовместимых с текущим MP4 эффектов; сохраните черновик или выберите поддерживаемый вариант.');
  const v=$('validation');v.textContent=warns.length?warns.join(' '):'Структура готова. Возврат выбора не запускает рендер, TTS, A2E или публикацию.';v.classList.toggle('warning',warns.length>0);
- $('sendToAgent').disabled=!(state.bridge&&state.request)||state.sending||warns.some(x=>/название|ID исходного|ID ассета/.test(x));
+ $('sendToAgent').disabled=!(state.bridge&&state.request)||state.sending||unsupported.length>0||warns.some(x=>/название|ID исходного|ID ассета/.test(x));
  const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
  $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.sending?'Решение отправлено. Подтверждение принимающей стороны пока не получено.':state.bridge?'Канал ответа подключен. После выбора нажмите «Передать выбор агенту».':'Канала ответа нет. Экспортируйте JSON, чтобы продолжить работу в агенте.';
 }
 function render(){renderConcepts();renderSceneList();renderEditor();renderSummary();}
-function updateKey(key,value){const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
+function updateKey(key,value){if(state.request&&['name','duration','image','asset','title','subtitle'].includes(key))return;const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
 function editChange(id,key,fn){$(id).addEventListener('change',()=>{const v=fn?fn($(id).value):$(id).value;updateKey(key,v);});}
-function liveChange(id,key){$(id).addEventListener('input',()=>{const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
+function liveChange(id,key){$(id).addEventListener('input',()=>{if(state.request&&['title','subtitle'].includes(key))return;const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
 function resetAck(){state.sending=false;state.lastAck=null;clearTimeout(pendingAckTimer);}
 function resetPreview(){previewTimers.forEach(t=>clearTimeout(t));previewTimers=[];$('previewPhoto').getAnimations().forEach(a=>a.cancel());$('frameTitle').getAnimations().forEach(a=>a.cancel());$('frameSubtitle').getAnimations().forEach(a=>a.cancel());$('previewPhoto').style.transform='scale(1.06)';$('frameTitle').style.opacity='1';$('frameSubtitle').style.opacity='1';}
 function play(){resetPreview();const s=state.scenes[state.selectedIndex];if(matchMedia('(prefers-reduced-motion: reduce)').matches){say('Анимация ограничена настройками доступности');return;}
@@ -131,7 +158,7 @@ function play(){resetPreview();const s=state.scenes[state.selectedIndex];if(matc
  if(s.subtitleStyle!=='none')sub.animate([{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'translateY(0)'}],{duration:Math.min(dur*.55,1100),delay:Math.min(dur*.25,500),fill:'forwards'});
 }
 function reorder(i,delta){const j=i+delta;if(j<0||j>=state.scenes.length)return;const a=state.scenes;[a[i],a[j]]=[a[j],a[i]];state.selectedIndex=j;a[0].transition='none';if(a.length>1&&a[1].transition==='none')a[1].transition=state.concepts.find(p=>p.id===state.selectedOption).transition;state.dirty=true;resetAck();render();}
-function addScene(){if(state.bridge){say('Агент передал утвержденный набор сцен. Добавление выполняется в сценарии.');return;}if(state.scenes.length>=LIMIT){say('Максимум 24 сцены');return;}const n=state.scenes.length,p=state.concepts.find(c=>c.id===state.selectedOption);const s=makeScene({name:`Сцена ${n+1}`,image:'city',title_text:'',subtitle_preview:''},n,p);state.scenes.push(s);state.selectedIndex=n;state.dirty=true;resetAck();render();}
+function addScene(){if(state.request){say('Утвержденные сцены изменяет Киностудия, не этот редактор.');return;}if(state.scenes.length>=LIMIT){say('Максимум 24 сцены');return;}const n=state.scenes.length,p=state.concepts.find(c=>c.id===state.selectedOption);const s=makeScene({name:`Сцена ${n+1}`,image:'city',title_text:'',subtitle_preview:''},n,p);state.scenes.push(s);state.selectedIndex=n;state.dirty=true;resetAck();render();}
 function fromSaved(){const read=key=>{try{const v=JSON.parse(localStorage.getItem(key)||'[]');return Array.isArray(v)?v:[]}catch{return[]}};
  const camera=read('motionlab-camera-favorites-v1').filter(id=>known('camera',id)),transition=read('motionlab:favorites').filter(id=>known('transitions',id)),title=read('motionlab:text:favorites').filter(id=>known('title',id)),subtitle=read('motionlab:subtitle-combos:v2').filter(id=>typeof id==='string'&&id.includes('|'));
  const has=Boolean(camera.length||transition.length||title.length||subtitle.length);if(!has){say('В библиотеках пока нет избранных эффектов');return;}
@@ -192,7 +219,7 @@ function announceReady(){const target=window.parent!==window?window.parent:windo
 function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sceneTransition',[['none','Без перехода (первая сцена)'],...CATALOG.transitions]);populateSelect('sceneTitleFx',CATALOG.title);populateSelect('sceneSubtitleStyle',CATALOG.subtitle);populateSelect('sceneWordMotion',CATALOG.motion);
  $('conceptList').addEventListener('click',ev=>{const btn=ev.target.closest('[data-option]');if(btn)choicesFromPreset(Number(btn.dataset.option));});
  $('sceneList').addEventListener('click',ev=>{const up=ev.target.closest('[data-up]'),down=ev.target.closest('[data-down]'),rem=ev.target.closest('[data-remove]'),open=ev.target.closest('[data-open]');
- if(up){reorder(Number(up.dataset.up),-1);return;}if(down){reorder(Number(down.dataset.down),1);return;}if(rem){const i=Number(rem.dataset.remove);if(state.bridge||state.scenes.length===1)return;state.scenes.splice(i,1);state.selectedIndex=clamp(state.selectedIndex,0,state.scenes.length-1);state.scenes[0].transition='none';resetAck();render();return;}if(open){titleChoice(Number(open.dataset.open));return;}
+ if(up){reorder(Number(up.dataset.up),-1);return;}if(down){reorder(Number(down.dataset.down),1);return;}if(rem){const i=Number(rem.dataset.remove);if(state.request||state.scenes.length===1)return;state.scenes.splice(i,1);state.selectedIndex=clamp(state.selectedIndex,0,state.scenes.length-1);state.scenes[0].transition='none';resetAck();render();return;}if(open){titleChoice(Number(open.dataset.open));return;}
  });
  $('addScene').addEventListener('click',addScene);$('applyFavorites').addEventListener('click',fromSaved);
  editChange('sceneName','name');editChange('sceneDuration','duration',v=>clamp(Number(v)||3,1,20));editChange('sceneImage','image');editChange('sceneAsset','asset');editChange('sceneCamera','camera');editChange('sceneTransition','transition');editChange('sceneTitleFx','titleFx');editChange('sceneSubtitleStyle','subtitleStyle');editChange('sceneWordMotion','wordMotion');editChange('sceneIntensity','intensity',v=>clamp(Number(v),0,100));
