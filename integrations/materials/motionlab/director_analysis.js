@@ -61,7 +61,7 @@
    try{video.currentTime=time;}catch(err){end(err);}
   });
  }
- function videoSignal(url){
+ function videoSignal(url,start=0,end=null){
   return new Promise((resolve,reject)=>{
    const video=document.createElement('video');
    video.preload='auto';video.muted=true;video.playsInline=true;
@@ -76,7 +76,9 @@
     try{
      const duration=video.duration;
      if(!Number.isFinite(duration)||duration<=0)throw Error('Неизвестная длительность');
-     const times=[.1,.5,.9].map(f=>Math.min(Math.max(.05,duration*f),Math.max(.05,duration-.05)));
+     const from=Math.max(0,start),to=Math.min(duration,end==null?duration:end);
+     if(to-from<.25)throw Error('Слишком короткий видеофрагмент для анализа');
+     const times=[.1,.5,.9].map(f=>Math.min(Math.max(.05,from+(to-from)*f),Math.max(.05,duration-.05)));
      const frames=[];
      for(const time of times)frames.push(await seekFrame(video,time));
      const diffs=[core.frameDifference(frames[0].grid,frames[1].grid),core.frameDifference(frames[1].grid,frames[2].grid)];
@@ -101,7 +103,7 @@
    for(let i=0;i<state.scenes.length;i++){
     const scene=state.scenes[i],source=previewFor(scene);
     status('Измеряются реальные кадры: '+(i+1)+' / '+state.scenes.length+'…');
-    const signal=source.type==='video'?await videoSignal(source.url):await imageSignal(source.url);
+    const signal=source.type==='video'?await videoSignal(source.url,source.start||0,source.end??null):await imageSignal(source.url);
     if(initial!==fingerprint())throw Error('Исходные материалы изменились. Повторите анализ.');
     results.push({scene_id:scene.id,asset_id:scene.asset,type:source.type,shaVerified:Boolean(source.shaVerified),signal});
    }
