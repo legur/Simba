@@ -63,6 +63,7 @@ jobs:
           for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js motionlab_wix_inbox.js visual_editor.js scene_pages.js creative.js; do
             node --check "integrations/materials/motionlab/$file"
           done
+          node --test integrations/materials/motionlab/repo-tests/test_wix_inbox.mjs
           node --test integrations/materials/motionlab/repo-tests/test_creative_catalog.mjs
           node --test integrations/materials/motionlab/repo-tests/test_storyboard_internal.mjs
           node --test integrations/materials/motionlab/repo-tests/test_director_preview.mjs
