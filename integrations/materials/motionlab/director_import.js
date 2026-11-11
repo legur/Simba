@@ -14,6 +14,9 @@
  function isOriginalTimeline(){
   if(!active||state.scenes.length!==active.segments.length)return false;
   return state.scenes.every((s,i)=>s.id===active.segments[i].id&&
+   previewFor(s)?.url===active.url&&s.clipRange&&
+   Math.abs(s.clipRange.start-active.segments[i].start)<.11&&
+   Math.abs(s.clipRange.end-active.segments[i].end)<.11&&
    Math.abs(s.duration-(active.segments[i].end-active.segments[i].start))<.11);
  }
  const info=()=>active;
@@ -116,6 +119,39 @@
    busy=false;$('fullVideoFile').disabled=false;
   }
  }
+ async function shiftBoundary(index,point){
+  if(!active||state.request||index<=0||index>=state.scenes.length)throw Error('Эту границу нельзя редактировать');
+  const prev=state.scenes[index-1],next=state.scenes[index],a=prev.clipRange,b=next.clipRange;
+  if(!a||!b||Math.abs(a.end-b.start)>.11)throw Error('У этих сцен нет общей границы исходного MP4');
+  const target=short(Number(point));
+  const min=Math.max(a.start+1.25,b.end-20),max=Math.min(b.end-1.25,a.start+20);
+  if(!Number.isFinite(target)||target<min||target>max)throw Error('Граница должна быть между '+short(min)+' и '+short(max)+' секундами');
+  stopFilm(false);
+  a.end=target;b.start=target;
+  prev.duration=short(a.end-a.start);next.duration=short(b.end-b.start);
+  const p=previewFor(prev),n=previewFor(next);
+  if(!p||!n||p.url!==active.url||n.url!==active.url)throw Error('Не найдены оригинальные источники этих сцен');
+  p.end=target;p.duration=prev.duration;n.start=target;n.duration=next.duration;
+  const pa=active.segments.find(x=>x.id===prev.id),na=active.segments.find(x=>x.id===next.id);
+  if(!pa||!na)throw Error('Нет подтвержденных интервалов в карте исходника');
+  pa.end=target;na.start=target;
+  state.dirty=true;globalThis.MotionLabDirector?.invalidate();resetAck();render();
+  const video=document.createElement('video');video.preload='auto';video.muted=true;video.playsInline=true;
+  const updated=[];
+  try{
+   await ready(video,active.url);
+   for(const [s,ref] of [[prev,p],[next,n]]){
+    const posterUrl=await poster(video,s.clipRange.start,s.clipRange.end);
+    updated.push([ref,posterUrl]);
+   }
+   for(const [ref,posterUrl] of updated){const old=ref.poster;ref.poster=posterUrl;if(old)URL.revokeObjectURL(old);}
+   render();
+  }finally{video.pause();video.removeAttribute('src');video.load();
+   // On failure, retain the changed time boundary but do not leak thumbnails.
+   for(const [ref,posterUrl] of updated)if(ref.poster!==posterUrl)URL.revokeObjectURL(posterUrl);
+  }
+  status('Временная граница перенесена на '+target+' с. Обновлены два реальных кадра. Проверьте стык и повторите режиссерский анализ.');
+ }
  function saveFile(blob,name){
   const url=URL.createObjectURL(blob),link=document.createElement('a');
   link.href=url;link.download=name;document.body.append(link);link.click();link.remove();
@@ -175,6 +211,6 @@
   $('exportContactSheet').addEventListener('click',()=>contactSheet().catch(e=>status(String(e.message||e),true)));
   $('fullVideoSrt').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(file)await acceptSrt(file);});
  }
- globalThis.MotionLabVideoImport={isOriginalTimeline,info,resetMeta,importVideo,exportMap,contactSheet};
+ globalThis.MotionLabVideoImport={isOriginalTimeline,info,resetMeta,importVideo,shiftBoundary,exportMap,contactSheet};
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
