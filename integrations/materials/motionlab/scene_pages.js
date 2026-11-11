@@ -137,7 +137,7 @@
    $('applyFontChanges').addEventListener('click',()=>{
     const scope=$('fontApplyScope').value,kind=editor.selectedKind();
     const changes={family:$('sceneFont').value,color:$('sceneFontColor').value};
-    if(scope==='all')editor.setTheme(kind,changes);
+    if(scope==='all')editor.applyTypographyAll(kind,changes);
     else editor.setSceneTypography(kind,changes);
     syncSceneTypography();
    });
