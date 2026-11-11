@@ -156,7 +156,7 @@ function makeScene(row,index,chosenPreset=PRESETS[0]){
 function prepareDemo(){stopFilm(false);clearPreviews();state.v2=null;state.confirmed=false;state.project=null;state.request=null;state.bridge=null;state.concepts=PRESETS.map(x=>({...x}));state.selectedOption=1;state.scenes=DEMO.map((x,i)=>makeScene({name:x[0],title_text:x[1],subtitle_preview:x[2],image:x[3]},i));state.selectedIndex=0;state.dirty=false;state.lastAck=null;state.sending=false;clearTimeout(pendingAckTimer);setConnection('demo');render();}
 function populateSelect(id,items){$(id).replaceChildren(...items.map(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;return o}));}
 function titleChoice(index){if(film.active||film.paused)stopFilm(false);let s=state.scenes[index];state.selectedIndex=index;resetPreview();render();}
-function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="concept-support">${!RENDER_MOVES.has(c.camera)||c.titleFx!=='none'?'Есть эффекты только для предпросмотра':'Нужна проверка рендерера'}</span><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
+function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="concept-support">${state.v2?'Рекомендация Motion Lab / проверка Montage':!RENDER_MOVES.has(c.camera)||c.titleFx!=='none'?'Есть эффекты только для предпросмотра':'Нужна проверка рендерера'}</span><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
 function scenePhoto(scene){return scene.previewUrl||IMAGES[scene.image]||IMAGES.mountains;}
 function renderSceneList(){
  $('sceneCount').textContent=String(state.scenes.length);$('metricScenes').textContent=String(state.scenes.length);
@@ -174,8 +174,8 @@ function renderSceneList(){
     <button type="button" class="page-edit-btn" data-edit-scene="${index}" aria-label="Открыть редактор сцены ${num}">✎ Редактировать сцену</button>
    </div>
    <div class="scene-control">
-    <button data-up="${index}" type="button" title="Выше" ${index===0?'disabled':''}>↑</button>
-    <button data-down="${index}" type="button" title="Ниже" ${index===state.scenes.length-1?'disabled':''}>↓</button>
+    <button data-up="${index}" type="button" title="Выше" ${index===0||state.request?'disabled':''}>↑</button>
+    <button data-down="${index}" type="button" title="Ниже" ${index===state.scenes.length-1||state.request?'disabled':''}>↓</button>
     <button data-remove="${index}" type="button" title="Удалить" ${state.scenes.length<=1||state.request?'disabled':''}>×</button>
    </div>
   </div>`;
