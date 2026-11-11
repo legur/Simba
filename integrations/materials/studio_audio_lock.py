@@ -104,7 +104,7 @@ def validate(project: dict, record: dict, source_revision: str) -> list[str]:
     if lock.get("voice_profile") != record.get("voice_profile"):
         issues.append("audio_lock: voice profile does not match approved stage")
     mode = lock.get("mode")
-    if mode not in MODES:
+    if not isinstance(mode, str) or mode not in MODES:
         issues.append("audio_lock: unsupported narration mode")
     if mode == "approved_wav":
         if record.get("voice_profile") != "simba_warmbaritone":
