@@ -34,6 +34,9 @@ class V2ContractTests(unittest.TestCase):
         self.t=tempfile.TemporaryDirectory()
         self.addCleanup(self.t.cleanup)
         self.job=Path(self.t.name)
+        # Synthetic nonzero fixture: load_spec only checks file existence and
+        # rights flag. This is NOT a licensed track or playable music.
+        (self.job/"owner-cleared-music.mp3").write_bytes(b"synthetic-test-not-real-audio")
         self.asset=[]
         self.spec={
             "packageId":"v2-demo","size":"1080x1920",
