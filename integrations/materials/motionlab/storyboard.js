@@ -403,10 +403,13 @@ function approveReview(){
  const error=validationError();
  if(error){say(error);return;}
  state.confirmed=true;state.confirmedAt=new Date().toISOString();
- if(state.request&&!state.bridge)saveLocalDraft();
+ const localSaved=state.request&&!state.bridge?saveLocalDraft():null;
  renderSummary();
  const count=rendererIssues(state.scenes).length;
- say(count?'Монтаж визуально утвержден, но '+count+' параметров еще не поддержаны рендерером':'Вариант утвержден. Черновик сохранен только в браузере; в Montage ничего не отправлено.');
+ say(localSaved===false?'Вариант утвержден, но не удалось сохранить черновик на устройстве. Сделайте экспорт JSON.':
+ count?'Вариант утвержден; есть '+count+' эффектов, требующих проверки рендерером. Черновик хранится только в браузере.':
+ state.bridge?'Вариант утвержден. Отправка возможна через подключенный канал.':
+ 'Вариант утвержден. Черновик сохранен только в браузере; в Montage ничего не отправлено.');
 }
 
 function resetPreview(){previewTimers.forEach(t=>clearTimeout(t));previewTimers=[];$('previewPhoto').getAnimations().forEach(a=>a.cancel());$('frameTitle').getAnimations().forEach(a=>a.cancel());$('frameSubtitle').getAnimations().forEach(a=>a.cancel());$('previewPhoto').style.transform='scale(1.06)';const v=$('previewVideo');if(!v.hidden){v.pause();try{v.currentTime=previewFor(state.scenes[state.selectedIndex])?.start||0;}catch{}}$('frameTitle').style.opacity='1';$('frameSubtitle').style.opacity='1';}
@@ -448,7 +451,7 @@ function parseLaunch(raw,strict){if(!raw||typeof raw!=='object'||Array.isArray(r
  const ids=scenes.map(s=>s.id);if(ids.some(id=>!id)||new Set(ids).size!==ids.length)throw Error('scene_id должны быть уникальными');
  return {request:{id:request_id,projectId:project_id,fingerprint:fp,stage:'edit_choice'},concepts,scenes,selected};
 }
-function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);stopFilm(false);clearPreviews();state.confirmed=false;state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
+function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);clearSavedDraft();stopFilm(false);clearPreviews();state.confirmed=false;state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
 function buildResult(){const req=state.request,bridge=Boolean(state.bridge),timestamp=state.confirmedAt||new Date().toISOString();const result={
  schema:'bontours.motionlab.storyboard.selection/v1',request_id:req?.id||null,project_id:req?.projectId||null,stage:'edit_choice',expected_input_fingerprint:req?.fingerprint||null,
  decision:{selected_option:state.selectedOption,options_presented:3,user_selected_at:timestamp,state:bridge?'USER_SELECTED_IN_CONNECTED_SESSION':'DRAFT_NOT_DELIVERED',confirmation_scope:'EDIT_CHOICES_ONLY'},
@@ -516,6 +519,7 @@ function saveLocalDraft(){
   request:state.request,project:state.project,scenes:state.scenes,
   concepts:state.concepts,selectedOption:state.selectedOption,
   confirmedAt:state.confirmedAt,selection:buildResult(),
+  visual:globalThis.MotionLabVisual?.exportLocalDraft?.()||null,
   render_authorized:false,delivery_status:'LOCAL_ONLY'
  };
  try{
@@ -543,6 +547,8 @@ function restoreLocalDraft(){
   state.selectedOption=s.selectedOption;state.selectedIndex=0;
   state.confirmed=false;state.confirmedAt=null;state.bridge=null;
   state.deliveryStatus={status:'LOCAL_ONLY'};
+  if(s.visual&&globalThis.MotionLabVisual?.importLocalDraft)
+   globalThis.MotionLabVisual.importLocalDraft(s.visual,state.scenes);
   setConnection('offline');render();
   say('Локальный черновик восстановлен; отправки в Montage не было.');
  }catch{clearSavedDraft();}
@@ -578,7 +584,7 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
   }catch(e){$('importSceneStatus').textContent='Объединение не выполнено: '+String(e.message||e);}
   finally{button.disabled=false;}
  });
- $('resetDemo').addEventListener('click',()=>{if(state.bridge){say('Активное задание агента. Демо не заменяет его.');return;}prepareDemo();say('Открыт демонстрационный проект');});
+ $('resetDemo').addEventListener('click',()=>{if(state.bridge){say('Активное задание агента. Демо не заменяет его.');return;}clearSavedDraft();prepareDemo();say('Открыт демонстрационный проект');});
  $('requestFile').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>300_000){say('Максимальный размер задания 300 КБ');return;}try{const source=JSON.parse(await file.text());if(state.bridge){say('Задание от агента активно. Импорт недоступен.');return;}loadLaunch(source,null);}catch(err){say('Ошибка JSON: '+err.message);}});
  $('downloadJson').addEventListener('click',jsonDownload);$('copyBrief').addEventListener('click',copyBrief);$('sendToAgent').addEventListener('click',sendSelection);
  window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);stopFilm(false);clearPreviews();});prepareDemo();restoreLocalDraft();
