@@ -8,6 +8,8 @@ on:
       - 'integrations/video/motionlab_v2_contract.py'
       - 'integrations/video/motionlab_layout_contract.py'
       - 'integrations/video/motionlab_typography_contract.py'
+      - 'integrations/video/motionlab_approved_audio.py'
+      - 'integrations/video/tests/test_motionlab_approved_audio.py'
       - 'integrations/video/tests/test_motionlab_typography_contract.py'
       - 'integrations/video/tests/test_motionlab_v2_typography.py'
       - 'integrations/video/tests/test_motionlab_render_contract.py'
@@ -69,5 +71,6 @@ jobs:
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_v2_contract.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_visual_layout.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_typography_contract.py' -v
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_approved_audio.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_v2_typography.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_analysis_bundle.py' -v
