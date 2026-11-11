@@ -322,10 +322,12 @@ function filmFrame(now){
 }
 function startFilm(){
  if(film.active)return;
- resetPreview();
+ const continuing=film.paused;
+ if(!continuing)resetPreview();
  const total=filmTotal();
  if(!Number.isFinite(total)||total<=0||!state.scenes.length){say('Нет сцен для просмотра');return;}
  film.active=true;film.total=total;film.started=performance.now()-(film.paused?film.playhead*1000:0);film.paused=false;if(film.playhead===0){film.index=-1;film.nextIndex=-1;}
+ if(continuing&&film.index>=0){const elapsed=state.scenes.slice(0,film.index).reduce((t,x)=>t+x.duration,0);safePlayVideo($('previewVideo'),Math.max(0,film.playhead-elapsed));}
  $('playFilm').textContent='■ Остановить просмотр';
  $('filmClock').textContent=filmClock(film.playhead)+' / '+filmClock(total);
  film.raf=requestAnimationFrame(filmFrame);
