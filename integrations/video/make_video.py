@@ -10,6 +10,8 @@ text, a line the speech check cannot hear back, text on screen too short to read
 import argparse, asyncio, difflib, glob, hashlib, json, os, re, shutil, subprocess, sys, unicodedata
 from pathlib import Path
 
+import motionlab_layout_contract as layout_contract
+
 for _s in (sys.stdout, sys.stderr): _s.reconfigure(encoding='utf-8', errors='replace')   # Windows consoles default to a code page
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[1]
@@ -51,6 +53,10 @@ def node(script, *args):
 
 # ---------------------------------------------------------------- spec
 MOVES = {'push', 'pull', 'pan-left', 'pan-right', 'rise', 'hold', 'none'}
+# Exact opt-in Motion Lab camera effects, implemented in template/film.js.
+# Existing clip default `move: none` is unchanged; no implicit mapping.
+MOTIONLAB_CAMERA_EFFECTS = {'cinematic-zoom', 'push-through', 'float'}
+MOTIONLAB_TITLE_EFFECTS = {'none', 'fade-rise'}
 MOTIONS = {'anime', 'classic'}
 RENDERERS = {'simba', 'hyperframes'}
 # The production style registry lives in template/subtitle_styles.js.
@@ -132,6 +138,30 @@ def load_spec(job: Path):
             sc.setdefault('move', 'none'); sc.setdefault('voice', 'tts')
             need(sc['voice'] in ('tts', 'clip'), f'scene {i + 1}: voice must be "tts" or explicit "clip"')
         need(sc.get('move', 'push') in MOVES, f'scene {i + 1}: move must be one of {sorted(MOVES)}')
+        camera_fx = sc.get('cameraEffect')
+        if camera_fx is not None:
+            need(isinstance(camera_fx, dict) and set(camera_fx) == {'id', 'intensity_percent'},
+                 f'scene {i + 1}: cameraEffect must be {{id, intensity_percent}}')
+            need(bool(sc.get('clip')) and sc.get('move') == 'none',
+                 f'scene {i + 1}: Motion Lab camera is opt-in on a video clip with move=none')
+            need(camera_fx['id'] in MOTIONLAB_CAMERA_EFFECTS,
+                 f'scene {i + 1}: unsupported Motion Lab camera effect')
+            intensity = camera_fx['intensity_percent']
+            need(type(intensity) in (int, float) and 0 <= intensity <= 100,
+                 f'scene {i + 1}: camera intensity must be 0..100')
+        if 'titleEffect' in sc:
+            title_fx = sc['titleEffect']
+            need(type(title_fx) is str and title_fx in MOTIONLAB_TITLE_EFFECTS,
+                 f'scene {i + 1}: unsupported Motion Lab title effect')
+            need(title_fx != 'none' or not sc.get('title'),
+                 f'scene {i + 1}: titleEffect=none requires no locked title')
+        if 'visualLayout' in sc:
+            need(bool(sc.get('clip')), f'scene {i + 1}: visualLayout only supported for verified F2U video clips')
+            try:
+                sc['visualLayout'] = layout_contract.validate_scene_layout(
+                    sc['visualLayout'], f'clip-{i + 1:02d}')
+            except layout_contract.LayoutError as exc:
+                raise Stop(f'video-spec.json scene {i + 1}: {exc.code} ({exc.field})') from None
         need(all(isinstance(l.get('text'), str) and l['text'].strip() for l in sc.get('lines', [])), f'scene {i + 1}: every line needs "text"')
     o = s.get('offer')
     if o: need(isinstance(o.get('title'), str) and isinstance(o.get('price'), str), 'offer: needs "title" and "price"')
@@ -463,7 +493,7 @@ def timeline(spec):
             end = speak(ls, t + (.5 if i == 0 else .35), 1420) - .35 + .5
             if sc.get('title'): end = max(end, t0 + 1.1 + need_read(sc['title']))
             t = max(end, t0 + (c['dur'] if c else sc.get('minDur', 2.8)))
-        s = {'image': sc.get('image', sc.get('clip')), 'move': sc.get('move', 'push'), 'focus': sc.get('focus', [.5, .5]), 'title': sc.get('title'), 't0': round(t0, 3), 't1': round(t, 3), 'transition': sc.get('transition')}
+        s = {'image': sc.get('image', sc.get('clip')), 'move': sc.get('move', 'push'), 'focus': sc.get('focus', [.5, .5]), 'title': sc.get('title'), 'cameraEffect': sc.get('cameraEffect'), 'titleEffect': sc.get('titleEffect'), 'visualLayout': sc.get('visualLayout'), 't0': round(t0, 3), 't1': round(t, 3), 'transition': sc.get('transition')}
         if c: s.update(frames=c['frames'], count=c['count'], fps=c['fps'])
         if sc.get('insert'): s['insert'] = sc['insert']
         scenes.append(s)
