@@ -43,6 +43,12 @@
   };
   renderStageAndControls();modified();
  }
+ function applyTypographyAll(kind,patch){
+  if(!shared.text[kind])return;
+  // Unlike changing the brand default, explicit "all scenes" replaces exceptions.
+  for(const row of state.scenes)if(row.visualTypography)delete row.visualTypography[kind];
+  setTheme(kind,patch);
+ }
  function setSceneTypography(kind,patch){
   const scene=current();if(!scene)return;
   const prev=typography(scene,kind);
@@ -302,7 +308,7 @@
  globalThis.MotionLabVisual={
   get,dirty,changed,typography,isOverride,
   theme:kind=>({...shared.text[kind]}),selectedKind:()=>layer.kind,
-  setTheme,setSceneTypography,inheritTypography,inheritLayout,applyLayoutToAll,resetTheme,
+  setTheme,applyTypographyAll,setSceneTypography,inheritTypography,inheritLayout,applyLayoutToAll,resetTheme,
   render:refresh,renderStage:renderLayout,populateCuts,pauseFilm,init,seek,saveDraft
  };
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
