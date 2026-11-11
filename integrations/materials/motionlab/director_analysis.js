@@ -84,6 +84,7 @@
   busy=true;btn().disabled=true;panel().hidden=true;
   const initial=fingerprint();
   try{
+   if(state.request)throw Error('Подключенное задание v1 имеет утвержденные варианты. Для замены требуется согласованный контракт Montage v2.');
    if(!state.scenes.length)throw Error('В раскадровке нет сцен');
    const missing=state.scenes.map((scene,index)=>previewFor(scene)?null:index+1).filter(Boolean);
    if(missing.length)throw Error('Не загружены реальные файлы для сцен: '+missing.join(', ')+'. Демонстрационные картинки не анализируются.');
@@ -103,7 +104,7 @@
     camera:p.scenes[0].camera,transition:p.transition,titleFx:p.titleFx,
     subtitleStyle:p.subtitleStyle,wordMotion:p.wordMotion,intensity:p.scenes[0].intensity
    }));
-   renderConcepts();
+   state.selectedOption=0;resetAck();renderConcepts();renderSummary();
    const recommended=generated.plans.find(p=>p.recommended);
    const title=document.createElement('strong');
    title.textContent='Рекомендация: вариант '+recommended.id+' — '+recommended.name;
