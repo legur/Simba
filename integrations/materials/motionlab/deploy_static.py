@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and deploy the 21 public Motion Lab files to the EXISTING Wix Headless site.
+"""Build and deploy the 23 public Motion Lab files to the EXISTING Wix Headless site.
 
 GitHub is canonical. This is a destructive Wix static *drop*, so the updater
 always sends the complete allowlisted site, never a patch. No private files,
@@ -37,6 +37,7 @@ SITE_FILES = (
     "subtitles.html", "subtitles.css", "subtitles.js",
     "camera.html", "camera.css", "camera.js",
     "storyboard.html", "storyboard.css", "storyboard.js", "visual_editor.js", "scene_pages.js",
+    "director_core.js", "director_analysis.js",
     "creative.html", "creative.css", "creative.js",
 )
 MAX_SITE_BYTES = 20 * 1024 * 1024
@@ -113,7 +114,7 @@ def check_remote_files(data: dict) -> None:
     extras = sorted(set(remote) - set(SITE_FILES) - {"wix.config.json"})
     if missing or extras:
         raise ValueError(
-            "Wix files have diverged from the protected 21-file deployment set. "
+            "Wix files have diverged from the protected 23-file deployment set. "
             f"Missing={missing}; extras={extras}. Resolve the drift before deployment."
         )
 
@@ -194,7 +195,7 @@ def main() -> int:
         auth = make_auth_header(os.environ.get("WIX_API_KEY", ""))
         before = wix_files_snapshot(auth)
         check_remote_files(before)
-        print("Remote static site is the expected 16-file Motion Lab; publishing.", flush=True)
+        print("Remote static site is the expected 23-file Motion Lab; publishing.", flush=True)
         result = publish(args.bundle, auth)
         print("Wix accepted the upload; checking remote inventory.", flush=True)
         after = wix_files_snapshot(auth)
