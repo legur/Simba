@@ -6,6 +6,7 @@
  const core=globalThis.MotionLabDirectorCore;
  const $=id=>document.getElementById(id);
  let plans=null,snapshot=null,busy=false;
+ let editorial=null;
  const panel=()=> $('directorReport');
  const btn=()=> $('analyzeLocalAssets');
  function status(message,isError=false){
@@ -20,6 +21,8 @@
  }
  function invalidate(){
   const hadPlans=Boolean(plans);
+  editorial=null;
+  const editorialStatus=$('editorialStatus');if(editorialStatus)editorialStatus.textContent='Нет загруженной редакторской аннотации.';
   plans=null;snapshot=null;
   if(panel())panel().hidden=true;
   if(hadPlans && !state.request){
@@ -102,7 +105,8 @@
     if(initial!==fingerprint())throw Error('Исходные материалы изменились. Повторите анализ.');
     results.push({scene_id:scene.id,asset_id:scene.asset,type:source.type,shaVerified:Boolean(source.shaVerified),signal});
    }
-   const generated=core.buildPlans(results);
+   const pixelPlans=core.buildPlans(results);
+   const generated=editorial?globalThis.MotionLabSemantic.enrich(pixelPlans,editorial,state.scenes):pixelPlans;
    if(initial!==fingerprint())throw Error('Состав сцен изменился. Повторите анализ.');
    plans={...generated,results};snapshot=initial;
    state.concepts=generated.plans.map(p=>({
@@ -154,6 +158,23 @@
  function init(){
   if(!core||!btn()||!panel())return;
   btn().addEventListener('click',analyze);
+  const picker=$('editorialManifest');
+  if(picker)picker.addEventListener('change',async()=>{
+   const file=picker.files?.[0];if(!file)return;
+   try{
+    if(file.size>100000)throw Error('Файл аннотаций слишком велик');
+    if(state.request)throw Error('Редакторские аннотации нельзя подменять внутри подключенного задания v1');
+    const data=JSON.parse(await file.text());
+    if(!globalThis.MotionLabSemantic)throw Error('Модуль редакторской проверки недоступен');
+    globalThis.MotionLabSemantic.validate(data,state.scenes);
+    editorial=data;
+    plans=null;snapshot=null;resetAck();
+    $('editorialStatus').textContent='Редакторские метки загружены и сверены с ID сцен и исходников: '+data.scenes.length+'. Перезапустите анализ кадров.';
+    status('Аннотации проверены; теперь выполните анализ реальных локальных файлов.');
+    if(panel())panel().hidden=true;
+   }catch(e){editorial=null;$('editorialStatus').textContent='Отклонено: '+String(e.message||e);}
+   picker.value='';
+  });
   status('Загрузите локальные файлы для каждой сцены. Файлы остаются в браузере.');
  }
  globalThis.MotionLabDirector={analyze,applyConcept,invalidate};
