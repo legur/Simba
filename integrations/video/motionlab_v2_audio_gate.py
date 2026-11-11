@@ -8,7 +8,7 @@ no duplicate implementation of its schema is permitted.
 from __future__ import annotations
 
 import hashlib
-import math
+import json
 from pathlib import Path
 import re
 import sys
@@ -122,6 +122,41 @@ def verify_private_audio_lock(project: dict, private_dir: Path, *,
                       narration_duration_ms=duration_ms,
                       narration_bytes_verified=True)
     return result
+
+
+
+def verify_private_audio_manifest(project: dict, private_dir: Path) -> dict:
+    """Trusted server-only mapping of private source filenames to locked IDs.
+
+    The browser sends no filenames or SHA. Missing/invalid manifest blocks
+    creating v2 session. Keys are deliberately not returned to the browser.
+    """
+    manifest_path = _safe_file(private_dir, "approved-audio-files.json")
+    if manifest_path.stat().st_size > 8192:
+        _fail("PRIVATE_AUDIO_MANIFEST_TOO_LARGE")
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (UnicodeError, ValueError, OSError):
+        _fail("PRIVATE_AUDIO_MANIFEST_INVALID")
+    if not isinstance(manifest, dict) or set(manifest) != {
+            "audio_revision_sha256", "narration_file", "music_file"}:
+        _fail("PRIVATE_AUDIO_MANIFEST_FIELDS_INVALID")
+    stage = (project.get("stage_handoffs") or {}).get("voice_music") or {}
+    lock = stage.get("audio_lock") or {}
+    if manifest.get("audio_revision_sha256") != lock.get("audio_revision_sha256"):
+        _fail("PRIVATE_AUDIO_MANIFEST_REVISION_STALE")
+    if lock.get("mode") == "approved_wav":
+        if not isinstance(manifest.get("narration_file"), str):
+            _fail("PRIVATE_AUDIO_MANIFEST_NARRATION_MISSING")
+    elif manifest.get("narration_file") is not None:
+        _fail("PRIVATE_AUDIO_MANIFEST_UNAPPROVED_NARRATION")
+    if not isinstance(manifest.get("music_file"), str):
+        _fail("PRIVATE_AUDIO_MANIFEST_MUSIC_MISSING")
+    # metadata and file hashes are checked in the one canonical verifier.
+    return verify_private_audio_lock(
+        project, private_dir, narration_name=manifest["narration_file"],
+        music_name=manifest["music_file"])
+
 
 
 def validate_alignment_evidence(preflight: dict, alignment: dict, expected_lines: list[dict]) -> dict:
