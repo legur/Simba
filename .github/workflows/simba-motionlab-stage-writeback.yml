@@ -37,6 +37,8 @@ on:
       - 'integrations/video/motionlab_layout_contract.py'
       - 'integrations/materials/motionlab/motionlab_live_host.js'
       - 'integrations/materials/motionlab/repo-tests/test_motionlab_live_host.mjs'
+      - 'integrations/materials/motionlab/motionlab_v2_live_host.js'
+      - 'integrations/materials/motionlab/repo-tests/test_motionlab_v2_live_host.mjs'
       - 'integrations/materials/motionlab/motionlab_host.html'
       - 'integrations/materials/motionlab/motionlab_host.css'
       - 'integrations/materials/motionlab/motionlab_host_page.js'
@@ -69,6 +71,8 @@ jobs:
           python -m unittest discover -s integrations/materials -p test_motionlab_live_receiver.py -v
           python -m unittest discover -s integrations/materials -p test_motionlab_v2_live_receiver.py -v
           node --test integrations/materials/motionlab/repo-tests/test_motionlab_live_host.mjs
+          node --test integrations/materials/motionlab/repo-tests/test_motionlab_v2_live_host.mjs
+          node --check integrations/materials/motionlab/motionlab_v2_live_host.js
           node --check integrations/materials/motionlab/motionlab_host_page.js
           node --check integrations/materials/motionlab/motionlab_live_host.js
 
