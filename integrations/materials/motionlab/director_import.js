@@ -10,6 +10,10 @@
  let active=null,busy=false;
  const status=(message,error=false)=>{const e=$('fullVideoStatus');if(e){e.textContent=message;e.classList.toggle('director-error',error);}};
  const short=n=>Math.round(n*100)/100;
+ function boundAsset(scene,ref){
+  scene.asset='local-sha256:'+active.sha+':'+Math.round(scene.clipRange.start*1000)+'-'+Math.round(scene.clipRange.end*1000);
+  ref.assetId=scene.asset;
+ }
  function resetMeta(){active=null;if($('fullVideoSummary'))$('fullVideoSummary').hidden=true;}
  function isOriginalTimeline(){
   if(!active||state.scenes.length!==active.segments.length)return false;
@@ -126,15 +130,14 @@
   const target=short(Number(point));
   const min=Math.max(a.start+1.25,b.end-20),max=Math.min(b.end-1.25,a.start+20);
   if(!Number.isFinite(target)||target<min||target>max)throw Error('Граница должна быть между '+short(min)+' и '+short(max)+' секундами');
+  const p=previewFor(prev),n=previewFor(next);
+  const pa=active.segments.find(x=>x.id===prev.id),na=active.segments.find(x=>x.id===next.id);
+  if(!p||!n||p.url!==active.url||n.url!==active.url||!pa||!na)throw Error('Не найдены оригинальные источники этих сцен');
   stopFilm(false);
   a.end=target;b.start=target;
   prev.duration=short(a.end-a.start);next.duration=short(b.end-b.start);
-  const p=previewFor(prev),n=previewFor(next);
-  if(!p||!n||p.url!==active.url||n.url!==active.url)throw Error('Не найдены оригинальные источники этих сцен');
   p.end=target;p.duration=prev.duration;n.start=target;n.duration=next.duration;
-  const pa=active.segments.find(x=>x.id===prev.id),na=active.segments.find(x=>x.id===next.id);
-  if(!pa||!na)throw Error('Нет подтвержденных интервалов в карте исходника');
-  pa.end=target;na.start=target;
+  pa.end=target;na.start=target;boundAsset(prev,p);boundAsset(next,n);
   state.dirty=true;globalThis.MotionLabDirector?.invalidate();resetAck();render();
   const video=document.createElement('video');video.preload='auto';video.muted=true;video.playsInline=true;
   const updated=[];
