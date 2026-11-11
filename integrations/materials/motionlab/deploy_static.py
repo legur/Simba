@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build and deploy the 28 public Motion Lab files to the EXISTING Wix Headless site.
+"""Build and deploy the allowlisted public Motion Lab files to the EXISTING Wix Headless site.
 
 GitHub is canonical. This is a destructive Wix static *drop*, so the updater
 always sends the complete allowlisted site, never a patch. No private files,
@@ -36,7 +36,7 @@ SITE_FILES = (
     "text.html", "text.css", "text.js",
     "subtitles.html", "subtitles.css", "subtitles.js",
     "camera.html", "camera.css", "camera.js",
-    "storyboard.html", "storyboard.css", "storyboard.js", "visual_editor.js", "scene_pages.js",
+    "storyboard.html", "storyboard.css", "storyboard.js", "motionlab_wix_inbox.js", "visual_editor.js", "scene_pages.js",
     "director_core.js", "director_import_core.js", "director_semantic.js", "director_analysis.js", "director_import.js", "director_vision_core.js", "director_vision.js",
     "creative.html", "creative.css", "creative.js",
 )
@@ -195,7 +195,7 @@ def main() -> int:
         auth = make_auth_header(os.environ.get("WIX_API_KEY", ""))
         before = wix_files_snapshot(auth)
         check_remote_files(before)
-        print("Remote static site is the expected 24-file Motion Lab; publishing.", flush=True)
+        print("Remote static site is the expected allowlisted Motion Lab; publishing.", flush=True)
         result = publish(args.bundle, auth)
         print("Wix accepted the upload; checking remote inventory.", flush=True)
         after = wix_files_snapshot(auth)

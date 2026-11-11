@@ -37,7 +37,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Validate the 21-file static bundle
+    name: Validate the complete static bundle
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -60,9 +60,10 @@ jobs:
           python3 integrations/materials/motionlab/deploy_static.py build --bundle "$RUNNER_TEMP/motionlab-site.zip"
       - name: Check public JavaScript syntax
         run: |
-          for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js visual_editor.js scene_pages.js creative.js; do
+          for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js motionlab_wix_inbox.js visual_editor.js scene_pages.js creative.js; do
             node --check "integrations/materials/motionlab/$file"
           done
+          node --test integrations/materials/motionlab/repo-tests/test_wix_inbox.mjs
           node --test integrations/materials/motionlab/repo-tests/test_creative_catalog.mjs
           node --test integrations/materials/motionlab/repo-tests/test_storyboard_internal.mjs
           node --test integrations/materials/motionlab/repo-tests/test_director_preview.mjs

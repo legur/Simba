@@ -9,6 +9,7 @@
  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
  <link rel="stylesheet" href="storyboard.css">
  <script defer src="storyboard.js"></script>
+  <script defer src="motionlab_wix_inbox.js"></script>
  <script defer src="visual_editor.js"></script>
  <script defer src="scene_pages.js"></script>
  <script defer src="director_core.js"></script>
@@ -260,7 +261,7 @@
     </div>
   </section>
   <section class="handoff" id="handoff">
-   <div class="handoff-head"><div><span class="small-label">05 / ВОЗВРАТ В АВТОМАТИЧЕСКУЮ СРЕДУ</span><h2>Передать выбранные настройки</h2><p>После выбора результат вернется в ту же рабочую сессию, если Киностудия подключила канал приема. Без него можно скачать файл и передать его агенту.</p></div><span id="handoffBadge" class="status-chip">ЧЕРНОВИК</span></div>
+   <div class="handoff-head"><div><span class="small-label">05 / ВОЗВРАТ В АВТОМАТИЧЕСКУЮ СРЕДУ</span><h2>Передать выбранные настройки</h2><p>После утверждения решение сохраняется в закрытой очереди Wix, а GitHub Actions забирает его для Montage. Вход Wix обязателен. Сохранение не запускает рендер или платные операции.</p></div><span id="handoffBadge" class="status-chip">ЧЕРНОВИК</span></div>
    <div class="summary" id="summary"></div>
    <div id="validation" class="validation" role="status"></div>
    <div class="review-approval">
@@ -269,8 +270,8 @@
      <button type="button" class="primary-btn" id="approveChoice">✓ Утвердить выбранный монтаж</button>
      <span id="approvalStatus" role="status">Еще не утверждено</span>
     </div>
-    <div class="handoff-buttons"><button type="button" class="primary-btn" id="sendToAgent" disabled>Передать выбор агенту</button><button type="button" class="secondary-btn" id="downloadJson">Скачать монтажное ТЗ JSON (v1)</button><button type="button" class="secondary-btn" id="downloadVisual">Скачать визуальные правки (черновик v2)</button><button type="button" class="secondary-btn" id="copyBrief">Скопировать ТЗ</button></div>
-   <p class="delivery-hint" id="deliveryHint">Прямая отправка становится доступной после получения подтвержденного задания от родительской среды. Экспорт всегда остается доступным.</p>
+    <div class="handoff-buttons"><button type="button" class="primary-btn" id="sendToAgent" disabled>Сохранить выбор и передать</button><button type="button" class="secondary-btn" id="wixLogin">Войти в Wix для передачи</button><button type="button" class="secondary-btn" id="checkWixStatus">Проверить статус</button><button type="button" class="secondary-btn" id="downloadJson">Скачать монтажное ТЗ JSON (v1)</button><button type="button" class="secondary-btn" id="downloadVisual">Скачать визуальные правки (черновик v2)</button><button type="button" class="secondary-btn" id="copyBrief">Скопировать ТЗ</button></div>
+   <p class="delivery-hint" id="deliveryHint">Войдите в Wix, затем загрузите задание и подтвердите выбор. Статусы «Сохранено на Wix» и «Получено GitHub» проверяются отдельно.</p>
   </section>
  </main>
  <footer>Motion Lab / Bon Tours <span>ПОДГОТОВКА · Без рендера · Без публикации · Без платных операций</span></footer>
