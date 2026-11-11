@@ -8,14 +8,82 @@
   title:Object.freeze({x:50,y:47,scale:100}),
   subtitle:Object.freeze({x:50,y:82,scale:100})
  });
+ const baseText=Object.freeze({title:Object.freeze({family:'Unbounded',color:'#ffffff',size:100}),subtitle:Object.freeze({family:'Manrope',color:'#ffffff',size:100})});
+ const shared={layout:{title:{...defaults.title},subtitle:{...defaults.subtitle}},text:{title:{...baseText.title},subtitle:{...baseText.subtitle}}};
  const layer={kind:'title',drag:null,safe:true};
+ const FONTS=new Set(['Unbounded','Manrope','Arial','Georgia']);
+ const color=v=>/^#[0-9a-f]{6}$/i.test(String(v))?v.toLowerCase():'#ffffff';
  const coord=(v,fallback,min,max)=>Number.isFinite(Number(v))?Math.round(Math.max(min,Math.min(max,Number(v)))):fallback;
  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
  const $$=s=>Array.from(document.querySelectorAll(s));
  const current=()=>state.scenes[state.selectedIndex];
- function get(scene,kind){return scene?.visualLayout?.[kind]||defaults[kind];}
- function dirty(scene,kind){const a=get(scene,kind),b=defaults[kind];return a.x!==b.x||a.y!==b.y||a.scale!==b.scale;}
- function changed(){return state.scenes.some(s=>dirty(s,'title')||dirty(s,'subtitle'));}
+ function get(scene,kind){return scene?.visualLayout?.[kind]||shared.layout[kind];}
+ function typography(scene,kind){return scene?.visualTypography?.[kind]||shared.text[kind];}
+ function dirty(scene,kind){
+  const a=get(scene,kind),b=defaults[kind],t=typography(scene,kind),z=baseText[kind];
+  return a.x!==b.x||a.y!==b.y||a.scale!==b.scale||t.family!==z.family||t.color!==z.color||t.size!==z.size;
+ }
+ function changed(){return state.scenes.some(s=>dirty(s,'title')||dirty(s,'subtitle'))||
+  ['title','subtitle'].some(k=>{
+   const a=shared.layout[k],b=defaults[k],t=shared.text[k],z=baseText[k];
+   return a.x!==b.x||a.y!==b.y||a.scale!==b.scale||t.family!==z.family||t.color!==z.color||t.size!==z.size;
+  });
+ }
+ function isOverride(scene,kind){return Boolean(scene?.visualLayout?.[kind]||scene?.visualTypography?.[kind]);}
+ function modified(){
+  state.dirty=true;resetAck();renderSummary();
+  globalThis.MotionLabPages?.syncSceneTypography?.();
+ }
+ function setTheme(kind,patch){
+  const prev=shared.text[kind];if(!prev)return;
+  shared.text[kind]={
+   family:FONTS.has(patch.family)?patch.family:prev.family,
+   color:patch.color?color(patch.color):prev.color,
+   size:patch.size===undefined?prev.size:Math.max(70,Math.min(140,Math.round(Number(patch.size)/5)*5))
+  };
+  renderStageAndControls();modified();
+ }
+ function applyTypographyAll(kind,patch){
+  if(!shared.text[kind])return;
+  // Unlike changing the brand default, explicit "all scenes" replaces exceptions.
+  for(const row of state.scenes)if(row.visualTypography)delete row.visualTypography[kind];
+  setTheme(kind,patch);
+ }
+ function setSceneTypography(kind,patch){
+  const scene=current();if(!scene)return;
+  const prev=typography(scene,kind);
+  if(!scene.visualTypography)scene.visualTypography={};
+  scene.visualTypography[kind]={
+   family:FONTS.has(patch.family)?patch.family:prev.family,
+   color:patch.color?color(patch.color):prev.color,
+   size:prev.size
+  };
+  renderStageAndControls();modified();
+ }
+ function inheritTypography(kind){
+  const scene=current();if(!scene)return;
+  if(scene.visualTypography)delete scene.visualTypography[kind];
+  renderStageAndControls();modified();
+ }
+ function inheritLayout(kind){
+  const scene=current();if(!scene)return;
+  if(scene.visualLayout)delete scene.visualLayout[kind];
+  renderStageAndControls();modified();
+ }
+ function applyLayoutToAll(kind){
+  const scene=current();if(!scene)return;
+  shared.layout[kind]={...get(scene,kind)};
+  for(const row of state.scenes)if(row.visualLayout)delete row.visualLayout[kind];
+  renderStageAndControls();modified();
+ }
+ function resetTheme(){
+  for(const kind of ['title','subtitle']){
+   shared.layout[kind]={...defaults[kind]};
+   shared.text[kind]={...baseText[kind]};
+  }
+  renderStageAndControls();modified();
+ }
+ function renderStageAndControls(){if(current())refresh(current());}
  function normalized(kind,v){
   return {x:coord(v.x,50,36,64),y:coord(v.y,defaults[kind].y,13,87),scale:Math.round(coord(v.scale,100,70,140)/5)*5};
  }
@@ -27,7 +95,10 @@
    node.style.left=val.x+'%';node.style.top=val.y+'%';
    node.style.bottom='auto';node.style.width='72%';
    node.style.transform='translate(-50%, -50%)';
-   node.style.fontSize=(base*(kind==='title'?.087:.042)*val.scale/100).toFixed(1)+'px';
+   const font=typography(scene,kind);
+   node.style.fontSize=(base*(kind==='title'?.087:.042)*val.scale/100*font.size/100).toFixed(1)+'px';
+   node.style.fontFamily=font.family+(font.family==='Georgia'?',serif':',sans-serif');
+   node.style.color=font.color;
    node.classList.toggle('active-edit',layer.kind===kind);
    node.setAttribute('aria-label',(kind==='title'?'Титр':'Субтитры')+'. Перемещайте стрелками, удерживайте Shift для шага 5 процентов.');
   }
@@ -50,14 +121,15 @@
    'Есть визуальные правки: это черновик v2. Позиции пока нельзя передать действующему Montage v1.':
    'Размещение стандартное. Визуальные изменения требуют отдельного согласованного Montage v2.';
   $('downloadVisual').disabled=!changed();
+  globalThis.MotionLabPages?.syncSceneTypography?.();
  }
  function edit(kind,fields,commit=true){
   const scene=current();if(!scene||!defaults[kind])return;
   const merged=normalized(kind,{...get(scene,kind),...fields});
-  if(!scene.visualLayout)scene.visualLayout={title:{...defaults.title},subtitle:{...defaults.subtitle}};
+  if(!scene.visualLayout)scene.visualLayout={};
   scene.visualLayout[kind]=merged;
   refresh(scene);
-  if(commit){state.dirty=true;resetAck();renderSummary();}
+  if(commit)modified();
  }
  function select(kind){
   if(!defaults[kind])return;
@@ -104,9 +176,15 @@
    user_confirmed:Boolean(state.confirmed),
    no_automated_visual_analysis:true,render_authorized:false,
    pending:'MONTAGE_V2_LAYOUT_SUPPORT',
-   scene_layout:state.scenes.map(s=>({scene_id:s.id,asset_id:s.asset||null,layout:{
-    title:{...get(s,'title')},subtitle:{...get(s,'subtitle')}
-   }})),
+   global_theme:{
+    layout:{title:{...shared.layout.title},subtitle:{...shared.layout.subtitle}},
+    typography:{title:{...shared.text.title},subtitle:{...shared.text.subtitle}}
+   },
+   scene_layout:state.scenes.map(s=>({scene_id:s.id,asset_id:s.asset||null,
+    overrides:{layout:{...s.visualLayout},typography:{...s.visualTypography}},
+    layout:{title:{...get(s,'title')},subtitle:{...get(s,'subtitle')}},
+    typography:{title:{...typography(s,'title')},subtitle:{...typography(s,'subtitle')}}
+   })),
    guards:{run_render:false,run_tts:false,run_a2e:false,run_paid_operations:false,auto_publish:false}
   };
   const blob=new Blob([JSON.stringify(out,null,2)],{type:'application/json;charset=utf-8'});
@@ -218,7 +296,7 @@
    $(id).addEventListener('input',e=>edit(layer.kind,{[key]:Number(e.target.value)}));
   const directions={overlayUp:[0,-1],overlayDown:[0,1],overlayLeft:[-1,0],overlayRight:[1,0]};
   for(const [id,[dx,dy]] of Object.entries(directions))$(id).addEventListener('click',()=>move(dx,dy));
-  $('resetOverlay').addEventListener('click',()=>edit(layer.kind,{...defaults[layer.kind]}));
+  $('resetOverlay').addEventListener('click',()=>inheritLayout(layer.kind));
   $('downloadVisual').addEventListener('click',saveDraft);
   $('cutScene').addEventListener('change',refreshCut);
   for(const button of $$('[data-cut-effect]'))button.addEventListener('click',()=>chooseCut(button.dataset.cutEffect));
@@ -227,6 +305,11 @@
   window.addEventListener('pagehide',()=>clearTimeout(cutStopTimer));
   refresh(current());populateCuts();
  }
- globalThis.MotionLabVisual={get,dirty,changed,render:refresh,renderStage:renderLayout,populateCuts,pauseFilm,init,seek,saveDraft};
+ globalThis.MotionLabVisual={
+  get,dirty,changed,typography,isOverride,
+  theme:kind=>({...shared.text[kind]}),selectedKind:()=>layer.kind,
+  setTheme,applyTypographyAll,setSceneTypography,inheritTypography,inheritLayout,applyLayoutToAll,resetTheme,
+  render:refresh,renderStage:renderLayout,populateCuts,pauseFilm,init,seek,saveDraft
+ };
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();

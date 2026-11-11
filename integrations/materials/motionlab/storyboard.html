@@ -10,6 +10,7 @@
  <link rel="stylesheet" href="storyboard.css">
  <script defer src="storyboard.js"></script>
  <script defer src="visual_editor.js"></script>
+ <script defer src="scene_pages.js"></script>
 </head>
 <body>
  <header class="site-header">
@@ -28,12 +29,12 @@
    <div class="conn-state"><span id="connLed" class="conn-led"></span><div><strong id="connectionTitle">Демонстрационный режим</strong><p id="connectionText">Настройки можно экспортировать в JSON. Для прямой передачи агент должен открыть модуль и подключить канал ответа.</p></div></div>
    <div class="conn-actions"><label for="requestFile" class="secondary-btn file-label">Загрузить задание JSON</label><input type="file" id="requestFile" accept=".json,application/json" hidden><button type="button" id="resetDemo" class="secondary-btn">Демо</button></div>
   </section>
-  <div class="workspace">
+  <div class="workspace" id="overviewWorkspace">
    <section class="design-panel">
     <div class="section-title"><div><span class="small-label">01 / ТРИ АЛЬТЕРНАТИВЫ</span><h2>Подача ролика</h2></div><span class="section-hint">ВЫБЕРИТЕ ОСНОВУ</span></div>
     <div id="conceptList" class="concept-grid" role="group" aria-label="Три варианта монтажной подачи"></div>
-    <div class="section-title shots-heading"><div><span class="small-label">02 / РАСКАДРОВКА</span><h2>Сцены <sup id="sceneCount">6</sup></h2></div><div class="heading-actions"><button type="button" class="mini-btn" id="applyFavorites">Из избранного</button><button type="button" class="mini-btn" id="addScene">+ Сцена</button></div></div>
-    <p class="helper">Выберите сцену слева и настройте ее справа. Порядок определяет последовательность будущего рилса.</p>
+    <div class="section-title shots-heading"><div><span class="small-label">02 / РАСКАДРОВКА</span><h2>Сцены <sup id="sceneCount">6</sup></h2></div><div class="heading-actions"><button type="button" class="mini-btn" id="editGlobalTheme">Единый стиль ролика</button><button type="button" class="mini-btn" id="applyFavorites">Из избранного</button><button type="button" class="mini-btn" id="addScene">+ Сцена</button></div></div>
+    <p class="helper">Нажмите «Редактировать сцену» или кнопку между двумя сценами для настройки перехода. Шрифты и оформление задаются общим стилем, но отдельные сцены могут иметь исключения.</p>
     <div id="sceneList" class="scene-list" role="list" aria-label="Список сцен"></div>
     <div class="panel-note"><span class="small-label">ПРИНЦИП</span><p>Изображения и текст — референсы и существующие материалы. В этой среде мы выбираем режиссерские приемы. Озвучка, музыка, цены и утвержденный сценарий не меняются автоматически.</p></div>
    </section>
@@ -118,6 +119,68 @@
     </div>
    </aside>
   </div>
+  <section id="detailView" class="detail-page" aria-labelledby="detailHeading" hidden>
+    <header class="detail-bar">
+      <button type="button" id="backToStoryboard" class="secondary-btn">← Назад к раскадровке</button>
+      <div><span id="detailKicker" class="small-label">РЕДАКТОР СЦЕНЫ</span><h2 id="detailHeading">Выбранная сцена</h2><p id="detailDescription">Настройки применяются только к выбранной сцене, если не указано другое.</p></div>
+      <button type="button" id="detailGlobalStyle" class="mini-btn">Стиль всего ролика</button>
+    </header>
+    <div class="detail-body">
+      <div id="detailSlot" class="detail-preview-slot"></div>
+      <section id="themePanel" class="detail-sidepanel" aria-label="Глобальный стиль ролика" hidden>
+       <span class="small-label">ОДНА ВИЗУАЛЬНАЯ СИСТЕМА</span><h3>Общий стиль ролика</h3>
+       <p>Шрифт, цвет, базовый размер и стандартное расположение одинаковы для всех сцен. Исключения настраиваются внутри конкретной сцены.</p>
+       <div class="theme-grid">
+        <fieldset><legend>Заголовки и цены</legend>
+         <label>Шрифт<select id="themeTitleFont"><option value="Unbounded">Unbounded</option><option value="Manrope">Manrope</option><option value="Arial">Arial</option><option value="Georgia">Georgia</option></select></label>
+         <label>Цвет<input type="color" id="themeTitleColor" value="#ffffff"></label>
+         <label>Базовый размер<input type="range" id="themeTitleSize" min="70" max="140" step="5" value="100"><output id="themeTitleSizeOut">100%</output></label>
+        </fieldset>
+        <fieldset><legend>Субтитры</legend>
+         <label>Шрифт<select id="themeSubtitleFont"><option value="Manrope">Manrope</option><option value="Unbounded">Unbounded</option><option value="Arial">Arial</option><option value="Georgia">Georgia</option></select></label>
+         <label>Цвет<input type="color" id="themeSubtitleColor" value="#ffffff"></label>
+         <label>Базовый размер<input type="range" id="themeSubtitleSize" min="70" max="140" step="5" value="100"><output id="themeSubtitleSizeOut">100%</output></label>
+        </fieldset>
+       </div>
+       <div class="global-subtitle-controls">
+        <label>Стиль субтитров для всего ролика<select id="globalSubtitleStyle"></select></label>
+        <label>Анимация слов для всего ролика<select id="globalSubtitleMotion"></select></label>
+       </div>
+       <button id="resetTheme" type="button" class="secondary-btn">Вернуть исходный общий стиль</button>
+       <p class="source-notice">Изменение шрифта, цвета и размера пока экспортируется как черновик v2. В действующий MP4 это не передается без адаптера Montage.</p>
+      </section>
+      <section id="cutPanel" class="detail-sidepanel" aria-label="Редактор перехода" hidden>
+       <span class="small-label">ОТДЕЛЬНЫЙ РЕДАКТОР СТЫКА</span><h3 id="cutHeading">Переход 01 → 02</h3>
+       <div class="cut-pair">
+         <div><img id="cutFromImage" alt="Кадр до перехода"><span id="cutFromLabel">Сцена 01</span></div>
+         <span aria-hidden="true">→</span>
+         <div><img id="cutToImage" alt="Кадр после перехода"><span id="cutToLabel">Сцена 02</span></div>
+       </div>
+       <p>Переход хранится у входящей сцены и меняется только для этой пары. Выберите вариант и нажмите «Посмотреть переход» в предпросмотре.</p>
+       <div id="allTransitions" class="transition-grid" role="group" aria-label="Все доступные переходы"></div>
+       <div class="source-notice">Переходы в браузере показаны приближенно. Точный результат проверяет Montage на реальном рендерере.</div>
+      </section>
+      <section id="sceneScopePanel" class="detail-sidepanel scene-scope" aria-label="Стили и правила применения" hidden>
+       <span class="small-label">ПРАВИЛО ДЛЯ ТЕКСТА</span><h3>Общий стиль или исключение?</h3>
+       <p><strong>По умолчанию:</strong> шрифт, цвет и основное оформление едины для всего ролика. Положение и размер можно поправить только здесь, чтобы текст не перекрывал важные детали кадра.</p>
+       <div class="scope-settings">
+        <label>Шрифт выбранного элемента<select id="sceneFont"><option value="Unbounded">Unbounded</option><option value="Manrope">Manrope</option><option value="Arial">Arial</option><option value="Georgia">Georgia</option></select></label>
+        <label>Цвет выбранного элемента<input type="color" id="sceneFontColor" value="#ffffff"></label>
+        <label>Куда применить шрифт и цвет?
+         <select id="fontApplyScope"><option value="all">Ко всем сценам</option><option value="scene">Только к этой сцене</option></select>
+        </label>
+        <button id="applyFontChanges" class="primary-btn" type="button">Применить шрифт и цвет</button>
+       </div>
+       <div class="scope-actions">
+         <button type="button" id="applyLayoutAll" class="secondary-btn">Это расположение — для всех сцен</button>
+         <button type="button" id="inheritLayout" class="secondary-btn">Вернуть положение из общего стиля</button>
+         <button type="button" id="inheritFont" class="secondary-btn">Вернуть общий шрифт и цвет</button>
+       </div>
+       <p class="source-notice" id="scopeState">Выбрано общее оформление.</p>
+       <p class="source-notice">Это визуальный предпросмотр. Настраиваемые координаты и шрифты пока требуют поддержки в контракте Montage v2.</p>
+      </section>
+    </div>
+  </section>
   <section class="handoff" id="handoff">
    <div class="handoff-head"><div><span class="small-label">05 / ВОЗВРАТ В АВТОМАТИЧЕСКУЮ СРЕДУ</span><h2>Передать выбранные настройки</h2><p>После выбора результат вернется в ту же рабочую сессию, если Киностудия подключила канал приема. Без него можно скачать файл и передать его агенту.</p></div><span id="handoffBadge" class="status-chip">ЧЕРНОВИК</span></div>
    <div class="summary" id="summary"></div>
