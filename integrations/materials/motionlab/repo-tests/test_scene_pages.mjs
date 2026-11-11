@@ -36,6 +36,25 @@ test('scene page, boundary page and common-style page exist',()=>{
   assert.ok(pages.includes(marker),marker);
  }
 });
+test('main storyboard displays the actual preview and restores it after leaving an editor',()=>{
+ const overview={name:'overview',children:[],appendChild(child){child.parentElement=this;this.children.push(child);}};
+ const detail={name:'detail',children:[],appendChild(child){child.parentElement=this;this.children.push(child);}};
+ const panel={parentElement:overview};overview.children.push(panel);
+ const context={document:{
+  readyState:'loading',addEventListener(){},
+  querySelector(sel){return sel==='.preview-panel'?panel:null;},
+  getElementById(id){return id==='overviewWorkspace'?overview:id==='detailSlot'?detail:null;}
+ }};
+ const extra=pages.replace(/\}\)\(\);\s*$/,'globalThis.testMovePreview=placePreview;})();');
+ assert.notEqual(extra,pages,'test must reach the page controller');
+ runInNewContext(extra,context,{timeout:1500});
+ context.testMovePreview(true);
+ assert.equal(panel.parentElement,detail,'focused editor must get the player');
+ context.testMovePreview(false);
+ assert.equal(panel.parentElement,overview,'overview must get the real player back');
+ assert.ok(pages.includes("root().classList.remove('overview-only')"),'two-column layout must be restored');
+ assert.ok(!pages.includes("root().classList.add('overview-only')"),'do not hide the preview at startup');
+});
 test('global typography, scene overrides and v2 export guards exist',()=>{
  for(const marker of ['const shared=','function typography(scene,kind)','function setTheme(kind,patch)',
  'function setSceneTypography(kind,patch)','function applyLayoutToAll(kind)',
