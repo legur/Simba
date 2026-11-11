@@ -59,9 +59,8 @@
     if(after.transition!==id){
      after.transition=id;state.dirty=true;state.selectedIndex=index;resetAck();render();
     }
+    // Populate first, then select the edited boundary once before previewing.
     globalThis.MotionLabVisual?.populateCuts();
-    $('cutScene').value=String(index);
-    globalThis.MotionLabVisual?.populateCuts(); // keeps chosen cut synchronized
     $('cutScene').value=String(index);
     $('previewCut').click();
    });
