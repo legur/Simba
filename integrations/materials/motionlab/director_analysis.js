@@ -135,8 +135,10 @@
    }
    panel().replaceChildren(title,explanation,list);panel().hidden=false;
    status('Готовы три предложения по измеренным кадрам. Выберите вариант выше для предпросмотра.');
+   return true;
   }catch(error){
    plans=null;snapshot=null;status('Анализ не выполнен: '+String(error.message||error),true);
+   return false;
   }finally{busy=false;btn().disabled=false;}
  }
  function applyConcept(id){
