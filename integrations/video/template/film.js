@@ -124,9 +124,30 @@ function drawScene(s, t, alpha) {
   const u = ss(seg(t, s.t0 - XF, s.t1 + XF)), [fx, fy] = s.focus ?? [.5, .5];
   const img = s.frames ? FR.get(frameOf(s, t)) : IMG[s.image];
   if (!img) return;                                          // a clip frame not prepared (readcheck draws no pictures)
-  const z = lerp(z0, z1, u), k = z - 1;                      // focus only matters when the camera zooms past the frame
+  // Motion Lab effects are explicit, bounded and opt-in. For ready A2E clips
+  // legacy move=none remains unchanged unless an approved cameraEffect exists.
+  let z = lerp(z0, z1, u);
+  let offsetX = lerp(x0, x1, u), offsetY = lerp(y0, y1, u);
+  if (s.cameraEffect) {
+    const amount = s.cameraEffect.intensity_percent / 100;
+    switch (s.cameraEffect.id) {
+      case 'cinematic-zoom':
+        z = lerp(1.06, 1.05 + .18 * amount, u); break;
+      case 'push-through':
+        z = lerp(1.06, 1.05 + .32 * amount, u); break;
+      case 'float':
+        z = lerp(1.06, 1.08 + .08 * amount, u);
+        offsetX += (8 * amount * u) / W;
+        offsetY += (9 * amount * u) / H;
+        break;
+      default: throw new Error('Unverified Motion Lab camera: ' + s.cameraEffect.id);
+    }
+  }
+  const k = z - 1;
   ctx.save(); ctx.globalAlpha = alpha;
-  cover(ctx, img, W * (.5 + (.5 - fx) * Math.min(.25, k * 2) + lerp(x0, x1, u)), H * (.5 + (.5 - fy) * Math.min(.25, k * 2) + lerp(y0, y1, u)), z);
+  cover(ctx, img,
+    W * (.5 + (.5 - fx) * Math.min(.25, k * 2) + offsetX),
+    H * (.5 + (.5 - fy) * Math.min(.25, k * 2) + offsetY), z);
   ctx.restore();
 }
 function grade() {
@@ -138,7 +159,8 @@ function grade() {
   ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
 }
 function drawTitle(s, i, t) {
-  if (!s.title) return;
+  if (!s.title || s.titleEffect === 'none') return;
+  if (s.titleEffect && s.titleEffect !== 'fade-rise') throw new Error('Unverified Motion Lab title effect: '+s.titleEffect);
   const a = 1 - seg(t, s.t1 - .3, s.t1 + XF * .5);
   if (a <= 0) return;
   ctx.save(); ctx.globalAlpha = a; ctx.font = `700 92px ${TITLE}`;
