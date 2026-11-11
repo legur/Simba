@@ -18,7 +18,7 @@
  const fmt=i=>String(i+1).padStart(2,'0');
  function thumb(scene) {
   const source=previewFor(scene);
-  return source?.type==='image'?source.url:scenePhoto(scene);
+  return source?.poster||(source?.type==='image'?source.url:scenePhoto(scene));
  }
  function route(view,index) {
   if(view==='style')return '#style';
