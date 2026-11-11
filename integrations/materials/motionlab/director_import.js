@@ -152,6 +152,8 @@
   const time=short(Number(point));
   if(!Number.isFinite(time)||time<=range.start+1.25||time>=range.end-1.25)throw Error('Нужны минимум 1.25 секунды с каждой стороны');
   const originalEnd=range.end;
+  const ix=active.segments.findIndex(s=>s.id===before.id);
+  if(ix<0)throw Error('Не найдена исходная временная карта');
   const newId='shot-manual-'+Math.round(time*1000);
   if(state.scenes.some(s=>s.id===newId))throw Error('Граница уже есть в раскадровке');
   const after=makeScene({scene_id:newId,name:'Фрагмент после '+time+' с',
@@ -164,8 +166,6 @@
   boundAsset(after,nextPreview);
   state.scenes.splice(index+1,0,after);
   localPreviews.set(after.id,nextPreview);
-  const ix=active.segments.findIndex(s=>s.id===before.id);
-  if(ix<0)throw Error('Не найдена исходная временная карта');
   active.segments.splice(ix,1,{id:before.id,start:range.start,end:time},{id:after.id,start:time,end:originalEnd});
   state.selectedIndex=index+1;state.dirty=true;remapSrt();globalThis.MotionLabDirector?.invalidate();resetAck();render();
   await refreshPosters([before,after]);
@@ -177,12 +177,12 @@
   if(!p||!q||p.url!==active.url||q.url!==active.url||!a.clipRange||!b.clipRange||
    Math.abs(a.clipRange.end-b.clipRange.start)>.11)throw Error('Объединение возможно только для соседних отрезков одного MP4');
   if(b.clipRange.end-a.clipRange.start>20)throw Error('Объединенная сцена не может быть дольше 20 секунд');
+  const ia=active.segments.findIndex(s=>s.id===a.id),ib=active.segments.findIndex(s=>s.id===b.id);
+  if(ia<0||ib!==ia+1)throw Error('Нарушен порядок исходной временной карты');
   stopFilm(false);
   a.clipRange.end=b.clipRange.end;a.duration=short(a.clipRange.end-a.clipRange.start);
   p.end=a.clipRange.end;p.duration=a.duration;boundAsset(a,p);
   state.scenes.splice(index+1,1);localPreviews.delete(b.id);
-  const ia=active.segments.findIndex(s=>s.id===a.id),ib=active.segments.findIndex(s=>s.id===b.id);
-  if(ia<0||ib!==ia+1)throw Error('Нарушен порядок исходной временной карты');
   active.segments.splice(ia,2,{id:a.id,start:a.clipRange.start,end:a.clipRange.end});
   const oldPoster=q.poster;if(oldPoster&&!state.scenes.some(s=>previewFor(s)?.poster===oldPoster))URL.revokeObjectURL(oldPoster);
   state.selectedIndex=index;state.dirty=true;remapSrt();globalThis.MotionLabDirector?.invalidate();resetAck();render();
