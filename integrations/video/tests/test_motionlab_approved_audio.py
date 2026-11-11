@@ -70,6 +70,24 @@ class ApprovedWavSourceTests(unittest.TestCase):
         self.asset["recorded_size_bytes"]+=1
         self.blocks("SIZE_MISMATCH")
 
+    def test_wrong_format_blocks_even_when_hash_matches(self):
+        with wave.open(str(self.path),"wb") as writer:
+            writer.setnchannels(1)
+            writer.setsampwidth(2)
+            writer.setframerate(16000)
+            writer.writeframes(b"\\x00\\x04"*16000)
+        sha=hashlib.sha256(self.path.read_bytes()).hexdigest()
+        self.asset["id"]="narration-"+sha[:24]
+        self.asset["recorded_sha256"]=sha
+        self.asset["recorded_size_bytes"]=self.path.stat().st_size
+        self.project["stage_handoffs"]["voice_music"]["assets"]=[
+            self.asset["id"],"music-other"]
+        self.blocks("FORMAT_INVALID")
+
+    def test_duplicate_approved_narration_blocks(self):
+        self.project["assets"].append(dict(self.asset))
+        self.blocks("EXACTLY_ONE_APPROVED_NARRATION_REQUIRED")
+
     def test_stage_and_asset_must_match_canonical_selection(self):
         self.project["stage_handoffs"]["voice_music"]["state"]="pending"
         self.blocks("HANDOFF_NOT_COMPLETE")
