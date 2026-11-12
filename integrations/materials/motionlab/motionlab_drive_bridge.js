@@ -86,5 +86,68 @@
       throw err;
     }
   }
-  root.MotionLabDrive = {ready,send,receipt,clearReceipt};
+  function projectCapability(fragment) {
+    const match=/^#project=([A-Za-z0-9_-]{15,100})\.([0-9a-f]{64})$/.exec(fragment||'');
+    return match ? {schema:'bontours.motionlab.drive-handoff/v1',ticket_id:match[1],ticket_token:match[2]} : null;
+  }
+  async function readProjectPart(handoff,operation,asset_id) {
+    if(!ready(handoff))throw Error('Загрузка закрытого проекта не настроена.');
+    const nonce=crypto.randomUUID(),frame=document.createElement('iframe'),form=document.createElement('form');
+    frame.name='motionlab-project-'+nonce;frame.hidden=true;frame.tabIndex=-1;
+    form.method='POST';form.action=SCRIPT;form.target=frame.name;form.hidden=true;
+    const params={nonce,operation,ticket_id:handoff.ticket_id,ticket_token:handoff.ticket_token};
+    if(asset_id)params.asset_id=asset_id;
+    Object.entries(params).forEach(([name,value])=>{const input=document.createElement('input');input.type='hidden';input.name=name;input.value=value;form.append(input);});
+    document.body.append(frame,form);
+    return await new Promise((resolve,reject)=>{
+      const cleanup=()=>{clearTimeout(timer);window.removeEventListener('message',receive);frame.remove();form.remove();};
+      const receive=e=>{
+        if(!allowedReply(e.origin)||e.data?.type!=='SIMBA_DRIVE_PROJECT_REPLY'||e.data?.nonce!==nonce)return;
+        const data=e.data;cleanup();
+        if(data.status!==(operation==='load_project'?'PROJECT_READY':'ASSET_READY'))reject(Error('Drive: '+String(data.error_code||'INVALID_PROJECT_REPLY').slice(0,65)));
+        else resolve(data);
+      };
+      const timer=setTimeout(()=>{cleanup();reject(Error('Нет ответа загрузчика проекта. Передача выбора не выполнялась.'));},60000);
+      window.addEventListener('message',receive);
+      try{form.submit();}catch{cleanup();reject(Error('Не удалось запросить проект.'));}
+    });
+  }
+  async function openProjectLink(api) {
+    const fromLink=projectCapability(location.hash);
+    if(location.hash.startsWith('#project=')&&!fromLink){api.status('Неверная ссылка проекта. Запросите новую ссылку у Киностудии.');return;}
+    let handoff=fromLink;
+    if(!handoff && !location.hash){try{handoff=projectCapability(sessionStorage.getItem('simba:motionlab:project-link:v1'));}catch{}}
+    if(!handoff)return;
+    // Fragment capabilities are never sent in an HTTP URL/referrer or saved
+    // in localStorage. Same-tab reload uses sessionStorage; server checks TTL.
+    if(fromLink){try{sessionStorage.setItem('simba:motionlab:project-link:v1',location.hash);}catch{}history.replaceState(null,'',location.pathname+location.search);}
+    api.busy?.(true);
+    try {
+      api.status('Открываю закрытый проект…');
+      const data=await readProjectPart(handoff,'load_project');
+      const assets=data.assets;
+      if(!Array.isArray(assets)||!assets.length||assets.length>24)throw Error('Неверный список клипов проекта.');
+      const seen=new Set();let total=0;
+      for(const a of assets){
+        if(!a||typeof a.asset_id!=='string'||seen.has(a.asset_id)||!/^[0-9a-f]{64}$/.test(a.sha256||'')
+          ||!Number.isInteger(a.size_bytes)||a.size_bytes<1024||a.size_bytes>20*1024*1024||a.mime_type!=='video/mp4')throw Error('Неверный исходный клип.');
+        seen.add(a.asset_id);total+=a.size_bytes;
+      }
+      if(total>120*1024*1024)throw Error('Проект превышает лимит просмотра.');
+      api.load({...data.launch,handoff});
+      for(let i=0;i<assets.length;i++){
+        const a=assets[i];api.status('Загружаю клип '+(i+1)+' из '+assets.length+'…');
+        const media=await readProjectPart(handoff,'load_asset',a.asset_id);
+        if(media.asset_id!==a.asset_id||media.sha256!==a.sha256||media.size_bytes!==a.size_bytes
+          ||media.mime_type!=='video/mp4'||typeof media.base64!=='string'||media.base64.length!==4*Math.ceil(a.size_bytes/3))throw Error('Ответ клипа не совпал с заданием.');
+        const bytes=Uint8Array.from(atob(media.base64),c=>c.charCodeAt(0));
+        const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(b=>b.toString(16).padStart(2,'0')).join('');
+        if(bytes.length!==a.size_bytes||hash!==a.sha256)throw Error('SHA-256 клипа не совпал.');
+        await api.asset(a.asset_id,new File([bytes],'project-'+i+'.mp4',{type:'video/mp4'}));
+      }
+      api.status('Проект открыт. Все клипы проверены. Выбор еще не передан в Montage.');
+    } catch(error){api.status('Проект не открыт полностью: '+String(error.message||error));}
+    finally{api.busy?.(false);}
+  }
+  root.MotionLabDrive = {ready,send,receipt,clearReceipt,openProjectLink,projectCapability};
 })(window);

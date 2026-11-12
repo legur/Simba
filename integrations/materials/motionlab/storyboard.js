@@ -96,8 +96,8 @@ function clearPreviews(){
  const v=$('previewVideo');if(v){v.pause();v.removeAttribute('src');}
 }
 function previewFor(s){const p=localPreviews.get(s.id);return p&&p.assetId===s.asset?p:null;}
-async function localFileChosen(file){
- if(!file)return;const scene=state.scenes[state.selectedIndex];if(!scene)return;
+async function localFileChosen(file,sourceScene=null){
+ if(!file)return;const scene=sourceScene||state.scenes[state.selectedIndex];if(!scene)return;
  const ext=file.name.toLowerCase().split('.').pop();
  const type=['mp4','mov','m4v','webm'].includes(ext)?'video':['jpg','jpeg','png','webp'].includes(ext)?'image':null;
  if(!type||file.size<1||file.size>(type==='video'?200:30)*1024*1024)throw Error('Разрешены JPG/PNG/WebP до 30 МБ и MP4/MOV/WebM до 200 МБ');
@@ -121,7 +121,7 @@ async function localFileChosen(file){
    if(!Number.isFinite(duration)||duration<=0)throw Error('Нет правильной длительности');
    if(expected?.duration_s&&Math.abs(expected.duration_s-duration)>.45)throw Error('Длительность отличается от утвержденного ассета');
   }
-  if(!state.scenes.includes(scene)||state.scenes[state.selectedIndex]!==scene)throw Error('Сцена изменилась: выберите файл снова');
+  if(!state.scenes.includes(scene)||(!sourceScene&&state.scenes[state.selectedIndex]!==scene))throw Error('Сцена изменилась: выберите файл снова');
   const old=localPreviews.get(scene.id);
    if(old){for(const previous of [old.url,old.poster]){
     if(previous&&![...localPreviews.entries()].some(([id,other])=>id!==scene.id&&(other.url===previous||other.poster===previous)))URL.revokeObjectURL(previous);
@@ -626,5 +626,17 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
    choicesFromPreset(1);say('Шаблон применен только к демонстрации. Для проекта нужен выбор трех предложений агента.');
  }
  announceReady();
+ globalThis.MotionLabDrive?.openProjectLink({
+  load:launch=>{
+   const current=state.request,rows=new Map(launch.scenes.map(s=>[s.scene_id,s]));
+   const same=current?.id===launch.request_id&&current.projectId===launch.project_id&&current.fingerprint===launch.expected_input_fingerprint
+    &&rows.size===state.scenes.length&&state.scenes.every(s=>{const row=rows.get(s.id);return row?.asset_id===s.asset&&row?.media?.asset_sha256===s.media?.asset_sha256;});
+   if(same){state.request.handoff=launch.handoff;renderSummary();}
+   else loadLaunch(launch,null);
+  },
+  asset:async(id,file)=>{const matches=state.scenes.filter(s=>s.asset===id);if(!matches.length)throw Error('Исходник отсутствует в проекте');for(const s of matches)await localFileChosen(file,s);},
+  status:text=>{$('connectionTitle').textContent='Проект из закрытого Drive';$('connectionText').textContent=text;},
+  busy:on=>{for(const id of ['overviewWorkspace','handoff'])$(id).inert=on;}
+ });
 }
 wire();

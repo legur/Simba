@@ -37,7 +37,7 @@ class Tickets(unittest.TestCase):
         def fake_upload(_svc,folder,name,body):
             writes.append((folder,name,body))
             return "f"*32 if len(writes)==1 else "l"*32
-        with patch.object(issuer,"read_approved_launch",return_value=source),\
+        with patch.object(issuer,"read_approved_launch",return_value=(source,b'approved-source-bytes')),\
              patch.object(issuer,"upload",side_effect=fake_upload),\
              patch.object(issuer.secrets,"token_hex",return_value="b"*64):
             receipt=issuer.issue(object(),"fake-file-id",now=dt.datetime(2026,11,12,tzinfo=dt.timezone.utc))
@@ -48,6 +48,16 @@ class Tickets(unittest.TestCase):
         self.assertEqual(writes[1][2]["handoff"]["ticket_token"],"b"*64)
         self.assertNotIn("ticket_token",receipt)
         self.assertEqual(receipt["authorized_launch_file_id"],"l"*32)
+
+    def test_read_grant_binds_private_manifest_and_original_scene_hash(self):
+        import hashlib
+        source=launch();source['scenes'][0].update(asset_id='a2e:one',media={'asset_sha256':'a'*64})
+        source['preview_assets']=[{'asset_id':'a2e:one','file_id':'original_media_123456789','sha256':'a'*64,'size_bytes':2048,'mime_type':'video/mp4'}]
+        self.assertIs(issuer.validate_launch(source),source)
+        source['preview_assets'][0]['sha256']='b'*64
+        with self.assertRaisesRegex(issuer.TicketError,'PREVIEW_SCENE_SOURCE_MISMATCH'):issuer.validate_launch(source)
+        source['preview_assets'][0]['size_bytes']=21*1024*1024
+        with self.assertRaisesRegex(issuer.TicketError,'INVALID_PREVIEW_ASSET'):issuer.validate_launch(source)
 
     def test_cannot_issue_from_signed_launch_to_avoid_reuse(self):
         source=launch();source["handoff"]={"ticket_token":"sensitive"}

@@ -30,6 +30,26 @@ def validate_launch(p):
         raise TicketError("THREE_OPTIONS_REQUIRED")
     if p.get("handoff"):
         raise TicketError("LAUNCH_ALREADY_HAS_HANDOFF")
+    previews=p.get('preview_assets',[])
+    if not isinstance(previews,list) or len(previews)>24:
+        raise TicketError('INVALID_PREVIEW_ASSETS')
+    seen=set(); total=0
+    for a in previews:
+        if (not isinstance(a,dict) or not isinstance(a.get('asset_id'),str)
+            or a['asset_id'] in seen
+            or not re.fullmatch(r'[A-Za-z0-9_-]{15,100}',a.get('file_id',''))
+            or not re.fullmatch(r'[a-f0-9]{64}',a.get('sha256',''))
+            or type(a.get('size_bytes')) is not int or not 1024<=a['size_bytes']<=20*1024*1024
+            or a.get('mime_type')!='video/mp4'):
+            raise TicketError('INVALID_PREVIEW_ASSET')
+        seen.add(a['asset_id']);total+=a['size_bytes']
+    if total>120*1024*1024:raise TicketError('PROJECT_PREVIEW_TOO_LARGE')
+    if previews:
+        by_id={a['asset_id']:a for a in previews}
+        for scene in scenes:
+            a=by_id.get(scene.get('asset_id'))
+            if not a or (scene.get('media') or {}).get('asset_sha256')!=a['sha256']:
+                raise TicketError('PREVIEW_SCENE_SOURCE_MISMATCH')
     return p
 
 def drive():
@@ -49,7 +69,7 @@ def drive():
     except Exception:
         raise TicketError("GOOGLE_DRIVE_AUTH_FAILED") from None
 
-def read_approved_launch(svc,file_id):
+def read_approved_launch(svc,file_id,include_raw=False):
     if not re.fullmatch(r"[A-Za-z0-9_-]{15,100}",file_id):
         raise TicketError("INVALID_PRIVATE_DRIVE_FILE_ID")
     try:
@@ -59,7 +79,8 @@ def read_approved_launch(svc,file_id):
         raw=svc.files().get_media(fileId=file_id).execute()
         if not isinstance(raw,bytes) or len(raw)>300000:
             raise TicketError("LAUNCH_TOO_LARGE")
-        return validate_launch(json.loads(raw.decode("utf-8")))
+        source=validate_launch(json.loads(raw.decode("utf-8")))
+        return (source,raw) if include_raw else source
     except TicketError:
         raise
     except Exception:
@@ -75,7 +96,7 @@ def upload(svc,folder,filename,data):
                                media_body=media,fields="id,name,parents").execute()["id"]
 
 def issue(svc,launch_id,now=None):
-    source=read_approved_launch(svc,launch_id)
+    source,raw=read_approved_launch(svc,launch_id,include_raw=True)
     now=now or dt.datetime.now(dt.timezone.utc)
     expires=now+dt.timedelta(hours=3)
     token=secrets.token_hex(32)
@@ -86,7 +107,9 @@ def issue(svc,launch_id,now=None):
       "token_sha256":hashlib.sha256(token.encode("ascii")).hexdigest(),
       "issued_utc":now.isoformat().replace("+00:00","Z"),
       "expires_utc":expires.isoformat().replace("+00:00","Z"),
-      "source_launch_file_id":launch_id
+      "source_launch_file_id":launch_id,
+      "source_launch_sha256":hashlib.sha256(raw).hexdigest(),
+      "project_read_enabled":bool(source.get('preview_assets'))
     }
     id=upload(svc,TICKET_DIR,"motionlab-"+source["request_id"]+"-ticket.json",ticket)
     output={**source,"handoff":{"schema":"bontours.motionlab.drive-handoff/v1",

@@ -17,6 +17,8 @@ const ML = Object.freeze({
   origin: 'https://headless-cvcdjldqjlx-leostraveltips-140e.wix-site-host.com',
   ticketFolder: '1lHQS4Pfl3OhDoxeWEL768C-XkBIcCxjs',
   inboxFolder: '1gYNUU3HUeWnu2jEcs1gEf4cu9LJEEPoD',
+  launchFolder: '10IdAl9pS-YSqLEYFbfTIKNEoho7bWGWA',
+  mediaFolder: '1oMtSCcUOMVU6f2yiS72cevr0NQF58EAj',
   maxBytes: 140000,
   maxScenes: 24,
   skewMs: 60 * 1000
@@ -156,7 +158,8 @@ function ingest(params) {
 }
 function output(message) {
   // The Google-hosted HTML reply communicates only with the *exact* Wix origin.
-  // No access tokens, user identity, source media or JSON selections are echoed.
+  // Receipts contain no bearer secrets. Project replies return only the
+  // ticket-authorized launch/MP4 bytes to the exact editor origin.
   const serialized = JSON.stringify(message).replace(/</g,'\\u003c');
   // HtmlService wraps user HTML in multiple Google-owned nested iframes.
   // window.parent is usually another Google iframe, NOT our Wix editor.
@@ -174,12 +177,57 @@ function output(message) {
   return HtmlService.createHtmlOutput(html)
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
+// Read only the exact pinned launch and its explicitly listed A2E originals.
+// No caller-supplied Drive file ID or public sharing is accepted.
+function readProject(params) {
+  const ticket=checkTicket(params.ticket_id,params.ticket_token).data;
+  if(ticket.project_read_enabled!==true || !/^[a-f0-9]{64}$/.test(ticket.source_launch_sha256||''))
+    fail('PROJECT_READ_NOT_AUTHORIZED');
+  const source=DriveApp.getFileById(ticket.source_launch_file_id);
+  onlyFolder(source,ML.launchFolder);
+  if(source.getSharingAccess()!==DriveApp.Access.PRIVATE || source.getSize()>300000)
+    fail('PROJECT_SOURCE_NOT_PRIVATE');
+  const raw=source.getBlob().getDataAsString('UTF-8');
+  if(hexSha256(raw)!==ticket.source_launch_sha256)fail('PROJECT_SOURCE_CHANGED');
+  const launch=JSON.parse(raw);
+  if(launch.schema!=='bontours.motionlab.storyboard.launch/v1'
+    ||launch.project_id!==ticket.project_id||launch.request_id!==ticket.session_id
+    ||launch.expected_input_fingerprint!==ticket.source_fingerprint
+    ||!Array.isArray(launch.options)||launch.options.length!==3
+    ||!Array.isArray(launch.scenes)||!launch.scenes.length||launch.scenes.length>24
+    ||!Array.isArray(launch.preview_assets)||!launch.preview_assets.length||launch.preview_assets.length>24)
+    fail('PROJECT_SOURCE_MISMATCH');
+  const assets=launch.preview_assets;
+  if(params.operation==='load_project') {
+    delete launch.preview_assets;
+    return {status:'PROJECT_READY',launch,
+      assets:assets.map(a=>({asset_id:a.asset_id,sha256:a.sha256,size_bytes:a.size_bytes,mime_type:a.mime_type}))};
+  }
+  const matches=assets.filter(a=>a.asset_id===params.asset_id);
+  if(matches.length!==1)fail('ASSET_NOT_IN_PROJECT');
+  const a=matches[0];
+  if(a.mime_type!=='video/mp4'||!Number.isInteger(a.size_bytes)||a.size_bytes<1024||a.size_bytes>20*1024*1024
+    ||!/^[a-f0-9]{64}$/.test(a.sha256||''))fail('INVALID_PREVIEW_ASSET');
+  const media=DriveApp.getFileById(a.file_id);onlyFolder(media,ML.mediaFolder);
+  if(media.getSharingAccess()!==DriveApp.Access.PRIVATE||media.getSize()!==a.size_bytes||media.getMimeType()!=='video/mp4')
+    fail('ASSET_METADATA_MISMATCH');
+  const bytes=media.getBlob().getBytes();
+  const sha=Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,bytes)
+    .map(b=>('0'+(b<0?b+256:b).toString(16)).slice(-2)).join('');
+  if(sha!==a.sha256)fail('ASSET_HASH_MISMATCH');
+  return {status:'ASSET_READY',asset_id:a.asset_id,sha256:sha,size_bytes:bytes.length,
+    mime_type:'video/mp4',base64:Utilities.base64Encode(bytes)};
+}
 function doPost(e) {
   const p = e && e.parameter || {};
   const nonce = typeof p.nonce === 'string' && /^[0-9a-f-]{36}$/.test(p.nonce)
         ? p.nonce : '';
   let lock;
   try {
+    if(['load_project','load_asset'].includes(p.operation)) {
+      if(!nonce)fail('INVALID_NONCE');
+      return output({type:'SIMBA_DRIVE_PROJECT_REPLY',nonce,...readProject(p)});
+    }
     lock = LockService.getScriptLock();
     if (!lock.tryLock(9000)) fail('RECEIVER_BUSY_RETRY');
     const result = ingest(p);
@@ -187,7 +235,7 @@ function doPost(e) {
   } catch (err) {
     // Return only a bounded allowlisted error code. Never log ticket/selection.
     const code = String(err && err.message || 'INGRESS_FAILED');
-    return output({type:'SIMBA_DRIVE_INGRESS_RECEIPT', nonce,
+    return output({type:['load_project','load_asset'].includes(p.operation)?'SIMBA_DRIVE_PROJECT_REPLY':'SIMBA_DRIVE_INGRESS_RECEIPT', nonce,
       status:'REJECTED', error_code:/^[A-Z_]{4,64}$/.test(code)?code:'INGRESS_FAILED'});
   } finally {
     if (lock) { try { lock.releaseLock(); } catch (_) {} }
