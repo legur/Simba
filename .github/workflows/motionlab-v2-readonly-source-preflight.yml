@@ -7,6 +7,9 @@ on:
       - 'integrations/materials/motionlab_v2_stage_writeback.py'
       - 'integrations/materials/test_motionlab_v2_readonly_preflight.py'
       - 'integrations/materials/test_motionlab_v2_listening_qa.py'
+      - 'integrations/materials/test_motionlab_v2_automatic_qa.py'
+      - 'integrations/video/motionlab_automatic_audio_qa.py'
+      - 'integrations/video/tests/test_motionlab_automatic_audio_qa.py'
       - 'integrations/video/motionlab_audio_listening_qa.py'
       - 'integrations/materials/studio_v2_audio_stage.py'
       - 'integrations/video/motionlab_v2_audio_gate.py'
@@ -33,3 +36,5 @@ jobs:
           python -m py_compile integrations/materials/motionlab_v2_stage_writeback.py
           python -m unittest discover -s integrations/materials -p test_motionlab_v2_readonly_preflight.py -v
           python -m unittest discover -s integrations/materials -p test_motionlab_v2_listening_qa.py -v
+          python -m unittest discover -s integrations/video/tests -p test_motionlab_automatic_audio_qa.py -v
+          python -m unittest discover -s integrations/materials -p test_motionlab_v2_automatic_qa.py -v
