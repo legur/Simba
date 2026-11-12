@@ -13,7 +13,7 @@ permissions:
 jobs:
   replay:
     # Run only once, from the trusted repository branch. No forks.
-    if: ${{ github.event.action == 'opened' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test/motionlab-alaska-immediate-dispatch-run-20261112' }}
+    if: ${{ github.event.action == 'synchronize' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test/motionlab-alaska-immediate-dispatch-run-20261112' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
