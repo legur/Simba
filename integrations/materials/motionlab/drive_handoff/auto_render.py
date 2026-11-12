@@ -97,16 +97,61 @@ def source_launch(svc,record):
        and launch.get("handoff") is None,"SOURCE_LAUNCH_MISMATCH")
     return launch
 
+def verify_exact_replay(svc, record, profile):
+    """Allow only a replay of the *same* approved Alaska montage.
+
+    New signed Apps Script receipts have a new receipt_id and SHA because the
+    user_selected_at time changes. Compare everything except that timestamp
+    to the original owner-approved private selection. Never allow new effects,
+    media, audio or a different project through this test lane.
+    """
+    cfg=profile.get("exact_replay_test") or {}
+    require(cfg.get("enabled") is True,"NOT_EXACT_OWNER_APPROVED_SELECTION")
+    now=dt.datetime.now(dt.timezone.utc)
+    try:
+        expiration=dt.datetime.fromisoformat(cfg["expires_utc"].replace("Z","+00:00"))
+    except (TypeError,ValueError,KeyError):
+        raise RenderError("REPLAY_EXPIRY_INVALID") from None
+    require(now<=expiration,"EXACT_REPLAY_EXPIRED")
+    baseline=validate_receipt(svc,cfg["baseline_receipt_file_id"])
+    require(baseline["receipt_id"]==profile["approved_receipt_id"] and
+      baseline["selection_sha256"]==profile["approved_selection_sha256"] and
+      baseline["source_fingerprint"]==profile["input_fingerprint"] and
+      baseline["project_id"]==record["project_id"] and
+      baseline["session_id"]==record["session_id"],
+      "BASELINE_APPROVAL_MISMATCH")
+    ticket=read_private(svc,record["ticket_id"],
+                        "1lHQS4Pfl3OhDoxeWEL768C-XkBIcCxjs",16000)
+    require(ticket.get("source_launch_file_id")==cfg["source_launch_file_id"]
+       and ticket.get("source_launch_sha256")==cfg["source_launch_sha256"],
+       "REPLAY_SOURCE_NOT_PINNED")
+    old=baseline["selection"]
+    new=record["selection"]
+    require(old.keys()==new.keys(), "REPLAY_SELECTION_FIELDS_CHANGED")
+    def without_approval_clock(s):
+        data=json.loads(json.dumps(s))
+        decision=data.get("decision") or {}
+        require(isinstance(decision.get("user_selected_at"),str) and
+            len(decision["user_selected_at"])<=50,
+            "REPLAY_APPROVAL_TIMESTAMP_INVALID")
+        decision.pop("user_selected_at",None)
+        return data
+    require(without_approval_clock(old)==without_approval_clock(new),
+            "REPLAY_SELECTION_NOT_IDENTICAL_TO_APPROVED")
+    return True
+
 def prepare(svc,receipt_file_id):
     record=validate_receipt(svc,receipt_file_id)
     profile=get_profile(record["project_id"])
     selection=record["selection"]
     decision=selection.get("decision") or {}
-    require(record["receipt_id"]==profile["approved_receipt_id"]
-        and record["selection_sha256"]==profile["approved_selection_sha256"]
-        and record["source_fingerprint"]==profile["input_fingerprint"]
+    require(record["source_fingerprint"]==profile["input_fingerprint"]
         and decision.get("selected_option")==profile["selected_option"],
         "NOT_EXACT_OWNER_APPROVED_SELECTION")
+    exactly_original=(record["receipt_id"]==profile["approved_receipt_id"]
+        and record["selection_sha256"]==profile["approved_selection_sha256"])
+    if not exactly_original:
+        verify_exact_replay(svc,record,profile)
     require(selection.get("format")=="9:16" and
       selection.get("next_stage")=="MONTAGE_PLANNING_REVIEW",
       "UNSUPPORTED_SELECTION_SCOPE")
