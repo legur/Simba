@@ -69,7 +69,7 @@ def post_selection(ticket_id, token, selection):
         pos=decoded.find("var msg=")
         end=decoded.find(";var origin=",pos)
         if pos<0 or end<pos:stop("APPS_SCRIPT_ACK_MISSING")
-        raw_message=decoded[pos+8:end].replace('\\"','"')
+        raw_message=re.sub(r'\\+(?=")','',decoded[pos+8:end])
     try:msg=json.loads(raw_message)
     except ValueError:stop("APPS_SCRIPT_ACK_PARSE_ERROR")
     if msg.get("type")!="SIMBA_DRIVE_INGRESS_RECEIPT" or msg.get("nonce")!=params["nonce"]:
