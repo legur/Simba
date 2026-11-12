@@ -13,7 +13,7 @@ permissions:
 jobs:
   replay:
     # Run only once, from the trusted repository branch. No forks.
-    if: ${{ github.event.action == 'synchronize' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test/motionlab-alaska-immediate-dispatch-run-20261112' }}
+    if: ${{ github.event.action == 'opened' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test/motionlab-alaska-immediate-dispatch-run-20261112' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -56,6 +56,16 @@ jobs:
               print('MALFORMED_TEST_ONLY_RESPONSE_PREFIX',repr(html[:1100]))
               print('HAS_RECEIPT_MARKER','SIMBA_DRIVE_INGRESS_RECEIPT' in html)
               print('HAS_MESSAGE_JS','var msg=' in html)
+              import re,json
+              decoded=re.sub(r'\\x([0-9a-fA-F]{2})',lambda m:chr(int(m.group(1),16)),html)
+              start=decoded.find('var msg=');stop=decoded.find(';var origin=',start)
+              raw=decoded[start+8:stop] if start>=0 and stop>start else ''
+              print('INVALID_TICKET_RAW_MSG_REPR',repr(raw[:350]))
+              print('INVALID_TICKET_MSG_REPLACED',repr(raw.replace('\\\"','"')[:350]))
+              print('INVALID_TICKET_JSON_ERROR',end=' ')
+              try:print('NONE',json.loads(raw.replace('\\\"','"')).get('error_code'))
+              except Exception as e:print(type(e).__name__,str(e)[:100])
+
               marker=html.find('SIMBA_DRIVE_INGRESS_RECEIPT')
               print('MALFORMED_MARKER_CONTEXT',repr(html[max(0,marker-650):marker+550]))
           except Exception as e:
