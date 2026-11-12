@@ -68,7 +68,7 @@ test('Source text/WAV sha and actual acoustic text tokens are bound to the draft
   await assert.rejects(core.inspect(textBytes,wavBytes,bytes({...draft,status:'AUDIO_ALIGNMENT_VERIFIED'})),/черновик/);
   const changed=structuredClone(draft);
   changed.lines[0].words[1].text='wrong';
-  await assert.rejects(core.inspect(textBytes,wavBytes,bytes(changed)),/слова/);
+  await assert.rejects(core.inspect(textBytes,wavBytes,bytes(changed)),/Слово или таймкод/);
 });
 test('Review is explicit per-word, bound to original draft SHA, not render authorization',async()=>{
   const c=await inspected();
