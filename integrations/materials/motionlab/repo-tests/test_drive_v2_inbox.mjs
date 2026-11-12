@@ -15,7 +15,7 @@ const sha=s=>crypto.createHash('sha256').update(s).digest('hex');
 const sort=o=>Array.isArray(o)?o.map(sort):o&&typeof o==='object'
   ?Object.fromEntries(Object.keys(o).sort().map(k=>[k,sort(o[k])])):o;
 const canonical=o=>JSON.stringify(sort(o));
-const ticketId='T'.repeat(27),token='a'.repeat(64),fileId='F'.repeat(24);
+const ticketId='T'.repeat(27),token='d'.repeat(64),fileId='F'.repeat(24);
 const folders={ticket:'1lHQS4Pfl3OhDoxeWEL768C-XkBIcCxjs',
  source:'10IdAl9pS-YSqLEYFbfTIKNEoho7bWGWA',
  media:'1oMtSCcUOMVU6f2yiS72cevr0NQF58EAj',
@@ -196,7 +196,7 @@ test('v2 asset read gives only exact owner-private matching MP4 bytes',()=>{
  assert.match(e.post(e.request('v2_asset',{asset_id:'other'})).html,/V2_ASSET_NOT_IN_PROJECT/);
 });
 test('One owner-approved v2 selection is saved once, never sent to v1 queue',()=>{
- const e=run(),ret=e.submit().html;
+ const e=run(),ownerChoice=selection(),ret=e.submit(ownerChoice).html;
  assert.match(ret,/V2_SELECTION_SAVED_AWAITING_CANONICAL_CAS/);
  assert.equal(e.inboxFiles.size,1);
  const item=[...e.inboxFiles.values()][0];
@@ -207,7 +207,8 @@ test('One owner-approved v2 selection is saved once, never sent to v1 queue',()=
  assert.equal(item.published,false);
  assert.equal(e.ticket.consumed_receipt_id,item.receipt_id);
  assert.equal(e.dispatches.length,0);
- assert.match(e.submit().html,/V2_SELECTION_SAVED_AWAITING_CANONICAL_CAS/);
+ // An idempotent retry must be byte-identical, including approval time.
+ assert.match(e.submit(ownerChoice).html,/V2_SELECTION_SAVED_AWAITING_CANONICAL_CAS/);
  assert.equal(e.inboxFiles.size,1);
 });
 test('Tampering project, option hashes, approval or paid guards fails closed',()=>{
