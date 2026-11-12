@@ -32,10 +32,6 @@ jobs:
           node-version: '24'
       - name: Install only local video-contract dependencies
         run: python -m pip install --disable-pip-version-check numpy soundfile pillow
-      - name: Confirm FFmpeg is local and not cloud
-        run: |
-          command -v ffmpeg
-          command -v ffprobe
       - name: Validate additive v1/v2 Apps Script and browser JavaScript
         run: |
           node --check integrations/materials/motionlab/studio-v2.js
@@ -43,7 +39,7 @@ jobs:
           node --test integrations/materials/motionlab/repo-tests/test_drive_v2_inbox.mjs
           node --test integrations/materials/motionlab/repo-tests/test_drive_handoff.mjs
           node --test integrations/materials/motionlab/repo-tests/test_montage_active_queue.mjs
-      - name: Validate private v2 issuer against actual synthetic decoded MP4s
+      - name: Validate private v2 issuer against source-pinned synthetic contract metadata
         run: |
           python -m py_compile integrations/materials/motionlab/drive_handoff/issue_v2_ticket.py
           python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_issue_v2_ticket.py' -v
