@@ -9,6 +9,18 @@ const src=fs.readFileSync(new URL('../drive_handoff/Code.gs',import.meta.url),'u
 const client=fs.readFileSync(new URL('../motionlab_drive_bridge.js',import.meta.url),'utf8');
 const ui=fs.readFileSync(new URL('../storyboard.js',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../storyboard.html',import.meta.url),'utf8');
+test('project link waits for the later deferred Drive bridge',()=>{
+ assert.ok(html.indexOf('src="storyboard.js"')<html.indexOf('src="motionlab_drive_bridge.js"'));
+ const startup=ui.slice(ui.indexOf('const openProject=()=>'),ui.lastIndexOf('\n}\nwire();'));
+ let ready,opened=0;
+ const context={document:{readyState:'loading',addEventListener(name,fn,options){
+  assert.equal(name,'DOMContentLoaded');assert.equal(options.once,true);ready=fn;
+ }}};
+ vm.runInNewContext(startup,context);
+ assert.equal(opened,0);
+ context.MotionLabDrive={openProjectLink(api){assert.equal(typeof api.load,'function');opened++;}};
+ ready();assert.equal(opened,1);
+});
 const ticketId='1A'.repeat(20),token='b'.repeat(64);
 const digest=value=>crypto.createHash('sha256').update(value).digest('hex');
 const canonical=o=>JSON.stringify(sort(o));
