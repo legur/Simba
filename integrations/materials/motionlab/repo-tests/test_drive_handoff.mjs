@@ -10,10 +10,10 @@ const client=fs.readFileSync(new URL('../motionlab_drive_bridge.js',import.meta.
 const ui=fs.readFileSync(new URL('../storyboard.js',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../storyboard.html',import.meta.url),'utf8');
 test('project link waits for the later deferred Drive bridge',()=>{
- assert.ok(html.indexOf('src="storyboard.js"')<html.indexOf('src="motionlab_drive_bridge.js"'));
+ assert.ok(html.indexOf('src="storyboard.js')<html.indexOf('src="motionlab_drive_bridge.js'));
  const startup=ui.slice(ui.indexOf('const openProject=()=>'),ui.lastIndexOf('\n}\nwire();'));
  let ready,opened=0;
- const context={document:{readyState:'loading',addEventListener(name,fn,options){
+ const context={document:{readyState:'interactive',addEventListener(name,fn,options){
   assert.equal(name,'DOMContentLoaded');assert.equal(options.once,true);ready=fn;
  }}};
  vm.runInNewContext(startup,context);
