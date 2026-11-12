@@ -44,7 +44,7 @@ function environment(){
    Date,JSON,Error,Object,String,Array,Number,Boolean,RegExp,MimeType:{PLAIN_TEXT:'text/plain'},
    Utilities:{
      DigestAlgorithm:{SHA_256:'sha256'},Charset:{UTF_8:'UTF-8'},
-     computeDigest(_a,value){return Array.from(crypto.createHash('sha256').update(value).digest()).map(v=>v>=128?v-256:v)},
+     computeDigest(_a,value){return Array.from(crypto.createHash('sha256').update(Array.isArray(value)?Buffer.from(value):value).digest()).map(v=>v>=128?v-256:v)},
      newBlob(value){return {getBytes(){return Array.from(Buffer.from(value))}}},
      getUuid(){return '22222222-2222-4222-8222-222222222222'}
    },
@@ -142,4 +142,50 @@ test('MotionLab permits nested Google messages but verifies origin nonce and has
  assert.ok(client.includes('!allowedReply(e.origin)'));
  assert.ok(client.includes('e.data?.nonce!==nonce'));
  assert.ok(client.includes('data.selection_sha256!==hash'));
+});
+
+function projectEnvironment(){
+ const e=environment(),media=Buffer.from('verified private MP4 bytes');
+ const asset={asset_id:'a2e:original',file_id:'media_original_123456789',sha256:digest(media),size_bytes:media.length,mime_type:'video/mp4'};
+ // A bounded original larger than the minimum, with a deterministic SHA.
+ const bytes=Buffer.concat([media,Buffer.alloc(2048)]);asset.size_bytes=bytes.length;asset.sha256=digest(bytes);
+ const source={schema:'bontours.motionlab.storyboard.launch/v1',stage:'edit_choice',project_id:e.ticket.project_id,request_id:e.ticket.session_id,expected_input_fingerprint:e.ticket.source_fingerprint,options:[{},{},{}],scenes:[{scene_id:'s1',asset_id:asset.asset_id}],preview_assets:[asset]};
+ let raw=JSON.stringify(source);
+ const file=(folder,blob,mime)=>({getParents(){let n=0;return{hasNext:()=>n===0,next:()=>{n++;return{getId:()=>folder}}}},getSharingAccess:()=> 'PRIVATE',getSize:()=>blob().length,getMimeType:()=>mime,getBlob:()=>({getBytes:()=>Array.from(blob()),getDataAsString:()=>blob().toString('utf8')})});
+ const sourceFile=file('10IdAl9pS-YSqLEYFbfTIKNEoho7bWGWA',()=>Buffer.from(raw),'application/json');
+ const mediaFile=file('1oMtSCcUOMVU6f2yiS72cevr0NQF58EAj',()=>bytes,'video/mp4');
+ const original=e.ctx.DriveApp.getFileById;let arbitraryRead=false;
+ e.ctx.DriveApp.getFileById=id=>{if(id==='launch_source_123456789')return sourceFile;if(id===asset.file_id)return mediaFile;if(id!==ticketId)arbitraryRead=true;return original(id)};
+ e.ctx.DriveApp.Access={PRIVATE:'PRIVATE'};
+ e.ctx.Utilities.base64Encode=b=>Buffer.from(b).toString('base64');
+ Object.assign(e.ticket,{project_read_enabled:true,source_launch_file_id:'launch_source_123456789',source_launch_sha256:digest(raw)});
+ return {...e,asset,bytes,sourceFile,mediaFile,setRaw:v=>raw=v,arbitraryRead:()=>arbitraryRead,
+   read:operation=>vm.runInContext('doPost',e.ctx)({parameter:{...e.request().parameter,operation,asset_id:asset.asset_id}})};
+}
+test('Project link reads pinned launch and only explicitly listed original media; no receipt or secret echo',()=>{
+ const e=projectEnvironment();
+ const project=e.read('load_project');assert.match(project.html,/PROJECT_READY/);assert.doesNotMatch(project.html,new RegExp(token));
+ assert.doesNotMatch(project.html,/media_original_123456789/);
+ const media=e.read('load_asset');assert.match(media.html,/ASSET_READY/);assert.ok(media.html.includes(e.bytes.toString('base64')));
+ assert.equal(e.files.size,0);assert.equal(e.ticket.consumed_receipt_id,undefined);
+ const denied=vm.runInContext('doPost',e.ctx)({parameter:{...e.request().parameter,operation:'load_asset',asset_id:'arbitrary_private_file'}});
+ assert.match(denied.html,/ASSET_NOT_IN_PROJECT/);assert.equal(e.arbitraryRead(),false);
+});
+test('Source mutation, shared source, expired or forged project capability are rejected without reads outside project',()=>{
+ let e=projectEnvironment();e.setRaw('{}');assert.match(e.read('load_project').html,/PROJECT_SOURCE_CHANGED/);
+ e=projectEnvironment();e.sourceFile.getSharingAccess=()=> 'ANYONE';assert.match(e.read('load_project').html,/PROJECT_SOURCE_NOT_PRIVATE/);
+ e=projectEnvironment();e.ticket.expires_utc=new Date(Date.now()-5*60000).toISOString();assert.match(e.read('load_project').html,/TICKET_EXPIRED/);
+ e=projectEnvironment();const post=vm.runInContext('doPost',e.ctx);assert.match(post({parameter:{...e.request(undefined,'0'.repeat(64)).parameter,operation:'load_project'}}).html,/TICKET_REJECTED/);
+ assert.equal(e.files.size,0);
+});
+test('Project reader rejects altered original bytes and legacy write-only tickets',()=>{
+ let e=projectEnvironment();e.mediaFile.getBlob=()=>({getBytes:()=>Array.from(Buffer.alloc(e.bytes.length))});assert.match(e.read('load_asset').html,/ASSET_HASH_MISMATCH/);
+ e=projectEnvironment();delete e.ticket.project_read_enabled;assert.match(e.read('load_project').html,/PROJECT_READ_NOT_AUTHORIZED/);
+});
+test('Project-link parser accepts exact fragment capabilities only; no login, third-party asset URLs or permanent tokens',()=>{
+ const root={};vm.runInNewContext(client,{window:root});const parse=root.MotionLabDrive.projectCapability;
+ assert.equal(parse('#project='+ticketId+'.'+token).ticket_id,ticketId);
+ for(const s of ['?project='+ticketId+'.'+token,'#project=short.'+token,'#project='+ticketId+'.'+token+'&extra=1','#project='+ticketId+'.NOT_A_TOKEN'])assert.equal(parse(s),null);
+ assert.match(client,/media\.asset_id!==a\.asset_id/);assert.match(client,/hash!==a\.sha256/);
+ assert.match(client,/api\.busy\?\.\(true\)/);assert.match(client,/finally\{api\.busy\?\.\(false\)/);
 });

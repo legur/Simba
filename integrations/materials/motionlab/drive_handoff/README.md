@@ -1,6 +1,16 @@
 # MotionLab -> Google Drive -> Montage
 
-Status: code prepared, deployment NOT complete. Public MotionLab receiver config URL is blank until verified Apps Script deployment. It must continue to show LOCAL_ONLY before that step.
+Status: the deployed receiver passed the synthetic round-trip and duplicate-submit test (PR #141). This is not a real project render or Montage acceptance. Opening private original clips from a project link is a separate change and requires redeploying the same Apps Script deployment with the updated Code.gs, updating the two existing Wix JS files, and a real-project readback test before announcing it live.
+
+## Open a private project in an ordinary browser
+
+The existing ticket issuer optionally validates `preview_assets`: exact asset ID, private A2E archive Drive file ID, SHA-256, byte size, and `video/mp4`. Every scene must name one of these exact sources. Limits: 24 unique originals, 20 MiB each, 120 MiB total. The ticket binds the **original launch bytes SHA-256**, project, request and source fingerprint; write-only legacy tickets grant no project-read access.
+
+The project link is the existing `storyboard.html` URL with fragment `#project=TICKET_ID.TICKET_TOKEN`. Supply this link privately to the owner only; never commit it or put it in an Issue. The fragment is removed immediately into same-tab sessionStorage (not localStorage or HTTP query/referrer). A refresh can restore it until the server-side three-hour expiry. A new browser needs its own private link. The capability grants only this project's listed previews and its existing one-use selection submission; it is not a Drive OAuth token.
+
+`load_project` / `load_asset` POST operations reuse the existing Apps Script deployment and exact-origin, nonce-bound response channel. They never list arbitrary Drive contents, take a caller-supplied Drive file ID, create a receipt, or trigger Montage. The source must be private and inside Launches; original clips must be private and inside the existing A2E_Auto_Archive folder. Server and browser verify original SHA-256 before previews are attached. There is no public file sharing. Editor controls are inert while loading; source changes and unsupported/expired replies show a failure instead of a successful project-open status. Same-source reload retains already restored draft scene settings but does not invent user approval.
+
+To prepare a project, store its real verified source launch and preview manifest in private Launches, issue the existing ticket once, then read the authorized launch through the owner Drive connection to deliver the private fragment link. The issuer logs only private file IDs and expiry. Do not create another ticket after an ambiguous issuer result until checking existing Tickets/Launches. A project-open success is not a selection ACK, APPLIED, render authorization, verified audio timing, or publication.
 
 ## Private owner-only Drive folders
 
