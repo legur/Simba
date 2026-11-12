@@ -102,21 +102,44 @@ def source_context(root:Path,private_root:Path,project_id:str,request_id:str):
     import motionlab_audio_listening_qa as listening_qa
     materials["audio_alignment_status"] = "TIMINGS_NOT_VERIFIED"
     listening_receipt = None
-    try:
-        has_review = listening_qa.private_review_presence(job)
-    except listening_qa.ListeningQAError:
-        raise V2SourceError("V2_INDEPENDENT_LISTENING_QA_NOT_VERIFIED") from None
-    if has_review:
+    # Default technical QA is now unattended: when a private local ASR model
+    # is configured, the trusted v2 stage automatically checks the original
+    # approved WAV and text against two independent acoustic methods. A failed
+    # or unavailable model FAILS CLOSED; it never requests that the owner fix
+    # machine timestamps by hand or silently falls back to an old receipt.
+    # The older manual review path is retained only for legacy compatibility
+    # in installations without the autonomous ASR model configuration.
+    model_path = os.environ.get("SIMBA_AUTO_QA_ASR_MODEL_DIR", "").strip()
+    if model_path:
+        import motionlab_automatic_audio_qa as auto_qa
         try:
-            alignment, listening_receipt = listening_qa.verify_owner_private_listening_qa(
-                project, job, root)
-        except (listening_qa.ListeningQAError, ValueError, KeyError):
-            raise V2SourceError("V2_INDEPENDENT_LISTENING_QA_NOT_VERIFIED") from None
-        if listening_receipt.get("status") != "AUDIO_ALIGNMENT_VERIFIED_BY_EXPLICIT_OWNER_LISTENING":
-            raise V2SourceError("V2_INDEPENDENT_LISTENING_QA_NOT_VERIFIED")
-        materials["audio_alignment_status"] = "AUDIO_ALIGNMENT_VERIFIED"
+            alignment, listening_receipt = auto_qa.verify_automatic_audio_qa(
+                project, job, root, asr_model_path=model_path,
+                device=os.environ.get("SIMBA_AUTO_QA_DEVICE", "cpu"))
+        except (auto_qa.AutomaticQAError, ValueError, KeyError, OSError):
+            raise V2SourceError("V2_AUTOMATIC_AUDIO_QA_BLOCKED") from None
+        if listening_receipt.get("status") != "AUDIO_ALIGNMENT_AUTO_QA_PASSED":
+            raise V2SourceError("V2_AUTOMATIC_AUDIO_QA_BLOCKED")
+        materials["audio_alignment_status"] = "AUDIO_ALIGNMENT_VERIFIED_AUTO"
+        materials["audio_alignment_method"] = "INDEPENDENT_LOCAL_CTC_AND_ASR"
         materials["audio_alignment_sha256"] = v2.digest(alignment)
         materials["audio_alignment_qa_sha256"] = listening_receipt["qa_evidence_sha256"]
+    else:
+        try:
+            has_review = listening_qa.private_review_presence(job)
+        except listening_qa.ListeningQAError:
+            raise V2SourceError("V2_INDEPENDENT_LISTENING_QA_NOT_VERIFIED") from None
+        if has_review:
+            try:
+                alignment, listening_receipt = listening_qa.verify_owner_private_listening_qa(
+                    project, job, root)
+            except (listening_qa.ListeningQAError, ValueError, KeyError):
+                raise V2SourceError("V2_INDEPENDENT_LISTENING_QA_NOT_VERIFIED") from None
+            if listening_receipt.get("status") != "AUDIO_ALIGNMENT_VERIFIED_BY_EXPLICIT_OWNER_LISTENING":
+                raise V2SourceError("V2_INDEPENDENT_LISTENING_QA_NOT_VERIFIED")
+            materials["audio_alignment_status"] = "AUDIO_ALIGNMENT_VERIFIED"
+            materials["audio_alignment_sha256"] = v2.digest(alignment)
+            materials["audio_alignment_qa_sha256"] = listening_receipt["qa_evidence_sha256"]
     return {"project":project,"packet":packet,"job":job,"spec":spec,
             "media":media,"materials":materials,"audio_receipt":audio_receipt,
             "listening_receipt":listening_receipt}
@@ -135,7 +158,8 @@ def check_current_v2(root:Path,private_root:Path,project_id:str,
     # Product decision: accurately synchronized word timings must exist
     # before the owner can finalize a visual WYSIWYG selection.
     # A byte-verified WAV is not an ASR/forced-alignment receipt.
-    if ctx["materials"].get("audio_alignment_status") != "AUDIO_ALIGNMENT_VERIFIED":
+    if ctx["materials"].get("audio_alignment_status") not in (
+            "AUDIO_ALIGNMENT_VERIFIED_AUTO", "AUDIO_ALIGNMENT_VERIFIED"):
         raise V2SourceError("TIMINGS_NOT_VERIFIED")
     spec,report=v2.map_selection_v2_to_spec(
         materials,proposals,selection,ctx["spec"],ctx["media"],ctx["job"])
