@@ -130,9 +130,10 @@ def inspect_receipt(svc,receipt_file_id,*,now=None):
           and isinstance(ticket_id,str) and IDENTIFIER.fullmatch(ticket_id),
           "V2_RECEIPT_NOT_PENDING_CANONICAL_CAS")
     # Inspect name separately after we know the claimed ticket.
-    secure_private_bytes(svc,receipt_file_id,INBOX,MAX_RECEIPT,
+    repeated=secure_private_bytes(svc,receipt_file_id,INBOX,MAX_RECEIPT,
          filename="motionlab-v2-"+ticket_id+".json",
          mime={"text/plain","application/json"})
+    guard(repeated==raw,"V2_PRIVATE_RECEIPT_CHANGED_DURING_READ")
     ticket_raw=secure_private_bytes(svc,ticket_id,TICKETS,MAX_TICKET,
             mime={"application/json","text/plain"})
     ticket=parse_json(ticket_raw,"V2_CONSUMED_TICKET_INVALID")
