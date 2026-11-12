@@ -183,5 +183,12 @@
     ]
   ],
   "subtitle_alignment": "ESTIMATED_FROM_APPROVED_NARRATION_REQUIRES_LISTENING_REVIEW",
-  "publication_authorized": false
+  "publication_authorized": false,
+  "exact_replay_test": {
+    "enabled": true,
+    "expires_utc": "2026-11-14T23:59:59Z",
+    "baseline_receipt_file_id": "1pkLPldVVz45rUr2xmcIonwbHg4NQApC-",
+    "source_launch_file_id": "1G4xscgptReyp8F_aUjCbViyoUmyr_Djq",
+    "source_launch_sha256": "e909aaecf7cc89ec2e9b7e3a287b818f63d0061ed544e621113b266cd896d6f7"
+  }
 }
