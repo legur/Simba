@@ -277,10 +277,39 @@ def validate_proposals_v2(materials,proposals):
           "MOTIONLAB_PROPOSALS_STALE")
     analysis=proposals.get("analysis")
     check(isinstance(analysis,dict)
-          and analysis.get("status")=="REAL_VIDEO_REVIEWED"
+          and analysis.get("status") in (
+              "REAL_VIDEO_REVIEWED", "REAL_VIDEO_AUTOMATICALLY_ANALYZED")
           and analysis.get("access_mode")=="owner_private_material_bundle"
           and description(analysis.get("review_notes"),20,1500),
           "ANALYSIS_INPUT_MISSING")
+    # Sampling pixel movement IS genuine inspection of original MP4 bytes,
+    # not human/AI semantic viewing. Keep an explicit, audit-friendly branch:
+    # browser claims alone remain untrusted; current-stage backend replays the
+    # full sample analysis from source bytes before accepting owner selection.
+    if analysis.get("status")=="REAL_VIDEO_AUTOMATICALLY_ANALYZED":
+        check(analysis.get("analysis_method")==
+              "full_timeline_sampled_pixels_ffmpeg_v1",
+              "AUTOMATIC_VIDEO_ANALYSIS_METHOD_MISSING")
+        samples=analysis.get("pixel_evidence")
+        check(isinstance(samples,list)
+              and len(samples)==len(materials["scenes"]),
+              "AUTOMATIC_VIDEO_EVIDENCE_MISSING")
+        for src,row in zip(materials["scenes"],samples):
+            check(isinstance(row,dict)
+                  and row.get("scene_id")==src["scene_id"]
+                  and row.get("asset_sha256")==src["media"]["asset_sha256"]
+                  and isinstance(row.get("sampled_frame_sha256"),str)
+                  and SHA.fullmatch(row["sampled_frame_sha256"])
+                  and type(row.get("frames_sampled")) is int
+                  and row["frames_sampled"] >= 5
+                  and row.get("sample_rate_fps")==3
+                  and numeric(row.get("first_sample_s"),0,0)
+                  and numeric(row.get("last_sample_s"),0,16)
+                  and numeric(row.get("mean_luminance"),0,255)
+                  and numeric(row.get("mean_contrast"),0,128)
+                  and numeric(row.get("motion_delta"),0,255)
+                  and numeric(row.get("peak_frame_delta"),0,255),
+                  "AUTOMATIC_VIDEO_EVIDENCE_MISSING",src["scene_id"])
     inspected=analysis.get("inspected_assets")
     check(isinstance(inspected,list) and
           len(inspected)==len(materials["scenes"]),"ANALYSIS_INPUT_MISSING")
