@@ -86,7 +86,7 @@ function onlyFolder(file, expectedId) {
   if (!parents.hasNext() || parents.next().getId() !== expectedId || parents.hasNext())
     fail('FILE_OUTSIDE_PRIVATE_FOLDER');
 }
-function checkTicket(id, token) {
+function checkTicket(id, token, readRenderOnly) {
   if (typeof id !== 'string' || !/^[A-Za-z0-9_-]{15,100}$/.test(id)
       || typeof token !== 'string' || !/^[0-9a-f]{64}$/.test(token))
     fail('INVALID_TICKET');
@@ -105,7 +105,12 @@ function checkTicket(id, token) {
       || data.state !== 'ISSUED')
     fail('TICKET_REJECTED');
   const expires = Date.parse(data.expires_utc);
-  if (!Number.isFinite(expires) || expires < Date.now() - ML.skewMs
+  // Render-result status is read-only and may arrive after a two-hour
+  // scheduled job. The extra 24h access applies ONLY to an already consumed
+  // ticket; it never extends authority to write or read original MP4s.
+  const grace=readRenderOnly===true && data.consumed_receipt_id
+      ? 24*3600*1000 : ML.skewMs;
+  if (!Number.isFinite(expires) || expires < Date.now() - grace
       || expires > Date.now() + 24 * 3600 * 1000)
     fail('TICKET_EXPIRED');
   return {file, data};
@@ -182,7 +187,7 @@ function output(message) {
 // Read only the exact pinned launch and its explicitly listed A2E originals.
 // No caller-supplied Drive file ID or public sharing is accepted.
 function readProject(params) {
-  const ticket=checkTicket(params.ticket_id,params.ticket_token).data;
+  const ticket=checkTicket(params.ticket_id,params.ticket_token,params.operation==='render_status').data;
   if(ticket.project_read_enabled!==true || !/^[a-f0-9]{64}$/.test(ticket.source_launch_sha256||''))
     fail('PROJECT_READ_NOT_AUTHORIZED');
   const source=DriveApp.getFileById(ticket.source_launch_file_id);
