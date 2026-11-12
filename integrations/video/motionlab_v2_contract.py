@@ -74,6 +74,64 @@ def checked_mp4(scene_id,asset,base,job_dir,probe):
     return media
 
 
+
+def expand_scene_media(originals, verified_media):
+    """Map unique approved source clips to an ordered scene timeline safely.
+
+    Legacy v2 still accepts one verified source per scene, unchanged.
+    For projects reusing video (Alaska: 10 scenes, 7 MP4s), every scene MUST
+    explicitly pin its scene_id and source_asset_id in the approved spec.
+    Reject unknown/replaced clips, unused source records, duplicate source
+    record IDs and any mismatch of the source filename.
+    """
+    check(isinstance(originals,list) and 1<=len(originals)<=r.MAX_SCENES
+          and isinstance(verified_media,list)
+          and 1<=len(verified_media)<=r.MAX_SCENES,"INVALID_SCENE_COUNT")
+    explicitly_pinned=all(isinstance(scene,dict)
+                          and isinstance(scene.get("scene_id"),str)
+                          and isinstance(scene.get("source_asset_id"),str)
+                          for scene in originals)
+    if not explicitly_pinned:
+        check(len(originals)==len(verified_media),"MEDIA_COUNT_MISMATCH")
+        return verified_media
+    by_id={}
+    for asset in verified_media:
+        check(isinstance(asset,dict) and isinstance(asset.get("asset_id"),str)
+              and asset["asset_id"] not in by_id,
+              "DUPLICATE_VERIFIED_SOURCE_ASSET")
+        by_id[asset["asset_id"]]=asset
+    ids=set();used=set();expanded=[]
+    for scene in originals:
+        sid,aid=scene["scene_id"],scene["source_asset_id"]
+        check(SAFE.fullmatch(sid) and SAFE.fullmatch(aid) and sid not in ids,
+              "SCENE_BINDING_MISMATCH")
+        ids.add(sid)
+        asset=by_id.get(aid)
+        check(asset is not None and scene.get("clip")==asset.get("file"),
+              "SOURCE_BINDING_CHANGED",sid)
+        if "scene_id" in asset:
+            check(asset["scene_id"]==sid or
+                  isinstance(asset["scene_id"],str) and SAFE.fullmatch(asset["scene_id"]),
+                  "SOURCE_BINDING_CHANGED",sid)
+        used.add(aid)
+        expanded.append({**asset,"scene_id":sid})
+    check(used==set(by_id),"UNUSED_OR_UNAPPROVED_SOURCE_ASSET")
+    return expanded
+
+
+def scene_playback(source_scene,source_duration,sid):
+    """Preserve scene timing; never silently hold/freeze a too-short clip."""
+    target=source_scene.get("scene_duration_s",source_duration)
+    check(numeric(target,.5,15),"INVALID_APPROVED_SCENE_DURATION",sid)
+    mode=source_scene.get("source_playback","freeze")
+    check(mode in ("freeze","loop"),"UNSUPPORTED_SOURCE_PLAYBACK",sid)
+    if target>source_duration+.02:
+        check(mode=="loop","EXPLICIT_SOURCE_REPEAT_REQUIRED",sid)
+    if mode=="loop":
+        check(target>source_duration+.02,"UNNECESSARY_SOURCE_REPEAT",sid)
+    return round(target,4),mode
+
+
 def make_materials_v2(project_id,request_id,fingerprint,approved_spec,
                       verified_media,job_dir,probe=None):
     """Read-only source package with zero Montage-authored creative options."""
@@ -83,8 +141,9 @@ def make_materials_v2(project_id,request_id,fingerprint,approved_spec,
     check(isinstance(approved_spec,dict) and isinstance(verified_media,list),
           "APPROVED_VIDEO_SPEC_REQUIRED")
     originals=approved_spec.get("scenes")
-    check(isinstance(originals,list) and len(originals)==len(verified_media)
-          and 1<=len(originals)<=8,"INVALID_SCENE_COUNT")
+    check(isinstance(originals,list) and 1<=len(originals)<=r.MAX_SCENES,
+          "INVALID_SCENE_COUNT")
+    scene_media=expand_scene_media(originals,verified_media)
     check(approved_spec.get("size","1080x1920")=="1080x1920"
           and isinstance(approved_spec.get("voice"),dict)
           and isinstance(approved_spec.get("music"),dict)
@@ -95,7 +154,7 @@ def make_materials_v2(project_id,request_id,fingerprint,approved_spec,
           "APPROVED_VIDEO_SPEC_REQUIRED")
     probe=probe or r._ffprobe
     scenes=[]; total=0; ids=set()
-    for idx,(base,asset) in enumerate(zip(originals,verified_media),1):
+    for idx,(base,asset) in enumerate(zip(originals,scene_media),1):
         check(isinstance(asset,dict),"MISSING_VERIFIED_ASSET")
         sid,aid=asset.get("scene_id"),asset.get("asset_id")
         check(isinstance(sid,str) and SAFE.fullmatch(sid)
@@ -103,7 +162,8 @@ def make_materials_v2(project_id,request_id,fingerprint,approved_spec,
               and sid not in ids,"SCENE_BINDING_MISMATCH")
         ids.add(sid)
         media=checked_mp4(sid,asset,base,job_dir,probe)
-        total+=media["duration_s"]
+        target,playback=scene_playback(base,media["duration_s"],sid)
+        total+=target
         title=base.get("title") or ""
         lines=base.get("lines",[])
         check(isinstance(title,str) and isinstance(lines,list)
@@ -111,8 +171,10 @@ def make_materials_v2(project_id,request_id,fingerprint,approved_spec,
                       for x in lines),"APPROVED_TEXT_UNAVAILABLE",sid)
         subtitle=" ".join(x["text"] for x in lines).strip()
         scenes.append({
-            "scene_id":sid,"asset_id":aid,"name":f"Сцена {idx}",
-            "media":media,
+            "scene_id":sid,"asset_id":aid,
+            "name":base.get("scene_name",f"Сцена {idx}"),
+            "media":media,"scene_duration_s":target,
+            "source_playback":playback,
             "locked":{"title_text":title,
                       "title_sha256":hashlib.sha256(title.encode()).hexdigest(),
                       "subtitle_preview":subtitle,
@@ -158,7 +220,7 @@ def validate_materials(materials):
           and constraints.get("allow_publish") is False,
           "INVALID_RENDER_CONSTRAINTS")
     scenes=materials.get("scenes")
-    check(isinstance(scenes,list) and 1<=len(scenes)<=8,"INVALID_SCENE_COUNT")
+    check(isinstance(scenes,list) and 1<=len(scenes)<=r.MAX_SCENES,"INVALID_SCENE_COUNT")
     ids=set();total=0
     for src in scenes:
         check(isinstance(src,dict),"SCENE_BINDING_MISMATCH")
@@ -186,7 +248,15 @@ def validate_materials(materials):
               and lock.get("subtitle_sha256")==hashlib.sha256(
                   lock["subtitle_preview"].encode()).hexdigest(),
               "APPROVED_TEXT_UNAVAILABLE",sid)
-        total+=media["duration_s"]
+        target=src.get("scene_duration_s",media["duration_s"])
+        mode=src.get("source_playback","freeze")
+        check(numeric(target,.5,15) and mode in ("freeze","loop"),
+              "INVALID_APPROVED_SCENE_DURATION",sid)
+        check(target<=media["duration_s"]+.02 or mode=="loop",
+              "EXPLICIT_SOURCE_REPEAT_REQUIRED",sid)
+        check(mode!="loop" or target>media["duration_s"]+.02,
+              "UNNECESSARY_SOURCE_REPEAT",sid)
+        total+=target
     check(total<=60,"VIDEO_DURATION_LIMIT_EXCEEDED")
 
 
@@ -439,15 +509,16 @@ def map_selection_v2_to_spec(materials,proposals,selection,approved_spec,
     check(isinstance(approved_spec,dict)
           and isinstance(verified_media,list)
           and isinstance(approved_spec.get("scenes"),list)
-          and len(approved_spec["scenes"])==len(verified_media)==len(materials["scenes"]),
+          and len(approved_spec["scenes"])==len(materials["scenes"]),
           "APPROVED_VIDEO_SPEC_REQUIRED")
+    scene_media=expand_scene_media(approved_spec["scenes"],verified_media)
     check(digest({"voice":approved_spec.get("voice"),
                   "music":approved_spec.get("music")})==
           materials.get("approved_audio_sha256"),"APPROVED_AUDIO_CHANGED")
     result=copy.deepcopy(approved_spec)
     probe=probe or r._ffprobe
     for i,(src,edited,base,asset) in enumerate(zip(
-            materials["scenes"],selection["scenes"],result["scenes"],verified_media)):
+            materials["scenes"],selection["scenes"],result["scenes"],scene_media)):
         sid=src["scene_id"]
         check(asset.get("asset_id")==src["asset_id"],"SOURCE_BINDING_CHANGED",sid)
         current=checked_mp4(sid,asset,base,job_dir,probe)
@@ -462,6 +533,11 @@ def map_selection_v2_to_spec(materials,proposals,selection,approved_spec,
               "TRIM_REQUIRES_V2_EXTENSION",sid)
         check("visualLayout" not in base,
               "UNAPPROVED_LAYOUT_ALREADY_PRESENT",sid)
+        target,playback=scene_playback(base,current["duration_s"],sid)
+        check(target==src["scene_duration_s"]
+              and playback==src["source_playback"],
+              "APPROVED_SCENE_PLAYBACK_CHANGED",sid)
+        base["clipPlayback"]=playback
         check((base.get("title") or "")==src["locked"]["title_text"],
               "IMMUTABLE_TEXT_CHANGED",sid)
         lines=base.get("lines",[])
