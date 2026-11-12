@@ -637,7 +637,7 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
   asset:async(id,file)=>{const matches=state.scenes.filter(s=>s.asset===id);if(!matches.length)throw Error('Исходник отсутствует в проекте');for(const s of matches)await localFileChosen(file,s);},
   status:text=>{$('connectionTitle').textContent='Проект из закрытого Drive';$('connectionText').textContent=text;},
   result:r=>{
-   if(!r||r.project_id!==state.project?.id)return;
+   if(!r||(state.project?.id&&r.project_id!==state.project.id))return;
    const panel=$('driveRenderPanel'),status=$('driveRenderStatus');
    const video=$('driveRenderVideo'),qa=$('driveRenderQa');
    panel.hidden=false;
