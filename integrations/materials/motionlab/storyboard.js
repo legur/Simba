@@ -579,6 +579,67 @@ function restoreLocalDraft(){
   say('Локальный черновик восстановлен; отправки в Montage не было.');
  }catch{clearSavedDraft();}
 }
+// A verified server receipt grants only a link to the owner-private Drive file.
+// The optional Google Drive iframe is created on the owner's click, never by a
+// background poll. It is not a public URL, local MP4 copy or approval action.
+const DRIVE_RENDER_VIEW=/^https:\/\/drive\.google\.com\/file\/d\/([A-Za-z0-9_-]{15,100})\/view$/;
+const DRIVE_RENDER_EMBED=/^https:\/\/drive\.google\.com\/file\/d\/[A-Za-z0-9_-]{15,100}\/preview$/;
+function closeDriveRenderPreview(){
+ const frame=$('driveRenderFrame'),wrap=$('driveRenderPreviewWrap'),button=$('driveRenderPreviewButton');
+ frame.removeAttribute('src');wrap.hidden=true;button.setAttribute('aria-expanded','false');
+}
+function clearDriveRenderReview(){
+ closeDriveRenderPreview();
+ $('driveRenderPanel').hidden=true;
+ $('driveRenderPreviewButton').hidden=true;
+ $('driveRenderPreviewButton').dataset.previewUrl='';
+ $('driveRenderVideo').hidden=true;
+ $('driveRenderVideo').removeAttribute('href');
+ $('driveRenderQa').hidden=true;
+ $('driveRenderQa').removeAttribute('href');
+ $('driveRenderMeta').hidden=true;
+}
+function openDriveRenderPreview(){
+ const button=$('driveRenderPreviewButton'),src=button.dataset.previewUrl||'';
+ if(button.hidden||!DRIVE_RENDER_EMBED.test(src))return;
+ const frame=$('driveRenderFrame');
+ frame.src=src;
+ $('driveRenderPreviewWrap').hidden=false;
+ button.setAttribute('aria-expanded','true');
+}
+function showDriveRenderResult(r){
+ const panel=$('driveRenderPanel'),status=$('driveRenderStatus'),badge=$('driveRenderBadge');
+ const video=$('driveRenderVideo'),qa=$('driveRenderQa'),preview=$('driveRenderPreviewButton');
+ const meta=$('driveRenderMeta');
+ panel.hidden=false;
+ const match=DRIVE_RENDER_VIEW.exec(r?.video_url||'');
+ const safeQa=DRIVE_RENDER_VIEW.test(r?.qa_url||'');
+ const ready=r?.status==='RENDER_READY'&&match&&safeQa&&/^[a-f0-9]{64}$/.test(r.sha256||'')
+   &&r.published===false&&Number.isFinite(r.duration_seconds)&&r.duration_seconds>0&&r.duration_seconds<=600;
+ if(ready){
+  const next='https://drive.google.com/file/d/'+match[1]+'/preview';
+  if(preview.dataset.previewUrl!==next)closeDriveRenderPreview();
+  status.textContent='Видео готово и прошло техническую проверку. Посмотрите его перед окончательным утверждением.';
+  badge.textContent='ГОТОВО К ПРОСМОТРУ';
+  meta.textContent='Продолжительность: '+Math.round(r.duration_seconds)+' сек. · Техническая проверка: PASS · Публикации нет.';
+  meta.hidden=false;
+  video.href=r.video_url;video.hidden=false;
+  qa.href=r.qa_url;qa.hidden=false;
+  preview.dataset.previewUrl=next;preview.hidden=false;
+ }else{
+  closeDriveRenderPreview();
+  preview.dataset.previewUrl='';preview.hidden=true;
+  video.removeAttribute('href');video.hidden=true;
+  qa.removeAttribute('href');qa.hidden=true;
+  meta.hidden=true;
+  badge.textContent='ПРОВЕРКА';
+  status.textContent=r?.status==='RENDER_PENDING'
+   ?(r.stage==='AWAITING_STUDIO_SELECTION'?'Выбор еще не передан в Montage.':
+      'Выбор принят. Проверяю завершение автоматического монтажа.')
+   :'Подтвержденный результат пока недоступен. Проверьте доступ к проекту и статус Google Apps Script.';
+ }
+}
+
 function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sceneTransition',[['none','Без перехода (первая сцена)'],...CATALOG.transitions]);populateSelect('sceneTitleFx',CATALOG.title);populateSelect('sceneSubtitleStyle',CATALOG.subtitle);populateSelect('sceneWordMotion',CATALOG.motion);
  $('conceptList').addEventListener('click',ev=>{const btn=ev.target.closest('[data-option]');if(btn)choicesFromPreset(Number(btn.dataset.option));});
  $('sceneList').addEventListener('click',ev=>{const up=ev.target.closest('[data-up]'),down=ev.target.closest('[data-down]'),rem=ev.target.closest('[data-remove]'),open=ev.target.closest('[data-open]');
@@ -587,6 +648,8 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  $('addScene').addEventListener('click',addScene);$('applyFavorites').addEventListener('click',fromSaved);
  editChange('sceneName','name');editChange('sceneDuration','duration',v=>clamp(Number(v)||3,1,20));editChange('sceneImage','image');editChange('sceneAsset','asset');editChange('sceneCamera','camera');editChange('sceneTransition','transition');editChange('sceneTitleFx','titleFx');editChange('sceneSubtitleStyle','subtitleStyle');editChange('sceneWordMotion','wordMotion');editChange('sceneIntensity','intensity',v=>clamp(Number(v),0,100));
  $('sceneIntensity').addEventListener('input',e=>{$('intensityValue').textContent=e.target.value+'%';});liveChange('sceneTitle','title');liveChange('sceneSubtitle','subtitle');
+ $('driveRenderPreviewButton').addEventListener('click',openDriveRenderPreview);
+ $('driveRenderClosePreview').addEventListener('click',closeDriveRenderPreview);
  $('playPreview').addEventListener('click',play);$('stopPreview').addEventListener('click',resetPreview);
  $('playFilm').addEventListener('click',()=>film.active?globalThis.MotionLabVisual?.pauseFilm():startFilm());
  $('stopFilm').addEventListener('click',()=>stopFilm());
@@ -613,7 +676,7 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  $('resetDemo').addEventListener('click',()=>{if(state.bridge){say('Активное задание агента. Демо не заменяет его.');return;}clearSavedDraft();prepareDemo();say('Открыт демонстрационный проект');});
  $('requestFile').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>300_000){say('Максимальный размер задания 300 КБ');return;}try{const source=JSON.parse(await file.text());if(state.bridge){say('Задание от агента активно. Импорт недоступен.');return;}loadLaunch(source,null);}catch(err){say('Ошибка JSON: '+err.message);}});
  $('downloadJson').addEventListener('click',jsonDownload);$('copyBrief').addEventListener('click',copyBrief);$('sendToAgent').addEventListener('click',sendSelection);
- window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);stopFilm(false);clearPreviews();});prepareDemo();restoreLocalDraft();
+ window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);stopFilm(false);clearPreviews();closeDriveRenderPreview();});prepareDemo();restoreLocalDraft();
  // Creative templates apply ONLY to the local demo. Agent launch with three options remains authoritative.
  const creativeId=new URLSearchParams(location.search).get('creativePreset');
  const creativeSuggestions={
@@ -631,6 +694,7 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  announceReady();
  const openProject=()=>globalThis.MotionLabDrive?.openProjectLink({
   load:launch=>{
+   clearDriveRenderReview();
    const current=state.request,rows=new Map(launch.scenes.map(s=>[s.scene_id,s]));
    const same=current?.id===launch.request_id&&current.projectId===launch.project_id&&current.fingerprint===launch.expected_input_fingerprint
     &&rows.size===state.scenes.length&&state.scenes.every(s=>{const row=rows.get(s.id);return row?.asset_id===s.asset&&row?.media?.asset_sha256===s.media?.asset_sha256;});
@@ -641,20 +705,7 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
   status:text=>{$('connectionTitle').textContent='Проект из закрытого Drive';$('connectionText').textContent=text;},
   result:r=>{
    if(!r||(state.project?.id&&r.project_id!==state.project.id))return;
-   const panel=$('driveRenderPanel'),status=$('driveRenderStatus');
-   const video=$('driveRenderVideo'),qa=$('driveRenderQa');
-   panel.hidden=false;
-   const privateDriveUrl=/^https:\/\/drive\.google\.com\/file\/d\/[A-Za-z0-9_-]{15,100}\/view$/;
-   if(r.status==='RENDER_READY' && privateDriveUrl.test(r.video_url||'') && privateDriveUrl.test(r.qa_url||'')
-     && /^[a-f0-9]{64}$/.test(r.sha256||'') && r.published===false){
-     status.textContent='Видео собрано, проверено и сохранено в закрытом Drive. Требуется просмотр перед публикацией.';
-     video.href=r.video_url;video.hidden=false;
-     qa.href=r.qa_url;qa.hidden=false;
-   }else{
-     video.hidden=true;qa.hidden=true;
-     status.textContent=r.status==='RENDER_PENDING'?'Видео еще не готово. Монтажер автоматически проверяет очередь Drive.':
-       'Для просмотра статуса требуется обновленная версия Google Apps Script.';
-   }
+   showDriveRenderResult(r);
   },
   busy:on=>{for(const id of ['overviewWorkspace','handoff'])$(id).inert=on;}
  });
