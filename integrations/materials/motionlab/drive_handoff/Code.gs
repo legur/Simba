@@ -337,7 +337,7 @@ function doPost(e) {
     // Return only a bounded allowlisted error code. Never log ticket/selection.
     const code = String(err && err.message || 'INGRESS_FAILED');
     return output({type:['load_project','load_asset','render_status'].includes(p.operation)?'SIMBA_DRIVE_PROJECT_REPLY':'SIMBA_DRIVE_INGRESS_RECEIPT', nonce,
-      status:'REJECTED', error_code:/^[A-Z_]{4,64}$/.test(code)?code:'INGRESS_FAILED'});
+      status:'REJECTED', error_code:/^[A-Z0-9_]{4,64}$/.test(code)?code:'INGRESS_FAILED'});
   } finally {
     if (lock) { try { lock.releaseLock(); } catch (_) {} }
   }
