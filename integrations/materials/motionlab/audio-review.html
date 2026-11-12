@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; media-src blob:; connect-src 'none'; img-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<title>Simba Studio | Проверка слов по утвержденному WAV</title>
+<style>
+:root{color-scheme:dark;font-family:system-ui,Arial,sans-serif}
+*{box-sizing:border-box}
+body{background:#10191e;color:#f0f7f5;margin:0;line-height:1.5}
+main{max-width:1040px;margin:auto;padding:clamp(16px,4vw,42px)}
+h1{font-size:clamp(23px,3vw,34px);line-height:1.2;margin:6px 0 14px}
+h2{font-size:21px;margin:0 0 16px}
+h3{font-size:19px;margin:0}
+p{max-width:860px}
+.muted{color:#b1ccc9}
+.notice{background:#193632;border-left:4px solid #6bb9a1;border-radius:8px;padding:13px 18px;margin:18px 0}
+.warning{background:#3f2c16;border-left:4px solid #eeae60}
+.panel{background:#1a292d;border:1px solid #426063;border-radius:14px;padding:clamp(14px,3vw,23px);margin:18px 0}
+.filegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+label{display:block;font-weight:650}
+input[type=file],input[type=text],input[type=number],textarea{background:#0d1a1c;border:1px solid #667e81;border-radius:8px;color:#fff;font:inherit;padding:11px;width:100%;margin-top:7px}
+input:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid #c3e9ae;outline-offset:2px}
+button{background:#e0c48f;color:#181e20;padding:11px 17px;font:inherit;font-weight:760;border:0;border-radius:9px;cursor:pointer;min-height:44px}
+button:hover{background:#f5d8a0}
+button.subtle{background:#37575a;color:#fff}
+button:disabled{opacity:.5;cursor:not-allowed}
+audio{width:100%;margin:8px 0 14px}
+.phrase{padding:18px 0;border-top:1px solid #426063}
+.phrase:first-child{border-top:none}
+.word{display:grid;grid-template-columns:minmax(100px,1.5fr) minmax(90px,.7fr) minmax(90px,.7fr) minmax(180px,1fr);gap:10px;align-items:center;padding:12px 0;border-bottom:1px solid #30464a}
+.word-title{font-size:17px;font-weight:700;overflow-wrap:anywhere}
+.word button{font-size:13px;padding:8px 10px;min-height:40px}
+.word label{font-size:13px}
+.word .listened{display:flex;align-items:center;gap:8px;padding-top:10px}
+.word input[type=checkbox]{width:22px;height:22px;margin:0}
+.word .note{grid-column:1/-1;max-width:100%}
+.words-table{margin-bottom:18px}
+footer{padding:20px 0;color:#acc4c1;font-size:13px}
+.status{font-weight:700;min-height:24px;padding:10px 0}
+[hidden]{display:none!important}
+@media(max-width:700px){.word{grid-template-columns:1fr 1fr}.word-title{grid-column:1/-1}.word .note{grid-column:1/-1}}
+</style>
+<script defer src="audio_review_core.js?v=20261112-1"></script>
+</head>
+<body>
+<main>
+<p class="muted">SIMBA · STUDIO / MOTION LAB · ПРОВЕРКА ОЗВУЧКИ</p>
+<h1>Проверка субтитров по оригинальному WAV</h1>
+<p>Прослушайте каждое слово, проверьте начало и конец, исправьте таймкоды при необходимости. Приложение формирует отдельный файл проверки для Montage.</p>
+<div class="notice">Файлы остаются <strong>только в этом браузере</strong>. Отправка в Google Drive, GitHub, A2E или TTS не выполняется.</div>
+<div class="notice warning"><strong>Важно:</strong> готовый отчет не запускает монтаж, не утверждает видео и не публикует его. Отмечайте «Прослушано» только после реального сравнения с исходной записью.</div>
+<section class="panel" aria-labelledby="loadHeading">
+<h2 id="loadHeading">1. Откройте исходные файлы</h2>
+<div class="filegrid">
+ <label>Утвержденный текст (.txt/.md)<input id="sourceFile" type="file" accept=".txt,.md,text/plain" required></label>
+ <label>Оригинальный утвержденный WAV<input id="wavFile" type="file" accept=".wav,audio/wav,audio/x-wav" required></label>
+ <label>Черновик таймингов WhisperX (.json)<input id="draftFile" type="file" accept=".json,application/json" required></label>
+</div>
+<p><button type="button" id="loadButton">Проверить SHA-256 и открыть запись</button></p>
+<p class="status" id="status" role="status" aria-live="polite"></p>
+</section>
+<section class="panel" id="reviewPanel" hidden aria-label="Проверка слов">
+<h2>2. Прослушайте каждое слово</h2>
+<p id="meta" class="muted"></p>
+<audio id="player" controls preload="metadata"></audio>
+<p class="muted">Кнопка «Слушать» воспроизводит фрагмент утвержденного WAV. После прослушивания отметьте слово вручную. Если исправляете время, обязательно объясните почему.</p>
+<div id="lines"></div>
+</section>
+<section class="panel" id="finishPanel" hidden aria-label="Сохранение отчета">
+<h2>3. Сохраните независимую проверку</h2>
+<label>Проверяющий (формат owner:ID)<input id="reviewer" type="text" placeholder="owner:legur" autocomplete="off"></label>
+<p><label>Как именно вы слушали запись, что заметили и что исправили
+<textarea id="overallNotes" rows="4" placeholder="Опишите проверку оригинального WAV, выявленные проблемы и сделанные исправления." spellcheck="true"></textarea></label></p>
+<button type="button" id="exportButton">Скачать отчет проверки JSON</button>
+<p class="muted">Полученный <code>alignment-listening-review.json</code> нужно вручную сохранить в закрытой папке соответствующего проекта рядом с исходным <code>alignment-draft.json</code>. Это действие не выполняется автоматически.</p>
+</section>
+<footer>Bon Tours · Локальная проверка источников · Без внешних запросов и платных операций</footer>
+</main>
+<script>
+'use strict';
+(()=>{
+ const $=id=>document.getElementById(id);
+ let context=null,clipUrl=null,stopAt=0;
+ const player=$('player');
+ const status=(msg,fail=false)=>{$('status').textContent=msg;$('status').style.color=fail?'#ffb5a1':'#b9eec8'};
+ const byClass=(root,css)=>Array.from(root.querySelectorAll(css));
+ const reset=()=>{
+   context=null;stopAt=0;player.pause();player.removeAttribute('src');player.load();
+   if(clipUrl){URL.revokeObjectURL(clipUrl);clipUrl=null}
+   $('lines').replaceChildren();$('reviewPanel').hidden=true;$('finishPanel').hidden=true;
+ };
+ for(const name of ['sourceFile','wavFile','draftFile'])$(name).addEventListener('change',()=>{reset();status('')});
+ player.addEventListener('timeupdate',()=>{if(stopAt&&player.currentTime>=stopAt){player.pause();stopAt=0}});
+ function startPreview(word){
+   stopAt=(word.end+200)/1000;
+   player.currentTime=Math.max(0,(word.start-250)/1000);
+   player.play().catch(()=>status('Нажмите воспроизведение в аудиоплеере.',true));
+ }
+ function row(text,original){
+   const wrap=document.createElement('div');wrap.className='word';wrap.dataset.text=text;
+   const heading=document.createElement('div');heading.className='word-title';heading.textContent=text;
+   const play=document.createElement('button');play.type='button';play.className='subtle';
+   play.textContent='Слушать';
+   play.addEventListener('click',()=>startPreview({
+     start:Number(start.value),end:Number(end.value)}));
+   const startLabel=document.createElement('label');startLabel.textContent='Начало (мс)';
+   const start=document.createElement('input');start.type='number';start.min='0';start.step='1';start.value=original.word_start_ms;start.className='word-start';
+   startLabel.append(start);
+   const endLabel=document.createElement('label');endLabel.textContent='Конец (мс)';
+   const end=document.createElement('input');end.type='number';end.min='1';end.step='1';end.value=original.word_end_ms;end.className='word-end';
+   endLabel.append(end);
+   const listenedLabel=document.createElement('label');listenedLabel.className='listened';
+   const checked=document.createElement('input');checked.type='checkbox';checked.className='word-listened';
+   listenedLabel.append(checked,document.createTextNode('Прослушано'));
+   const correction=document.createElement('label');correction.className='note';
+   correction.textContent='Причина коррекции (если меняли время)';
+   const note=document.createElement('input');note.type='text';note.className='word-correction';
+   note.placeholder='Причина изменения границ слова';correction.append(note);
+   wrap.append(heading,play,startLabel,endLabel,listenedLabel,correction);
+   return wrap;
+ }
+ function draw(ctx){
+   const list=$('lines');list.replaceChildren();
+   for(const line of ctx.lines){
+     const section=document.createElement('section');section.className='phrase';section.dataset.lineId=line.line_id;
+     const head=document.createElement('h3');head.textContent=line.line_id+': '+line.text;
+     const table=document.createElement('div');table.className='words-table';
+     for(const w of line.words)table.append(row(w.text,w));
+     const notesLabel=document.createElement('label');notesLabel.textContent='Что вы проверили на слух в этой фразе';
+     const notes=document.createElement('textarea');notes.className='line-notes';notes.rows=2;
+     notes.placeholder='Сравнение фразы с оригинальным WAV и замеченные неточности';
+     notesLabel.append(notes);
+     section.append(head,table,notesLabel);list.append(section);
+   }
+ }
+ $('loadButton').addEventListener('click',async()=>{
+   reset();status('Читаю локальные файлы и сверяю SHA-256…');
+   const source=$('sourceFile').files?.[0],wav=$('wavFile').files?.[0],draft=$('draftFile').files?.[0];
+   if(!source||!wav||!draft){status('Выберите все три оригинальных файла.',true);return}
+   if(!globalThis.crypto?.subtle||!globalThis.MotionLabAudioReview){
+     status('Нужен современный браузер на HTTPS с поддержкой локального SHA-256.',true);return;
+   }
+   try{
+     const [a,b,c]=await Promise.all([source.arrayBuffer(),wav.arrayBuffer(),draft.arrayBuffer()]);
+     const checked=await MotionLabAudioReview.inspect(
+       new Uint8Array(a),new Uint8Array(b),new Uint8Array(c));
+     context=checked;
+     clipUrl=URL.createObjectURL(wav);
+     player.src=clipUrl;
+     $('meta').textContent='Проект: '+checked.draft.project_id+
+       ' · Строк: '+checked.lines.length+' · Слов: '+checked.wordCount+
+       ' · SHA источников совпали. Тайминги пока НЕ утверждены.';
+     draw(checked);$('reviewPanel').hidden=false;$('finishPanel').hidden=false;
+     status('Источники проверены. Теперь прослушайте и отметьте каждое слово.');
+   }catch(err){reset();status('Отклонено: '+String(err.message||err),true)}
+ });
+ $('exportButton').addEventListener('click',()=>{
+   if(!context){status('Сначала откройте оригиналы.',true);return}
+   const blocks=byClass($('lines'),'.phrase');
+   const lines=blocks.map(block=>({
+     line_id:block.dataset.lineId,
+     listening_notes:block.querySelector('.line-notes').value,
+     words:byClass(block,'.word').map(w=>({
+       text:w.dataset.text,
+       word_start_ms:Number(w.querySelector('.word-start').value),
+       word_end_ms:Number(w.querySelector('.word-end').value),
+       listened:w.querySelector('.word-listened').checked,
+       correction_note:w.querySelector('.word-correction').value
+     }))
+   }));
+   try{
+     const obj=MotionLabAudioReview.prepareReview(
+       context,$('reviewer').value.trim(),$('overallNotes').value,lines);
+     const blob=new Blob([JSON.stringify(obj,null,2)+'\n'],{type:'application/json'});
+     const url=URL.createObjectURL(blob);
+     const a=document.createElement('a');a.href=url;a.download='alignment-listening-review.json';
+     document.body.append(a);a.click();a.remove();
+     setTimeout(()=>URL.revokeObjectURL(url),3000);
+     status('Отчет сохранен локально. Он не передан в Drive или Montage.');
+   }catch(err){status('Проверка не завершена: '+String(err.message||err),true)}
+ });
+ window.addEventListener('pagehide',()=>{stopAt=0;player.pause();if(clipUrl)URL.revokeObjectURL(clipUrl)});
+})();
+</script>
+</body>
+</html>

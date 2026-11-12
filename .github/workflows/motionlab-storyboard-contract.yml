@@ -42,3 +42,5 @@ jobs:
           for test in test_director_semantic.cjs test_director_import_core.cjs test_director_vision_core.cjs; do
             node "integrations/materials/motionlab/repo-tests/$test"
           done
+          node --check integrations/materials/motionlab/audio_review_core.js
+          node --test integrations/materials/motionlab/repo-tests/test_audio_review.mjs
