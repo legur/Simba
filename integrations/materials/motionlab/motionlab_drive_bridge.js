@@ -167,7 +167,16 @@
         timer=setTimeout(poll,120000);
       };
       poll();
-    } catch(error){api.status('Проект не открыт полностью: '+String(error.message||error));}
+    } catch(error){
+      api.status('Исходный проект недоступен: '+String(error.message||error));
+      // The 3-hour media ticket might have expired before the scheduled
+      // renderer completed. A separately bounded consumed-ticket read can
+      // still show the private result link without returning any original MP4.
+      try{
+        const rendered=await readProjectPart(handoff,'render_status');
+        api.result?.(rendered);
+      }catch{}
+    }
     finally{api.busy?.(false);}
   }
   root.MotionLabDrive = {ready,send,receipt,clearReceipt,openProjectLink,projectCapability};
