@@ -201,4 +201,98 @@ class V2AtomicWritebackTests(unittest.TestCase):
                     Path(self.root.name),Path("/private"),self.bundle,refs)
 
 
+    def test_end_to_end_default_never_writes_even_with_authenticated_receipt(self):
+        payload={
+            "status":"V2_VIDEO_SPEC_MAPPED_NOT_RENDERED",
+            "receipt_id":self.bundle["selection_contract_receipt_id"],
+            "render_authorized":False,
+        }
+        with patch.object(intake,"inspect_receipt",return_value=self.bundle),\\
+             patch.object(intake,"replay_private_canonical",
+                          return_value=({"project":self.base},
+                            {"packageId":self.bundle["project_id"]},payload)),\\
+             patch.object(cas,"stage_all_private_references") as saved,\\
+             patch.object(cas,"github_cas_from_checked_workspace") as commit:
+            result=cas.process_owner_v2_receipt(
+                object(),Path(self.root.name),Path("/private"),
+                self.bundle["receipt_file_id"],apply=False)
+        self.assertEqual(result["status"],"V2_PRIVATE_SOURCE_REPLAY_PASSED_NO_WRITE")
+        self.assertFalse(result["canonical_applied"])
+        saved.assert_not_called()
+        commit.assert_not_called()
+
+    def test_explicit_apply_only_after_full_source_and_private_references(self):
+        payload={
+            "status":"V2_VIDEO_SPEC_MAPPED_NOT_RENDERED",
+            "receipt_id":self.bundle["selection_contract_receipt_id"],
+            "render_authorized":False,
+        }
+        committed={
+            "status":"V2_CANONICAL_EDIT_CHOICE_APPLIED_NO_RENDER",
+            "commit_sha":"a"*40,
+            "new_blob_sha":"b"*40,
+            "candidate_sha256":"c"*64,
+        }
+        ack={
+            "status":"V2_EDIT_CHOICE_CANONICALLY_APPLIED_AWAITING_MONTAGE_PLAN",
+            "receipt_id":self.bundle["receipt_id"],
+            "commit_sha":"a"*40,
+            "private_ack_file_id":"K"*26,
+            "render_authorized":False,
+        }
+        events=[]
+        with patch.object(intake,"inspect_receipt",
+                          side_effect=lambda *a,**kw:(events.append("private_receipt")
+                             or self.bundle)),\\
+             patch.object(intake,"replay_private_canonical",
+                          side_effect=lambda *a,**kw:(events.append("media_replay")
+                             or ({}, {"packageId":self.bundle["project_id"]},payload))),\\
+             patch.object(cas,"stage_all_private_references",
+                          side_effect=lambda *a,**kw:(events.append("stage_refs")
+                             or self.refs)),\\
+             patch.object(cas,"prepare_canonical_candidate",
+                          side_effect=lambda *a,**kw:(events.append("candidate")
+                             or (self.candidate,{}))),\\
+             patch.object(cas,"github_cas_from_checked_workspace",
+                          side_effect=lambda *a,**kw:(events.append("commit")
+                             or committed)),\\
+             patch.object(cas,"finish_applied_ack",
+                          side_effect=lambda *a,**kw:(events.append("ack") or ack)):
+            result=cas.process_owner_v2_receipt(
+                object(),Path(self.root.name),Path("/private"),
+                self.bundle["receipt_file_id"],"t"*60,apply=True)
+        self.assertEqual(events,["private_receipt","media_replay","stage_refs",
+                                 "candidate","commit","ack"])
+        self.assertTrue(result["canonical_applied"])
+        self.assertFalse(result["render_authorized"])
+        self.assertEqual(result["paid_calls"],0)
+
+    def test_postcommit_ack_failure_reports_ambiguous_state(self):
+        payload={
+            "status":"V2_VIDEO_SPEC_MAPPED_NOT_RENDERED",
+            "receipt_id":self.bundle["selection_contract_receipt_id"],
+            "render_authorized":False,
+        }
+        committed={
+            "status":"V2_CANONICAL_EDIT_CHOICE_APPLIED_NO_RENDER",
+            "commit_sha":"a"*40,"new_blob_sha":"b"*40,
+            "candidate_sha256":"c"*64,
+        }
+        with patch.object(intake,"inspect_receipt",return_value=self.bundle),\\
+             patch.object(intake,"replay_private_canonical",
+                          return_value=({},{"packageId":self.bundle["project_id"]},payload)),\\
+             patch.object(cas,"stage_all_private_references",return_value=self.refs),\\
+             patch.object(cas,"prepare_canonical_candidate",
+                          return_value=(self.candidate,{})),\\
+             patch.object(cas,"github_cas_from_checked_workspace",
+                          return_value=committed),\\
+             patch.object(cas,"finish_applied_ack",
+                          side_effect=OSError("temporary private Drive outage")):
+            with self.assertRaisesRegex(cas.V2CasError,
+                        "V2_CAS_COMMITTED_ACK_PENDING_CHECK_GITHUB"):
+                cas.process_owner_v2_receipt(
+                    object(),Path(self.root.name),Path("/private"),
+                    self.bundle["receipt_file_id"],"t"*60,apply=True)
+
+
 if __name__=="__main__":unittest.main()
