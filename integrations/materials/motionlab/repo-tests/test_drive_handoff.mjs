@@ -48,9 +48,13 @@ function environment(){
  const inbox={
     getFilesByName(name){
       const item=files.get(name);let gone=false;
-      return {hasNext(){return Boolean(item&&!gone)},next(){gone=true;return {getBlob(){return {getDataAsString:()=>JSON.stringify(item)}}}}}
+      return {hasNext(){return Boolean(item&&!gone)},next(){gone=true;return {
+        getId(){return 'I'.repeat(30)},
+        getBlob(){return {getDataAsString:()=>JSON.stringify(item)}}}}}
     },
-    createFile(name,data){files.set(name,JSON.parse(data));return {}}
+    createFile(name,data){files.set(name,JSON.parse(data));return {
+      getId(){return 'I'.repeat(30)}
+    }}
  };
  const sandbox={
    Date,JSON,Error,Object,String,Array,Number,Boolean,RegExp,MimeType:{PLAIN_TEXT:'text/plain'},

@@ -260,8 +260,8 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  $('downloadJson').title=globalThis.MotionLabVideoImport?.info?.()?'Для целого MP4 нужен export scene-map/v1, который сохраняет интервалы':layoutDraft?'Этот v1 JSON не хранит позиции текста. Скачайте визуальный черновик v2.':'Скачать настройки совместимые с v1';
  $('downloadVisual').disabled=!layoutDraft;
  const approval=$('approvalStatus');if(approval){approval.textContent=state.confirmed?'Вариант утвержден вами, но не передан монтажеру':'Еще не утверждено';approval.classList.toggle('approved',state.confirmed);}
- const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.deliveryStatus?.status==='SAVED_IN_DRIVE_PENDING_MONTAGE'?'В DRIVE / ЖДЕТ MONTAGE':state.deliveryStatus?.status==='LOCAL_ONLY'?'СОХРАНЕНО НА УСТРОЙСТВЕ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
- $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.deliveryStatus?.status==='SAVED_IN_DRIVE_PENDING_MONTAGE'?`Подтверждено Google Drive. Квитанция ${state.deliveryStatus.receipt_id}. Montage еще не выполнил рендер и QA.`:state.deliveryStatus?.status==='LOCAL_ONLY'?'Черновик хранится только в этом браузере, в Drive и Montage не отправлен.':state.sending?'Сохраняем и ждем проверенную серверную квитанцию; отправка еще не подтверждена.':state.bridge?'Подключенный агентский канал ожидает подтверждения ACK.':state.request?.handoff&&!globalThis.MotionLabDrive?.ready?.(state.request.handoff)?'Одноразовое разрешение получено. Приемник Google Drive еще не опубликован; пока доступно только локальное сохранение.':'Приемник Google Drive для этого задания не подключен. Можно сохранить локальный черновик без входа.';
+ const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.deliveryStatus?.automation_status==='GITHUB_DISPATCHED'?'DRIVE → GITHUB':state.deliveryStatus?.status==='SAVED_IN_DRIVE_PENDING_MONTAGE'?'В DRIVE / ЖДЕТ MONTAGE':state.deliveryStatus?.status==='LOCAL_ONLY'?'СОХРАНЕНО НА УСТРОЙСТВЕ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
+ $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.deliveryStatus?.status==='SAVED_IN_DRIVE_PENDING_MONTAGE'?`Подтверждено Google Drive. Квитанция ${state.deliveryStatus.receipt_id}. ${state.deliveryStatus.automation_status==='GITHUB_DISPATCHED'?'GitHub получил команду на монтаж; результат будет проверяться автоматически каждые 10 минут, только пока есть активное задание.':state.deliveryStatus.automation_status==='SETUP_REQUIRED'||state.deliveryStatus.automation_status==='TRIGGER_PERMISSION_REQUIRED'?'Автоматический запуск пока не настроен в Google Apps Script. Данные сохранены, но GitHub еще не запущен.':'Монтаж пока не подтвержден; сохранен серверный квиток.'}`:state.deliveryStatus?.status==='LOCAL_ONLY'?'Черновик хранится только в этом браузере, в Drive и Montage не отправлен.':state.sending?'Сохраняем и ждем проверенную серверную квитанцию; отправка еще не подтверждена.':state.bridge?'Подключенный агентский канал ожидает подтверждения ACK.':state.request?.handoff&&!globalThis.MotionLabDrive?.ready?.(state.request.handoff)?'Одноразовое разрешение получено. Приемник Google Drive еще не опубликован; пока доступно только локальное сохранение.':'Приемник Google Drive для этого задания не подключен. Можно сохранить локальный черновик без входа.';
 }
 function render(){renderConcepts();renderSceneList();renderEditor();renderSummary();globalThis.MotionLabPages?.sync?.();}
 function updateKey(key,value){if(state.request&&['name','duration','image','asset','title','subtitle'].includes(key))return;const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
@@ -499,8 +499,11 @@ function sendSelection(){
     const packet=buildResult();
     state.sending=true;state.deliveryStatus=null;renderSummary();
     bridge.send(packet,state.request.handoff).then(receipt=>{
-      state.deliveryStatus={status:receipt.status,receipt_id:receipt.receipt_id};
-      say('Google Drive подтвердил сохранение. Montage еще не запускался.');
+      state.deliveryStatus={status:receipt.status,receipt_id:receipt.receipt_id,
+        automation_status:receipt.automation_status};
+      say(receipt.automation_status==='GITHUB_DISPATCHED'
+        ?'Drive принял выбор, GitHub получил команду на бесплатный монтаж.'
+        :'Drive принял выбор, автоматический запуск пока не подтвержден.');
     }).catch(e=>{
       if(saveLocalDraft())say('Drive не подтвердил прием: '+String(e.message||e)+'. Черновик хранится локально.');
       else say('Drive не подтвердил прием: '+String(e.message||e));

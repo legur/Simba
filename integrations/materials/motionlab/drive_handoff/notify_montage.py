@@ -110,9 +110,10 @@ def list_pending(svc):
         page=result.get('nextPageToken')
         if not page:break
 
-def run(svc,dry_run=True):
+def run(svc,dry_run=True,receipt_file_id=None):
     status={'found':0,'notified':0,'blocked':0,'dry_run':dry_run,'render_started':False}
-    for fid in list_pending(svc):
+    targets=[receipt_file_id] if receipt_file_id is not None else list_pending(svc)
+    for fid in targets:
         status['found']+=1
         try:
             item=validate(svc,fid)
@@ -127,9 +128,10 @@ def run(svc,dry_run=True):
 
 def main():
     parser=argparse.ArgumentParser();parser.add_argument('--send-notifications',action='store_true')
+    parser.add_argument('--receipt-file-id')
     args=parser.parse_args()
     try:
-        report=run(drive(),dry_run=not args.send_notifications)
+        report=run(drive(),dry_run=not args.send_notifications,receipt_file_id=args.receipt_file_id)
         print(json.dumps(report,sort_keys=True))
         return 2 if report['blocked'] else 0
     except InboxError as e:

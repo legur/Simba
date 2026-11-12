@@ -1,4 +1,5 @@
-name: MotionLab — Drive inbox to free Montage render and private Drive QA
+name: MotionLab — on-demand Drive inbox to free Montage render
+run-name: "MotionLab receipt ${{ inputs.receipt_file_id || 'manual' }}"
 
 on:
   pull_request:
@@ -11,8 +12,11 @@ on:
         type: boolean
         default: true
         description: 'Read-only by default; owner can explicitly run free render'
-  schedule:
-    - cron: '17 */2 * * *'
+      receipt_file_id:
+        type: string
+        required: false
+        description: 'Exact private Drive Inbox file ID from signed Apps Script receipt'
+
 
 permissions:
   contents: read
@@ -24,7 +28,7 @@ concurrency:
 
 jobs:
   test:
-    if: ${{ github.event_name != 'schedule' }}
+    if: ${{ github.event_name == 'pull_request' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -40,7 +44,7 @@ jobs:
         run: python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_*.py' -v
 
   inbox:
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:
@@ -58,11 +62,19 @@ jobs:
           GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DRY_RUN: ${{ inputs.dry_run }}
+          RECEIPT_FILE_ID: ${{ inputs.receipt_file_id }}
         run: |
-          if [ "$DRY_RUN" = 'false' ] || [ "${{ github.event_name }}" = 'schedule' ]; then
-            python integrations/materials/motionlab/drive_handoff/notify_montage.py --send-notifications
+          args=()
+          if [ -n "$RECEIPT_FILE_ID" ]; then
+            if [[ ! "$RECEIPT_FILE_ID" =~ ^[A-Za-z0-9_-]{15,100}$ ]]; then
+              echo "Invalid receipt file ID" >&2; exit 2
+            fi
+            args+=(--receipt-file-id "$RECEIPT_FILE_ID")
+          fi
+          if [ "$DRY_RUN" = 'false' ] && [ "${{ github.actor }}" = "${{ github.repository_owner }}" ]; then
+            python integrations/materials/motionlab/drive_handoff/notify_montage.py --send-notifications "${args[@]}"
           else
-            python integrations/materials/motionlab/drive_handoff/notify_montage.py
+            python integrations/materials/motionlab/drive_handoff/notify_montage.py "${args[@]}"
           fi
 
       - name: Ensure FFmpeg and fonts are available for free local Montage
@@ -81,12 +93,13 @@ jobs:
           MOTIONLAB_NO_PAID_APIS: 'true'
           DRY_RUN: ${{ inputs.dry_run }}
           ACTOR_IS_OWNER: ${{ github.actor == github.repository_owner }}
+          RECEIPT_FILE_ID: ${{ inputs.receipt_file_id }}
         run: |
-          if [ "${{ github.event_name }}" = 'schedule' ]; then
-            python integrations/materials/motionlab/drive_handoff/auto_render.py --apply
-          elif [ "$DRY_RUN" = 'false' ] && [ "$ACTOR_IS_OWNER" = 'true' ]; then
-            python integrations/materials/motionlab/drive_handoff/auto_render.py --apply
+          args=()
+          if [ -n "$RECEIPT_FILE_ID" ]; then args+=(--receipt-file-id "$RECEIPT_FILE_ID"); fi
+          if [ "$DRY_RUN" = 'false' ] && [ "$ACTOR_IS_OWNER" = 'true' ]; then
+            python integrations/materials/motionlab/drive_handoff/auto_render.py --apply "${args[@]}"
           else
-            python integrations/materials/motionlab/drive_handoff/auto_render.py
+            python integrations/materials/motionlab/drive_handoff/auto_render.py "${args[@]}"
           fi
 

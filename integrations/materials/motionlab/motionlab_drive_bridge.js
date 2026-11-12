@@ -73,8 +73,12 @@
             reject(Error('Drive не принял задание: '+String(data.error_code||'INVALID_RECEIPT').slice(0,65)));
             return;
           }
+          const allowedAutomation=['GITHUB_DISPATCHED','SETUP_REQUIRED','TRIGGER_PERMISSION_REQUIRED',
+            'GITHUB_REJECTED','GITHUB_UNREACHABLE','ALREADY_RENDERED','QUEUE_ACTIVE'];
+          const automationStatus=allowedAutomation.includes(data.automation_status)?data.automation_status:'UNKNOWN';
           const r={status:data.status,receipt_id:data.receipt_id,
-                   project_id:selection.project_id,selection_sha256:hash};
+                   project_id:selection.project_id,selection_sha256:hash,
+                   automation_status:automationStatus};
           try {localStorage.setItem(RECEIPT_KEY,JSON.stringify(r));} catch {}
           resolve(r);
         };
