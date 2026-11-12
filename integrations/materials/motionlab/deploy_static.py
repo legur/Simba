@@ -36,7 +36,7 @@ SITE_FILES = (
     "text.html", "text.css", "text.js",
     "subtitles.html", "subtitles.css", "subtitles.js",
     "camera.html", "camera.css", "camera.js",
-    "storyboard.html", "storyboard.css", "storyboard.js", "visual_editor.js", "scene_pages.js",
+    "storyboard.html", "storyboard.css", "storyboard.js", "motionlab_drive_config.js", "motionlab_drive_bridge.js", "visual_editor.js", "scene_pages.js",
     "director_core.js", "director_import_core.js", "director_semantic.js", "director_analysis.js", "director_import.js", "director_vision_core.js", "director_vision.js",
     "creative.html", "creative.css", "creative.js",
 )
