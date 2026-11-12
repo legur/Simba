@@ -178,15 +178,19 @@ class PrivateResolverTests(unittest.TestCase):
         # Verify the existing one-time runner remains the only paid codepath.
         resolved=self._resolve()
         import tempfile
+        # The current production universal runner does NOT route private
+        # issue kinds itself. Pass the verified, converted event explicitly.
+        # Do not pretend that it echoes private lineage/readback status.
+        self.assertEqual(json.loads(resolved["issue"]["body"])["project_id"],
+                         self.case.pid)
         with tempfile.TemporaryDirectory() as out, \
-             patch.object(private,"perhaps_resolve",return_value=(resolved,True)), \
              patch.dict(universal.os.environ, {"A2E_API_KEY":"sk_"+"x"*20}), \
              patch.object(universal,"price",return_value=[101]), \
              patch.object(universal.core,"a2e_start") as paid:
-            result=universal.run(self.event,Path(out))
+            result=universal.run(resolved,Path(out))
             self.assertEqual(result["status"],"STOPPED")
-            self.assertTrue(result["private_source_readback_verified"])
-            self.assertEqual(result["lineage"]["project_id"],self.case.pid)
+            self.assertIn("Quote exceeds selected credit ceiling",result["note"])
+            self.assertNotIn("private_source_readback_verified",result)
             paid.assert_not_called()
 
 
