@@ -1,4 +1,4 @@
-name: Monid alternate search
+name: Monid travel research
 on:
   push:
     branches: [codex/monid-check-20261112]
@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Check sources
+      - name: Retrieve Reddit and Threads discussions
         env:
           MONID_SECRET: ${{ secrets.monid_key }}
           NO_COLOR: '1'
@@ -22,6 +22,5 @@ jobs:
           M="$RUNNER_TEMP/monid/node_modules/.bin/monid"
           "$M" keys add -k "$MONID_SECRET" -l github-action
           unset MONID_SECRET
-          "$M" inspect -p anyapi -e /reddit.search
-          "$M" inspect -p tikhub -e /api/v1/threads/web/fetch_post_comments
-          "$M" run -p anyapi -e /threads.search -i '{"query":"travel","startDate":"2026-11-05","endDate":"2026-11-12"}' -w 40 -j || true
+          "$M" run -p anyapi -e /reddit.search -i '{"query":"subreddit:travel","timeframe":"week","sort":"comments"}' -w 40 -j || true
+          "$M" run -p tikhub -e /api/v1/threads/web/fetch_post_comments --query '{"post_id":"4028305804780335592"}' -w 40 -j || true
