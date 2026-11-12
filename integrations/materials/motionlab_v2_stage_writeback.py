@@ -102,7 +102,11 @@ def source_context(root:Path,private_root:Path,project_id:str,request_id:str):
     import motionlab_audio_listening_qa as listening_qa
     materials["audio_alignment_status"] = "TIMINGS_NOT_VERIFIED"
     listening_receipt = None
-    if listening_qa.private_review_presence(job):
+    try:
+        has_review = listening_qa.private_review_presence(job)
+    except listening_qa.ListeningQAError:
+        raise V2SourceError("V2_INDEPENDENT_LISTENING_QA_NOT_VERIFIED") from None
+    if has_review:
         try:
             alignment, listening_receipt = listening_qa.verify_owner_private_listening_qa(
                 project, job, root)
