@@ -57,9 +57,20 @@ def post_selection(ticket_id, token, selection):
             html=response.read(42000).decode("utf-8","replace")
     except (urllib.error.URLError,TimeoutError):
         stop("APPS_SCRIPT_NETWORK_ERROR")
-    match=re.search(r"var msg=(\{.*?\});var origin=",html,re.DOTALL)
-    if not match:stop("APPS_SCRIPT_ACK_MISSING")
-    try:msg=json.loads(match.group(1))
+    # Google HtmlService may return a sandbox bootstrap instead of inner
+    # iframe HTML. Its userHtml is JavaScript escaped with \xNN bytes.
+    # Never print raw responses or bearer tokens.
+    normal=re.search(r"var msg=(\{.*?\});var origin=",html,re.DOTALL)
+    if normal:
+        raw_message=normal.group(1)
+    else:
+        decoded=re.sub(r"\\x([0-9a-fA-F]{2})",
+                       lambda m:chr(int(m.group(1),16)),html)
+        pos=decoded.find("var msg=")
+        end=decoded.find(";var origin=",pos)
+        if pos<0 or end<pos:stop("APPS_SCRIPT_ACK_MISSING")
+        raw_message=decoded[pos+8:end].replace('\\"','"')
+    try:msg=json.loads(raw_message)
     except ValueError:stop("APPS_SCRIPT_ACK_PARSE_ERROR")
     if msg.get("type")!="SIMBA_DRIVE_INGRESS_RECEIPT" or msg.get("nonce")!=params["nonce"]:
         stop("APPS_SCRIPT_ACK_NONCE_MISMATCH")
