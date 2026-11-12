@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-11-12 | [MSC Seascape: тайна каюты](2026-11-12__NEWS__MSC-SEASCAPE-INVESTIGATION__APPROVED.md) | APPROVED_TEXT; Rafael previews pending | news / documentary detective / discussion | MSC Seascape / FBI investigation | 21:15 clothing change → incident chronology → crew towels; facts with judicial caveat | «Отлично» после редакторских правок | high for approval; factual sources linked |
 | 2026-11-11 | [Шуточный прейскурант услуг турагента](2026-11-11__LEO__TRAVEL-AGENT-SATIRICAL-SERVICES__APPROVED.md) | APPROVED_TEXT; visual not requested | Leo / humor / personal brand | вымышленные платные услуги турагента | 11 абсурдных услуг, узнаваемые запросы туристов, самоирония | «отлично» после усиления плотности и разнообразия шуток | high |
 | 2026-11-10 | [SHOPPING IL - бонусы на туры Eshet](2026-11-10__SELLING__ESHET-SHOPPING-IL-BONUS__APPROVED.md) | APPROVED_TEXT; Rafael previews pending | sales / promotion | Eshet Tours / Shopping IL / 09–19 Nov 2026 | выбор бонуса 150 EUR/200 USD на пару или ESHET FLEX | «отлично» после уточнения применимости только к турам Eshet | high |
 | 2026-11-10 | [Злата Прага: неделя в Европе](2026-11-10__SELLING__ZLATA-PRAGUE-LAST-MINUTE__APPROVED.md) | APPROVED; FINAL_VISUAL_READY (3) | sales / last minute | Prague, Dresden, Karlovy Vary / 15–21 Nov 2026 | неделя не за все деньги мира; 599 EUR/person sharing | «3 вариант» | high |
