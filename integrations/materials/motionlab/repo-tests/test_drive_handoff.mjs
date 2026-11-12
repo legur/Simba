@@ -283,3 +283,59 @@ test('Expired ticket status grace is read-only and only after consumed receipt',
  e.ticket.expires_utc=new Date(Date.now()-25*60*60*1000).toISOString();
  assert.throws(()=>check(ticketId,token,true),/TICKET_EXPIRED/);
 });
+
+
+test('Studio exposes only verified private video for opt-in owner playback',()=>{
+ assert.match(html,/id="driveRenderPreviewButton"/);
+ assert.match(html,/id="driveRenderFrame"[^>]*referrerpolicy="no-referrer"/);
+ assert.doesNotMatch(html,/<iframe[^>]+id="driveRenderFrame"[^>]+src=/);
+ const helpers=ui.slice(ui.indexOf('const DRIVE_RENDER_VIEW='),ui.indexOf('function wire(){'));
+ assert.ok(helpers.startsWith('const DRIVE_RENDER_VIEW='),'review helper not found');
+ const ids=['driveRenderPanel','driveRenderStatus','driveRenderBadge','driveRenderMeta',
+   'driveRenderVideo','driveRenderQa','driveRenderPreviewButton',
+   'driveRenderPreviewWrap','driveRenderFrame'];
+ const elements=Object.fromEntries(ids.map(id=>[id,{
+   hidden:true,dataset:{},attributes:{},setAttribute(k,v){this.attributes[k]=v;},
+   removeAttribute(k){delete this.attributes[k];delete this[k];}
+ }]));
+ const ctx=vm.createContext({$:id=>elements[id]});
+ vm.runInContext(helpers,ctx);
+ const fn=vm.runInContext('showDriveRenderResult',ctx);
+ const open=vm.runInContext('openDriveRenderPreview',ctx);
+ const close=vm.runInContext('closeDriveRenderPreview',ctx);
+ const clear=vm.runInContext('clearDriveRenderReview',ctx);
+ const view='https://drive.google.com/file/d/'+'V'.repeat(30)+'/view';
+ const qa='https://drive.google.com/file/d/'+'Q'.repeat(30)+'/view';
+ const result={status:'RENDER_READY',project_id:'alaska-voyager-2027',
+   sha256:'c'.repeat(64),duration_seconds:43.366667,published:false,
+   video_url:view,qa_url:qa};
+ fn({status:'RENDER_PENDING',stage:'SAVED_IN_DRIVE_PENDING_MONTAGE'});
+ assert.equal(elements.driveRenderPanel.hidden,false);
+ assert.equal(elements.driveRenderVideo.hidden,true);
+ assert.equal(elements.driveRenderPreviewButton.hidden,true);
+ fn(result);
+ assert.equal(elements.driveRenderBadge.textContent,'ГОТОВО К ПРОСМОТРУ');
+ assert.equal(elements.driveRenderVideo.hidden,false);
+ assert.equal(elements.driveRenderVideo.href,view);
+ assert.equal(elements.driveRenderPreviewWrap.hidden,true);
+ assert.equal(elements.driveRenderFrame.src,undefined,'no auto-loading of private video');
+ open();
+ assert.equal(elements.driveRenderFrame.src,view.replace('/view','/preview'));
+ assert.equal(elements.driveRenderPreviewWrap.hidden,false);
+ close();
+ assert.equal(elements.driveRenderFrame.src,undefined);
+ assert.equal(elements.driveRenderPreviewWrap.hidden,true);
+ fn({...result,video_url:'https://example.org/file/d/'+'V'.repeat(30)+'/view'});
+ assert.equal(elements.driveRenderVideo.hidden,true);
+ assert.equal(elements.driveRenderPreviewButton.hidden,true);
+ fn({...result,published:true});
+ assert.equal(elements.driveRenderVideo.hidden,true);
+ fn({...result,sha256:'unverified'});
+ assert.equal(elements.driveRenderVideo.hidden,true);
+ fn(result);
+ clear();
+ assert.equal(elements.driveRenderPanel.hidden,true);
+ assert.equal(elements.driveRenderVideo.href,undefined);
+ assert.equal(elements.driveRenderFrame.src,undefined);
+ assert.equal(elements.driveRenderPreviewButton.dataset.previewUrl,'');
+});

@@ -236,3 +236,18 @@
 .director-vision .vision-review-form input[type=checkbox]{margin-top:3px;flex:0 0 auto;accent-color:#8bc5a3}
 .director-vision .vision-review-form small{display:block;font-size:11px;color:#b2c6d0;line-height:1.5}
 @media(max-width:600px){.director-vision{padding:12px}.director-vision .vision-review-row{grid-template-columns:66px 1fr;gap:8px;padding:8px}.director-vision .vision-review-row img{width:66px;height:116px}}
+
+/* Owner-only completed Montage review. Private Drive embed loads only on a user click. */
+.drive-render-panel{margin-top:18px;padding:18px;border:1px solid #486755;border-radius:12px;background:#112820;color:var(--text);font-size:13px}
+.drive-render-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.drive-render-head strong{font-size:16px}
+.drive-render-panel>p{margin:10px 0 0;line-height:1.55}
+.drive-render-meta{color:#c5e4c6;font-weight:800}
+.drive-render-actions{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-top:15px}
+.drive-render-actions .secondary-btn{display:inline-flex;align-items:center;min-height:42px}
+.drive-render-preview{margin-top:16px;padding:14px;border:1px solid #3c5659;border-radius:12px;background:#0b1923}
+.drive-render-preview iframe{display:block;width:min(100%,360px);aspect-ratio:9/16;max-height:70vh;margin:auto;border:0;border-radius:8px;background:#071017}
+.drive-render-preview p{font-size:12px;color:#bdd0cb;line-height:1.5}
+.drive-render-note{color:#e7c990;font-size:12px}
+.drive-render-panel [hidden]{display:none!important}
+@media(max-width:560px){.drive-render-actions{display:grid;grid-template-columns:1fr}.drive-render-actions>*{width:100%;justify-content:center;text-align:center}.drive-render-panel{padding:14px}}

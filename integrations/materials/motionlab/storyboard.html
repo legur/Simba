@@ -7,8 +7,8 @@
  <meta name="description" content="Конструктор раскадровки Bon Tours с выбором камер, переходов, титров и субтитров. Возврат выбранных настроек агенту.">
  <link rel="preconnect" href="https://fonts.googleapis.com">
  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
- <link rel="stylesheet" href="storyboard.css">
- <script defer src="storyboard.js?v=active-queue-20261112-1"></script>
+ <link rel="stylesheet" href="storyboard.css?v=private-review-20261112-1">
+ <script defer src="storyboard.js?v=private-review-20261112-1"></script>
   <script defer src="motionlab_drive_config.js"></script>
   <script defer src="motionlab_drive_bridge.js?v=active-queue-20261112-1"></script>
  <script defer src="visual_editor.js"></script>
@@ -273,11 +273,22 @@
     </div>
     <div class="handoff-buttons"><button type="button" class="primary-btn" id="sendToAgent" disabled>Сохранить черновик на устройстве</button><button type="button" class="secondary-btn" id="downloadJson">Скачать монтажное ТЗ JSON (v1)</button><button type="button" class="secondary-btn" id="downloadVisual">Скачать визуальные правки (черновик v2)</button><button type="button" class="secondary-btn" id="copyBrief">Скопировать ТЗ</button></div>
    <p class="delivery-hint" id="deliveryHint">Вход Wix не нужен. После серверного подтверждения появится квитанция Google Drive; локальное сохранение не считается передачей в Montage.</p>
-   <div class="delivery-hint" id="driveRenderPanel" hidden aria-live="polite">
-     <strong>Автоматический монтаж:</strong> <span id="driveRenderStatus">Проверяю готовность ролика…</span>
-     <a id="driveRenderVideo" hidden target="_blank" rel="noopener noreferrer">Открыть готовое видео в закрытом Google Drive</a>
-     <a id="driveRenderQa" hidden target="_blank" rel="noopener noreferrer">Технический отчет</a>
-   </div>
+   <section class="delivery-hint drive-render-panel" id="driveRenderPanel" hidden aria-label="Проверка готового монтажа" aria-live="polite">
+     <div class="drive-render-head"><strong>Автоматический монтаж</strong><span class="status-chip" id="driveRenderBadge">ПРОВЕРКА</span></div>
+     <p id="driveRenderStatus">Проверяю готовность ролика…</p>
+     <p class="drive-render-meta" id="driveRenderMeta" hidden></p>
+     <div class="drive-render-actions">
+       <button type="button" class="primary-btn" id="driveRenderPreviewButton" aria-controls="driveRenderPreviewWrap" aria-expanded="false" hidden>▶ Смотреть готовое видео здесь</button>
+       <a class="secondary-btn" id="driveRenderVideo" hidden target="_blank" rel="noopener noreferrer">Открыть в закрытом Google Drive</a>
+       <a class="secondary-btn" id="driveRenderQa" hidden target="_blank" rel="noopener noreferrer">Технический отчет</a>
+     </div>
+     <div class="drive-render-preview" id="driveRenderPreviewWrap" hidden>
+       <iframe id="driveRenderFrame" title="Просмотр закрытого видео Montage через Google Drive" loading="lazy" referrerpolicy="no-referrer" allow="autoplay; fullscreen" allowfullscreen></iframe>
+       <p>Просмотр доступен только владельцу файла в Google Drive. Если встроенное окно просит вход или заблокировано браузером, используйте кнопку «Открыть в закрытом Google Drive».</p>
+       <button type="button" class="secondary-btn" id="driveRenderClosePreview">Закрыть просмотр</button>
+     </div>
+     <p class="drive-render-note">Техническая проверка не означает окончательного утверждения ролика. Субтитры необходимо проверить на слух. Публикации нет.</p>
+   </section>
   </section>
  </main>
  <footer>Motion Lab / Bon Tours <span>ПОДГОТОВКА · Без рендера · Без публикации · Без платных операций</span></footer>
