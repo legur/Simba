@@ -23,7 +23,7 @@ from urllib.request import Request, urlopen
 from urllib.error import HTTPError,URLError
 
 HERE=Path(__file__).resolve().parent
-for folder in (str(HERE),str(HERE.parents[2]),str(HERE.parents[2]/"video")):
+for folder in (str(HERE),str(HERE.parents[1]),str(HERE.parents[2]),str(HERE.parents[2]/"video")):
     if folder not in sys.path: sys.path.insert(0,folder)
 
 import motionlab_v2_contract as v2
