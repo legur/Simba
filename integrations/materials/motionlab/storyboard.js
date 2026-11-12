@@ -626,7 +626,7 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
    choicesFromPreset(1);say('Шаблон применен только к демонстрации. Для проекта нужен выбор трех предложений агента.');
  }
  announceReady();
- globalThis.MotionLabDrive?.openProjectLink({
+ const openProject=()=>globalThis.MotionLabDrive?.openProjectLink({
   load:launch=>{
    const current=state.request,rows=new Map(launch.scenes.map(s=>[s.scene_id,s]));
    const same=current?.id===launch.request_id&&current.projectId===launch.project_id&&current.fingerprint===launch.expected_input_fingerprint
@@ -638,5 +638,9 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
   status:text=>{$('connectionTitle').textContent='Проект из закрытого Drive';$('connectionText').textContent=text;},
   busy:on=>{for(const id of ['overviewWorkspace','handoff'])$(id).inert=on;}
  });
+ // Deferred scripts execute in document order; the Drive bridge follows this
+ // editor, so project loading must wait until all deferred scripts are ready.
+ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',openProject,{once:true});
+ else openProject();
 }
 wire();
