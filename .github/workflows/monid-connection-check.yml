@@ -1,4 +1,4 @@
-name: Monid travel research
+name: Monid travel dataset
 on:
   push:
     branches: [codex/monid-check-20261112]
@@ -8,12 +8,12 @@ permissions:
 jobs:
   search:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
     steps:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Retrieve Reddit and Threads discussions
+      - name: Gather candidate posts
         env:
           MONID_SECRET: ${{ secrets.monid_key }}
           NO_COLOR: '1'
@@ -22,5 +22,11 @@ jobs:
           M="$RUNNER_TEMP/monid/node_modules/.bin/monid"
           "$M" keys add -k "$MONID_SECRET" -l github-action
           unset MONID_SECRET
-          "$M" run -p anyapi -e /reddit.search -i '{"query":"subreddit:travel","timeframe":"week","sort":"comments"}' -w 40 -j || true
-          "$M" run -p tikhub -e /api/v1/threads/web/fetch_post_comments --query '{"post_id":"4028305804780335592"}' -w 40 -j || true
+          "$M" inspect -p anyapi -e /reddit.post_comments
+          for q in 'subreddit:travel' 'subreddit:solotravel' 'subreddit:cruise' 'subreddit:Flights' 'subreddit:travelhacks' 'subreddit:JapanTravel' 'subreddit:Europetravel' ; do
+            "$M" run -p anyapi -e /reddit.search -i "{\"query\":\"$q\",\"timeframe\":\"week\",\"sort\":\"comments\"}" -w 35 -j > "$RUNNER_TEMP/$(echo "$q" | tr : _).json" || true
+          done
+          for q in travel cruise vacation airline hotel tourism; do
+            "$M" run -p anyapi -e /threads.search -i "{\"query\":\"$q\",\"startDate\":\"2026-11-05\",\"endDate\":\"2026-11-12\"}" -w 35 -j > "$RUNNER_TEMP/threads_$q.json" || true
+          done
+          node -e 'const fs=require("fs"),p=process.env.RUNNER_TEMP; for(const f of fs.readdirSync(p).filter(x=>x.endsWith(".json"))){ try{let x=JSON.parse(fs.readFileSync(p+"/"+f));let d=x.output?.data||x.output;let arr=d?.posts||[];console.log("RESULT "+JSON.stringify({file:f,status:x.status,http:x.providerResponse?.httpStatus,cost:x.cost,posts:arr.map(v=>({id:v.id,created:v.createdUtc,title:v.title,text:(v.text||"").slice(0,350),score:v.score,likes:v.likeCount,comments:v.numComments??v.replyCount,url:v.url||v.permalink,subreddit:v.subreddit}))}));}catch(e){console.log("ERROR",f,e.message)}}'
