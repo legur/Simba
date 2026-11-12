@@ -265,3 +265,17 @@ test('Browser render status accepts no false APPLIED or public media',()=>{
  assert.match(client,/render_status/);
  assert.doesNotMatch(client,/auto_publish\s*:\s*true/);
 });
+
+test('Expired ticket status grace is read-only and only after consumed receipt',()=>{
+ const e=environment();
+ e.ticket.expires_utc=new Date(Date.now()-2*60*60*1000).toISOString();
+ e.ticket.consumed_receipt_id='22222222-2222-4222-8222-222222222222';
+ const check=vm.runInContext('checkTicket',e.ctx);
+ assert.throws(()=>check(ticketId,token,false),/TICKET_EXPIRED/);
+ assert.equal(check(ticketId,token,true).data.project_id,'prague');
+ delete e.ticket.consumed_receipt_id;
+ assert.throws(()=>check(ticketId,token,true),/TICKET_EXPIRED/);
+ e.ticket.consumed_receipt_id='22222222-2222-4222-8222-222222222222';
+ e.ticket.expires_utc=new Date(Date.now()-25*60*60*1000).toISOString();
+ assert.throws(()=>check(ticketId,token,true),/TICKET_EXPIRED/);
+});
