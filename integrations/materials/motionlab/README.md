@@ -1,5 +1,8 @@
 # Motion Lab / автоматическая Киностудия — протокол v1
 
+> **Состояние на 12.11.2026:** **Studio = Motion Lab** (один интерактивный редактор), **Simba / Dispatcher** — независимый оркестратор, **Montage** — техническое исполнение/производственные тайминги. [Разделение ролей и будущий v2](../../../SIMBA%20KNOWLEDGE%20BASE/06_AGENT_WORKFLOWS/STUDIO_MOTIONLAB_MONTAGE_OWNERSHIP_V2.md). Действующий приватный `storyboard.launch/selection/v1` через Google Apps Script → Drive → GitHub Actions → FFmpeg → private MP4/QA реально проверен 12.11.2026, run 43232685698 (SUCCESS); финальное утверждение/публикация отсутствуют, word timings оценочные. Новая встроенная панель просмотра Studio опубликована через PR #153; интерактивный просмотр браузера владельца отдельно не подтвержден. Разделы ниже — история v1 и проектные требования, некоторые статусы развертывания (Wix login, Python receiver, GitHub Wix auto-deploy) устарели. **V2 (приватный approved WAV/music alignment, три концепции из анализа и CAS APPLIED) еще не интегрирован.**
+
+
 > **Единый процесс Studio ↔ Simba, уточнение 10.11.2026:**
 > `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/STUDIO_MOTIONLAB_SYNC.md`.
 > Motion Lab получает **готовые видеоклипы 5–15 секунд, созданные Ф2У (A2E)**
