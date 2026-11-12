@@ -21,6 +21,7 @@ on:
       - 'integrations/video/motionlab_analysis_bundle.py'
       - 'integrations/video/motionlab_auto_proposals.py'
       - 'integrations/video/tests/test_motionlab_auto_proposals.py'
+      - 'integrations/video/tests/test_motionlab_alaska_scene_reuse.py'
       - 'integrations/materials/motionlab_v2_stage_writeback.py'
       - 'integrations/video/tests/test_motionlab_analysis_bundle.py'
       - 'integrations/video/make_video.py'
@@ -77,6 +78,7 @@ jobs:
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_visual_layout.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_analysis_bundle.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_auto_proposals.py' -v
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_alaska_scene_reuse.py' -v
       - name: Studio v2 real metadata and private approved-audio readback gates (offline)
         run: |
           python -m py_compile integrations/video/motionlab_approved_audio.py integrations/video/motionlab_v2_audio_gate.py integrations/video/motionlab_typography_contract.py

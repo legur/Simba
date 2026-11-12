@@ -37,7 +37,7 @@ CAMERA_EFFECTS = frozenset(make_video.MOTIONLAB_CAMERA_EFFECTS)
 TITLE_EFFECTS = frozenset(make_video.MOTIONLAB_TITLE_EFFECTS)
 TRIM_TOLERANCE = .15
 MAX_CLIP_DURATION = 15.0
-MAX_SCENES = 8
+MAX_SCENES = 12
 ARTIFACTS = ("make_video.py", "template/film.js",
              "template/transitions.js", "template/subtitle_styles.js",
              "motionlab_layout_contract.py")

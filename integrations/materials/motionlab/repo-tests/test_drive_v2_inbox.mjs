@@ -252,3 +252,57 @@ test('Reject expired tickets, changed launch bytes, forged requests and replay',
  assert.equal(e.inboxFiles.size,1);
  assert.equal(e.dispatches.length,0);
 });
+
+
+test('Alaska mapping accepts 10 ordered scenes sharing 1 SHA-verified original clip',()=>{
+ const oldScenes=source.materials.scenes;
+ const oldEvidence=source.proposals.analysis.inspected_assets;
+ const oldPixels=source.proposals.analysis.pixel_evidence;
+ const oldOptions=source.proposals.proposals.map(p=>p.scenes);
+ const oldMaterialsHash=source.proposals.materials_sha256;
+ try{
+   const ten=Array.from({length:10},(_,i)=>({
+     ...structuredClone(scene),
+     scene_id:'alaska-'+String(i+1).padStart(2,'0'),
+     scene_duration_s:i===0?8.1:4,
+     source_playback:i===0?'loop':'freeze',
+   }));
+   source.materials.scenes=ten;
+   source.proposals.analysis.inspected_assets=ten.map(s=>({
+     scene_id:s.scene_id,asset_sha256:s.media.asset_sha256,
+     evidence_kind:'full_original_mp4'
+   }));
+   source.proposals.analysis.pixel_evidence=ten.map(s=>({
+     scene_id:s.scene_id,asset_sha256:s.media.asset_sha256,
+     sampled_frame_sha256:'c'.repeat(64)
+   }));
+   for(const opt of source.proposals.proposals){
+     const first=opt.scenes[0];
+     opt.scenes=ten.map((s,i)=>({
+       ...structuredClone(first),
+       scene_id:s.scene_id,
+       transition:i===0?null:{id:'crossfade',duration_ms:900}
+     }));
+   }
+   source.proposals.materials_sha256=sha(canonical(source.materials));
+   const e=run();
+   const read=e.post(e.request('v2_load')).html;
+   assert.match(read,/V2_PROJECT_READY/);
+   assert.match(read,/alaska-10/);
+   assert.equal(e.source.preview_assets.length,1);
+   const ownerSelection=selection();
+   ownerSelection.materials_sha256=sha(canonical(source.materials));
+   ownerSelection.proposals_sha256=sha(canonical(source.proposals));
+   ownerSelection.scenes=structuredClone(source.proposals.proposals[0].scenes);
+   const submitted=e.submit(ownerSelection).html;
+   assert.match(submitted,/V2_SELECTION_SAVED_AWAITING_CANONICAL_CAS/);
+   assert.equal(e.inboxFiles.size,1);
+   assert.equal(e.dispatches.length,0);
+ }finally{
+   source.materials.scenes=oldScenes;
+   source.proposals.analysis.inspected_assets=oldEvidence;
+   source.proposals.analysis.pixel_evidence=oldPixels;
+   source.proposals.materials_sha256=oldMaterialsHash;
+   source.proposals.proposals.forEach((p,i)=>{p.scenes=oldOptions[i]});
+ }
+});

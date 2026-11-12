@@ -110,15 +110,41 @@ def build_automated_proposals(materials: dict, verified_media: list[dict],
     """The trusted private worker must compute and later recheck these results."""
     v2.validate_materials(materials)
     if (not isinstance(verified_media, list)
-            or len(verified_media) != len(materials["scenes"])
-            or len(verified_media) > 8):
+            or not verified_media
+            or len(verified_media) > v2.r.MAX_SCENES):
         reject("AUTOMATIC_ANALYSIS_MISSING_MEDIA")
     folder = Path(private_job)
     if folder.is_symlink() or not folder.is_dir():
         reject("AUTOMATIC_ANALYSIS_PRIVATE_DIRECTORY_INVALID")
     folder = folder.resolve()
-    evidence = [measure_original(scene, asset, folder)
-                for scene, asset in zip(materials["scenes"], verified_media)]
+    # The true A2E archive stores each file once. One clip may appear several
+    # times on the approved timeline (Alaska has 10 scenes from 7 MP4s).
+    if len(verified_media)==len(materials["scenes"]) and all(
+       a.get("scene_id")==s["scene_id"] and a.get("asset_id")==s["asset_id"]
+       for s,a in zip(materials["scenes"],verified_media)):
+        per_scene=verified_media
+    else:
+        by_id={}
+        for a in verified_media:
+            if (not isinstance(a,dict) or not isinstance(a.get("asset_id"),str)
+                    or a["asset_id"] in by_id):
+                reject("AUTOMATIC_ANALYSIS_DUPLICATE_OR_MISSING_SOURCE")
+            by_id[a["asset_id"]]=a
+        per_scene=[]
+        for s in materials["scenes"]:
+            source=by_id.get(s["asset_id"])
+            if source is None:
+                reject("AUTOMATIC_ANALYSIS_MISSING_MEDIA",s["scene_id"])
+            per_scene.append({**source,"scene_id":s["scene_id"]})
+        if set(by_id)!={s["asset_id"] for s in materials["scenes"]}:
+            reject("AUTOMATIC_ANALYSIS_UNUSED_SOURCE")
+    cache={}
+    evidence=[]
+    for scene,asset in zip(materials["scenes"],per_scene):
+        key=(asset["asset_id"],asset.get("sha256"),asset.get("file"))
+        if key not in cache:
+            cache[key]=measure_original(scene,asset,folder)
+        evidence.append({**cache[key],"scene_id":scene["scene_id"]})
     mean_motion = sum(row["motion_delta"] for row in evidence)/len(evidence)
     mean_contrast = sum(row["mean_contrast"] for row in evidence)/len(evidence)
     winner = 1 if mean_motion < 14 else 3
@@ -172,8 +198,9 @@ def build_automated_proposals(materials: dict, verified_media: list[dict],
     return proposed, {
         "status": "THREE_REAL_VIDEO_AUTOMATED_PROPOSALS_NOT_OWNER_SELECTED",
         "proposals_sha256": v2.digest(proposed),
-        "source_clip_count": len(evidence),
-        "frames_decoded": sum(row["frames_sampled"] for row in evidence),
+        "source_clip_count": len(cache),
+        "scene_count": len(evidence),
+        "frames_decoded": sum(row["frames_sampled"] for row in cache.values()),
         "semantic_review_performed": False,
         "paid_calls": 0,
         "render_authorized": False,

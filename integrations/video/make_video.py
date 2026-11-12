@@ -116,7 +116,7 @@ def load_spec(job: Path):
             'position': substyle.get('position', 'bottom'),
             'scale_percent': size,
         }
-    need(isinstance(s.get('scenes'), list) and 1 <= len(s['scenes']) <= 8, 'scenes: 1–8 scenes')
+    need(isinstance(s.get('scenes'), list) and 1 <= len(s['scenes']) <= 12, 'scenes: 1–12 scenes')
     for i, sc in enumerate(s['scenes']):
         transition = sc.get('transition')
         if transition is not None:
@@ -135,6 +135,13 @@ def load_spec(job: Path):
         need((job / src).is_file(), f'scene {i + 1}: "clip" or "image" file not found in the job folder: {src!r}')
         if sc.get('clip'):
             need(sc['clip'].lower().endswith(VIDEO_EXT), f'scene {i + 1}: clip must be one of {VIDEO_EXT}')
+            # Repeat is OPT-IN and only affects the already-approved local
+            # clip frames; never changes source text, voice or clip SHA.
+            # A longer scene freezes after its last frame by default.
+            playback = sc.get('clipPlayback', 'freeze')
+            need(playback in ('freeze', 'loop'),
+                 f'scene {i + 1}: clipPlayback must be freeze or loop')
+            sc['clipPlayback'] = playback
             sc.setdefault('move', 'none'); sc.setdefault('voice', 'tts')
             need(sc['voice'] in ('tts', 'clip'), f'scene {i + 1}: voice must be "tts" or explicit "clip"')
         need(sc.get('move', 'push') in MOVES, f'scene {i + 1}: move must be one of {sorted(MOVES)}')
@@ -494,7 +501,7 @@ def timeline(spec):
             if sc.get('title'): end = max(end, t0 + 1.1 + need_read(sc['title']))
             t = max(end, t0 + (c['dur'] if c else sc.get('minDur', 2.8)))
         s = {'image': sc.get('image', sc.get('clip')), 'move': sc.get('move', 'push'), 'focus': sc.get('focus', [.5, .5]), 'title': sc.get('title'), 'cameraEffect': sc.get('cameraEffect'), 'titleEffect': sc.get('titleEffect'), 'visualLayout': sc.get('visualLayout'), 't0': round(t0, 3), 't1': round(t, 3), 'transition': sc.get('transition')}
-        if c: s.update(frames=c['frames'], count=c['count'], fps=c['fps'])
+        if c: s.update(frames=c['frames'], count=c['count'], fps=c['fps'], clipPlayback=sc.get('clipPlayback', 'freeze'))
         if sc.get('insert'): s['insert'] = sc['insert']
         scenes.append(s)
     def still_of(name):                                   # a clip used as a card background → its last frame
