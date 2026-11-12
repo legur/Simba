@@ -19,6 +19,8 @@ const ML = Object.freeze({
   inboxFolder: '1gYNUU3HUeWnu2jEcs1gEf4cu9LJEEPoD',
   launchFolder: '10IdAl9pS-YSqLEYFbfTIKNEoho7bWGWA',
   mediaFolder: '1oMtSCcUOMVU6f2yiS72cevr0NQF58EAj',
+  renderFolder: '1GMoSVogs0SKuTAXCdMVcG-U7bTn-IuCt',
+  appliedFolder: '1Ya87Y6FUUmstpSs8jG0mKvEVLRqTvwxH',
   maxBytes: 140000,
   maxScenes: 24,
   skewMs: 60 * 1000
@@ -198,6 +200,7 @@ function readProject(params) {
     ||!Array.isArray(launch.preview_assets)||!launch.preview_assets.length||launch.preview_assets.length>24)
     fail('PROJECT_SOURCE_MISMATCH');
   const assets=launch.preview_assets;
+  if(params.operation==='render_status')return readRenderStatus(params,ticket);
   if(params.operation==='load_project') {
     delete launch.preview_assets;
     return {status:'PROJECT_READY',launch,
@@ -218,13 +221,84 @@ function readProject(params) {
   return {status:'ASSET_READY',asset_id:a.asset_id,sha256:sha,size_bytes:bytes.length,
     mime_type:'video/mp4',base64:Utilities.base64Encode(bytes)};
 }
+
+// Owner-only read of the technical Montage output after a consumed selection.
+// Reuses the existing project ticket; does not issue Drive permissions, share,
+// trigger rendering or accept arbitrary caller-provided file IDs.
+function readRenderStatus(params, ticket) {
+  const folder=DriveApp.getFolderById(ML.inboxFolder);
+  const records=folder.getFilesByName('motionlab-'+params.ticket_id+'.json');
+  if(!records.hasNext())return {status:'RENDER_PENDING',stage:'AWAITING_STUDIO_SELECTION'};
+  const selected=records.next();
+  if(records.hasNext())fail('DUPLICATE_SELECTION_RECEIPTS');
+  onlyFolder(selected,ML.inboxFolder);
+  if(selected.getSharingAccess()!==DriveApp.Access.PRIVATE || selected.getSize()>ML.maxBytes)
+    fail('UNTRUSTED_SELECTION_RECEIPT');
+  const item=JSON.parse(selected.getBlob().getDataAsString('UTF-8'));
+  if(item.schema!=='bontours.motionlab.drive-inbox/v1'
+    ||item.ticket_id!==params.ticket_id
+    ||item.project_id!==ticket.project_id
+    ||item.session_id!==ticket.session_id
+    ||item.source_fingerprint!==ticket.source_fingerprint
+    ||item.receipt_id!==ticket.consumed_receipt_id
+    ||item.selection_sha256!==ticket.consumed_sha256)
+    fail('INVALID_CONSUMED_RECEIPT');
+  const applied=DriveApp.getFolderById(ML.appliedFolder);
+  const outputs=applied.getFilesByName('motionlab-'+item.receipt_id+'-render.json');
+  if(!outputs.hasNext())return {status:'RENDER_PENDING',stage:'SAVED_IN_DRIVE_PENDING_MONTAGE'};
+  const receiptFile=outputs.next();
+  if(outputs.hasNext())fail('DUPLICATE_RENDER_RECEIPTS');
+  onlyFolder(receiptFile,ML.appliedFolder);
+  if(receiptFile.getSharingAccess()!==DriveApp.Access.PRIVATE || receiptFile.getSize()>20000)
+    fail('UNTRUSTED_RENDER_RECEIPT');
+  const result=JSON.parse(receiptFile.getBlob().getDataAsString('UTF-8'));
+  const idPattern=/^[A-Za-z0-9_-]{15,100}$/;
+  if(result.schema!=='bontours.motionlab.drive-render-receipt/v1'
+    ||result.status!=='RENDERED_PENDING_OWNER_REVIEW'
+    ||result.published!==false
+    ||result.receipt_id!==item.receipt_id
+    ||result.project_id!==item.project_id
+    ||result.selection_sha256!==item.selection_sha256
+    ||!/^[a-f0-9]{64}$/.test(result.video_sha256||'')
+    ||!idPattern.test(result.video_file_id||'')
+    ||!idPattern.test(result.qa_file_id||''))
+    fail('RENDER_RECEIPT_MISMATCH');
+  const video=DriveApp.getFileById(result.video_file_id);
+  onlyFolder(video,ML.renderFolder);
+  if(video.getSharingAccess()!==DriveApp.Access.PRIVATE
+     ||video.getMimeType()!=='video/mp4'
+     ||video.getSize()<100000 || video.getSize()>180*1024*1024)
+    fail('RENDER_VIDEO_NOT_PRIVATE');
+  const report=DriveApp.getFileById(result.qa_file_id);
+  onlyFolder(report,ML.renderFolder);
+  if(report.getSharingAccess()!==DriveApp.Access.PRIVATE||report.getSize()>30000)
+    fail('RENDER_QA_NOT_PRIVATE');
+  const qa=JSON.parse(report.getBlob().getDataAsString('UTF-8'));
+  if(qa.schema!=='bontours.motionlab.drive-automated-render/v1'
+    ||qa.receipt_id!==item.receipt_id
+    ||qa.selection_sha256!==item.selection_sha256
+    ||qa.sha256!==result.video_sha256
+    ||qa.drive_video_file_id!==result.video_file_id
+    ||qa.technical_decode!=='PASS'||qa.published!==false)
+    fail('RENDER_QA_MISMATCH');
+  // A private file link does not grant read access; Google remains owner-only.
+  return {status:'RENDER_READY',
+    receipt_id:item.receipt_id,
+    sha256:result.video_sha256,
+    qa_status:qa.qa,
+    duration_seconds:qa.duration_seconds,
+    published:false,
+    video_url:'https://drive.google.com/file/d/'+result.video_file_id+'/view',
+    qa_url:'https://drive.google.com/file/d/'+result.qa_file_id+'/view'};
+}
+
 function doPost(e) {
   const p = e && e.parameter || {};
   const nonce = typeof p.nonce === 'string' && /^[0-9a-f-]{36}$/.test(p.nonce)
         ? p.nonce : '';
   let lock;
   try {
-    if(['load_project','load_asset'].includes(p.operation)) {
+    if(['load_project','load_asset','render_status'].includes(p.operation)) {
       if(!nonce)fail('INVALID_NONCE');
       return output({type:'SIMBA_DRIVE_PROJECT_REPLY',nonce,...readProject(p)});
     }
@@ -235,7 +309,7 @@ function doPost(e) {
   } catch (err) {
     // Return only a bounded allowlisted error code. Never log ticket/selection.
     const code = String(err && err.message || 'INGRESS_FAILED');
-    return output({type:['load_project','load_asset'].includes(p.operation)?'SIMBA_DRIVE_PROJECT_REPLY':'SIMBA_DRIVE_INGRESS_RECEIPT', nonce,
+    return output({type:['load_project','load_asset','render_status'].includes(p.operation)?'SIMBA_DRIVE_PROJECT_REPLY':'SIMBA_DRIVE_INGRESS_RECEIPT', nonce,
       status:'REJECTED', error_code:/^[A-Z_]{4,64}$/.test(code)?code:'INGRESS_FAILED'});
   } finally {
     if (lock) { try { lock.releaseLock(); } catch (_) {} }
