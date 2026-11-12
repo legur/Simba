@@ -64,3 +64,53 @@ The example must be replaced with **all** actual lines and words; normalized wor
 When **both** `alignment-draft.json` and `alignment-listening-review.json` exist and independently pass exact SHA + approved audio + word-by-word checks, the `motionlab_v2_stage_writeback.source_context()` read-only result includes `audio_alignment_status=AUDIO_ALIGNMENT_VERIFIED` and a non-sensitive digest of the reviewed timing result. **Neither the review nor this metadata authorizes rendering or publication.** The additional owner selection/CAS/spec/MP4 QA gates are still separate. A review file without the acoustic draft, or vice versa, fails closed. With neither file the source remains at `TIMINGS_NOT_VERIFIED`.
 
 The test suite uses **synthetic owner-attestation data only** and cannot establish that a human has listened to a real customer's audio. There is no automatic "I listened" button or synthetic review generator in production. The real reviewer must create the evidence after listening.
+
+
+## Autonomous audio QA (new default when a local model is provisioned)
+
+**No owner word-by-word work is needed.** After the already approved original
+WAV/music and spoken source arrive at the trusted private v2 source stage,
+`motionlab_v2_stage_writeback.source_context()` can run the two-model QA
+automatically. The legacy owner listening page remains an *optional older
+diagnostic tool*, not a prerequisite for the automated route.
+
+The trusted private runner must have the following preinstalled **offline**
+dependencies and environment (infrastructure configuration, not a customer
+task):
+
+- Python package `whisperx` with its Russian CTC alignment model installed
+  and available locally for the existing on-demand CTC adapter.
+- Python package `faster-whisper` and an already-downloaded CTranslate2
+  multilingual model directory containing `model.bin` and `config.json`.
+  Set `SIMBA_AUTO_QA_ASR_MODEL_DIR=/absolute/private/model-directory`.
+  Optional `SIMBA_AUTO_QA_DEVICE=cpu` or `cuda`. No remote ASR API keys.
+- An approved canonical v2 `voice_music.audio_lock` pinned to the original
+  `project.sources[]`, private approved WAV/music and its verified manifest,
+  and approved source A2E clip bytes.
+
+When invoked by the v2 source stage, the code independently decodes the
+**actual original WAV without passing the approved transcript to the ASR**.
+It requires the recognized words and numbers to match the approved spoken
+text exactly (normalized case/ё), language confidence >=0.80,
+word probability >=0.64, segment log probability >=-0.45, and every independent
+ASR word boundary to agree with the local CTC alignment within 220 ms.
+Each source, WAV, model and audio revision SHA is bound to the QA evidence.
+
+Success yields `AUDIO_ALIGNMENT_VERIFIED_AUTO` and a bounded SHA receipt,
+still with `render_authorized=false` and `publication_authorized=false`.
+Any uncertainty, missing model, mismatch, or absent private media yields
+`V2_AUTOMATIC_AUDIO_QA_BLOCKED`; **no human must fill in the gaps**.
+These thresholds are conservative *engineering gates*, not a scientific
+guarantee that two model outputs are correct. They must be validated with
+real approved Russian WAV samples before using this in live v2 production.
+
+Existing human-review JSON is supported for legacy compatibility only
+when the offline autonomous ASR model has not been configured. Once the
+model path is set, a failed automatic check cannot silently fall back to
+a human checkbox or a cached approval. No payment, A2E, TTS, rendering,
+final owner video approval, or posting occurs in the audio QA step.
+
+**Deployment status:** code and synthetic tests in PR #169; the local ASR
+weights have not been provisioned in the current v2 runtime, and the v2
+Apps Script/owner selection route is still not live. The successful v1
+FFmpeg pipeline must remain the active production route.
