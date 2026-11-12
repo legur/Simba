@@ -1,4 +1,4 @@
-name: Monid inspect
+name: Monid search pilot
 on:
   push:
     branches: [codex/monid-check-20261112]
@@ -6,25 +6,22 @@ on:
 permissions:
   contents: read
 jobs:
-  inspect:
+  search:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Inspect endpoints
+      - name: Search pilot
         env:
           MONID_SECRET: ${{ secrets.monid_key }}
           NO_COLOR: '1'
         run: |
-          set -e
           npm install --prefix "$RUNNER_TEMP/monid" @monid-ai/cli@0.1.9 --no-audit --no-fund
           M="$RUNNER_TEMP/monid/node_modules/.bin/monid"
           "$M" keys add -k "$MONID_SECRET" -l github-action
           unset MONID_SECRET
-          "$M" discover -q "threads post replies comments" -l 10
-          "$M" inspect -p litescrape -e /reddit/search
-          "$M" inspect -p litescrape -e /reddit/post
-          "$M" inspect -p anyapi -e /threads.search
-          "$M" inspect -p tikhub -e /api/v1/threads/web/search_posts
+          "$M" run -p litescrape -e /reddit/search --query '{"q":"travel","sort":"comments","time":"week","limit":10}' -w 35 -j
+          "$M" run -p anyapi -e /threads.search -i '{"query":"travel","startDate":"2026-11-05","endDate":"2026-11-12"}' -w 35 -j
+          "$M" inspect -p tikhub -e /api/v1/threads/web/fetch_post_comments
