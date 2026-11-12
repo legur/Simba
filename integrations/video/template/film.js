@@ -29,7 +29,14 @@ const frameOf = (s, t) => {
   // existing v2 scenes retain the last-frame hold, without discontinuities
   // from an implicit video repeat.
   const index = Math.max(0, Math.floor((t - s.t0) * s.fps));
-  const frame = s.clipPlayback === 'loop' ? index % s.count : clamp(index, 0, s.count - 1);
+  // Alaska v1's actual owner-approved 10-scene footage was FFmpeg
+  // setpts-scaled: sample the WHOLE original clip across each scene's
+  // narration duration instead of freezing or jumping to a new loop.
+  const frame = s.clipPlayback === 'stretch'
+    ? clamp(Math.floor((Math.max(0, t - s.t0) / Math.max(1e-3, s.t1 - s.t0))
+                       * s.count), 0, s.count - 1)
+    : s.clipPlayback === 'loop'
+      ? index % s.count : clamp(index, 0, s.count - 1);
   return `${s.frames}${String(frame + 1).padStart(5, '0')}.jpg`;
 };
 const live = t => TL.scenes.filter(s => t >= s.t0 - TRANSITION_PAD && t <= s.t1 + TRANSITION_PAD);

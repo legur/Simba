@@ -115,6 +115,31 @@ class AlaskaTenSceneReuseTests(unittest.TestCase):
         self.assertEqual(spec["scenes"][6]["clip"],self.media[0]["file"])
         self.assertEqual(spec["scenes"][8]["clip"],self.media[0]["file"])
 
+    def test_original_alaska_time_stretch_preserves_entire_clips_without_loop(self):
+        # The actual approved legacy Alaska renderer uses setpts to fit the
+        # whole 5.0625 s A2E source into longer/shorter narration scenes.
+        spec=copy.deepcopy(self.spec)
+        for scene in spec["scenes"]:
+            scene["source_playback"]="stretch"
+        materials=v2.make_materials_v2(self.spec["packageId"],
+            "alaska-reuse-real-test","a"*64,spec,self.media,self.fx.job)
+        self.assertEqual(len(materials["scenes"]),10)
+        self.assertTrue(all(x["source_playback"]=="stretch"
+                            for x in materials["scenes"]))
+        proposals,receipt=automatic.build_automated_proposals(
+            materials,self.media,self.fx.job)
+        choice=self.selection()
+        choice["materials_sha256"]=v2.digest(materials)
+        choice["proposals_sha256"]=v2.digest(proposals)
+        choice["scenes"]=copy.deepcopy(proposals["proposals"][0]["scenes"])
+        mapped,report=v2.map_selection_v2_to_spec(materials,proposals,choice,
+                                                  spec,self.media,self.fx.job)
+        self.assertEqual(report["status"],"V2_VIDEO_SPEC_MAPPED_NOT_RENDERED")
+        self.assertEqual(len(mapped["scenes"]),10)
+        self.assertEqual({s["clipPlayback"] for s in mapped["scenes"]},
+                         {"stretch"})
+        self.assertFalse(report["render_authorized"])
+
     def test_long_scene_without_explicit_loop_is_rejected(self):
         broken=copy.deepcopy(self.spec)
         broken["scenes"][0]["source_playback"]="freeze"

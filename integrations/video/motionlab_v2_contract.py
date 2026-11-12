@@ -124,9 +124,9 @@ def scene_playback(source_scene,source_duration,sid):
     target=source_scene.get("scene_duration_s",source_duration)
     check(numeric(target,.5,15),"INVALID_APPROVED_SCENE_DURATION",sid)
     mode=source_scene.get("source_playback","freeze")
-    check(mode in ("freeze","loop"),"UNSUPPORTED_SOURCE_PLAYBACK",sid)
+    check(mode in ("freeze","loop","stretch"),"UNSUPPORTED_SOURCE_PLAYBACK",sid)
     if target>source_duration+.02:
-        check(mode=="loop","EXPLICIT_SOURCE_REPEAT_REQUIRED",sid)
+        check(mode in ("loop","stretch"),"EXPLICIT_SOURCE_REPEAT_REQUIRED",sid)
     if mode=="loop":
         check(target>source_duration+.02,"UNNECESSARY_SOURCE_REPEAT",sid)
     return round(target,4),mode
@@ -250,9 +250,9 @@ def validate_materials(materials):
               "APPROVED_TEXT_UNAVAILABLE",sid)
         target=src.get("scene_duration_s",media["duration_s"])
         mode=src.get("source_playback","freeze")
-        check(numeric(target,.5,15) and mode in ("freeze","loop"),
+        check(numeric(target,.5,15) and mode in ("freeze","loop","stretch"),
               "INVALID_APPROVED_SCENE_DURATION",sid)
-        check(target<=media["duration_s"]+.02 or mode=="loop",
+        check(target<=media["duration_s"]+.02 or mode in ("loop","stretch"),
               "EXPLICIT_SOURCE_REPEAT_REQUIRED",sid)
         check(mode!="loop" or target>media["duration_s"]+.02,
               "UNNECESSARY_SOURCE_REPEAT",sid)
