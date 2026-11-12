@@ -1,0 +1,52 @@
+name: MotionLab Google Apps Script live negative smoke
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/motionlab-drive-live-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check published Apps Script GET and reject a forged test ticket
+        shell: bash
+        env:
+          RECEIVER: https://script.google.com/macros/s/AKfycbwf4RNyK_76ASvV9k-0rv2Tc-F_m-_v8TqQyWg5t0G-t5wibx7IgpXSJo2GG6Dcc1Wc/exec
+        run: |
+          python3 - <<'PY'
+          import os, urllib.request, urllib.parse, urllib.error
+          u=os.environ["RECEIVER"]
+          def request(method,data=None):
+              req=urllib.request.Request(u,data=data,method=method,headers={
+                  "User-Agent":"Simba-MotionLab-Negative-Smoke/1.0",
+                  "Content-Type":"application/x-www-form-urlencoded"})
+              try:
+                  with urllib.request.urlopen(req,timeout=24) as response:
+                      return response.status,response.url,response.read(30000).decode("utf-8","replace")
+              except urllib.error.HTTPError as e:
+                  return e.code,e.url,e.read(1200).decode("utf-8","replace")
+          code,url,body=request("GET")
+          get_ok=code==200 and "Simba MotionLab secure Drive ingress" in body
+          print("GET HTTP:",code,"expected service banner:",get_ok)
+          if not get_ok:
+              raise SystemExit("Apps Script GET did not return expected receiver banner")
+          bad={
+              "nonce":"11111111-1111-4111-8111-111111111111",
+              "ticket_id":"INVALID_TEST_ONLY",
+              "ticket_token":"0"*64,
+              "selection_sha256":"0"*64,
+              "selection_json":"{}",
+          }
+          code,url,body=request("POST",urllib.parse.urlencode(bad).encode())
+          rejected=code==200 and "SIMBA_DRIVE_INGRESS_RECEIPT" in body and "REJECTED" in body and "INVALID_TICKET" in body
+          print("POST invalid ticket HTTP:",code,"correctly rejected:",rejected)
+          if not rejected:
+              raise SystemExit("Invalid token was not verifiably rejected by Apps Script")
+          print("PASS - Live receiver reachable, forged ticket refused, no Drive write attempted")
+          PY
