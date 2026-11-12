@@ -315,8 +315,19 @@ function doPost(e) {
       if(!nonce)fail('INVALID_NONCE');
       return output({type:'SIMBA_DRIVE_PROJECT_REPLY',nonce,...readProject(p)});
     }
+    if(['v2_load','v2_asset'].includes(p.operation)) {
+      if(!nonce)fail('INVALID_NONCE');
+      return output({type:'SIMBA_DRIVE_V2_PROJECT_REPLY',nonce,...readV2Project(p)});
+    }
     lock = LockService.getScriptLock();
     if (!lock.tryLock(9000)) fail('RECEIVER_BUSY_RETRY');
+    if(p.operation==='v2_submit') {
+      if(!nonce)fail('INVALID_NONCE');
+      const v2Result=ingestV2(p);
+      // V2 must NEVER enter the v1 FFmpeg queue. Its receipt remains
+      // PENDING_CANONICAL_CAS until a source-pinned private worker applies it.
+      return output({type:'SIMBA_DRIVE_V2_RECEIPT',nonce,...v2Result});
+    }
     const result = ingest(p);
     // The private receipt is durable before any optional GitHub dispatch.
     // Queue failure never rewrites a genuine saved-in-Drive ACK to REJECTED.
@@ -336,7 +347,12 @@ function doPost(e) {
   } catch (err) {
     // Return only a bounded allowlisted error code. Never log ticket/selection.
     const code = String(err && err.message || 'INGRESS_FAILED');
-    return output({type:['load_project','load_asset','render_status'].includes(p.operation)?'SIMBA_DRIVE_PROJECT_REPLY':'SIMBA_DRIVE_INGRESS_RECEIPT', nonce,
+    const replyType=['v2_load','v2_asset'].includes(p.operation)
+      ? 'SIMBA_DRIVE_V2_PROJECT_REPLY'
+      : p.operation==='v2_submit' ? 'SIMBA_DRIVE_V2_RECEIPT'
+      : ['load_project','load_asset','render_status'].includes(p.operation)
+        ? 'SIMBA_DRIVE_PROJECT_REPLY':'SIMBA_DRIVE_INGRESS_RECEIPT';
+    return output({type:replyType, nonce,
       status:'REJECTED', error_code:/^[A-Z0-9_]{4,64}$/.test(code)?code:'INGRESS_FAILED'});
   } finally {
     if (lock) { try { lock.releaseLock(); } catch (_) {} }
