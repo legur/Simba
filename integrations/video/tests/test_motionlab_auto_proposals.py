@@ -134,6 +134,27 @@ class ActualPixelBasedProposalsTests(unittest.TestCase):
                 stage.check_current_v2(self.job,self.job,"motionlab-test",
                                        self.materials,tampered,None)
 
+    def test_prepare_automatic_handoff_requires_unattended_audio_qa(self):
+        ctx={"materials":self.materials,"media":self.media,"job":self.job,
+             "spec":{}}
+        with patch.object(stage,"source_context",return_value=ctx):
+            with self.assertRaisesRegex(stage.V2SourceError,
+                                        "AUTOMATIC_AUDIO_QA_REQUIRED"):
+                stage.prepare_automatic_v2_proposals(
+                    self.job,self.job,"motionlab-test","req-real-pixels-01")
+        with patch.object(stage,"source_context",return_value={
+            **ctx,"materials":{**self.materials,
+                              "audio_alignment_status":"AUDIO_ALIGNMENT_VERIFIED_AUTO"}
+        }):
+            launch=stage.prepare_automatic_v2_proposals(
+                self.job,self.job,"motionlab-test","req-real-pixels-01")
+        self.assertTrue(launch["owner_selection_required"])
+        self.assertFalse(launch["run_render"])
+        self.assertFalse(launch["auto_publish"])
+        self.assertFalse(launch["run_paid_operations"])
+        self.assertEqual(len(launch["proposals"]["proposals"]),3)
+        self.assertNotIn("decision",launch)
+
     def test_no_fake_semantic_claims_or_user_approval(self):
         self.assertEqual(self.proposals["analysis"]["status"],
                          "REAL_VIDEO_AUTOMATICALLY_ANALYZED")
