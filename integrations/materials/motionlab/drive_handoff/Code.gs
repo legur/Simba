@@ -58,8 +58,13 @@ function noSecrets(value, depth) {
 function verifySelection(selection, ticket) {
   if (!selection || typeof selection !== 'object' || Array.isArray(selection))
     fail('INVALID_SELECTION');
-  if (!['bontours.motionlab.storyboard.selection/v1',
-        'bontours.motionlab.selection/v2'].includes(selection.schema))
+  // The active Drive ingress and FFmpeg worker implement ONLY storyboard
+  // selection/v1. A v2 creative decision requires a separate, source-pinned
+  // materials+proposals+audio-alignment+CAS protocol; never treat v2 as v1
+  // and accidentally dispatch a render. Enable v2 only after its own QA.
+  if (selection.schema === 'bontours.motionlab.selection/v2')
+    fail('V2_ROUTE_NOT_ACTIVATED');
+  if (selection.schema !== 'bontours.motionlab.storyboard.selection/v1')
     fail('UNSUPPORTED_SCHEMA');
   if (selection.request_id !== ticket.session_id
       || selection.project_id !== ticket.project_id
@@ -332,7 +337,7 @@ function doPost(e) {
     // Return only a bounded allowlisted error code. Never log ticket/selection.
     const code = String(err && err.message || 'INGRESS_FAILED');
     return output({type:['load_project','load_asset','render_status'].includes(p.operation)?'SIMBA_DRIVE_PROJECT_REPLY':'SIMBA_DRIVE_INGRESS_RECEIPT', nonce,
-      status:'REJECTED', error_code:/^[A-Z_]{4,64}$/.test(code)?code:'INGRESS_FAILED'});
+      status:'REJECTED', error_code:/^[A-Z0-9_]{4,64}$/.test(code)?code:'INGRESS_FAILED'});
   } finally {
     if (lock) { try { lock.releaseLock(); } catch (_) {} }
   }
