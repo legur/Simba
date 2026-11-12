@@ -1,0 +1,39 @@
+name: "Studio v2: private receipt and canonical SHA-CAS (OFFLINE / NO RENDER)"
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/studio-v2-canonical-cas.yml'
+      - 'integrations/materials/motionlab/drive_handoff/v2_receipt_preflight.py'
+      - 'integrations/materials/motionlab/drive_handoff/v2_canonical_cas.py'
+      - 'integrations/materials/motionlab/drive_handoff/test_v2_receipt_preflight.py'
+      - 'integrations/materials/motionlab/drive_handoff/test_v2_canonical_cas.py'
+      - 'integrations/materials/motionlab_v2_stage_writeback.py'
+      - 'integrations/video/motionlab_v2_contract.py'
+
+permissions:
+  contents: read
+
+jobs:
+  verified_receipt_cas_contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Install only offline package imports
+        run: python -m pip install --disable-pip-version-check numpy soundfile pillow
+      - name: Compile privacy and CAS boundary
+        run: |
+          python -m py_compile integrations/materials/motionlab/drive_handoff/v2_receipt_preflight.py
+          python -m py_compile integrations/materials/motionlab/drive_handoff/v2_canonical_cas.py
+          python -m py_compile integrations/materials/motionlab/drive_handoff/test_v2_receipt_preflight.py
+          python -m py_compile integrations/materials/motionlab/drive_handoff/test_v2_canonical_cas.py
+      - name: Authenticated private Drive receipts and zero-write GitHub SHA CAS
+        run: |
+          python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_v2_receipt_preflight.py' -v
+          python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_v2_canonical_cas.py' -v
