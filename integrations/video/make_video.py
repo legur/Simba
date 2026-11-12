@@ -139,8 +139,11 @@ def load_spec(job: Path):
             # clip frames; never changes source text, voice or clip SHA.
             # A longer scene freezes after its last frame by default.
             playback = sc.get('clipPlayback', 'freeze')
-            need(playback in ('freeze', 'loop'),
-                 f'scene {i + 1}: clipPlayback must be freeze or loop')
+            need(playback in ('freeze', 'loop', 'stretch'),
+                 f'scene {i + 1}: clipPlayback must be freeze, loop or stretch')
+            # 'stretch' maps ALL frames in the original approved MP4 evenly
+            # across the scene's timed narration, matching the legacy Alaska
+            # FFmpeg setpts time-scaling (no extra A2E clip or silent loop).
             sc['clipPlayback'] = playback
             sc.setdefault('move', 'none'); sc.setdefault('voice', 'tts')
             need(sc['voice'] in ('tts', 'clip'), f'scene {i + 1}: voice must be "tts" or explicit "clip"')
