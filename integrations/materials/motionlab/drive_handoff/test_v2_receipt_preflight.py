@@ -199,7 +199,9 @@ class V2InboxPreflightTests(unittest.TestCase):
     def test_sha_identity_and_owner_time_window(self):
         self.row["selection_sha256"]="f"*64
         self.reset_files()
-        with self.assertRaisesRegex(pre.V2InboxError,"V2_SELECTION_SHA_OR_ID_MISMATCH"):
+        # A mismatched consumed ticket must be rejected before inspecting
+        # the selection payload. The earliest broken trust boundary wins.
+        with self.assertRaisesRegex(pre.V2InboxError,"V2_CONSUMED_TICKET_MISMATCH"):
             self.inspect()
         self.row["selection_sha256"]=v2.digest(self.chosen)
         self.ticket["consumed_utc"]=(self.now+timedelta(hours=4)).isoformat()
