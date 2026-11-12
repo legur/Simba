@@ -1,7 +1,8 @@
-"""Trusted v2 ticket issuance tests using real generated fixture MP4 pixels.
+"""Trusted v2 ticket issuance tests with synthetic contract metadata.
 
-Mocks only Google OAuth/Drive storage. No owner token in logs, no credentials
-or paid A2E/TTS/rendering calls.
+Actual real FFmpeg source analysis is tested separately in
+test_motionlab_auto_proposals.py. This issuer only verifies protocol, source
+pinning and private file metadata; it must not decode media.
 """
 from __future__ import annotations
 import copy
@@ -20,7 +21,6 @@ sys.path.insert(0,str(VIDEO))
 sys.path.insert(0,str(VIDEO/"tests"))
 import issue_v2_ticket as issuer
 import issue_ticket as original
-from test_motionlab_auto_proposals import ActualPixelBasedProposalsTests
 
 
 class FakeDrive:
@@ -65,8 +65,11 @@ class FakeDrive:
 
 class IssueV2TicketTests(unittest.TestCase):
     def setUp(self):
-        fixture=ActualPixelBasedProposalsTests(
-            "test_real_frames_measured_with_correct_source_sha_and_three_variants")
+        # Import the existing synthetic Python contract fixture INSIDE
+        # setUp, so unittest discovery doesn't accidentally rerun its tests.
+        # In particular, issuing a ticket should not need FFmpeg or real media.
+        from test_motionlab_v2_contract import V2ContractTests
+        fixture=V2ContractTests("test_materials_launch_without_creative_options")
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
         self.fixture=fixture
@@ -83,16 +86,32 @@ class IssueV2TicketTests(unittest.TestCase):
                 "asset_id":row["asset_id"],
                 "sha256":row["sha256"],
                 "file_id":("M"*20)+str(i),
-                "size_bytes":(Path(fixture.job)/row["file"]).stat().st_size,
+                "size_bytes":2048,
                 "mime_type":"video/mp4",
-            } for i,row in enumerate(fixture.media)]
+            } for i,row in enumerate(fixture.asset)]
         }
+        self.source["proposals"]["analysis"]["status"]="REAL_VIDEO_AUTOMATICALLY_ANALYZED"
+        self.source["proposals"]["analysis"]["analysis_method"]="full_timeline_sampled_pixels_ffmpeg_v1"
+        self.source["proposals"]["analysis"]["pixel_evidence"]=[
+            {"scene_id":scene["scene_id"],
+             "asset_sha256":scene["media"]["asset_sha256"],
+             "sampled_frame_sha256":"e"*64,
+             "frames_sampled":12,
+             "sample_rate_fps":3,
+             "first_sample_s":0,
+             "last_sample_s":3.667,
+             "mean_luminance":110.0,
+             "mean_contrast":25.0,
+             "motion_delta":4.0,
+             "peak_frame_delta":18.0}
+            for scene in self.source["materials"]["scenes"]
+        ]
         # materials_sha256 includes the audio receipt; proposals must be
         # freshly pinned to this exact source packet.
         from motionlab_v2_contract import digest
         self.source["proposals"]["materials_sha256"]=digest(self.source["materials"])
 
-    def test_three_real_mp4_proposals_and_auto_qa_required(self):
+    def test_three_source_pinned_proposals_and_auto_qa_required(self):
         self.assertEqual(issuer.valid_source(self.source),self.source)
         bad=copy.deepcopy(self.source)
         bad["materials"]["audio_alignment_status"]="TIMINGS_NOT_VERIFIED"
