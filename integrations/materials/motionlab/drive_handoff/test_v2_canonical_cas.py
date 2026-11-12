@@ -52,9 +52,21 @@ class V2AtomicWritebackTests(unittest.TestCase):
         self.candidate["stage_handoffs"]["edit_choice"]={
             "selection_sha256":self.bundle["selection_sha256"],
             "motionlab_receipt_id":self.bundle["selection_contract_receipt_id"],
+            "materials_sha256":v2.digest(self.bundle["materials"]),
+            "proposals_sha256":v2.digest(self.bundle["proposals"]),
+            "video_spec_sha256":"f"*64,
+            "video_spec_private_file_id":"V"*26,
             "render_authorized":False,
             "no_auto_publish":True,
+            "no_paid_operations":True,
         }
+        self.candidate["assets"].append({
+            "id":"motionlab-v2-"+self.bundle["selection_sha256"][:24],
+            "kind":"edit_plan","state":"available",
+            "drive_file_id":"S"*26,
+            "url":"https://drive.google.com/file/d/"+("S"*26)+"/view",
+            "recorded_sha256":self.bundle["selection_sha256"],
+        })
         self.raw=(json.dumps(self.base,ensure_ascii=False,indent=2)+"\n").encode()
         path=Path(self.root.name)/cas.project_path(self.bundle["project_id"])
         path.parent.mkdir(parents=True)
