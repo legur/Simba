@@ -228,7 +228,7 @@ function readProject(params) {
 function readRenderStatus(params, ticket) {
   const folder=DriveApp.getFolderById(ML.inboxFolder);
   const records=folder.getFilesByName('motionlab-'+params.ticket_id+'.json');
-  if(!records.hasNext())return {status:'RENDER_PENDING',stage:'AWAITING_STUDIO_SELECTION'};
+  if(!records.hasNext())return {status:'RENDER_PENDING',project_id:ticket.project_id,stage:'AWAITING_STUDIO_SELECTION'};
   const selected=records.next();
   if(records.hasNext())fail('DUPLICATE_SELECTION_RECEIPTS');
   onlyFolder(selected,ML.inboxFolder);
@@ -245,7 +245,7 @@ function readRenderStatus(params, ticket) {
     fail('INVALID_CONSUMED_RECEIPT');
   const applied=DriveApp.getFolderById(ML.appliedFolder);
   const outputs=applied.getFilesByName('motionlab-'+item.receipt_id+'-render.json');
-  if(!outputs.hasNext())return {status:'RENDER_PENDING',stage:'SAVED_IN_DRIVE_PENDING_MONTAGE'};
+  if(!outputs.hasNext())return {status:'RENDER_PENDING',project_id:ticket.project_id,stage:'SAVED_IN_DRIVE_PENDING_MONTAGE'};
   const receiptFile=outputs.next();
   if(outputs.hasNext())fail('DUPLICATE_RENDER_RECEIPTS');
   onlyFolder(receiptFile,ML.appliedFolder);
@@ -283,6 +283,7 @@ function readRenderStatus(params, ticket) {
     fail('RENDER_QA_MISMATCH');
   // A private file link does not grant read access; Google remains owner-only.
   return {status:'RENDER_READY',
+    project_id:ticket.project_id,
     receipt_id:item.receipt_id,
     sha256:result.video_sha256,
     qa_status:qa.qa,
