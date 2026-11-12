@@ -58,8 +58,13 @@ function noSecrets(value, depth) {
 function verifySelection(selection, ticket) {
   if (!selection || typeof selection !== 'object' || Array.isArray(selection))
     fail('INVALID_SELECTION');
-  if (!['bontours.motionlab.storyboard.selection/v1',
-        'bontours.motionlab.selection/v2'].includes(selection.schema))
+  // The active Drive ingress and FFmpeg worker implement ONLY storyboard
+  // selection/v1. A v2 creative decision requires a separate, source-pinned
+  // materials+proposals+audio-alignment+CAS protocol; never treat v2 as v1
+  // and accidentally dispatch a render. Enable v2 only after its own QA.
+  if (selection.schema === 'bontours.motionlab.selection/v2')
+    fail('V2_ROUTE_NOT_ACTIVATED');
+  if (selection.schema !== 'bontours.motionlab.storyboard.selection/v1')
     fail('UNSUPPORTED_SCHEMA');
   if (selection.request_id !== ticket.session_id
       || selection.project_id !== ticket.project_id
