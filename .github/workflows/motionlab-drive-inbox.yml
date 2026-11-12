@@ -12,7 +12,7 @@ on:
         default: true
         description: 'Read-only by default; owner can explicitly run free render'
   schedule:
-    - cron: '17 * * * *'
+    - cron: '17 */2 * * *'
 
 permissions:
   contents: read
@@ -24,6 +24,7 @@ concurrency:
 
 jobs:
   test:
+    if: ${{ github.event_name != 'schedule' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -39,7 +40,6 @@ jobs:
         run: python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_*.py' -v
 
   inbox:
-    needs: test
     if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
     runs-on: ubuntu-latest
     timeout-minutes: 25
