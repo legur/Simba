@@ -1,4 +1,4 @@
-name: Monid connection check
+name: Monid discovery
 on:
   push:
     branches: [codex/monid-check-20261112]
@@ -6,25 +6,22 @@ on:
 permissions:
   contents: read
 jobs:
-  check:
+  discover:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Check Monid account and balance
+      - name: Discover search and comment endpoints
         env:
           MONID_SECRET: ${{ secrets.monid_key }}
           NO_COLOR: '1'
         run: |
           set -e
-          if [ -z "$MONID_SECRET" ]; then
-            echo "Monid secret is missing or unavailable to this workflow."
-            exit 1
-          fi
           npm install --prefix "$RUNNER_TEMP/monid" @monid-ai/cli@0.1.9 --no-audit --no-fund
-          "$RUNNER_TEMP/monid/node_modules/.bin/monid" keys add -k "$MONID_SECRET" -l github-action
+          M="$RUNNER_TEMP/monid/node_modules/.bin/monid"
+          "$M" keys add -k "$MONID_SECRET" -l github-action
           unset MONID_SECRET
-          "$RUNNER_TEMP/monid/node_modules/.bin/monid" whoami
-          "$RUNNER_TEMP/monid/node_modules/.bin/monid" balance
+          "$M" discover -q "reddit search posts comments" -l 8
+          "$M" discover -q "threads search posts comments" -l 8
