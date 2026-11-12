@@ -1,0 +1,187 @@
+{
+  "schema": "bontours.motionlab.free-render-profile/v1",
+  "project_id": "alaska-voyager-2027",
+  "input_fingerprint": "4308cbe748011dfe882e6794ac1fd9e553a40660c0da8eb180acdc494adef995",
+  "approved_receipt_id": "a55b5a41-529e-468f-84e6-09b16c3fccff",
+  "approved_selection_sha256": "9580ce34d60afd47c213270a5b9142a9d81ed93caaff179956d98720e4e2a2e3",
+  "selected_option": 1,
+  "required_scene_count": 10,
+  "render": {
+    "width": 720,
+    "height": 1280,
+    "fps": 24,
+    "output_width": 1080,
+    "output_height": 1920,
+    "output_fps": 30,
+    "max_seconds": 60,
+    "fade_kind": "crossfade",
+    "fade_ms": 900
+  },
+  "archive_folder_id": "1GMoSVogs0SKuTAXCdMVcG-U7bTn-IuCt",
+  "applied_folder_id": "1Ya87Y6FUUmstpSs8jG0mKvEVLRqTvwxH",
+  "approved_audio_video": {
+    "drive_file_id": "1tWeTuXSIj1EIQ8QOcOy-4t-zHGFVjXUu",
+    "sha256": "b62f375ad20fac67f7707e6f6e9b969d6b154364cd4db0f95a43d488bfeaf9f0",
+    "audio_adts_sha256": "158f6b252a051aec22943fb61c9ff11750520972e72804789b4a73835b9f4ec1",
+    "voice": "WarmBaritone",
+    "music": "Discover"
+  },
+  "subtitle_chunks": [
+    [
+      0,
+      3,
+      "Ледники, горы и Аляска с моря."
+    ],
+    [
+      3,
+      8.1,
+      "Ради таких видов хочется задержаться на палубе."
+    ],
+    [
+      8.1,
+      12.12,
+      "На Voyager of the Seas отправляемся из Сиэтла"
+    ],
+    [
+      12.12,
+      13.2,
+      "в Джуно"
+    ],
+    [
+      13.2,
+      14.25,
+      "и Скагуэй."
+    ],
+    [
+      14.25,
+      17.85,
+      "Затем Эндикотт-Арм и ледник Доуэс."
+    ],
+    [
+      17.85,
+      19.8,
+      "И канадская Виктория."
+    ],
+    [
+      19.8,
+      21.68,
+      "Семь ночей круиза,"
+    ],
+    [
+      21.68,
+      25.52,
+      "с 27 августа по 3 сентября 2027 года."
+    ],
+    [
+      25.52,
+      29.56,
+      "В пакете перелеты с 26 августа по 5 сентября"
+    ],
+    [
+      29.56,
+      32.3,
+      "и ночь в отеле в Сиэтле перед круизом."
+    ],
+    [
+      32.3,
+      37.6,
+      "Цена - 2249 долларов на человека в двухместной каюте."
+    ],
+    [
+      37.6,
+      43.36,
+      "Напишите мне «Аляска», пришлю подробности."
+    ]
+  ],
+  "title_cues": [
+    [
+      0.3,
+      7.85,
+      "АЛЯСКА"
+    ],
+    [
+      8.25,
+      11.95,
+      "VOYAGER OF THE SEAS"
+    ],
+    [
+      14.36,
+      17.62,
+      "ЛЕДНИК ДОУЭС"
+    ],
+    [
+      19.9,
+      21.65,
+      "7 НОЧЕЙ"
+    ],
+    [
+      25.62,
+      26.5,
+      "ПЕРЕЛЕТЫ + ОТЕЛЬ"
+    ]
+  ],
+  "info_cues": [
+    [
+      21.68,
+      25.52,
+      "Info",
+      "7 НОЧЕЙ   •   27.08–03.09.2027"
+    ],
+    [
+      26.54,
+      29.56,
+      "Info",
+      "ПЕРЕЛЕТЫ   •   26.08–05.09.2027"
+    ],
+    [
+      30.12,
+      32,
+      "Info",
+      "НОЧЬ В ОТЕЛЕ В СИЭТЛЕ"
+    ],
+    [
+      32.58,
+      37.6,
+      "Price",
+      "2249 $"
+    ],
+    [
+      32.58,
+      37.6,
+      "Info",
+      "{\\pos(360,310)}за человека в двухместной каюте"
+    ],
+    [
+      37.6,
+      43.36,
+      "Title",
+      "BON TOURS"
+    ],
+    [
+      37.6,
+      43.36,
+      "Contact",
+      "{\\pos(360,237)}058-677-8492"
+    ],
+    [
+      37.6,
+      43.36,
+      "Contact",
+      "{\\pos(360,290)}08-996-1127"
+    ],
+    [
+      37.6,
+      43.36,
+      "Contact",
+      "{\\pos(360,348)}www.letsgo-world.co.il"
+    ],
+    [
+      37.6,
+      43.36,
+      "Contact",
+      "{\\pos(360,406)}Ашдод, Ацмаут 89"
+    ]
+  ],
+  "subtitle_alignment": "ESTIMATED_FROM_APPROVED_NARRATION_REQUIRES_LISTENING_REVIEW",
+  "publication_authorized": false
+}

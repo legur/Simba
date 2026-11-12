@@ -47,3 +47,15 @@ Official docs:
 https://developers.google.com/apps-script/guides/web
 https://developers.google.com/apps-script/api/reference/rest/v1/projects/create
 https://developers.google.com/apps-script/api/reference/rest/v1/projects.deployments/create
+
+## Automatic free Montage stage — 12 November 2026
+
+Implementation: auto_render.py and render_profiles/alaska-voyager-2027.json. The existing motionlab-drive-inbox.yml scheduled job checks private Drive Inbox once every two hours. It verifies the consumed one-use ticket, project fingerprint, source media and exact owner-approved selection, then renders with open-source FFmpeg. Unconfigured/unsupported projects remain untouched; no guesswork or paid calls.
+
+The narrowly authorized Alaska pilot pins the real Studio receipt a55b5a41-529e-468f-84e6-09b16c3fccff and selection SHA-256 9580ce34d60afd47c213270a5b9142a9d81ed93caaff179956d98720e4e2a2e3. It uses 10 Studio scenes, nine crossfades of 900ms, seven SHA-verified original A2E MP4s, and approved original audio bitstream copied without re-synthesis. Existing on-screen price/date/contact cues are source-pinned in the profile. Unknown effects or visual coordinates fail closed.
+
+Trust checks: private receipt and consumed ticket; SHA-256 of original private launch and full A2E bytes; exact approved scene order and asset IDs; original approved reference MP4 and AAC ADTS hashes; private Drive destination ACL; full ffmpeg decode, dimensions/length and exact audio byte stream. Render is idempotently archived with private video+QA and a separate Drive receipt in Applied only after upload and readback checks.
+
+Status after technical success is RENDERED_PENDING_OWNER_REVIEW, NOT published or canonically APPLIED; a human separately approves the exact output. The manually approved Alaska reference is not overwritten. Word-level subtitle timing in the Alaska profile is estimated (not forced-aligned), so the QA explicitly retains a listening-review caveat.
+
+No A2E, TTS, paid video service, stock asset generation, public Drive sharing or automatic publication is invoked. Private GitHub Actions polling every two hours uses repository runner minutes, which can count against the account quota; it has a per-run timeout and only renders receipts with approved profiles.
