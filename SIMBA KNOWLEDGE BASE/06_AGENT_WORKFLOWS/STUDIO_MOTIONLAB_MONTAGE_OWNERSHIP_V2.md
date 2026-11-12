@@ -1,7 +1,7 @@
 # Simba Dispatcher ↔ Studio (Motion Lab) ↔ Montage — границы и контракт v2
 
-**Дата:** 11–12.11.2026. **Инициатор:** владелец продукта. **Статус:** `OWNER_ARCHITECTURE_ACCEPTED / V2_RUNTIME_UNMERGED`, не действующий production-контракт v2.  
-**Точка согласования:** [Issue #113](https://github.com/legur/Simba/issues/113). **Montage:** draft [PR #115](https://github.com/legur/Simba/pull/115) (рендерер/маппер), draft [PR #105](https://github.com/legur/Simba/pull/105) (защищенный приемник и маршрутизация).  
+**Дата:** 11–12.11.2026. **Инициатор:** владелец продукта. **Статус:** `OWNER_ARCHITECTURE_ACCEPTED / V2_RUNTIME_PARTIAL`, production-контракт v2 еще не введен.  
+**Точка согласования:** [Issue #113](https://github.com/legur/Simba/issues/113). **Montage:** прежний #115 перенесен в [#156](https://github.com/legur/Simba/pull/156) и объединен с main; [PR #105](https://github.com/legur/Simba/pull/105) остается draft для несоединенных v2 этапов.  
 **Приоритет при противоречиях:** после совместного подтверждения этот документ заменяет старое положение `STUDIO_MOTIONLAB_SYNC.md` о формировании трех креативных вариантов Montage. До подтверждения приведенные ниже части, не зафиксированные в #113, остаются предложением.
 
 > **Актуализация 12.11.2026 — статус: архитектурные роли подтверждены владельцем, v2 production еще НЕ внедрен.**
@@ -107,3 +107,32 @@ Montage готовит доверенный `bontours.motionlab.materials.launch
 - Тесты: несовпадение источника/голоса/renderer revision, отсутствующий timing, обрезанная реплика, сменившийся исходный asset, unsupported FX, неподтвержденный пользовательский выбор — fail closed. Реальный end-to-end с приватным MP4 обязателен **до** заявления о production готовности.
 
 **Архитектурная матрица зафиксирована как решение владельца.** Реализация v2 требует отдельных тестов и технического согласования; документ или merge не означает доказанный production v2.
+
+
+## 7. Результаты переноса из PR #105 и точные условия активации (12.11.2026)
+
+**Что действительно объединено с `main`:**
+
+| PR | Реализовано | Чего НЕ доказывает |
+| --- | --- | --- |
+| [#154](https://github.com/legur/Simba/pull/154) | Роли: Studio = Motion Lab, Simba / Dispatcher = оркестрация | Готовность встраивания v2 в существующий UI |
+| [#155](https://github.com/legur/Simba/pull/155) | Канонический `studio_audio_lock`, строгая проверка metadata | Физические байты WAV и точные времена слов |
+| [#156](https://github.com/legur/Simba/pull/156) | Исполнимые эффекты, строгие возможности и WYSIWYG/layout контракт Montage | Live-маппинг v2 выбора |
+| [#157](https://github.com/legur/Simba/pull/157) | Реальная независимая проверка приватного WAV/music по SHA и структурный контроль alignment evidence | Наличие реального forced alignment / независимого QA |
+| [#158](https://github.com/legur/Simba/pull/158) | Реальные ChatGPT Rafael storyboard файлы → закрытый архив → read-only preflight существующего A2E | Автоматический/платный запуск A2E |
+| [#159](https://github.com/legur/Simba/pull/159) | Проверка уже готового A2E MP4 и owner-only CAS записи `a2e_clips` | Новые сгенерированные клипы или автоматическое одобрение |
+| [#160](https://github.com/legur/Simba/pull/160) | Приватные проверенные WAV/music и лицензия → owner-only legacy `voice_music` | Canonical audio-lock v2 по умолчанию |
+| [#161](https://github.com/legur/Simba/pull/161) | Ручная owner-only передача подтвержденного v1 выбора и CAS в `edit_choice` | Автоматическое применение v2 UI выбора к проекту |
+| [#162](https://github.com/legur/Simba/pull/162) | **Явно включаемый** v2 audio-lock при точном совпадении SHA текста из утвержденного voice Issue с каноническим `sources[]` и проверенных WAV/music | `AUDIO_ALIGNMENT_VERIFIED`, `SPEC_READY` или разрешенный рендер |
+
+Все эти новые workflow writeback — **manual owner-only** с явными входами и контрольными SHA. Их наличие в `main` не означает, что они автоматически прогнали новый проект. Действующий v1 Apps Script → Drive → GitHub → MP4 не заменен.
+
+**Непройденные обязательные gates для переключения производства на v2:**
+
+1. **Активный канонический проект.** В `campaigns/` на дату проверки присутствуют `bavaria-new-year-2027` и `prague-new-year-2027`. Для live v2 теста нужен явно утвержденный действующий проект (например, новый реальный тур) с проверенными исходными A2E MP4, script/voice_music approvals, `project.sources[]`, записями выбора и приватными файлами. Не создавать фиктивные источники или менять старые проекты задним числом.
+2. **Production Audio Engine.** От точных байтов одобренного WAV получить проверяемые `phrase_start/end` и `word_start/end`, привязанные к `audio_revision_sha256`, с независимым контролем совпадения слов. `validate_alignment_evidence` из #157 пока возвращает `ALIGNMENT_METADATA_CONSISTENT_NEEDS_INDEPENDENT_AUDIO_QA`, то есть **не** `AUDIO_ALIGNMENT_VERIFIED`. Не заменять результат приблизительными таймкодами.
+3. **Включение v2 в уже действующий приемник.** Сохранить существующий Apps Script `/exec` и owner-only Drive/Actions; добавить строгую проверку `materials.launch/v2 → proposals/v2 → selection/v2`, три различающихся предложения после реального анализа клипов, explicit owner choice, SHA/revision, durable ACK, затем отдельный CAS `APPLIED`. Не возвращать старый альтернативный Python/SQLite host из PR #105 как второй production receiver.
+4. **Исполнение.** После `AUDIO_ALIGNMENT_VERIFIED`, `APPLIED` и полной проверки media/spec разрешить только подготовку MP4 + независимый QA; никаких повторных A2E/TTS или автоматической публикации.
+5. **Полный реальный тест пользователя.** Проверить в личном браузере приватный просмотр результата в Studio, точность титров/субтитров и финальное утверждение. Прошлый тест backend v1 «Аляска» не является тестом v2.
+
+**Активный производственный контракт по-прежнему v1. Статус v2: `LIVE_V2_E2E_BLOCKED` до прохождения всех пяти gates.**
