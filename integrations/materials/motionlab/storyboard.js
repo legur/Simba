@@ -252,21 +252,22 @@ function renderSummary(){const total=state.scenes.reduce((t,s)=>t+s.duration,0);
  if(globalThis.MotionLabVisual?.changed())warns.push('Визуальные координаты сохраняются только отдельным черновиком v2; через selection/v1 не передаются.');
  const v=$('validation');v.textContent=warns.length?warns.join(' '):'Структура готова. Возврат выбора не запускает рендер, TTS, A2E или публикацию.';v.classList.toggle('warning',warns.length>0);
  const online=Boolean(state.bridge&&state.request);
+ const driveReady=Boolean(!online&&state.request?.handoff&&globalThis.MotionLabDrive?.ready?.(state.request.handoff));
  $('sendToAgent').disabled=!state.request||!state.confirmed||state.sending||(online&&unsupported.length>0)||warns.some(x=>/название|ID исходного|ID ассета/.test(x));
- $('sendToAgent').textContent=online?'Передать выбор агенту':'Сохранить черновик на устройстве';
+ $('sendToAgent').textContent=online?'Передать выбор агенту':driveReady?'Сохранить в Google Drive':'Сохранить черновик на устройстве';
  const layoutDraft=Boolean(globalThis.MotionLabVisual?.changed());
  $('downloadJson').disabled=layoutDraft||Boolean(globalThis.MotionLabVideoImport?.info?.());
  $('downloadJson').title=globalThis.MotionLabVideoImport?.info?.()?'Для целого MP4 нужен export scene-map/v1, который сохраняет интервалы':layoutDraft?'Этот v1 JSON не хранит позиции текста. Скачайте визуальный черновик v2.':'Скачать настройки совместимые с v1';
  $('downloadVisual').disabled=!layoutDraft;
  const approval=$('approvalStatus');if(approval){approval.textContent=state.confirmed?'Вариант утвержден вами, но не передан монтажеру':'Еще не утверждено';approval.classList.toggle('approved',state.confirmed);}
- const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.deliveryStatus?.status==='LOCAL_ONLY'?'СОХРАНЕНО НА УСТРОЙСТВЕ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
- $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.deliveryStatus?.status==='LOCAL_ONLY'?'Черновик сохранен в этом браузере, но в Wix и Montage не отправлен. После обновления страницы его можно восстановить.':state.sending?'Отправлено по подключенному каналу; ждем подтверждения.':state.bridge?'Подключенный агентский канал готов принять решение с подтверждением ACK.':'Серверный канал для сохранения в Wix еще не развернут. Здесь можно сохранить черновик на устройстве без входа.';
+ const badge=$('handoffBadge');badge.textContent=state.lastAck?'ПРИНЯТО АГЕНТОМ':state.deliveryStatus?.status==='SAVED_IN_DRIVE_PENDING_MONTAGE'?'В DRIVE / ЖДЕТ MONTAGE':state.deliveryStatus?.status==='LOCAL_ONLY'?'СОХРАНЕНО НА УСТРОЙСТВЕ':state.sending?'ОЖИДАНИЕ ACK':state.bridge?'ПОДКЛЮЧЕНО':'ЧЕРНОВИК';
+ $('deliveryHint').textContent=state.lastAck?`Принято средой. Квитанция: ${state.lastAck}`:state.deliveryStatus?.status==='SAVED_IN_DRIVE_PENDING_MONTAGE'?`Подтверждено Google Drive. Квитанция ${state.deliveryStatus.receipt_id}. Montage еще не выполнил рендер и QA.`:state.deliveryStatus?.status==='LOCAL_ONLY'?'Черновик хранится только в этом браузере, в Drive и Montage не отправлен.':state.sending?'Сохраняем и ждем проверенную серверную квитанцию; отправка еще не подтверждена.':state.bridge?'Подключенный агентский канал ожидает подтверждения ACK.':state.request?.handoff&&!globalThis.MotionLabDrive?.ready?.(state.request.handoff)?'Одноразовое разрешение получено. Приемник Google Drive еще не опубликован; пока доступно только локальное сохранение.':'Приемник Google Drive для этого задания не подключен. Можно сохранить локальный черновик без входа.';
 }
 function render(){renderConcepts();renderSceneList();renderEditor();renderSummary();globalThis.MotionLabPages?.sync?.();}
 function updateKey(key,value){if(state.request&&['name','duration','image','asset','title','subtitle'].includes(key))return;const s=state.scenes[state.selectedIndex];s[key]=value;state.dirty=true;resetAck();renderSceneList();renderSummary();if(['title','subtitle','subtitleStyle','titleFx','image'].includes(key))renderEditor();}
 function editChange(id,key,fn){$(id).addEventListener('change',()=>{const v=fn?fn($(id).value):$(id).value;updateKey(key,v);});}
 function liveChange(id,key){$(id).addEventListener('input',()=>{if(state.request&&['title','subtitle'].includes(key))return;const v=$(id).value;const s=state.scenes[state.selectedIndex];s[key]=v;state.dirty=true;resetAck();renderSummary();if(key==='title')$('frameTitle').textContent=v;if(key==='subtitle')$('frameSubtitle').textContent=v;});$(id).addEventListener('change',renderSceneList);}
-function resetAck(){if(film.active||film.paused)stopFilm();state.confirmed=false;state.confirmedAt=null;state.sending=false;state.lastAck=null;state.deliveryStatus=null;clearSavedDraft();clearTimeout(pendingAckTimer);}
+function resetAck(){if(film.active||film.paused)stopFilm();state.confirmed=false;state.confirmedAt=null;state.sending=false;state.lastAck=null;state.deliveryStatus=null;clearSavedDraft();globalThis.MotionLabDrive?.clearReceipt?.();clearTimeout(pendingAckTimer);}
 // Whole-film editor review: a browser approximation on verified/locally selected assets.
 // Does not generate MP4, analyze speech/music, or silently authorize Montage.
 const film={active:false,paused:false,playhead:0,raf:0,started:0,index:-1,nextIndex:-1,total:0};
@@ -449,7 +450,16 @@ function parseLaunch(raw,strict){if(!raw||typeof raw!=='object'||Array.isArray(r
  const selected=raw.selected_option===1||raw.selected_option===2||raw.selected_option===3?raw.selected_option:1;
  const scenes=raw.scenes.map((x,i)=>makeScene(x,i,concepts[selected-1]));
  const ids=scenes.map(s=>s.id);if(ids.some(id=>!id)||new Set(ids).size!==ids.length)throw Error('scene_id должны быть уникальными');
- return {request:{id:request_id,projectId:project_id,fingerprint:fp,stage:'edit_choice'},concepts,scenes,selected};
+ let handoff=null;
+  if(raw.handoff!==undefined){
+    const h=raw.handoff;
+    if(!h||h.schema!=='bontours.motionlab.drive-handoff/v1'||
+       !/^[A-Za-z0-9_-]{15,100}$/.test(h.ticket_id||'')||
+       !/^[a-f0-9]{64}$/.test(h.ticket_token||''))
+      throw Error('Неверное одноразовое разрешение Google Drive');
+    handoff={schema:h.schema,ticket_id:h.ticket_id,ticket_token:h.ticket_token};
+  }
+  return {request:{id:request_id,projectId:project_id,fingerprint:fp,stage:'edit_choice',handoff},concepts,scenes,selected};
 }
 function loadLaunch(raw,channel){const parsed=parseLaunch(raw,true);clearSavedDraft();stopFilm(false);clearPreviews();state.confirmed=false;state.request=parsed.request;state.project={id:parsed.request.projectId};state.concepts=parsed.concepts;state.scenes=parsed.scenes;state.selectedOption=parsed.selected;state.selectedIndex=0;state.dirty=false;resetAck();state.bridge=channel||null;setConnection(channel?'connected':'offline');render();say('Задание Киностудии загружено');}
 function buildResult(){const req=state.request,bridge=Boolean(state.bridge),timestamp=state.confirmedAt||new Date().toISOString();const result={
@@ -478,14 +488,27 @@ function buildResult(){const req=state.request,bridge=Boolean(state.bridge),time
 function validationError(){if(![1,2,3].includes(state.selectedOption))return 'Выберите один из трех монтажных вариантов';if(filmTotal()>60)return 'Сумма длительностей сцен превышает 60 секунд';if(state.scenes.some(s=>!s.name.trim()))return 'Названия сцен не могут быть пустыми';if(state.scenes.some(s=>s.image==='custom'&&!s.asset.trim()))return 'Для своего кадра необходим ID исходного файла';if(!state.scenes.length)return 'Добавьте сцену';return null;}
 function jsonDownload(){if(globalThis.MotionLabVideoImport?.info?.()){say('Импортированному MP4 нужна карта сцен с временными интервалами.');return;}if(globalThis.MotionLabVisual?.changed()){say('Визуальные координаты не поддержаны JSON v1. Используйте отдельный черновик v2.');return;}const error=validationError();if(error){say(error);return;}const obj=buildResult();const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`motionlab-${obj.project_id||'demo'}-edit-choice.json`;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);say('JSON сохранен');}
 async function copyBrief(){const lines=[`BON TOURS / MOTION LAB — РЕЖИССЕРСКОЕ РЕШЕНИЕ`,`Проект: ${state.project?.id||'демонстрация'}`,`Вариант: ${state.selectedOption}`,`Сцен: ${state.scenes.length}`,'',...state.scenes.map((s,i)=>`${i+1}. ${s.name} (${s.duration} с): камера ${nameFor('camera',s.camera)}, переход ${i?nameFor('transitions',s.transition):'нет'}, титр ${nameFor('title',s.titleFx)}, субтитры ${nameFor('subtitle',s.subtitleStyle)} / ${nameFor('motion',s.wordMotion)}`),'','Решение только для подготовки. Рендер, TTS, A2E и публикация не разрешены.'];try{await navigator.clipboard.writeText(lines.join('\n'));say('Монтажное ТЗ скопировано')}catch{say('Копирование недоступно. Скачайте JSON')}}
-function setConnection(mode){$('connLed').className='conn-led '+(mode==='connected'?'connected':'waiting');$('connectionTitle').textContent=mode==='connected'?'Агент подключен / выбор ожидается':mode==='offline'?'Задание импортировано / офлайн':'Демонстрационный режим';$('connectionText').textContent=mode==='connected'?`Сессия ${state.request?.id||''}. После выбора отправим настройки строго инициировавшей среде и дождемся ACK.`:mode==='offline'?'Задание импортировано. Вход Wix не требуется; пока можно сохранить черновик в этом браузере. Для автоматической передачи нужен защищенный серверный приемник.':'Вы можете проверить редактор и экспортировать JSON. Для прямого возврата агент должен запустить модуль через подтвержденный канал сообщений.';renderSummary();}
+function setConnection(mode){$('connLed').className='conn-led '+(mode==='connected'?'connected':'waiting');$('connectionTitle').textContent=mode==='connected'?'Агент подключен / выбор ожидается':mode==='offline'?'Задание импортировано / офлайн':'Демонстрационный режим';$('connectionText').textContent=mode==='connected'?`Сессия ${state.request?.id||''}. После выбора отправим настройки строго инициировавшей среде и дождемся ACK.`:mode==='offline'?'Задание импортировано. Вход Wix не требуется. Если оно содержит действующий билет Drive и приемник опубликован, подтвержденный выбор можно сразу сохранить в Drive.':'Вы можете проверить редактор и экспортировать JSON. Для прямого возврата агент должен запустить модуль через подтвержденный канал сообщений.';renderSummary();}
 function sendSelection(){
  if(!state.confirmed){say('Сначала утвердите выбранный монтаж');return;}
  const error=validationError();if(error){say(error);return;}
  if(!state.request){say('Сначала загрузите проверенное задание проекта');return;}
  if(!state.bridge){
-  if(saveLocalDraft())say('Черновик сохранен на устройстве, но НЕ передан Montage.');
-  else say('Не удалось сохранить черновик на устройстве. Используйте экспорт JSON.');
+  const bridge=globalThis.MotionLabDrive;
+  if(bridge?.ready?.(state.request.handoff)){
+    const packet=buildResult();
+    state.sending=true;state.deliveryStatus=null;renderSummary();
+    bridge.send(packet,state.request.handoff).then(receipt=>{
+      state.deliveryStatus={status:receipt.status,receipt_id:receipt.receipt_id};
+      say('Google Drive подтвердил сохранение. Montage еще не запускался.');
+    }).catch(e=>{
+      if(saveLocalDraft())say('Drive не подтвердил прием: '+String(e.message||e)+'. Черновик хранится локально.');
+      else say('Drive не подтвердил прием: '+String(e.message||e));
+    }).finally(()=>{state.sending=false;renderSummary();});
+  } else {
+    if(saveLocalDraft())say('Черновик сохранен на устройстве, но НЕ передан Montage.');
+    else say('Не удалось сохранить черновик на устройстве. Используйте экспорт JSON.');
+  }
   return;
  }
  if(globalThis.MotionLabVisual?.changed()){say('Агентский канал v1 не принимает визуальные координаты. Сохраните черновик на устройстве.');return;}
@@ -516,7 +539,7 @@ function saveLocalDraft(){
  if(!state.request||globalThis.MotionLabVideoImport?.info?.())return false;
  const snapshot={
   schema:'bontours.motionlab.local-draft/v1',saved_at:new Date().toISOString(),
-  request:state.request,project:state.project,scenes:state.scenes,
+  request:{id:state.request.id,projectId:state.request.projectId,fingerprint:state.request.fingerprint,stage:'edit_choice'},project:state.project,scenes:state.scenes,
   concepts:state.concepts,selectedOption:state.selectedOption,
   confirmedAt:state.confirmedAt,selection:buildResult(),
   visual:globalThis.MotionLabVisual?.exportLocalDraft?.()||null,

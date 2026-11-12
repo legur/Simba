@@ -9,6 +9,8 @@
  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
  <link rel="stylesheet" href="storyboard.css">
  <script defer src="storyboard.js"></script>
+  <script defer src="motionlab_drive_config.js"></script>
+  <script defer src="motionlab_drive_bridge.js"></script>
  <script defer src="visual_editor.js"></script>
  <script defer src="scene_pages.js"></script>
  <script defer src="director_core.js"></script>
@@ -260,7 +262,7 @@
     </div>
   </section>
   <section class="handoff" id="handoff">
-   <div class="handoff-head"><div><span class="small-label">05 / ВОЗВРАТ В АВТОМАТИЧЕСКУЮ СРЕДУ</span><h2>Передать выбранные настройки</h2><p>Вход Wix не требуется. Пока защищенный серверный приемник не развернут, подтвержденный монтаж сохраняется только в этом браузере. В Montage он не передается; рендер и платные операции не запускаются.</p></div><span id="handoffBadge" class="status-chip">ЧЕРНОВИК</span></div>
+   <div class="handoff-head"><div><span class="small-label">05 / ВОЗВРАТ В АВТОМАТИЧЕСКУЮ СРЕДУ</span><h2>Передать выбранные настройки</h2><p>Вход Wix не требуется. Если выдано одноразовое разрешение проекта и включен приемник Google Drive, подтвержденный выбор сохраняется напрямую в закрытой папке Drive. Без приемника доступен локальный черновик. Рендер и платные операции не запускаются.</p></div><span id="handoffBadge" class="status-chip">ЧЕРНОВИК</span></div>
    <div class="summary" id="summary"></div>
    <div id="validation" class="validation" role="status"></div>
    <div class="review-approval">
@@ -270,7 +272,7 @@
      <span id="approvalStatus" role="status">Еще не утверждено</span>
     </div>
     <div class="handoff-buttons"><button type="button" class="primary-btn" id="sendToAgent" disabled>Сохранить черновик на устройстве</button><button type="button" class="secondary-btn" id="downloadJson">Скачать монтажное ТЗ JSON (v1)</button><button type="button" class="secondary-btn" id="downloadVisual">Скачать визуальные правки (черновик v2)</button><button type="button" class="secondary-btn" id="copyBrief">Скопировать ТЗ</button></div>
-   <p class="delivery-hint" id="deliveryHint">Для работы с редактором вход Wix не нужен. Локальный черновик не является подтвержденной передачей в GitHub или Montage.</p>
+   <p class="delivery-hint" id="deliveryHint">Вход Wix не нужен. После серверного подтверждения появится квитанция Google Drive; локальное сохранение не считается передачей в Montage.</p>
   </section>
  </main>
  <footer>Motion Lab / Bon Tours <span>ПОДГОТОВКА · Без рендера · Без публикации · Без платных операций</span></footer>
