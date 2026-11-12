@@ -19,6 +19,9 @@ on:
       - 'integrations/video/tests/test_motionlab_visual_layout.py'
       - 'integrations/video/tests/test_motionlab_subtitle_geometry.mjs'
       - 'integrations/video/motionlab_analysis_bundle.py'
+      - 'integrations/video/motionlab_auto_proposals.py'
+      - 'integrations/video/tests/test_motionlab_auto_proposals.py'
+      - 'integrations/materials/motionlab_v2_stage_writeback.py'
       - 'integrations/video/tests/test_motionlab_analysis_bundle.py'
       - 'integrations/video/make_video.py'
       - 'integrations/video/template/film.js'
@@ -62,7 +65,7 @@ jobs:
           command -v ffprobe
       - name: Syntax and existing renderer contract
         run: |
-          python -m py_compile integrations/video/make_video.py integrations/video/motionlab_render_contract.py integrations/video/motionlab_v2_contract.py integrations/video/motionlab_layout_contract.py integrations/video/motionlab_analysis_bundle.py
+          python -m py_compile integrations/video/make_video.py integrations/video/motionlab_render_contract.py integrations/video/motionlab_v2_contract.py integrations/video/motionlab_layout_contract.py integrations/video/motionlab_analysis_bundle.py integrations/video/motionlab_auto_proposals.py
           node --check integrations/video/template/film.js
           node --test integrations/video/tests/test_motionlab_subtitle_geometry.mjs
           python -m unittest discover -s integrations/video/tests -p 'test_motion_lab_transitions.py' -v
@@ -73,6 +76,7 @@ jobs:
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_v2_contract.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_visual_layout.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_analysis_bundle.py' -v
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_auto_proposals.py' -v
       - name: Studio v2 real metadata and private approved-audio readback gates (offline)
         run: |
           python -m py_compile integrations/video/motionlab_approved_audio.py integrations/video/motionlab_v2_audio_gate.py integrations/video/motionlab_typography_contract.py

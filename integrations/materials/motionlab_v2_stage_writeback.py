@@ -145,6 +145,35 @@ def source_context(root:Path,private_root:Path,project_id:str,request_id:str):
             "listening_receipt":listening_receipt}
 
 
+
+def prepare_automatic_v2_proposals(root: Path, private_root: Path,
+                                   project_id: str, request_id: str) -> dict:
+    """Return actual source-pinned materials and 3 plans for owner choice.
+
+    A trusted private stage can call this after media and unattended WAV QA
+    finish. It never makes a user approval, writes to Git, runs paid models,
+    starts a render or changes the existing owner Apps Script receiver.
+    """
+    context = source_context(root, private_root, project_id, request_id)
+    if context["materials"].get("audio_alignment_status") != "AUDIO_ALIGNMENT_VERIFIED_AUTO":
+        raise V2SourceError("AUTOMATIC_AUDIO_QA_REQUIRED_FOR_AUTOMATIC_PROPOSALS")
+    import motionlab_auto_proposals as automatic
+    try:
+        proposals, evidence = automatic.build_automated_proposals(
+            context["materials"], context["media"], context["job"])
+    except (ValueError, OSError):
+        raise V2SourceError("AUTOMATIC_PROPOSALS_SOURCE_RECHECK_FAILED") from None
+    return {
+        "materials": context["materials"],
+        "proposals": proposals,
+        "analysis_receipt": evidence,
+        "owner_selection_required": True,
+        "run_render": False,
+        "run_paid_operations": False,
+        "auto_publish": False,
+    }
+
+
 def check_current_v2(root:Path,private_root:Path,project_id:str,
                      materials:dict,proposals:dict,selection:dict|None=None):
     if not isinstance(materials,dict):
@@ -153,6 +182,19 @@ def check_current_v2(root:Path,private_root:Path,project_id:str,
     if ctx["materials"]!=materials:
         raise V2SourceError("Private materials changed since user opened Motion Lab")
     v2.validate_proposals_v2(materials,proposals)
+    if proposals.get("analysis",{}).get("status")=="REAL_VIDEO_AUTOMATICALLY_ANALYZED":
+        # The client may only *display* the three options. A trusted stage
+        # must independently rebuild their SHA-bound pixel evidence and
+        # creative plan from original private MP4 bytes before CAS/selection.
+        # Never accept self-attested video analysis from a browser payload.
+        import motionlab_auto_proposals as automatic
+        try:
+            actual, evidence = automatic.build_automated_proposals(
+                ctx["materials"], ctx["media"], ctx["job"])
+        except (ValueError, OSError):
+            raise V2SourceError("AUTOMATIC_PROPOSALS_SOURCE_RECHECK_FAILED") from None
+        if v2.digest(actual)!=v2.digest(proposals):
+            raise V2SourceError("AUTOMATIC_PROPOSALS_SOURCE_RECHECK_FAILED")
     if selection is None:
         return ctx,None,None
     # Product decision: accurately synchronized word timings must exist
