@@ -1,4 +1,4 @@
-name: Monid discovery
+name: Monid inspect
 on:
   push:
     branches: [codex/monid-check-20261112]
@@ -6,14 +6,14 @@ on:
 permissions:
   contents: read
 jobs:
-  discover:
+  inspect:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Discover search and comment endpoints
+      - name: Inspect endpoints
         env:
           MONID_SECRET: ${{ secrets.monid_key }}
           NO_COLOR: '1'
@@ -23,5 +23,8 @@ jobs:
           M="$RUNNER_TEMP/monid/node_modules/.bin/monid"
           "$M" keys add -k "$MONID_SECRET" -l github-action
           unset MONID_SECRET
-          "$M" discover -q "reddit search posts comments" -l 8
-          "$M" discover -q "threads search posts comments" -l 8
+          "$M" discover -q "threads post replies comments" -l 10
+          "$M" inspect -p litescrape -e /reddit/search
+          "$M" inspect -p litescrape -e /reddit/post
+          "$M" inspect -p anyapi -e /threads.search
+          "$M" inspect -p tikhub -e /api/v1/threads/web/search_posts
