@@ -174,7 +174,7 @@ class VerifiedPrivateV2SourceTests(unittest.TestCase):
         original=self.path.read_bytes()
         self.source()
         self.assertEqual(self.path.read_bytes(),original)
-        self.assertEqual(len(list(self.job.glob("*"))),5)
+        self.assertEqual(len(list(self.job.glob("*"))),6)
 
 
 if __name__=="__main__":
