@@ -15,7 +15,7 @@ from unittest.mock import patch
 
 HERE=Path(__file__).resolve().parent
 for p in (str(HERE),str(HERE.parents[2]/"video"),
-          str(HERE.parents[2]),str(HERE.parents[2]/"video"/"tests")):
+          str(HERE.parents[1]),str(HERE.parents[2]),str(HERE.parents[2]/"video"/"tests")):
     if p not in sys.path:sys.path.insert(0,p)
 
 import v2_receipt_preflight as pre
