@@ -5,10 +5,16 @@ on:
     paths:
       - 'integrations/materials/dispatcher.py'
       - 'integrations/materials/test_dispatcher.py'
+      - 'integrations/materials/studio_audio_lock.py'
+      - 'integrations/materials/test_handoff.py'
+      - 'integrations/materials/test_studio_audio_lock.py'
       - 'integrations/materials/auto_script.py'
       - 'integrations/materials/test_auto_script.py'
       - 'integrations/materials/catalog.py'
       - 'integrations/materials/handoff.py'
+      - 'integrations/materials/studio_audio_lock.py'
+      - 'integrations/materials/test_handoff.py'
+      - 'integrations/materials/test_studio_audio_lock.py'
       - 'integrations/materials/test_catalog.py'
       - '.github/workflows/simba-video-stage-dispatch.yml'
   push:
@@ -37,6 +43,10 @@ jobs:
         with:
           python-version: '3.12'
       - run: python3 -m unittest discover -s integrations/materials -p test_dispatcher.py -v
+      - name: Studio canonical audio lock + legacy handoff regressions
+        run: |
+          python3 -m unittest discover -s integrations/materials -p test_handoff.py -v
+          python3 -m unittest discover -s integrations/materials -p test_studio_audio_lock.py -v
       - run: python3 integrations/materials/catalog.py check
       - name: Verify local-AI drafting privacy, first-stage gate and source checks
         run: python3 -m unittest discover -s integrations/materials -p test_auto_script.py -v
@@ -68,6 +78,8 @@ jobs:
       - name: Validate real projects and safe dispatcher
         run: |
           python3 -m unittest discover -s integrations/materials -p test_dispatcher.py -v
+          python3 -m unittest discover -s integrations/materials -p test_handoff.py -v
+          python3 -m unittest discover -s integrations/materials -p test_studio_audio_lock.py -v
           python3 integrations/materials/catalog.py check
       - name: Dispatch changed project handoffs (create at most one public task per revision)
         env:
