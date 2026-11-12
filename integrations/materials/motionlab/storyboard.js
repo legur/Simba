@@ -640,7 +640,7 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  });
  // Deferred scripts execute in document order; the Drive bridge follows this
  // editor, so project loading must wait until all deferred scripts are ready.
- if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',openProject,{once:true});
+ if(document.readyState!=='complete')document.addEventListener('DOMContentLoaded',openProject,{once:true});
  else openProject();
 }
 wire();
