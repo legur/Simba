@@ -333,3 +333,86 @@ def store_applied_ack(svc,bundle,receipt):
                           mime={"application/json"},filename=name)
     ensure(actual==raw,"V2_APPLIED_ACK_COLLISION_AFTER_COMMIT")
     return {"id":file_id,"sha256":hashlib.sha256(raw).hexdigest()}
+
+
+def process_owner_v2_receipt(svc,workspace_root,private_root,
+                             receipt_file_id,github_token="",*,apply=False):
+    """Trust-gated handoff: Drive receipt -> real media replay -> optional CAS.
+
+    Default NO WRITE. The apply path is callable ONLY by a trusted private
+    owner worker with pre-provisioned private original MP4/WAV, offline ASR
+    models and a narrowly scoped GitHub contents-write token.
+    """
+    bundle=intake.inspect_receipt(svc,receipt_file_id)
+    context,spec,report=intake.replay_private_canonical(
+        workspace_root,private_root,bundle)
+    ensure(report.get("render_authorized") is False,
+           "V2_SOURCE_REPLAY_NOT_RENDER_SAFE")
+    if not apply:
+        return {
+            "status":"V2_PRIVATE_SOURCE_REPLAY_PASSED_NO_WRITE",
+            "project_id":bundle["project_id"],
+            "receipt_id":bundle["receipt_id"],
+            "selection_sha256":bundle["selection_sha256"],
+            "spec_sha256":v2.digest(spec),
+            "owner_approval_authenticated":True,
+            "automatic_audio_qa_required":True,
+            "original_video_replayed":True,
+            "canonical_applied":False,"render_authorized":False,
+            "published":False,"paid_calls":0,
+        }
+    ensure(isinstance(github_token,str) and len(github_token)>25,
+           "V2_GITHUB_TOKEN_MISSING")
+    refs=stage_all_private_references(svc,bundle,spec)
+    candidate,outcome=prepare_canonical_candidate(
+        workspace_root,private_root,bundle,refs)
+    committed=github_cas_from_checked_workspace(
+        workspace_root,bundle,candidate,github_token,apply=True)
+    # If this final Drive ACK fails AFTER the CAS, report an ambiguous
+    # post-commit state rather than saying no canonical mutation occurred.
+    try:
+        ack=finish_applied_ack(svc,bundle,committed,refs)
+    except Exception:
+        raise V2CasError("V2_CAS_COMMITTED_ACK_PENDING_CHECK_GITHUB") from None
+    return {
+        "status":ack["status"],
+        "project_id":bundle["project_id"],
+        "receipt_id":bundle["receipt_id"],
+        "selection_sha256":bundle["selection_sha256"],
+        "canonical_applied":True,
+        "commit_sha":ack["commit_sha"],
+        "private_ack_file_id":ack["private_ack_file_id"],
+        "render_authorized":False,"published":False,
+        "paid_calls":0,
+    }
+
+
+def main():
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--receipt-file-id",required=True)
+    parser.add_argument("--private-root",required=True,
+                        help="OWNER-PRIVATE staged verified WAV/MP4 workspace, OUTSIDE GitHub")
+    parser.add_argument("--apply",action="store_true",
+                        help="Explicitly commit one canonical edit-choice via GitHub SHA CAS")
+    args=parser.parse_args()
+    try:
+        import issue_ticket
+        root=HERE.parents[3]
+        result=process_owner_v2_receipt(
+            issue_ticket.drive(),root,Path(args.private_root),
+            args.receipt_file_id,os.environ.get("GITHUB_TOKEN",""),
+            apply=args.apply)
+        # Never print selection, audio source, bearer capability or private URLs.
+        print(json.dumps(result,sort_keys=True))
+        return 0
+    except (V2CasError,intake.V2InboxError,ValueError,KeyError,OSError) as err:
+        reason=str(err)
+        if not re.fullmatch(r"[A-Z0-9_]{4,90}",reason):
+            reason="V2_CANONICAL_IMPORT_BLOCKED"
+        print("SIMBA_V2_OWNER_IMPORT_BLOCKED:"+reason,file=sys.stderr)
+        return 2
+
+
+if __name__=="__main__":
+    raise SystemExit(main())
