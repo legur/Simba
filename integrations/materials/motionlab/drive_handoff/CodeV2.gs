@@ -16,7 +16,7 @@ const V2 = Object.freeze({
   selectionSchema:'bontours.motionlab.selection/v2',
   replyType:'SIMBA_DRIVE_V2_RECEIPT',
   maxBytes:140000,
-  maxScenes:8
+  maxScenes:12
 });
 function checkV2Ticket(id,token) {
   if(typeof id!=='string'||!/^[A-Za-z0-9_-]{15,100}$/.test(id)
@@ -113,21 +113,29 @@ function v2Source(ticket) {
     signatures.add(canonical(option.scenes));
     verifyV2Scenes(option.scenes,materials);
   }
+  // Preview assets are UNIQUE video files, not the number of scenes.
+  // Reusing an original clip never sends it twice or requires new A2E.
   const previews=source.preview_assets||[];
-  if(!Array.isArray(previews)||previews.length!==scenes.length)
+  if(!Array.isArray(previews)||!previews.length||previews.length>scenes.length)
     fail('V2_PREVIEW_MANIFEST_INVALID');
-  let total=0;
-  for(let i=0;i<previews.length;i++){
-    const a=previews[i],s=scenes[i];
-    if(!a||a.asset_id!==s.asset_id||a.sha256!==s.media.asset_sha256
+  let total=0;const files=new Map();
+  for(const a of previews){
+    if(!a||!validIdentifier(a.asset_id)||files.has(a.asset_id)
+      ||!/^[a-f0-9]{64}$/.test(a.sha256||'')
       ||!validIdentifier(a.file_id)||a.file_id.length<15
       ||a.mime_type!=='video/mp4'
       ||!Number.isInteger(a.size_bytes)||a.size_bytes<1024
       ||a.size_bytes>20*1024*1024)
       fail('V2_PREVIEW_MANIFEST_INVALID');
-    total+=a.size_bytes;
+    files.set(a.asset_id,a);total+=a.size_bytes;
   }
-  if(total>120*1024*1024)fail('V2_PREVIEW_MANIFEST_INVALID');
+  if(total>120*1024*1024||files.size!==mediaHashes.size)
+    fail('V2_PREVIEW_MANIFEST_INVALID');
+  for(const s of scenes){
+    const a=files.get(s.asset_id);
+    if(!a||a.sha256!==s.media.asset_sha256)
+      fail('V2_PREVIEW_MANIFEST_INVALID');
+  }
   return source;
 }
 function verifyV2Scenes(scenes,materials) {
