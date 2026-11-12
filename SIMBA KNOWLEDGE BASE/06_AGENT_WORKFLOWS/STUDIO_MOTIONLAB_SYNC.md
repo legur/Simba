@@ -1,4 +1,7 @@
 # Studio ↔ Simba Motion Lab — единый контракт подготовки монтажа
+
+> **Актуально на 12.11.2026:** **Studio и Motion Lab — один редактор**, а `Simba / Dispatcher` — отдельная функция оркестрации. Разделы ниже описывают этапы разработки v1 и содержат устаревшие гипотезы (включая раздельные Studio/Motion Lab, SQLite server и ожидание отсутствующего HTTPS receiver). Принятое разграничение и незавершенные gates v2: [STUDIO_MOTIONLAB_MONTAGE_OWNERSHIP_V2.md](STUDIO_MOTIONLAB_MONTAGE_OWNERSHIP_V2.md). **Рабочий v1**: приватный Google Apps Script `/exec`, Drive Inbox и немедленный GitHub workflow_dispatch; 12.11.2026 backend replay → FFmpeg → private MP4/QA **PASS** (run 43232685698, owner review еще требуется). Это НЕ production v2 audio-alignment/selection/APPLIED. Не включать старые Wix-login, Wix CMS poller или Python SQLite relay.
+
 Версия: 2026-11-10 · Уточнение Leo: готовые клипы — результат Ф2У (A2E) · Статус: PROCESS_ALIGNED / IMPLEMENTATION_PARTIALIAL
 Ответственные контексты: отдельный чат **Studio** (подготовительный интерактивный модуль) и
 **Simba Киностудия / PR #105** (GitHub/Google Drive, контракты этапов и производственный монтаж).
