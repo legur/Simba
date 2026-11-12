@@ -1,0 +1,77 @@
+name: MotionLab Google Apps Script live smoke (no paid calls)
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/motionlab-drive-live-smoke.yml'
+      - 'integrations/materials/motionlab/drive_handoff/live_smoke.py'
+      - 'integrations/materials/motionlab/drive_handoff/notify_montage.py'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check published Apps Script GET and reject a forged test ticket
+        shell: bash
+        env:
+          RECEIVER: https://script.google.com/macros/s/AKfycbwf4RNyK_76ASvV9k-0rv2Tc-F_m-_v8TqQyWg5t0G-t5wibx7IgpXSJo2GG6Dcc1Wc/exec
+        run: |
+          python3 - <<'PY'
+          import os, urllib.request, urllib.parse, urllib.error
+          u=os.environ["RECEIVER"]
+          def request(method,data=None):
+              req=urllib.request.Request(u,data=data,method=method,headers={
+                  "User-Agent":"Simba-MotionLab-Negative-Smoke/1.0",
+                  "Content-Type":"application/x-www-form-urlencoded"})
+              try:
+                  with urllib.request.urlopen(req,timeout=24) as response:
+                      return response.status,response.url,response.read(30000).decode("utf-8","replace")
+              except urllib.error.HTTPError as e:
+                  return e.code,e.url,e.read(1200).decode("utf-8","replace")
+          code,url,body=request("GET")
+          get_ok=code==200 and "Simba MotionLab secure Drive ingress" in body
+          print("GET HTTP:",code,"expected service banner:",get_ok)
+          if not get_ok:
+              raise SystemExit("Apps Script GET did not return expected receiver banner")
+          bad={
+              "nonce":"11111111-1111-4111-8111-111111111111",
+              "ticket_id":"INVALID_TEST_ONLY",
+              "ticket_token":"0"*64,
+              "selection_sha256":"0"*64,
+              "selection_json":"{}",
+          }
+          code,url,body=request("POST",urllib.parse.urlencode(bad).encode())
+          rejected=code==200 and "SIMBA_DRIVE_INGRESS_RECEIPT" in body and "REJECTED" in body and any(x in body for x in ("INVALID_TICKET", "TICKET_NOT_FOUND", "TICKET_REJECTED"))
+          print("POST invalid ticket HTTP:",code,"response_receipt:", "SIMBA_DRIVE_INGRESS_RECEIPT" in body, "rejected:", "REJECTED" in body, "expected code:", any(x in body for x in ("INVALID_TICKET", "TICKET_NOT_FOUND", "TICKET_REJECTED")))
+          if not rejected:
+              raise SystemExit("Invalid token was not verifiably rejected by Apps Script")
+          print("PASS - Live receiver reachable, forged ticket refused, no Drive write attempted")
+          PY
+
+  positive_drive_round_trip:
+    needs: verify
+    # Secrets only for a trusted same-repository PR; never untrusted forks.
+    if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Install official Drive OAuth client
+        run: python -m pip install --disable-pip-version-check 'google-api-python-client>=2.140,<3' 'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+      - name: Test actual Apps Script write, Drive readback, retry, delete
+        env:
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+        run: |
+          python integrations/materials/motionlab/drive_handoff/live_smoke.py
