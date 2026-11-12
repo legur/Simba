@@ -1,0 +1,149 @@
+name: Simba verified voice and music to Montage (NO PAID CALLS)
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: "Canonical approved project"
+        required: true
+        type: string
+      selection_manifest_file_id:
+        description: "Owner-private Google Drive selection/rights JSON file ID"
+        required: true
+        type: string
+      selection_manifest_sha256:
+        description: "SHA-256 of actual approved private selection manifest"
+        required: true
+        type: string
+  pull_request:
+    paths:
+      - '.github/workflows/simba-voice-music-writeback.yml'
+      - 'integrations/materials/voice_music_writeback.py'
+      - 'integrations/materials/test_voice_music_writeback.py'
+      - 'integrations/materials/handoff.py'
+      - 'integrations/video/simba_voice.py'
+      - 'integrations/video/music_input.py'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-verified-audio-writeback-global
+  cancel-in-progress: false
+
+jobs:
+  test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Verify actual PCM WAV, private Drive byte receipts and Music Editor approval
+        run: python -m unittest discover -s integrations/materials -p test_voice_music_writeback.py -v
+
+  writeback:
+    # Private approval file already exists. This step never synthesizes,
+    # downloads a commercial music source, invokes A2E or publishes a reel.
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      github.repository == 'legur/Simba' &&
+      github.actor == 'legur' &&
+      github.triggering_actor == 'legur' &&
+      github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      issues: read
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Strict canonical checkout and read-only audio tools
+        shell: bash
+        env:
+          PROJECT_ID: ${{ inputs.project_id }}
+          MANIFEST_ID: ${{ inputs.selection_manifest_file_id }}
+          MANIFEST_SHA: ${{ inputs.selection_manifest_sha256 }}
+        run: |
+          set -euo pipefail
+          [[ "$PROJECT_ID" =~ ^[a-z0-9][a-z0-9-]{0,63}$ ]]
+          [[ "$MANIFEST_ID" =~ ^[A-Za-z0-9_-]{10,128}$ ]]
+          [[ "$MANIFEST_SHA" =~ ^[0-9a-f]{64}$ ]]
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$GITHUB_SHA"
+          test -z "$(git status --porcelain)"
+          test -f "campaigns/$PROJECT_ID/project.json"
+          python -m pip install --disable-pip-version-check \
+            'google-api-python-client>=2.140,<3' \
+            'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+          if ! command -v ffprobe; then
+            sudo apt-get update -qq
+            sudo apt-get install -y ffmpeg
+          fi
+          command -v ffprobe
+      - name: Private Drive source and approval verification then atomic project stage write
+        shell: bash
+        env:
+          PROJECT_ID: ${{ inputs.project_id }}
+          MANIFEST_ID: ${{ inputs.selection_manifest_file_id }}
+          MANIFEST_SHA: ${{ inputs.selection_manifest_sha256 }}
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python integrations/materials/voice_music_writeback.py \
+            --project "$PROJECT_ID" \
+            --manifest-file-id "$MANIFEST_ID" \
+            --manifest-sha256 "$MANIFEST_SHA" \
+            --apply --report "$RUNNER_TEMP/simba-voice-music-report.json"
+          test "$(git diff --name-only)" = "campaigns/$PROJECT_ID/project.json"
+          python integrations/materials/catalog.py check
+          python integrations/materials/handoff.py --report-only "$PROJECT_ID"
+      - name: Commit only verified Voice/Music project record
+        shell: bash
+        env:
+          PROJECT_ID: ${{ inputs.project_id }}
+        run: |
+          set -euo pipefail
+          test "$(git ls-remote origin refs/heads/main | cut -f1)" = "$GITHUB_SHA"
+          git config user.name "simba-studio-actions"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- "campaigns/$PROJECT_ID/project.json"
+          test "$(git diff --cached --name-only)" = "campaigns/$PROJECT_ID/project.json"
+          git commit -m "chore(studio): approved voice and music archived; route montage for $PROJECT_ID"
+          git push origin HEAD:main
+      - name: Redacted receipt without voice, music or private links
+        if: always()
+        shell: bash
+        run: |
+          if [ -f "$RUNNER_TEMP/simba-voice-music-report.json" ]; then
+            echo '### Simba verified Voice/Music to Montage' >> "$GITHUB_STEP_SUMMARY"
+            python - "$RUNNER_TEMP/simba-voice-music-report.json" >> "$GITHUB_STEP_SUMMARY" <<'PY'
+          import json,sys
+          report=json.load(open(sys.argv[1],encoding='utf-8'))
+          for k in ('status','project_id','selected_text_option',
+                    'selected_music_option','voice_profile','next_recipient',
+                    'paid_calls','project_written'):
+              print(f'{k}: {report.get(k)}')
+          PY
+          fi
+      - name: Preserve only non-sensitive status metadata
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: simba-voice-music-writeback-metadata
+          path: ${{ runner.temp }}/simba-voice-music-report.json
+          retention-days: 14
+          if-no-files-found: warn
