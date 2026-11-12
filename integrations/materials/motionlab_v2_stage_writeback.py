@@ -95,9 +95,27 @@ def source_context(root:Path,private_root:Path,project_id:str,request_id:str):
                                    spec,media,job)
     materials["audio_revision_sha256"] = audio_receipt["audio_revision_sha256"]
     materials["audio_preflight_status"] = audio_receipt["status"]
+    # No timing approval is inferred from a verified WAV or CTC draft.
+    # Only a separate, owner-private per-word listening review, explicitly
+    # tied to current source/draft/approved audio SHA, can advance this gate.
+    # Evidence stays private; the client receives bounded SHA/status only.
+    import motionlab_audio_listening_qa as listening_qa
     materials["audio_alignment_status"] = "TIMINGS_NOT_VERIFIED"
+    listening_receipt = None
+    if listening_qa.private_review_presence(job):
+        try:
+            alignment, listening_receipt = listening_qa.verify_owner_private_listening_qa(
+                project, job, root)
+        except (listening_qa.ListeningQAError, ValueError, KeyError):
+            raise V2SourceError("V2_INDEPENDENT_LISTENING_QA_NOT_VERIFIED") from None
+        if listening_receipt.get("status") != "AUDIO_ALIGNMENT_VERIFIED_BY_EXPLICIT_OWNER_LISTENING":
+            raise V2SourceError("V2_INDEPENDENT_LISTENING_QA_NOT_VERIFIED")
+        materials["audio_alignment_status"] = "AUDIO_ALIGNMENT_VERIFIED"
+        materials["audio_alignment_sha256"] = v2.digest(alignment)
+        materials["audio_alignment_qa_sha256"] = listening_receipt["qa_evidence_sha256"]
     return {"project":project,"packet":packet,"job":job,"spec":spec,
-            "media":media,"materials":materials,"audio_receipt":audio_receipt}
+            "media":media,"materials":materials,"audio_receipt":audio_receipt,
+            "listening_receipt":listening_receipt}
 
 
 def check_current_v2(root:Path,private_root:Path,project_id:str,
