@@ -13,7 +13,7 @@ permissions:
 jobs:
   replay:
     # Run only once, from the trusted repository branch. No forks.
-    if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test/motionlab-alaska-immediate-dispatch-run-20261112' }}
+    if: ${{ github.event.action == 'opened' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test/motionlab-alaska-immediate-dispatch-run-20261112' }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -31,3 +31,32 @@ jobs:
           GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
           GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
         run: python integrations/materials/motionlab/drive_handoff/live_approved_alaska_active_queue.py
+
+  check_receiver_response_shape:
+    if: ${{ github.event.action == 'synchronize' && github.event.pull_request.head.repo.full_name == github.repository && github.head_ref == 'test/motionlab-alaska-immediate-dispatch-run-20261112' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Inspect ONLY malformed test ticket response without secrets
+        shell: bash
+        run: |
+          python - <<'PY'
+          import urllib.request,urllib.parse
+          u='https://script.google.com/macros/s/AKfycbwf4RNyK_76ASvV9k-0rv2Tc-F_m-_v8TqQyWg5t0G-t5wibx7IgpXSJo2GG6Dcc1Wc/exec'
+          data=urllib.parse.urlencode({
+            'nonce':'11111111-1111-4111-8111-111111111111',
+            'ticket_id':'Z'*32,'ticket_token':'0'*64,
+            'selection_sha256':'0'*64,'selection_json':'{}'
+          }).encode()
+          try:
+            with urllib.request.urlopen(urllib.request.Request(
+              u,data=data,headers={'Content-Type':'application/x-www-form-urlencoded'}),timeout=28) as response:
+              html=response.read(16000).decode('utf-8','replace')
+              print('HTTP',response.status,'LENGTH',len(html))
+              print('MALFORMED_TEST_ONLY_RESPONSE_PREFIX',repr(html[:1100]))
+              print('HAS_RECEIPT_MARKER','SIMBA_DRIVE_INGRESS_RECEIPT' in html)
+              print('HAS_MESSAGE_JS','var msg=' in html)
+          except Exception as e:
+            print('MALFORMED_TEST_ONLY_HTTP_FAILED',type(e).__name__)
+            raise SystemExit(2)
+          PY
