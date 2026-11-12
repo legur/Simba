@@ -2,7 +2,7 @@ name: Owner-approved Alaska active-queue one-shot backend replay
 
 on:
   pull_request:
-    types: [opened]
+    types: [opened, synchronize]
     paths:
       - '.github/workflows/motionlab-alaska-active-queue-test.yml'
       - 'integrations/materials/motionlab/drive_handoff/live_approved_alaska_active_queue.py'
