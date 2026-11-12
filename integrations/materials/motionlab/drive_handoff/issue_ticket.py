@@ -77,7 +77,7 @@ def upload(svc,folder,filename,data):
 def issue(svc,launch_id,now=None):
     source=read_approved_launch(svc,launch_id)
     now=now or dt.datetime.now(dt.timezone.utc)
-    expires=now+dt.timedelta(minutes=20)
+    expires=now+dt.timedelta(hours=3)
     token=secrets.token_hex(32)
     ticket={
       "schema":"bontours.motionlab.drive-ticket/v1","state":"ISSUED",
