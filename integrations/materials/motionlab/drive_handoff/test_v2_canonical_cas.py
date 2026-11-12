@@ -207,11 +207,11 @@ class V2AtomicWritebackTests(unittest.TestCase):
             "receipt_id":self.bundle["selection_contract_receipt_id"],
             "render_authorized":False,
         }
-        with patch.object(intake,"inspect_receipt",return_value=self.bundle),\\
+        with patch.object(intake,"inspect_receipt",return_value=self.bundle),\
              patch.object(intake,"replay_private_canonical",
                           return_value=({"project":self.base},
-                            {"packageId":self.bundle["project_id"]},payload)),\\
-             patch.object(cas,"stage_all_private_references") as saved,\\
+                            {"packageId":self.bundle["project_id"]},payload)),\
+             patch.object(cas,"stage_all_private_references") as saved,\
              patch.object(cas,"github_cas_from_checked_workspace") as commit:
             result=cas.process_owner_v2_receipt(
                 object(),Path(self.root.name),Path("/private"),
@@ -243,19 +243,19 @@ class V2AtomicWritebackTests(unittest.TestCase):
         events=[]
         with patch.object(intake,"inspect_receipt",
                           side_effect=lambda *a,**kw:(events.append("private_receipt")
-                             or self.bundle)),\\
+                             or self.bundle)),\
              patch.object(intake,"replay_private_canonical",
                           side_effect=lambda *a,**kw:(events.append("media_replay")
-                             or ({}, {"packageId":self.bundle["project_id"]},payload))),\\
+                             or ({}, {"packageId":self.bundle["project_id"]},payload))),\
              patch.object(cas,"stage_all_private_references",
                           side_effect=lambda *a,**kw:(events.append("stage_refs")
-                             or self.refs)),\\
+                             or self.refs)),\
              patch.object(cas,"prepare_canonical_candidate",
                           side_effect=lambda *a,**kw:(events.append("candidate")
-                             or (self.candidate,{}))),\\
+                             or (self.candidate,{}))),\
              patch.object(cas,"github_cas_from_checked_workspace",
                           side_effect=lambda *a,**kw:(events.append("commit")
-                             or committed)),\\
+                             or committed)),\
              patch.object(cas,"finish_applied_ack",
                           side_effect=lambda *a,**kw:(events.append("ack") or ack)):
             result=cas.process_owner_v2_receipt(
@@ -278,14 +278,14 @@ class V2AtomicWritebackTests(unittest.TestCase):
             "commit_sha":"a"*40,"new_blob_sha":"b"*40,
             "candidate_sha256":"c"*64,
         }
-        with patch.object(intake,"inspect_receipt",return_value=self.bundle),\\
+        with patch.object(intake,"inspect_receipt",return_value=self.bundle),\
              patch.object(intake,"replay_private_canonical",
-                          return_value=({},{"packageId":self.bundle["project_id"]},payload)),\\
-             patch.object(cas,"stage_all_private_references",return_value=self.refs),\\
+                          return_value=({},{"packageId":self.bundle["project_id"]},payload)),\
+             patch.object(cas,"stage_all_private_references",return_value=self.refs),\
              patch.object(cas,"prepare_canonical_candidate",
-                          return_value=(self.candidate,{})),\\
+                          return_value=(self.candidate,{})),\
              patch.object(cas,"github_cas_from_checked_workspace",
-                          return_value=committed),\\
+                          return_value=committed),\
              patch.object(cas,"finish_applied_ack",
                           side_effect=OSError("temporary private Drive outage")):
             with self.assertRaisesRegex(cas.V2CasError,
