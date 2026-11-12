@@ -71,7 +71,7 @@ class RenderChecks(unittest.TestCase):
         record,launch=fixture();record["receipt_id"]="wrong"
         with patch.object(m,"validate_receipt",return_value=record),\
              patch.object(m,"source_launch",return_value=launch):
-            with self.assertRaisesRegex(m.RenderError,"NOT_EXACT_OWNER_APPROVED_SELECTION"):
+            with self.assertRaisesRegex(m.RenderError,"BASELINE_APPROVAL_MISMATCH"):
                 m.prepare(object(),"private-receipt")
 
     def test_unimplemented_layout_changes_blocked(self):
@@ -81,6 +81,40 @@ class RenderChecks(unittest.TestCase):
              patch.object(m,"source_launch",return_value=launch):
             with self.assertRaisesRegex(m.RenderError,"UNIMPLEMENTED_VISUAL_OVERRIDES"):
                 m.prepare(object(),"private-receipt")
+
+    def test_exact_replay_of_prior_alaska_selection_only(self):
+        original,launch=fixture()
+        # Replay input may have a new receipt+selection hash due to a new
+        # owner click timestamp; scene/effect data must be byte-equivalent.
+        original["selection"]["decision"]["user_selected_at"]="2026-11-12T08:05:23Z"
+        new=copy.deepcopy(original)
+        new["receipt_id"]="new-verified-private-uuid"
+        new["selection"]["decision"]["user_selected_at"]="2026-11-12T14:05:23Z"
+        new["selection_sha256"]="b"*64
+        profile=m.get_profile("alaska-voyager-2027")
+        ticket={"source_launch_file_id":profile["exact_replay_test"]["source_launch_file_id"],
+                "source_launch_sha256":profile["exact_replay_test"]["source_launch_sha256"]}
+        with patch.object(m,"validate_receipt",return_value=original),\
+             patch.object(m,"read_private",return_value=ticket):
+            self.assertTrue(m.verify_exact_replay(object(),new,profile))
+        new["selection"]["scenes"][1]["transition"]["id"]="wipe"
+        with patch.object(m,"validate_receipt",return_value=original),\
+             patch.object(m,"read_private",return_value=ticket):
+            with self.assertRaisesRegex(m.RenderError,"REPLAY_SELECTION_NOT_IDENTICAL_TO_APPROVED"):
+                m.verify_exact_replay(object(),new,profile)
+
+    def test_replay_does_not_accept_changed_private_source(self):
+        original,launch=fixture()
+        original["selection"]["decision"]["user_selected_at"]="2026-11-12T08:05:23Z"
+        new=copy.deepcopy(original);new["receipt_id"]="replay-2"
+        new["selection_sha256"]="b"*64
+        profile=m.get_profile("alaska-voyager-2027")
+        ticket={"source_launch_file_id":"untrusted-private-project",
+                "source_launch_sha256":"f"*64}
+        with patch.object(m,"validate_receipt",return_value=original),\
+             patch.object(m,"read_private",return_value=ticket):
+            with self.assertRaisesRegex(m.RenderError,"REPLAY_SOURCE_NOT_PINNED"):
+                m.verify_exact_replay(object(),new,profile)
 
     def test_subtitle_profile_produces_real_ass_and_facts(self):
         profile=m.get_profile("alaska-voyager-2027")
