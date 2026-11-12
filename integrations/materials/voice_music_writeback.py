@@ -36,6 +36,7 @@ import handoff
 import auto_script
 import rafael_archive
 import a2e_writeback
+import studio_v2_audio_stage
 import simba_voice
 import simba_voice_issue
 
@@ -286,7 +287,8 @@ def _probe_music(raw: bytes, mime: str) -> float:
 
 def build_candidate(root: Path, project_id: str, manifest_id: str,
                     manifest_sha256: str, *, drive=None,
-                    probe_music=None, voice_issue_fetch=None) -> tuple[Path, dict, dict]:
+                    probe_music=None, voice_issue_fetch=None,
+                    v2_approved_text_source: str | None = None) -> tuple[Path, dict, dict]:
     """Reconcile private selected voice/music and produce canonical project update."""
     if not isinstance(project_id, str) or not ID.fullmatch(project_id):
         raise AudioHandoffError("invalid project ID")
@@ -396,6 +398,16 @@ def build_candidate(root: Path, project_id: str, manifest_id: str,
         "voice_profile": voice["profile"],
         "music_license_evidence": rights,
     }
+    if v2_approved_text_source is not None:
+        # The existing private manifest and owner Voice Issue already verified
+        # the EXACT selected narration text. A v2 lock is allowed only when
+        # that exact text SHA is also pinned in the canonical source list.
+        # This is opt-in; existing voice/music v1 records are unchanged.
+        result = studio_v2_audio_stage.bind_verified_voice_music(
+            result,
+            approved_text_source_path=v2_approved_text_source,
+            approved_voice_text_sha256=voice["text_sha256"])
+
     result["stage"] = "VOICE_AND_MUSIC_MEDIA_VERIFIED"
     result["next_action"] = (
         "MONTAGE: show three edit/transition/caption approaches; "
@@ -423,6 +435,9 @@ def build_candidate(root: Path, project_id: str, manifest_id: str,
         "music_license_legally_certified_by_code": False,
         "asset_ids": new_ids, "next_recipient": "MONTAGE",
         "next_stage": "edit_choice", "paid_calls": 0,
+        "v2_audio_lock_metadata": (
+            "VALID_METADATA_NOT_ALIGNED" if v2_approved_text_source is not None
+            else "LEGACY_V1_NO_CANONICAL_AUDIO_LOCK"),
         "rendered": False, "published": False, "project_written": False,
     }
     return path, result, report
@@ -434,6 +449,8 @@ def main(argv=None) -> int:
     parser.add_argument("--project", required=True)
     parser.add_argument("--manifest-file-id", required=True)
     parser.add_argument("--manifest-sha256", required=True)
+    parser.add_argument("--v2-approved-text-source",
+                        help="Opt-in canonical approved narration source file; SHA must exactly match owner-approved voice Issue text")
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--report", type=Path)
     args = parser.parse_args(argv)
@@ -442,7 +459,8 @@ def main(argv=None) -> int:
         path = catalog.inside(root, f"campaigns/{args.project}/project.json")
         before = digest(path.read_bytes())
         target, updated, report = build_candidate(
-            root, args.project, args.manifest_file_id, args.manifest_sha256)
+            root, args.project, args.manifest_file_id, args.manifest_sha256,
+            v2_approved_text_source=args.v2_approved_text_source)
         if args.apply:
             a2e_writeback.apply_candidate(
                 root, target, updated, original_sha256=before)
