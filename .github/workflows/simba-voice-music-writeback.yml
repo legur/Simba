@@ -15,11 +15,17 @@ on:
         description: "SHA-256 of actual approved private selection manifest"
         required: true
         type: string
+      v2_approved_text_source:
+        description: "Optional canonical source.md path whose exact byte SHA equals the selected approved voice Issue text; blank keeps legacy v1"
+        required: false
+        type: string
   pull_request:
     paths:
       - '.github/workflows/simba-voice-music-writeback.yml'
       - 'integrations/materials/voice_music_writeback.py'
       - 'integrations/materials/test_voice_music_writeback.py'
+      - 'integrations/materials/studio_v2_audio_stage.py'
+      - 'integrations/materials/test_studio_v2_audio_stage.py'
       - 'integrations/materials/handoff.py'
       - 'integrations/video/simba_voice.py'
       - 'integrations/video/music_input.py'
@@ -44,7 +50,9 @@ jobs:
         with:
           python-version: '3.12'
       - name: Verify actual PCM WAV, private Drive byte receipts and Music Editor approval
-        run: python -m unittest discover -s integrations/materials -p test_voice_music_writeback.py -v
+        run: |
+          python -m unittest discover -s integrations/materials -p test_voice_music_writeback.py -v
+          python -m unittest discover -s integrations/materials -p test_studio_v2_audio_stage.py -v
 
   writeback:
     # Private approval file already exists. This step never synthesizes,
@@ -97,16 +105,22 @@ jobs:
           PROJECT_ID: ${{ inputs.project_id }}
           MANIFEST_ID: ${{ inputs.selection_manifest_file_id }}
           MANIFEST_SHA: ${{ inputs.selection_manifest_sha256 }}
+          V2_SOURCE: ${{ inputs.v2_approved_text_source }}
           GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
           GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
           GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          extra=()
+          if [ -n "$V2_SOURCE" ]; then
+            extra+=(--v2-approved-text-source "$V2_SOURCE")
+          fi
           python integrations/materials/voice_music_writeback.py \
             --project "$PROJECT_ID" \
             --manifest-file-id "$MANIFEST_ID" \
             --manifest-sha256 "$MANIFEST_SHA" \
+            "${extra[@]}" \
             --apply --report "$RUNNER_TEMP/simba-voice-music-report.json"
           test "$(git diff --name-only)" = "campaigns/$PROJECT_ID/project.json"
           python integrations/materials/catalog.py check
