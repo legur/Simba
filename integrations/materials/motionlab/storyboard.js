@@ -636,6 +636,23 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
   },
   asset:async(id,file)=>{const matches=state.scenes.filter(s=>s.asset===id);if(!matches.length)throw Error('Исходник отсутствует в проекте');for(const s of matches)await localFileChosen(file,s);},
   status:text=>{$('connectionTitle').textContent='Проект из закрытого Drive';$('connectionText').textContent=text;},
+  result:r=>{
+   if(!r||(state.project?.id&&r.project_id!==state.project.id))return;
+   const panel=$('driveRenderPanel'),status=$('driveRenderStatus');
+   const video=$('driveRenderVideo'),qa=$('driveRenderQa');
+   panel.hidden=false;
+   const privateDriveUrl=/^https:\/\/drive\.google\.com\/file\/d\/[A-Za-z0-9_-]{15,100}\/view$/;
+   if(r.status==='RENDER_READY' && privateDriveUrl.test(r.video_url||'') && privateDriveUrl.test(r.qa_url||'')
+     && /^[a-f0-9]{64}$/.test(r.sha256||'') && r.published===false){
+     status.textContent='Видео собрано, проверено и сохранено в закрытом Drive. Требуется просмотр перед публикацией.';
+     video.href=r.video_url;video.hidden=false;
+     qa.href=r.qa_url;qa.hidden=false;
+   }else{
+     video.hidden=true;qa.hidden=true;
+     status.textContent=r.status==='RENDER_PENDING'?'Видео еще не готово. Монтажер автоматически проверяет очередь Drive.':
+       'Для просмотра статуса требуется обновленная версия Google Apps Script.';
+   }
+  },
   busy:on=>{for(const id of ['overviewWorkspace','handoff'])$(id).inert=on;}
  });
  // Deferred scripts execute in document order; the Drive bridge follows this

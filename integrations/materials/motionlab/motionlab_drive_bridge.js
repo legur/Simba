@@ -104,7 +104,8 @@
       const receive=e=>{
         if(!allowedReply(e.origin)||e.data?.type!=='SIMBA_DRIVE_PROJECT_REPLY'||e.data?.nonce!==nonce)return;
         const data=e.data;cleanup();
-        if(data.status!==(operation==='load_project'?'PROJECT_READY':'ASSET_READY'))reject(Error('Drive: '+String(data.error_code||'INVALID_PROJECT_REPLY').slice(0,65)));
+        const valid=operation==='render_status'?['RENDER_READY','RENDER_PENDING'].includes(data.status):data.status===(operation==='load_project'?'PROJECT_READY':'ASSET_READY');
+        if(!valid)reject(Error('Drive: '+String(data.error_code||'INVALID_PROJECT_REPLY').slice(0,65)));
         else resolve(data);
       };
       const timer=setTimeout(()=>{cleanup();reject(Error('Нет ответа загрузчика проекта. Передача выбора не выполнялась.'));},60000);
@@ -146,7 +147,36 @@
         await api.asset(a.asset_id,new File([bytes],'project-'+i+'.mp4',{type:'video/mp4'}));
       }
       api.status('Проект открыт. Все клипы проверены. Выбор еще не передан в Montage.');
-    } catch(error){api.status('Проект не открыт полностью: '+String(error.message||error));}
+      // Read-only owner render status; no rendering is initiated by this call.
+      if(root.motionlabRenderPollStop)root.motionlabRenderPollStop();
+      let stopped=false,timer=null;
+      root.motionlabRenderPollStop=()=>{stopped=true;clearTimeout(timer);};
+      const poll=async()=>{
+        if(stopped)return;
+        try{
+          const reply=await readProjectPart(handoff,'render_status');
+          if(stopped)return;
+          api.result?.(reply);
+          if(reply.status==='RENDER_READY')return;
+        }catch(err){
+          // Older un-deployed Apps Script may reject status requests.
+          // Never claim a confirmed render without its private Drive receipt.
+          api.result?.({status:'RENDER_STATUS_UNAVAILABLE',project_id:data.launch.project_id});
+          return;
+        }
+        timer=setTimeout(poll,120000);
+      };
+      poll();
+    } catch(error){
+      api.status('Исходный проект недоступен: '+String(error.message||error));
+      // The 3-hour media ticket might have expired before the scheduled
+      // renderer completed. A separately bounded consumed-ticket read can
+      // still show the private result link without returning any original MP4.
+      try{
+        const rendered=await readProjectPart(handoff,'render_status');
+        api.result?.(rendered);
+      }catch{}
+    }
     finally{api.busy?.(false);}
   }
   root.MotionLabDrive = {ready,send,receipt,clearReceipt,openProjectLink,projectCapability};
