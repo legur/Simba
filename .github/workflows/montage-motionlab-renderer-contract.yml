@@ -22,6 +22,7 @@ on:
       - 'integrations/video/motionlab_auto_proposals.py'
       - 'integrations/video/tests/test_motionlab_auto_proposals.py'
       - 'integrations/video/tests/test_motionlab_alaska_scene_reuse.py'
+      - 'integrations/video/tests/test_motionlab_clip_playback.mjs'
       - 'integrations/materials/motionlab_v2_stage_writeback.py'
       - 'integrations/video/tests/test_motionlab_analysis_bundle.py'
       - 'integrations/video/make_video.py'
@@ -69,6 +70,7 @@ jobs:
           python -m py_compile integrations/video/make_video.py integrations/video/motionlab_render_contract.py integrations/video/motionlab_v2_contract.py integrations/video/motionlab_layout_contract.py integrations/video/motionlab_analysis_bundle.py integrations/video/motionlab_auto_proposals.py
           node --check integrations/video/template/film.js
           node --test integrations/video/tests/test_motionlab_subtitle_geometry.mjs
+          node --test integrations/video/tests/test_motionlab_clip_playback.mjs
           python -m unittest discover -s integrations/video/tests -p 'test_motion_lab_transitions.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_subtitle_styles.py' -v
       - name: New Motion Lab source-pinned zero-paid renderer preflight
