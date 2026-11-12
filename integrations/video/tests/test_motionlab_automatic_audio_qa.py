@@ -126,13 +126,11 @@ class IndependentASRValidationTests(unittest.TestCase):
 
     def test_timing_drift_and_asr_overlaps_block(self):
         asr = copy.deepcopy(self.asr)
-        asr["segments"][0]["words"][3]["start"] = 1.90
-        asr["segments"][0]["words"][3]["end"] = 2.05
+        # Shift the final word but preserve monotonic ASR timestamps to
+        # isolate disagreement between the two models from an overlap error.
+        asr["segments"][0]["words"][5]["start"] = 2.00
+        asr["segments"][0]["words"][5]["end"] = 2.53
         with self.assertRaisesRegex(qa.AutomaticQAError,"AUTO_QA_MODELS_DISAGREE"):
-            # Need keep the ASR monotonic to check actual model disagreement.
-            for j in (4,5):
-                asr["segments"][0]["words"][j]["start"] += .40
-                asr["segments"][0]["words"][j]["end"] += .40
             self.check(transcript=asr)
         asr = copy.deepcopy(self.asr)
         asr["segments"][0]["words"][2]["start"] = .18
