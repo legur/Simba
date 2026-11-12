@@ -65,6 +65,14 @@ jobs:
             python integrations/materials/motionlab/drive_handoff/notify_montage.py
           fi
 
+      - name: Ensure FFmpeg and fonts are available for free local Montage
+        run: |
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null || ! test -d /usr/share/fonts/truetype/dejavu; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core
+          fi
+          ffmpeg -hide_banner -version | head -n 1
+          ffprobe -hide_banner -version | head -n 1
       - name: Render verified owner-approved source-pinned selections with free FFmpeg
         env:
           GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
@@ -97,6 +105,14 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check 'google-api-python-client>=2.140,<3' 'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+      - name: Ensure FFmpeg and fonts are available for free local Montage
+        run: |
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null || ! test -d /usr/share/fonts/truetype/dejavu; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core
+          fi
+          ffmpeg -hide_banner -version | head -n 1
+          ffprobe -hide_banner -version | head -n 1
       - name: Render approved Alaska selection and verify private Drive readback
         env:
           GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
