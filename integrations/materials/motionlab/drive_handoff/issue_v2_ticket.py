@@ -47,21 +47,30 @@ def valid_source(source):
     if proposals.get("analysis",{}).get("status")!="REAL_VIDEO_AUTOMATICALLY_ANALYZED":
         raise original.TicketError("V2_SOURCE_NOT_AUTOMATICALLY_ANALYZED")
     previews=source.get("preview_assets")
-    if not isinstance(previews,list) or len(previews)!=len(materials["scenes"]):
+    if (not isinstance(previews,list) or not previews
+            or len(previews)>len(materials["scenes"])):
         raise original.TicketError("V2_PREVIEW_MANIFEST_INCOMPLETE")
-    ids=set()
+    ids={}
     total=0
-    for asset,scene in zip(previews,materials["scenes"]):
-        if (not isinstance(asset,dict) or asset.get("asset_id")!=scene["asset_id"]
-                or asset.get("sha256")!=scene["media"]["asset_sha256"]
+    for asset in previews:
+        if (not isinstance(asset,dict)
+                or not isinstance(asset.get("asset_id"),str)
+                or asset["asset_id"] in ids
+                or not isinstance(asset.get("sha256"),str)
+                or not contract.SHA.fullmatch(asset["sha256"])
                 or not SAFE.fullmatch(asset.get("file_id",""))
                 or asset.get("mime_type")!="video/mp4"
                 or type(asset.get("size_bytes")) is not int
-                or not 1024<=asset["size_bytes"]<=20*1024*1024
-                or asset["asset_id"] in ids):
+                or not 1024<=asset["size_bytes"]<=20*1024*1024):
             raise original.TicketError("V2_PREVIEW_ASSET_INVALID")
-        ids.add(asset["asset_id"])
+        ids[asset["asset_id"]]=asset
         total+=asset["size_bytes"]
+    for scene in materials["scenes"]:
+        clip=ids.get(scene["asset_id"])
+        if clip is None or clip["sha256"]!=scene["media"]["asset_sha256"]:
+            raise original.TicketError("V2_PREVIEW_ASSET_INVALID")
+    if len(ids)!=len({s["asset_id"] for s in materials["scenes"]}):
+        raise original.TicketError("V2_PREVIEW_ASSET_INVALID")
     if total>120*1024*1024:
         raise original.TicketError("V2_PREVIEW_ASSETS_TOO_LARGE")
     return source
