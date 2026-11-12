@@ -153,6 +153,19 @@ def check_current_v2(root:Path,private_root:Path,project_id:str,
     if ctx["materials"]!=materials:
         raise V2SourceError("Private materials changed since user opened Motion Lab")
     v2.validate_proposals_v2(materials,proposals)
+    if proposals.get("analysis",{}).get("status")=="REAL_VIDEO_AUTOMATICALLY_ANALYZED":
+        # The client may only *display* the three options. A trusted stage
+        # must independently rebuild their SHA-bound pixel evidence and
+        # creative plan from original private MP4 bytes before CAS/selection.
+        # Never accept self-attested video analysis from a browser payload.
+        import motionlab_auto_proposals as automatic
+        try:
+            actual, evidence = automatic.build_automated_proposals(
+                ctx["materials"], ctx["media"], ctx["job"])
+        except (ValueError, OSError):
+            raise V2SourceError("AUTOMATIC_PROPOSALS_SOURCE_RECHECK_FAILED") from None
+        if v2.digest(actual)!=v2.digest(proposals):
+            raise V2SourceError("AUTOMATIC_PROPOSALS_SOURCE_RECHECK_FAILED")
     if selection is None:
         return ctx,None,None
     # Product decision: accurately synchronized word timings must exist
