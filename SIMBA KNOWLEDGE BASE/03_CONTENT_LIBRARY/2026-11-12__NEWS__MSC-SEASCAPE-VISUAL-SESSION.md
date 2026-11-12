@@ -33,3 +33,15 @@ Create a premium square 1:1 documentary news poster, cinematic still-life of imp
 ### 5. 05. Газетная полоса
 
 Create a sophisticated 1:1 square editorial poster resembling a contemporary newspaper front page, cream and charcoal paper textures, abstract cutout silhouette of a cruise ship and a very subtle timeline (do not invent details), high-contrast black-and-cream grid. Single exact Russian headline 'ДЕЛО MSC SEASCAPE' at top, single exact subheading 'ФБР ВЕДЕТ РАССЛЕДОВАНИЕ' lower left. No extra text, no real news organization logos, no photos of people, no gore, no fake legal documents.
+
+## First preview generator output — 2026-11-12
+
+Renderer: ChatGPT image_gen, 5 source images returned.
+
+- Preview draft A: `file_000000009fb481f4b091d2ed68437437` / `/mnt/data/a_cinematic_moody_photorealistic_scene_a_long.png` — empty cabin corridor and towel trolley
+- Preview draft B: `file_0000000021bc8210957773264ddc4fa4` / `/mnt/data/a_cinematic_realistic_scene_in_a_narrow_modern_c.png` — synthetic dramatization of employee and man at cabin door
+- Preview draft C: `file_00000000022881f4b66ce83b423cb555` / `/mnt/data/a_cinematic_dramatic_realistic_photo_film_style.png` — synthetic dramatization of man with phone in corridor
+- Preview draft D: `file_0000000067888210a99d2ada19554cb8` / `/mnt/data/a_dramatic_cinematic_night_time_scene_a_large_ill.png` — generic stylized liner and law-enforcement boats
+- Preview draft E: `file_00000000c5ac82439feb107ef77a8474` / `/mnt/data/a_cinematic_realistic_photo_style_scene_at_a_port.png` — fictional illustration of agents boarding ship
+
+QA: ALL FIVE 1024x1536 portrait, not required 1:1; no approved short Russian title overlays, and variants B/C/D/E depict unverified staged documentary scenes (not admissible as factual photos). These are exploratory images only, not valid Rafael 1:1 previews or publication assets. The full production prompts 01–05 above remain proposed concepts, not fulfilled. NEXT_ACTION: create compliant 1:1 editorial, explicitly illustrative 5 Rafael previews with fact-safe image selection and exact short text, then Leo selects. STATUS: VISUAL_PREVIEW_QA_FAILED; approved text remains unchanged; FINAL_VISUAL_READY=NO.
