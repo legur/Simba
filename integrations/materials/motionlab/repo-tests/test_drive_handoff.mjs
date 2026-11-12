@@ -201,3 +201,67 @@ test('Project-link parser accepts exact fragment capabilities only; no login, th
  assert.match(client,/media\.asset_id!==a\.asset_id/);assert.match(client,/hash!==a\.sha256/);
  assert.match(client,/api\.busy\?\.\(true\)/);assert.match(client,/finally\{api\.busy\?\.\(false\)/);
 });
+
+test('Apps Script render status returns only private source-bound Drive result',()=>{
+ const e=environment();
+ const uuid='22222222-2222-4222-8222-222222222222';
+ const tokenData={project_id:'prague',session_id:'studio-prague',
+   source_fingerprint:'a'.repeat(64),
+   consumed_receipt_id:uuid,consumed_sha256:digest(canonical(chosen))};
+ const result={schema:'bontours.motionlab.drive-render-receipt/v1',
+   receipt_id:uuid,project_id:'prague',selection_sha256:tokenData.consumed_sha256,
+   video_sha256:'f'.repeat(64),status:'RENDERED_PENDING_OWNER_REVIEW',
+   published:false,video_file_id:'V'.repeat(30),qa_file_id:'Q'.repeat(30)};
+ const qa={schema:'bontours.motionlab.drive-automated-render/v1',
+   receipt_id:uuid,selection_sha256:tokenData.consumed_sha256,
+   sha256:result.video_sha256,drive_video_file_id:result.video_file_id,
+   technical_decode:'PASS',published:false,qa:'TECHNICAL_PASS_REQUIRES_FINAL_OWNER_REVIEW',
+   duration_seconds:43.366667};
+ const receipt={schema:'bontours.motionlab.drive-inbox/v1',
+   receipt_id:uuid,ticket_id:ticketId,project_id:'prague',session_id:'studio-prague',
+   source_fingerprint:'a'.repeat(64),selection_sha256:tokenData.consumed_sha256};
+ const makeFile=(folder,body,mime='application/json')=>({
+   getParents(){let count=0;return {hasNext(){return count===0},next(){count++;return {getId(){return folder}}}}},
+   getSharingAccess(){return 'PRIVATE'},
+   getSize(){return mime==='video/mp4'?1000000:JSON.stringify(body||{}).length},
+   getMimeType(){return mime},
+   getBlob(){return {getDataAsString(){return JSON.stringify(body)}}}
+ });
+ const fileMap=new Map([
+   [result.video_file_id,makeFile('1GMoSVogs0SKuTAXCdMVcG-U7bTn-IuCt',{},'video/mp4')],
+   [result.qa_file_id,makeFile('1GMoSVogs0SKuTAXCdMVcG-U7bTn-IuCt',qa)]
+ ]);
+ const folders=new Map([
+   ['1gYNUU3HUeWnu2jEcs1gEf4cu9LJEEPoD',
+      makeFile('1gYNUU3HUeWnu2jEcs1gEf4cu9LJEEPoD',receipt,'text/plain')],
+   ['1Ya87Y6FUUmstpSs8jG0mKvEVLRqTvwxH',
+      makeFile('1Ya87Y6FUUmstpSs8jG0mKvEVLRqTvwxH',result)]
+ ]);
+ e.ctx.DriveApp={
+   Access:{PRIVATE:'PRIVATE'},
+   getFileById(id){if(!fileMap.has(id))throw Error('missing');return fileMap.get(id)},
+   getFolderById(id){return {
+     getFilesByName(filename){
+       const row=folders.get(id),expected=id==='1gYNUU3HUeWnu2jEcs1gEf4cu9LJEEPoD'
+          ? 'motionlab-'+ticketId+'.json' : 'motionlab-'+uuid+'-render.json';
+       let consumed=false;
+       return {hasNext(){return filename===expected&&!consumed},
+               next(){consumed=true;return row}}
+     }
+   }}
+ };
+ const check=vm.runInContext('readRenderStatus',e.ctx);
+ const data=check({ticket_id:ticketId},tokenData);
+ assert.equal(data.status,'RENDER_READY');
+ assert.equal(data.published,false);
+ assert.equal(data.sha256,result.video_sha256);
+ assert.match(data.video_url,/^https:\/\/drive\.google\.com\/file\/d\//);
+ assert.doesNotMatch(JSON.stringify(data),new RegExp(token));
+ result.video_sha256='b'.repeat(64);
+ assert.throws(()=>check({ticket_id:ticketId},tokenData),/RENDER_QA_MISMATCH/);
+});
+test('Browser render status accepts no false APPLIED or public media',()=>{
+ assert.match(client,/RENDER_READY/);
+ assert.match(client,/render_status/);
+ assert.doesNotMatch(client,/auto_publish\s*:\s*true/);
+});
