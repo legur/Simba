@@ -120,7 +120,7 @@ test('Expiration or stale fingerprint rejected with no data written',()=>{
 test('HtmlService reply reaches the Wix ancestor across nested Google frames',()=>{
  const e=environment();
  const response=vm.runInContext('doPost',e.ctx)(e.request());
- const scriptText=response.html.match(/<script>([\\s\\S]*?)<\\/script>/)?.[1];
+ const scriptText=response.html.split('<script>')[1]?.split('</script>')[0];
  assert.ok(scriptText,'Apps Script must return executable receipt script');
  const deliveries=[];
  const wix={postMessage(data,origin){deliveries.push({data,origin})}};
@@ -138,8 +138,8 @@ test('HtmlService reply reaches the Wix ancestor across nested Google frames',()
  assert.doesNotMatch(JSON.stringify(deliveries),new RegExp(token));
 });
 test('MotionLab permits nested Google messages but verifies origin nonce and hash',()=>{
- assert.doesNotMatch(client,/e\\.source!==frame\\.contentWindow/);
- assert.match(client,/!allowedReply\\(e\\.origin\\)/);
- assert.match(client,/e\\.data\\?\\.nonce!==nonce/);
- assert.match(client,/data\\.selection_sha256!==hash/);
+ assert.ok(!client.includes('e.source!==frame.contentWindow'));
+ assert.ok(client.includes('!allowedReply(e.origin)'));
+ assert.ok(client.includes('e.data?.nonce!==nonce'));
+ assert.ok(client.includes('data.selection_sha256!==hash'));
 });
