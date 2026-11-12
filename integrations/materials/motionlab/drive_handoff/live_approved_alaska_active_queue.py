@@ -33,7 +33,7 @@ def stop(reason):
     raise SystemExit(2)
 
 def safe_private_file(svc,id,folder):
-    data=read_private(svc,id,folder,max_bytes=320000)
+    data=read_private(svc,id,folder,limit=320000)
     return data
 
 def post_selection(ticket_id, token, selection):
