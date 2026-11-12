@@ -67,3 +67,24 @@ After the automatic FFmpeg workflow has uploaded an MP4 and QA to private Drive,
 This change does not require any new cloud backend, OAuth scope, public Drive folder or paid API. It DOES require the user to copy the newest Code.gs to their existing Google Apps Script project and select Deploy > Manage deployments > Edit > New version > Deploy, preserving the same /exec URL. Current Google Drive OAuth keys cannot publish a new Apps Script deployment. Until that owner action, the updated Wix frontend shows render-status unavailable, rather than fabricating a result. The private links need the Google account with owner access to view the MP4.
 
 If the preview ticket expired before the result was ready, Studio can still query the bounded read-only status and show the owner-only video link when opened from the same original private project link. It does not reopen the private source preview or enable a new write.
+
+## Active-only GitHub dispatch (replaces idle polling, 12 November 2026)
+
+The two-hour GitHub Actions schedule is removed. The new workflow is invoked on demand by the existing owner-executed Google Apps Script only AFTER an authenticated Studio selection is validated and durably saved in private Drive. The browser never receives a GitHub credential. In the web app:
+
+- `Code.gs` maintains the private owner Script Properties key `MOTIONLAB_QUEUE_ACTIVE_V1` (receipt IDs, private Drive receipt file IDs, fingerprints, attempts; **no bearer tickets or GitHub keys**).
+- One immediate GitHub workflow_dispatch requests only `motionlab-drive-inbox.yml` on the `main` branch with exact receipt_file_id, using the repo-owner fine-grained token held **only** in Script Properties.
+- A single temporary owner-installed Apps Script clock trigger runs `motionlabQueueTick` every 10 minutes only while any job is active. It checks for a verified private render receipt, retries dispatch if needed, and deletes itself when the queue is empty. It never changes Drive sharing or performs paid rendering.
+- Idempotent GitHub checks prevent duplicate renders. Incomplete work stops after ten attempts or two hours, whichever happens first; the flag is removed and `MOTIONLAB_QUEUE_LAST_RESULTS_V1` records a safe owner-only needs-review status. It never loops indefinitely.
+- No GitHub cron runs while the queue is empty. A Google Apps Script trigger is **not** a precise timer; 10-minute wake-ups may be delayed slightly.
+
+**One-time owner action still required (not automatically installed):**
+1. In the GitHub account owning the private `legur/Simba` repository, create a **fine-grained Personal Access Token** restricted to `legur/Simba`, **Actions: Read and write** only, with an expiry. Do not grant repository Contents write or any other permissions, and **do not paste the token in ChatGPT, the Wix page, GitHub source, or an issue**.
+2. In the owner Google Apps Script project, open Project Settings → Script properties and save name `MOTIONLAB_GITHUB_ACTIONS_TOKEN` with that secret value. Script properties are server-side. Review access and rotate the token before its expiry.
+3. Replace existing `Code.gs` with the current reviewed repository source, save, then **Deploy → Manage deployments → Edit → New version → Deploy** (same public /exec URL). On the editor toolbar, run `motionlabActivateQueue` once to authorize Google Apps Script to create its own temporary time trigger and issue the GitHub HTTPS request. If no pending jobs it returns `QUEUE_EMPTY_READY`; this is normal. If approval is not granted or the token is missing, Studio correctly reports Drive saved but GitHub not started.
+4. Approve a **fresh** Studio selection and verify Drive Inbox has its receipt, workflow_dispatch appears in private GitHub Actions with matching receipt_file_id, Applied has the signed render result, the temporary clock trigger disappears, and Studio shows the private result link (the previous tested Alaska selection is already completed and cannot be used to prove a new dispatch).
+
+No new cloud service, public Drive sharing, paid A2E/TTS, or publication. Note that private GitHub Actions runner minutes can count against account quotas; dispatch occurs only on active project submissions and bounded retries. This mechanism works while the user is away, only after the owner has completed the explicit one-time Apps Script credential and permission setup.
+
+GitHub workflow dispatch API requirements: https://docs.github.com/en/rest/actions/workflows#create-a-workflow-dispatch-event
+Google temporary time triggers: https://developers.google.com/apps-script/reference/script/clock-trigger-builder#everyMinutes(Integer)
