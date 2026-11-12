@@ -40,6 +40,8 @@ def validate(svc, file_id):
     if not SAFE.fullmatch(data.get('project_id') or '') or not SAFE.fullmatch(data.get('session_id') or '') or not SHA.fullmatch(data.get('source_fingerprint') or '') or not SHA.fullmatch(data.get('selection_sha256') or ''):
         raise InboxError('INVALID_SOURCE_METADATA')
     selection = data.get('selection')
+    if isinstance(selection, dict) and selection.get('test_only') is True:
+        raise InboxError('TEST_ONLY_FORBIDDEN_IN_MONTAGE')
     if not isinstance(selection, dict) or selection.get('schema') not in ('bontours.motionlab.storyboard.selection/v1', 'bontours.motionlab.selection/v2'):
         raise InboxError('INVALID_SELECTION_SCHEMA')
     if hashlib.sha256(canonical(selection).encode('utf-8')).hexdigest() != data['selection_sha256']:
