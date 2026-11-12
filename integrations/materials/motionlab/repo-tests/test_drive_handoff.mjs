@@ -339,3 +339,23 @@ test('Studio exposes only verified private video for opt-in owner playback',()=>
  assert.equal(elements.driveRenderFrame.src,undefined);
  assert.equal(elements.driveRenderPreviewButton.dataset.previewUrl,'');
 });
+
+
+test('v2 selection cannot slip into the deployed v1 Drive renderer even with old fields',()=>{
+ const e=environment(),post=vm.runInContext('doPost',e.ctx);
+ const forged={...structuredClone(chosen),schema:'bontours.motionlab.selection/v2'};
+ const result=post(e.request(forged));
+ assert.match(result.html,/V2_ROUTE_NOT_ACTIVATED/);
+ assert.equal(e.files.size,0,'no private v1 receipt');
+ assert.equal(e.ticket.consumed_receipt_id,undefined,'ticket is not consumed');
+ // The honest v2 schema also cannot be mapped to v1 with missing fields.
+ const honest={...structuredClone(forged),
+   decision:{selected_option:1,options_presented:3,explicit_approval:true,
+     state:'USER_SELECTED_IN_CONNECTED_SESSION',visual_layout_edited:false}};
+ const rejected=post(e.request(honest));
+ assert.match(rejected.html,/V2_ROUTE_NOT_ACTIVATED/);
+ assert.equal(e.files.size,0);
+ // Existing v1 flow still works after the rejected v2 attempt.
+ assert.match(post(e.request(chosen)).html,/SAVED_IN_DRIVE_PENDING_MONTAGE/);
+ assert.equal(e.files.size,1);
+});
