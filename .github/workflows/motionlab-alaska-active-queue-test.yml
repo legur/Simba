@@ -56,6 +56,8 @@ jobs:
               print('MALFORMED_TEST_ONLY_RESPONSE_PREFIX',repr(html[:1100]))
               print('HAS_RECEIPT_MARKER','SIMBA_DRIVE_INGRESS_RECEIPT' in html)
               print('HAS_MESSAGE_JS','var msg=' in html)
+              marker=html.find('SIMBA_DRIVE_INGRESS_RECEIPT')
+              print('MALFORMED_MARKER_CONTEXT',repr(html[max(0,marker-650):marker+550]))
           except Exception as e:
             print('MALFORMED_TEST_ONLY_HTTP_FAILED',type(e).__name__)
             raise SystemExit(2)
