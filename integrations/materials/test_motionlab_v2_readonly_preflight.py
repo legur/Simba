@@ -128,12 +128,12 @@ class VerifiedPrivateV2SourceTests(unittest.TestCase):
 
     def test_changed_private_music_blocks_source(self):
         (self.job/"music.bin").write_bytes(b"altered music" * 300)
-        with self.assertRaisesRegex(Exception,"APPROVED_MUSIC_SHA256_MISMATCH"):
+        with self.assertRaisesRegex(stage.V2SourceError,"V2_APPROVED_AUDIO_SOURCE_NOT_VERIFIED"):
             self.source()
 
     def test_missing_verified_wav_blocks_source(self):
         (self.job/"approved.wav").unlink()
-        with self.assertRaisesRegex(Exception,"PRIVATE_AUDIO_FILE_UNAVAILABLE"):
+        with self.assertRaisesRegex(stage.V2SourceError,"V2_APPROVED_AUDIO_SOURCE_NOT_VERIFIED"):
             self.source()
 
     def test_no_source_outside_private_bundle(self):
