@@ -185,9 +185,11 @@ def _github(method,path,token,payload=None):
     except HTTPError as exc:
         if exc.code in (409,412,422):
             raise V2CasError("V2_CANONICAL_CAS_CONFLICT") from None
-        raise V2CasError("V2_GITHUB_API_UNAVAILABLE") from None
+        raise V2CasError("V2_CANONICAL_CAS_OUTCOME_AMBIGUOUS_CHECK_GITHUB"
+                         if method=="PUT" else "V2_GITHUB_API_UNAVAILABLE") from None
     except (URLError,TimeoutError,OSError,ValueError):
-        raise V2CasError("V2_GITHUB_API_UNAVAILABLE") from None
+        raise V2CasError("V2_CANONICAL_CAS_OUTCOME_AMBIGUOUS_CHECK_GITHUB"
+                         if method=="PUT" else "V2_GITHUB_API_UNAVAILABLE") from None
 
 
 def get_github_canonical(project_id,token):
@@ -230,6 +232,44 @@ def github_cas_canonical(project_id,old_sha,original,candidate,token,*,apply=Fal
         ensure(candidate.get("stage_handoffs",{}).get("voice_music")==
                old.get("stage_handoffs",{}).get("voice_music"),
                "V2_APPROVED_AUDIO_LOCK_CHANGED")
+        # No broad project rewrite. The only permitted edits are the recorded
+        # single edit-plan asset, its handoff and bounded stage metadata.
+        changed={key for key in set(old)|set(candidate)
+                 if old.get(key)!=candidate.get(key)}
+        ensure(changed<= {"assets","stage_handoffs","stage","next_action","updated_at"}
+               and {"assets","stage_handoffs","stage"}<=changed
+               and isinstance(old.get("assets"),list)
+               and isinstance(candidate.get("assets"),list)
+               and len(candidate["assets"])==len(old["assets"])+1
+               and candidate["assets"][:-1]==old["assets"]
+               and isinstance(old.get("stage_handoffs"),dict)
+               and candidate["stage_handoffs"]=={
+                    **old["stage_handoffs"],
+                    "edit_choice":candidate["stage_handoffs"]["edit_choice"]},
+               "V2_UNRELATED_CANONICAL_FIELDS_CHANGED")
+        edit=candidate["stage_handoffs"]["edit_choice"]
+        asset=candidate["assets"][-1]
+        selection_sha=edit.get("selection_sha256","")
+        asset_id="motionlab-v2-"+selection_sha[:24]
+        private_id=asset.get("drive_file_id","")
+        ensure(isinstance(selection_sha,str) and SHA.fullmatch(selection_sha)
+               and edit.get("motionlab_receipt_id")=="motionlab:v2:"+selection_sha
+               and edit.get("no_paid_operations") is True
+               and edit.get("no_auto_publish") is True
+               and edit.get("render_authorized") is False
+               and SHA.fullmatch(edit.get("materials_sha256",""))
+               and SHA.fullmatch(edit.get("proposals_sha256",""))
+               and SHA.fullmatch(edit.get("video_spec_sha256",""))
+               and DRIVE.fullmatch(edit.get("video_spec_private_file_id",""))
+               and asset.get("id")==asset_id
+               and asset.get("kind")=="edit_plan"
+               and asset.get("state")=="available"
+               and asset.get("recorded_sha256")==selection_sha
+               and DRIVE.fullmatch(private_id)
+               and asset.get("url")==
+                   "https://drive.google.com/file/d/"+private_id+"/view"
+               and asset.get("id") not in {a.get("id") for a in old["assets"]},
+               "V2_UNVERIFIED_EDIT_PLAN_ASSET")
     except (KeyError,TypeError,UnicodeError,ValueError):
         raise V2CasError("V2_UNSAFE_CANONICAL_CANDIDATE") from None
     raw=(json.dumps(candidate,ensure_ascii=False,sort_keys=True,indent=2)+"\n").encode("utf-8")
