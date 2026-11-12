@@ -116,3 +116,30 @@ test('Expiration or stale fingerprint rejected with no data written',()=>{
  assert.match(post(e.request(other)).html,/SOURCE_FINGERPRINT_MISMATCH/);
  assert.equal(e.files.size,0);
 });
+
+test('HtmlService reply reaches the Wix ancestor across nested Google frames',()=>{
+ const e=environment();
+ const response=vm.runInContext('doPost',e.ctx)(e.request());
+ const scriptText=response.html.split('<script>')[1]?.split('</script>')[0];
+ assert.ok(scriptText,'Apps Script must return executable receipt script');
+ const deliveries=[];
+ const wix={postMessage(data,origin){deliveries.push({data,origin})}};
+ wix.parent=wix;
+ const googleOuter={parent:wix,postMessage(){}};
+ const googleSandbox={parent:googleOuter,postMessage(){}};
+ const htmlServiceUser={parent:googleSandbox};
+ vm.runInNewContext(scriptText,{window:htmlServiceUser});
+ assert.equal(deliveries.length,1);
+ assert.equal(deliveries[0].origin,
+   'https://headless-cvcdjldqjlx-leostraveltips-140e.wix-site-host.com');
+ assert.equal(deliveries[0].data.status,'SAVED_IN_DRIVE_PENDING_MONTAGE');
+ assert.equal(deliveries[0].data.selection_sha256,digest(canonical(chosen)));
+ assert.equal(deliveries[0].data.nonce,'44444444-4444-4444-8444-444444444444');
+ assert.doesNotMatch(JSON.stringify(deliveries),new RegExp(token));
+});
+test('MotionLab permits nested Google messages but verifies origin nonce and hash',()=>{
+ assert.ok(!client.includes('e.source!==frame.contentWindow'));
+ assert.ok(client.includes('!allowedReply(e.origin)'));
+ assert.ok(client.includes('e.data?.nonce!==nonce'));
+ assert.ok(client.includes('data.selection_sha256!==hash'));
+});

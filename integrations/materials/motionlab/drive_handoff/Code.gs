@@ -158,9 +158,19 @@ function output(message) {
   // The Google-hosted HTML reply communicates only with the *exact* Wix origin.
   // No access tokens, user identity, source media or JSON selections are echoed.
   const serialized = JSON.stringify(message).replace(/</g,'\\u003c');
+  // HtmlService wraps user HTML in multiple Google-owned nested iframes.
+  // window.parent is usually another Google iframe, NOT our Wix editor.
+  // Walk the ancestor chain and post using the exact Wix origin: only the
+  // Wix document receives the message, never the intervening Google frames.
   const html = '<!doctype html><meta charset="utf-8"><script>'
-    + 'window.parent.postMessage(' + serialized + ','
-    + JSON.stringify(ML.origin) + ');</script>';
+    + '(function(){var msg=' + serialized + ';var origin='
+    + JSON.stringify(ML.origin) + ';'
+    + 'var target=window;for(var i=0;i<8;i++){'
+    + 'var next;try{next=target.parent;}catch(e){break;}'
+    + 'if(!next||next===target)break;'
+    + 'try{next.postMessage(msg,origin);}catch(e){}'
+    + 'target=next;}'
+    + '})();</script>';
   return HtmlService.createHtmlOutput(html)
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }

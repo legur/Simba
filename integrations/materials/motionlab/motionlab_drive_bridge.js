@@ -59,7 +59,12 @@
         const cleanup=()=>{finished=true;clearTimeout(timeout);window.removeEventListener('message',receive);form.remove();frame.remove();};
         const timeout=setTimeout(()=>{if(!finished){cleanup();reject(Error('Нет подтверждения записи от Drive. Проверьте статус перед повтором.'));}},35000);
         const receive=e=>{
-          if(e.source!==frame.contentWindow || !allowedReply(e.origin)
+          // Apps Script HtmlService sends from a nested Google-origin sandbox
+          // window, not necessarily frame.contentWindow. We cannot rely on
+          // e.source equality. A strict Google origin plus unpredictable 128-bit
+          // per-request nonce, exact selection SHA-256 and server status are all
+          // required before claiming any Drive ACK.
+          if(!allowedReply(e.origin)
              || e.data?.type!=='SIMBA_DRIVE_INGRESS_RECEIPT' || e.data?.nonce!==nonce) return;
           const data=e.data;cleanup();
           if(data.status!=='SAVED_IN_DRIVE_PENDING_MONTAGE'
