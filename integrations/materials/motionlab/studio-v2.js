@@ -100,20 +100,29 @@
       ||p.schema!=='bontours.motionlab.proposals/v2'
       ||m.audio_alignment_status!=='AUDIO_ALIGNMENT_VERIFIED_AUTO'
       ||p.analysis?.status!=='REAL_VIDEO_AUTOMATICALLY_ANALYZED'
-      ||!Array.isArray(m.scenes)||!m.scenes.length||m.scenes.length>8
+      ||!Array.isArray(m.scenes)||!m.scenes.length||m.scenes.length>12
       ||!Array.isArray(p.proposals)||p.proposals.length!==3
-      ||!Array.isArray(assets)||assets.length!==m.scenes.length)
+      ||!Array.isArray(assets)||!assets.length||assets.length>m.scenes.length)
       throw Error('Не получен проверенный пакет v2 с тремя предложениями и автоматической проверкой озвучки.');
     if(p.materials_sha256!==await digest(m)
       ||p.renderer_revision_sha256!==m.renderer_capabilities?.revision_sha256
       ||p.project_id!==m.project_id||p.request_id!==m.request_id)
       throw Error('Изменены исходные материалы или версия рендерера.');
-    for(let i=0;i<m.scenes.length;i++){
-      if(m.scenes[i].asset_id!==assets[i].asset_id
-         ||m.scenes[i].media?.asset_sha256!==assets[i].sha256
-         ||!SHA.test(assets[i].sha256)||assets[i].mime_type!=='video/mp4')
+    const clipById=new Map();
+    for(const a of assets){
+      if(!a||typeof a.asset_id!=='string'||clipById.has(a.asset_id)
+        ||!SHA.test(a.sha256)||a.mime_type!=='video/mp4'
+        ||!Number.isInteger(a.size_bytes)||a.size_bytes<1024)
+        throw Error('Повторная или недостоверная запись исходного MP4.');
+      clipById.set(a.asset_id,a);
+    }
+    for(const scene of m.scenes){
+      const a=clipById.get(scene.asset_id);
+      if(!a||scene.media?.asset_sha256!==a.sha256)
         throw Error('Оригинальные клипы не соответствуют заданию.');
     }
+    if(clipById.size!==new Set(m.scenes.map(s=>s.asset_id)).size)
+      throw Error('Обнаружен посторонний MP4 без привязки к сцене.');
     return {materials:m,proposals:p,assets};
   }
   function selectMenu(values,selected,onChange){
@@ -160,7 +169,7 @@
     for(const row of S.scenes)row.subtitle[key]=value;
   }
   async function preview(scene,index,button,video){
-    const original=S.assets[index];
+    const original=S.assets.find(a=>a.asset_id===S.materials.scenes[index].asset_id);
     if(!original||scene.scene_id!==S.materials.scenes[index].scene_id)
       throw Error('Неверная сцена');
     button.disabled=true;
