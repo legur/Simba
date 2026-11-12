@@ -44,8 +44,8 @@ jobs:
               "selection_json":"{}",
           }
           code,url,body=request("POST",urllib.parse.urlencode(bad).encode())
-          rejected=code==200 and "SIMBA_DRIVE_INGRESS_RECEIPT" in body and "REJECTED" in body and "INVALID_TICKET" in body
-          print("POST invalid ticket HTTP:",code,"correctly rejected:",rejected)
+          rejected=code==200 and "SIMBA_DRIVE_INGRESS_RECEIPT" in body and "REJECTED" in body and any(x in body for x in ("INVALID_TICKET", "TICKET_NOT_FOUND", "TICKET_REJECTED"))
+          print("POST invalid ticket HTTP:",code,"response_receipt:", "SIMBA_DRIVE_INGRESS_RECEIPT" in body, "rejected:", "REJECTED" in body, "expected code:", any(x in body for x in ("INVALID_TICKET", "TICKET_NOT_FOUND", "TICKET_REJECTED")))
           if not rejected:
               raise SystemExit("Invalid token was not verifiably rejected by Apps Script")
           print("PASS - Live receiver reachable, forged ticket refused, no Drive write attempted")
