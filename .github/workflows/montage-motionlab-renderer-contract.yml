@@ -4,6 +4,13 @@ on:
   pull_request:
     paths:
       - '.github/workflows/montage-motionlab-renderer-contract.yml'
+      - 'integrations/video/motionlab_approved_audio.py'
+      - 'integrations/video/motionlab_v2_audio_gate.py'
+      - 'integrations/video/motionlab_typography_contract.py'
+      - 'integrations/video/tests/test_motionlab_approved_audio.py'
+      - 'integrations/video/tests/test_motionlab_v2_audio_gate.py'
+      - 'integrations/video/tests/test_motionlab_v2_real_studio_audio_lock.py'
+      - 'integrations/video/tests/test_motionlab_typography_contract.py'
       - 'integrations/video/motionlab_render_contract.py'
       - 'integrations/video/motionlab_v2_contract.py'
       - 'integrations/video/motionlab_layout_contract.py'
@@ -66,3 +73,10 @@ jobs:
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_v2_contract.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_visual_layout.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_analysis_bundle.py' -v
+      - name: Studio v2 real metadata and private approved-audio readback gates (offline)
+        run: |
+          python -m py_compile integrations/video/motionlab_approved_audio.py integrations/video/motionlab_v2_audio_gate.py integrations/video/motionlab_typography_contract.py
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_approved_audio.py' -v
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_v2_audio_gate.py' -v
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_v2_real_studio_audio_lock.py' -v
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_typography_contract.py' -v
