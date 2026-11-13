@@ -129,7 +129,8 @@ class ScriptRunnerTests(unittest.TestCase):
             return SCRIPT_BASE + ' ' + ('История.' if len(calls)==1 else 'Интрига.' if len(calls)==2 else 'Трейлер.')
         uploaded = []
         with patch.object(auto_script, 'find_existing', return_value=None) as find, \
-             patch.object(auto_script, 'upload_private', side_effect=lambda *a: uploaded.append(a) or 'PRIVATE_ARCHIVED_FOR_LEO_REVIEW'):
+             patch.object(auto_script, 'upload_private', side_effect=lambda *a: uploaded.append(a) or 'PRIVATE_ARCHIVED_FOR_LEO_REVIEW'), \
+             patch.object(auto_script.studio_archive, 'save_files') as archive:
             result = auto_script.run(self.root, self.report, self.folder, infer=fake_model,
                                      drive_factory=FakeDrive)
         self.assertEqual(len(calls), 3)
@@ -137,11 +138,18 @@ class ScriptRunnerTests(unittest.TestCase):
         self.assertEqual(result[0]['approved'], False)
         self.assertEqual(result[0]['publishing'], False)
         self.assertEqual(len(uploaded), 1)
+        self.assertEqual(len(archive.call_args.args[3]), 2)
         self.assertIn('Вариант 3', uploaded[0][3])
-        with patch.object(auto_script, 'find_existing', return_value='existing_file'):
+        class ExistingDrive:
+            def files(self): return self
+            def get_media(self, **_): return self
+            def execute(self, **_): return ('existing script '*40).encode()
+        with patch.object(auto_script, 'find_existing', return_value='existing_file'), \
+             patch.object(auto_script.studio_archive, 'save_files') as archive:
             result = auto_script.run(self.root, self.report, self.folder,
                                      infer=lambda *_: self.fail('Must not call model if already saved'),
-                                     drive_factory=FakeDrive)
+                                     drive_factory=ExistingDrive)
+        self.assertEqual(len(archive.call_args.args[3]), 2)
         self.assertEqual(result[0]['status'], 'ALREADY_PRIVATE_ARCHIVED')
 
     def test_untrusted_local_model_endpoint_forbidden(self):
