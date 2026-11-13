@@ -53,7 +53,7 @@ def _private_job(root:Path,private_root:Path,project_id:str)->Path:
 
 
 def _unique_approved_a2e_v2(project: dict) -> list[dict]:
-    """Read canonical F2U approvals: up to 12 UNIQUE sources for 12 scenes.
+    """Read canonical F2U approvals: up to renderer.MAX_SCENES unique sources.
 
     v1 _clips() intentionally remains untouched (max six). Alaska's approved
     ten-scene timeline references seven original A2E files, not ten new files.
