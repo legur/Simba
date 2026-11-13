@@ -128,7 +128,7 @@ def sentence_windows(approved, observations, duration):
     These ASR anchors are window hints, NOT proof that words were spoken.
     """
     import difflib
-    sentences=[part.strip() for part in re.split(r'(?<=[.!?])\\s+',approved)
+    sentences=[part.strip() for part in re.split(r'(?<=[.!?])\s+',approved)
                if part.strip()]
     need(1<len(sentences)<=24,"CTC_SENTENCE_SEGMENTATION_INVALID")
     expected=normalize(approved)
