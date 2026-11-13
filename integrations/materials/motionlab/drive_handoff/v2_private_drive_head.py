@@ -257,6 +257,48 @@ def bootstrap_private_head(svc,*,folder_id,file_id,project_id,
                              github_token,apply=True)
 
 
+def store_owner_private_ack(svc,bundle,ack):
+    """Idempotent post-CAS receipt, distinct from legacy public-project ACK."""
+    need(isinstance(bundle.get("receipt_id"),str)
+         and intake.UUID.fullmatch(bundle["receipt_id"]),
+         "V2_PRIVATE_OWNER_RECEIPT_ID_INVALID")
+    folder=cas.APPLIED
+    source.verify_private_folder(svc,folder)
+    name="motionlab-v2-"+bundle["receipt_id"]+"-private-head-applied.json"
+    raw=_json_bytes(ack)
+    need(100<=len(raw)<=MAX_SNAPSHOT,"V2_PRIVATE_ACK_SIZE_INVALID")
+    q=f"'{folder}' in parents and name = '{name}' and trashed = false"
+    try:
+        rows=svc.files().list(q=q,fields="nextPageToken,files(id)",
+                              pageSize=100).execute()
+        items=rows.get("files") or []
+        need(not rows.get("nextPageToken") and len(items)<=1,
+             "V2_PRIVATE_ACK_COLLISION")
+        if items:
+            fid=items[0].get("id")
+        else:
+            from googleapiclient.http import MediaIoBaseUpload
+            result=svc.files().create(
+                body={"name":name,"parents":[folder],
+                      "mimeType":"application/json"},
+                media_body=MediaIoBaseUpload(io.BytesIO(raw),
+                      mimetype="application/json",resumable=False),
+                fields="id").execute()
+            fid=result.get("id")
+    except PrivateHeadError:
+        raise
+    except Exception:
+        raise PrivateHeadError("V2_PRIVATE_ACK_WRITE_FAILED") from None
+    _check_exact_owner_acl(svc,fid)
+    try:
+        checked=intake.secure_private_bytes(svc,fid,folder,MAX_SNAPSHOT,
+                     mime={"application/json"},filename=name)
+    except intake.V2InboxError:
+        raise PrivateHeadError("V2_PRIVATE_ACK_READBACK_FAILED") from None
+    need(checked==raw,"V2_PRIVATE_ACK_CHANGED_OR_COLLIDED")
+    return {"id":fid,"sha256":hashlib.sha256(raw).hexdigest()}
+
+
 def apply_private_edit_choice(svc,*,folder_id,file_id,project_id,
                               expected_sha256,owner_source_bytes,
                               workspace_parent,public_repo,private_media_root,
@@ -312,8 +354,6 @@ def apply_private_edit_choice(svc,*,folder_id,file_id,project_id,
     # The pointer commit, not mere Drive snapshot creation, changes the head.
     # ACK failure is explicitly ambiguous: never pretend the CAS did not run.
     try:
-        from googleapiclient.http import MediaIoBaseUpload
-        name="motionlab-v2-"+bundle["receipt_id"]+"-private-head-applied.json"
         ack={"schema":"bontours.studio.private-head-applied/v1",
              "status":"PRIVATE_DRIVE_EDIT_CHOICE_CANONICALLY_APPLIED",
              "project_id":project_id,"receipt_id":bundle["receipt_id"],
@@ -322,11 +362,7 @@ def apply_private_edit_choice(svc,*,folder_id,file_id,project_id,
              "private_snapshot_file_id":stored["id"],
              "head_commit_sha":committed["commit_sha"],
              "render_authorized":False,"published":False,"paid_calls":0}
-        ack_raw=_json_bytes(ack)
-        # Reuse immutable snapshot write semantics inside an owner-only folder
-        # and keep the resulting file ID private.
-        ack_stored=cas.store_applied_ack(
-            svc,bundle,ack)  # Existing method is immutable and SHA verified.
+        ack_stored=store_owner_private_ack(svc,bundle,ack)
     except Exception:
         raise PrivateHeadError(
             "V2_PRIVATE_HEAD_COMMITTED_ACK_PENDING_CHECK_PRIVATE_HEAD") from None
