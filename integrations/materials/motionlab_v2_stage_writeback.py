@@ -69,9 +69,12 @@ def _unique_approved_a2e_v2(project: dict) -> list[dict]:
             or any(not isinstance(i, str) or not i for i in ids)
             or len(ids) != len(set(ids))):
         raise V2SourceError("V2_APPROVED_UNIQUE_A2E_LIST_INVALID")
-    assets = {a["id"]: a for a in project.get("assets", [])
+    entries = project.get("assets")
+    if not isinstance(entries, list):
+        raise V2SourceError("V2_CANONICAL_ASSETS_INVALID")
+    assets = {a["id"]: a for a in entries
               if isinstance(a, dict) and isinstance(a.get("id"), str)}
-    if len(assets) != len([a for a in project.get("assets", [])
+    if len(assets) != len([a for a in entries
                             if isinstance(a, dict) and isinstance(a.get("id"), str)]):
         raise V2SourceError("V2_DUPLICATE_CANONICAL_ASSET_IDS")
     result = []
@@ -124,7 +127,7 @@ def source_context(root:Path,private_root:Path,project_id:str,request_id:str):
             raise V2SourceError("V2_PRIVATE_MEDIA_ASSET_INVALID")
         aid=asset.get("asset_id")
         known=known_by_id.get(aid) if isinstance(aid,str) else None
-        if aid in observed or known is None:
+        if not isinstance(aid,str) or aid in observed or known is None:
             raise V2SourceError("V2_PRIVATE_MEDIA_SOURCE_MISSING_OR_DUPLICATED")
         observed.add(aid)
         duration=asset.get("duration_s")
