@@ -102,3 +102,14 @@ PURPOSE: Facebook travel news preview poster 1:1 (variant 5). SCENE: Плака�
 - Note: preview image was a five-panel collage rather than five standalone previews, and diverged from the stored variant-1 prompt. Follow canonical saved variant-1 prompt for independent final artwork; do not claim collage QA PASS.
 - State: `FINAL_RENDER_REQUESTED`; `FINAL_VISUAL_READY`: pending actual render/QA; `PUBLISHED`: NO.
 - Image generator: ChatGPT image_gen; explicit 1:1 aspect size requested; ChatGPT model/quality controls unavailable to verify.
+
+## VARIANT 1 — RESULT OF SEPARATE FINAL RENDER (2026-11-13)
+
+- SELECTED_VARIANT_ID: 1, from Leo's message «1».
+- RENDERER: ChatGPT image_gen; image ID 9803dd52-bdaa-4cc4-91d1-3c432e129709.
+- Session-local output: /mnt/data/a_detailed_photorealistic_warm_cinematic_travel_a.png; PNG 1254×1254; square 1:1 independently verified.
+- Selected actual preview: top-left of five-panel contact sheet, Simba in coat/red scarf with mug in front of Vienna Rathaus. Standalone render preserves the chosen preview visual.
+- QA: square PASS; anthropomorphic Simba PASS; phone/WhatsApp/QR absent PASS; post not published.
+- QA WARNING: original saved variant-1 prompt described split Vienna/Budapest and required exactly «РОЖДЕСТВЕНСКИЕ ЯРМАРКИ»; generated image instead shows Vienna only and adds «открыты!». This is faithful to selected visible preview but not to originally saved full production prompt.
+- STATUS: FINAL_RENDERED_QA_WARNING; FINAL_VISUAL_READY: NO; PUBLISHED: NO.
+- Generator does not expose verified API Sunburst or ChatGPT Images with thinking mode; do not claim that mode.
