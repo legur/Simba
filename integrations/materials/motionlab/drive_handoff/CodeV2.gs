@@ -16,7 +16,7 @@ const V2 = Object.freeze({
   selectionSchema:'bontours.motionlab.selection/v2',
   replyType:'SIMBA_DRIVE_V2_RECEIPT',
   maxBytes:140000,
-  maxScenes:12
+  maxScenes:24
 });
 function checkV2Ticket(id,token) {
   if(typeof id!=='string'||!/^[A-Za-z0-9_-]{15,100}$/.test(id)
