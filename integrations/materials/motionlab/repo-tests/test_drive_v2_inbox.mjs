@@ -306,3 +306,65 @@ test('Alaska mapping accepts 10 ordered scenes sharing 1 SHA-verified original c
    source.proposals.proposals.forEach((p,i)=>{p.scenes=oldOptions[i]});
  }
 });
+
+
+test('v2 private GAS source and receipt handle dynamic 3, 15, 24 scenes; 25 blocked',()=>{
+ const oldScenes=source.materials.scenes;
+ const oldEvidence=source.proposals.analysis.inspected_assets;
+ const oldPixels=source.proposals.analysis.pixel_evidence;
+ const oldOptions=source.proposals.proposals.map(p=>p.scenes);
+ const oldMaterialsHash=source.proposals.materials_sha256;
+ try{
+  for(const count of [3,15,24,25]){
+   const rows=Array.from({length:count},(_,i)=>({
+     ...structuredClone(scene),
+     scene_id:'dynamic-'+String(i+1).padStart(2,'0'),
+     scene_duration_s:Math.min(3,52/count),
+     source_playback:'freeze'
+   }));
+   source.materials.scenes=rows;
+   source.proposals.analysis.inspected_assets=rows.map(s=>({
+     scene_id:s.scene_id,asset_sha256:s.media.asset_sha256,
+     evidence_kind:'full_original_mp4'
+   }));
+   source.proposals.analysis.pixel_evidence=rows.map(s=>({
+     scene_id:s.scene_id,asset_sha256:s.media.asset_sha256,
+     sampled_frame_sha256:'c'.repeat(64)
+   }));
+   for(const option of source.proposals.proposals){
+     const base=structuredClone(option.scenes[0]);
+     option.scenes=rows.map((s,i)=>({
+       ...structuredClone(base),scene_id:s.scene_id,
+       transition:i===0?null:{id:'crossfade',duration_ms:900}
+     }));
+   }
+   source.proposals.materials_sha256=sha(canonical(source.materials));
+   const e=run();
+   const loaded=e.post(e.request('v2_load')).html;
+   if(count===25){
+     assert.match(loaded,/V2_SOURCE_CONTRACT_MISMATCH/);
+     assert.equal(e.inboxFiles.size,0);
+     continue;
+   }
+   assert.match(loaded,/V2_PROJECT_READY/,String(count));
+   assert.match(loaded,new RegExp('dynamic-'+String(count).padStart(2,'0')),String(count));
+   const pick=selection();
+   pick.materials_sha256=sha(canonical(source.materials));
+   pick.proposals_sha256=sha(canonical(source.proposals));
+   pick.scenes=structuredClone(source.proposals.proposals[0].scenes);
+   const receipt=e.submit(pick).html;
+   assert.match(receipt,/V2_SELECTION_SAVED_AWAITING_CANONICAL_CAS/,String(count));
+   assert.equal(pick.scenes.length,count);
+   assert.equal(pick.scenes.filter(s=>s.transition!==null).length,count-1);
+   assert.equal(e.source.preview_assets.length,1);
+   assert.equal(e.inboxFiles.size,1);
+   assert.equal(e.dispatches.length,0);
+  }
+ }finally{
+   source.materials.scenes=oldScenes;
+   source.proposals.analysis.inspected_assets=oldEvidence;
+   source.proposals.analysis.pixel_evidence=oldPixels;
+   source.proposals.materials_sha256=oldMaterialsHash;
+   source.proposals.proposals.forEach((p,i)=>{p.scenes=oldOptions[i]});
+ }
+});
