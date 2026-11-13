@@ -107,7 +107,7 @@ test('universal storyboard dynamically builds 3, 10, 15 and 24 actual scene card
   return dom.get(id);
  };
  const context={document:{getElementById:mock},location:{search:''}};
- const setup=String.raw\`
+ const setup=String.raw`
 globalThis.dynamicallyBuilt=[];
 for (const count of [3,10,15,24]) {
  state.request={id:'verified-owner-project',projectId:'dynamic-test'};
@@ -130,7 +130,7 @@ for (const count of [3,10,15,24]) {
   counter:document.getElementById('sceneCount').textContent
  });
 }
-\`;
+`;
  runInNewContext(scenes.replace(/\bwire\(\);\s*$/,'')+setup,context,{timeout:2000});
  for(const row of context.dynamicallyBuilt){
   assert.equal(row.cards,row.count);
