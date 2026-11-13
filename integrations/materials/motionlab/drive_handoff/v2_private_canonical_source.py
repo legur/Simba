@@ -89,9 +89,9 @@ def check_canonical_shape(document: object, project_id: str) -> None:
             "V2_PRIVATE_CANONICAL_STAGE_INVALID")
 
 
-def inspect_private_canonical(svc, *, folder_id: str, file_id: str,
+def _read_private_canonical(svc, *, folder_id: str, file_id: str,
                               project_id: str, expected_sha256: str) -> dict:
-    """Authenticated, pinned read. Returns no raw private content/IDs.
+    """Private internal owner-side reader; only trusted worker may call.
 
     expected_sha256 MUST come from independent owner-controlled provenance.
     Later voice/music, MP4, offline ASR and edit-choice gates remain mandatory.
@@ -126,6 +126,15 @@ def inspect_private_canonical(svc, *, folder_id: str, file_id: str,
     except (UnicodeError, ValueError):
         raise PrivateCanonicalError("V2_PRIVATE_CANONICAL_JSON_INVALID") from None
     check_canonical_shape(doc, project_id)
+    return raw, doc, actual_sha
+
+
+def inspect_private_canonical(svc, *, folder_id: str, file_id: str,
+                              project_id: str, expected_sha256: str) -> dict:
+    """Public redacted preflight; never returns owner text or file IDs."""
+    raw, doc, actual_sha = _read_private_canonical(
+        svc, folder_id=folder_id, file_id=file_id,
+        project_id=project_id, expected_sha256=expected_sha256)
     return {
         "status": "V2_OWNER_PRIVATE_CANONICAL_BYTES_PINNED_NOT_APPLIED",
         "project_id": project_id,
