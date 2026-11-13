@@ -34,7 +34,7 @@ SPEC_ID="1O1MT_CgTfyH-s1uBFCSQLR5CT1tyrAli"
 WAV_SHA="0a503ad3656f5a44e5921558f19c75d4dfe696a46bf53a7b990e601321b2570e"
 MUSIC_SHA="cc92050b8e2e3a1c8a13d4ee85bc74cd95799c2088096e680167a73b2b390560"
 SOURCE_SHA="bdf88225ce6771281484f00123791cd8bfd89d22b4d19cf577b4f475249a233f"
-NAME="Alaska_v2_offline_dual_asr_phrasewise_v2.json"
+NAME="Alaska_v2_offline_dual_asr_scalar_v3.json"
 MAX_WAV=4*1024*1024
 MAX_MP3=6*1024*1024
 MAX_SPEC=100_000
@@ -174,6 +174,19 @@ def sentence_windows(approved, observations, duration):
              "end":round(item["end"],3)} for item in positions]
 
 
+def verified_time(value):
+    """Accept finite NumPy/Pandas Real scalars returned by WhisperX alignment.
+
+    Pandas Series.min() returns np.float64. Requiring type(value) == float
+    incorrectly marked EVERY genuine CTC timestamp as missing in Alaska v2.
+    Strings, bools, NaN, infinity and arbitrary coercible objects are not
+    acoustic timestamps.
+    """
+    import math
+    from numbers import Real
+    return isinstance(value,Real) and not isinstance(value,bool) and math.isfinite(float(value))
+
+
 def redacted_evidence(approved_tokens,observations,ctc,duration):
     """Private review only: positions/scores, NO spoken words or transcript."""
     import difflib
@@ -186,18 +199,25 @@ def redacted_evidence(approved_tokens,observations,ctc,duration):
     } for code,i,end,j,other in difflib.SequenceMatcher(
         a=approved_tokens,b=heard,autojunk=False).get_opcodes()
         if code!="equal"]
-    absent=[];nonmonotonic=[];outofrange=[]
+    absent=[];nonmonotonic=[];outofrange=[];unsupported=[]
+    start_types={};end_types={}
     previous_end=0.0
     for i,row in enumerate(ctc):
         begin,end=row.get("start"),row.get("end")
-        if type(begin) not in (int,float) or type(end) not in (int,float):
+        sb=type(begin).__name__;se=type(end).__name__
+        start_types[sb]=start_types.get(sb,0)+1
+        end_types[se]=end_types.get(se,0)+1
+        if begin is None or end is None:
             absent.append(i)
-        elif not 0<=begin<end<=duration+.1:
-            outofrange.append(i)
-        elif begin+0.08<previous_end:
-            nonmonotonic.append(i)
-        if type(end) in (int,float):
-            previous_end=max(previous_end,float(end))
+        elif not verified_time(begin) or not verified_time(end):
+            unsupported.append(i)
+        else:
+            first,last=float(begin),float(end)
+            if not 0<=first<last<=duration+.1:
+                outofrange.append(i)
+            elif first+.05<previous_end:
+                nonmonotonic.append(i)
+            previous_end=max(previous_end,last)
     return {
         "approved_numeric_token_positions":[i for i,t in enumerate(approved_tokens)
                                             if any(char.isdigit() for char in t)],
@@ -205,8 +225,15 @@ def redacted_evidence(approved_tokens,observations,ctc,duration):
         "independent_asr_weak_word_positions":[i for i,x in enumerate(observations)
                                               if x["probability"]<.64][:25],
         "ctc_missing_timing_positions":absent[:25],
+        "ctc_invalid_type_or_nonfinite_positions":unsupported[:25],
         "ctc_invalid_timing_positions":outofrange[:25],
         "ctc_nonmonotonic_positions":nonmonotonic[:25],
+        "ctc_missing_count":len(absent),
+        "ctc_invalid_type_count":len(unsupported),
+        "ctc_out_of_range_count":len(outofrange),
+        "ctc_nonmonotonic_count":len(nonmonotonic),
+        "ctc_start_types":start_types,
+        "ctc_end_types":end_types,
         "ctc_output_tokens":len(ctc),
         "approved_tokens":len(approved_tokens),
         "notes":"Indices only; no transcript, audio or client text is included."
@@ -248,13 +275,13 @@ def check_two_methods(approved,wav_path,duration):
     previous_ctc_end=0.0
     for row in ctc:
         start,end=row.get("start"),row.get("end")
-        if (type(start) not in (int,float)
-                or type(end) not in (int,float)
-                or not 0<=start<end<=duration+.1
-                or start+.05<previous_ctc_end):
+        if not verified_time(start) or not verified_time(end):
             ctc_valid=False
-        if type(end) in (int,float):
-            previous_ctc_end=max(previous_ctc_end,float(end))
+            continue
+        first,last=float(start),float(end)
+        if not 0<=first<last<=duration+.1 or first+.05<previous_ctc_end:
+            ctc_valid=False
+        previous_ctc_end=max(previous_ctc_end,last)
     # No metadata promotion from a forced alignment alone. Even with a
     # very plausible CTC timeline, the unprompted independent ASR must agree.
     match=(spoken==expected and ctc_tokens==expected and ctc_valid
