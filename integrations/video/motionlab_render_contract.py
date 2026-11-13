@@ -29,6 +29,7 @@ if str(HERE) not in sys.path:
     sys.path.insert(0, str(HERE))
 import motionlab_selection as selector
 import make_video
+import motionlab_scene_contract as scene_contract
 import motionlab_layout_contract as layout_contract
 
 SHA = re.compile(r"^[0-9a-f]{64}$")
@@ -37,8 +38,8 @@ CAMERA_EFFECTS = frozenset(make_video.MOTIONLAB_CAMERA_EFFECTS)
 TITLE_EFFECTS = frozenset(make_video.MOTIONLAB_TITLE_EFFECTS)
 TRIM_TOLERANCE = .15
 MAX_CLIP_DURATION = 15.0
-MAX_SCENES = 12
-ARTIFACTS = ("make_video.py", "template/film.js",
+MAX_SCENES = scene_contract.MAX_SCENES
+ARTIFACTS = ("make_video.py", "motionlab_scene_contract.py", "template/film.js",
              "template/transitions.js", "template/subtitle_styles.js",
              "motionlab_layout_contract.py")
 
@@ -78,7 +79,7 @@ def renderer_capabilities() -> dict:
         "revision_sha256": revision(),
         "renderer": "make_video.py + template/film.js",
         "max_scenes": MAX_SCENES,
-        "max_film_seconds": 60,
+        "max_film_seconds": scene_contract.MAX_FILM_SECONDS,
         "source": {"kind": "video", "origin": "f2u_a2e", "max_clip_seconds": 15},
         "camera": {
             "renderable": sorted(CAMERA_EFFECTS),

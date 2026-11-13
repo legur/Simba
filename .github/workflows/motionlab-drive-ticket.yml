@@ -31,6 +31,7 @@ jobs:
       - run: |
           python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_*.py' -v
           node --test integrations/materials/motionlab/repo-tests/test_drive_handoff.mjs
+          node --test integrations/materials/motionlab/repo-tests/test_drive_v2_inbox.mjs
 
   ticket:
     if: ${{ github.event_name == 'workflow_dispatch' }}

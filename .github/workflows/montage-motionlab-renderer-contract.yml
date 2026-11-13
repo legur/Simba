@@ -12,6 +12,8 @@ on:
       - 'integrations/video/tests/test_motionlab_v2_real_studio_audio_lock.py'
       - 'integrations/video/tests/test_motionlab_typography_contract.py'
       - 'integrations/video/motionlab_render_contract.py'
+      - 'integrations/video/motionlab_scene_contract.py'
+      - 'integrations/video/tests/test_motionlab_scene_contract.py'
       - 'integrations/video/motionlab_v2_contract.py'
       - 'integrations/video/motionlab_layout_contract.py'
       - 'integrations/video/tests/test_motionlab_render_contract.py'
@@ -67,7 +69,7 @@ jobs:
           command -v ffprobe
       - name: Syntax and existing renderer contract
         run: |
-          python -m py_compile integrations/video/make_video.py integrations/video/motionlab_render_contract.py integrations/video/motionlab_v2_contract.py integrations/video/motionlab_layout_contract.py integrations/video/motionlab_analysis_bundle.py integrations/video/motionlab_auto_proposals.py
+          python -m py_compile integrations/video/motionlab_scene_contract.py integrations/video/make_video.py integrations/video/motionlab_render_contract.py integrations/video/motionlab_v2_contract.py integrations/video/motionlab_layout_contract.py integrations/video/motionlab_analysis_bundle.py integrations/video/motionlab_auto_proposals.py
           node --check integrations/video/template/film.js
           node --test integrations/video/tests/test_motionlab_subtitle_geometry.mjs
           node --test integrations/video/tests/test_motionlab_clip_playback.mjs
@@ -75,6 +77,7 @@ jobs:
           python -m unittest discover -s integrations/video/tests -p 'test_subtitle_styles.py' -v
       - name: New Motion Lab source-pinned zero-paid renderer preflight
         run: |
+          python -m unittest discover -s integrations/video/tests -p 'test_motionlab_scene_contract.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_render_contract.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_v2_contract.py' -v
           python -m unittest discover -s integrations/video/tests -p 'test_motionlab_visual_layout.py' -v

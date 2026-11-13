@@ -4,6 +4,7 @@
  * SIMBA_MOTIONLAB_SELECTION -> SIMBA_MOTIONLAB_ACK. ACK is mandatory for delivery.
  */
 const $ = id => document.getElementById(id);
+// Mirrors Python motionlab_scene_contract.MAX_SCENES; checked in CI.
 const LIMIT = 24;
 const CATALOG = {
   camera: [
@@ -80,7 +81,7 @@ function rendererIssues(scenes){
   if(!RENDER_WORD_MOTIONS.has(s.wordMotion))issues.push('Сцена '+(i+1)+': анимация слов не поддержана');
  });
  if(new Set(scenes.map(s=>s.subtitleStyle+'|'+s.wordMotion)).size>1)issues.push('Рендерер допускает только один стиль субтитров на весь ролик');
- if(scenes.length>8)issues.push('Рендерер сейчас ограничен восемью сценами');
+ if(scenes.length>LIMIT)issues.push('Превышен лимит '+LIMIT+' сцен для одного ролика');
  return issues;
 }
 // Local previews bind to scene + approved asset ID and never enter returned JSON.

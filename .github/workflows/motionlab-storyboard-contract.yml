@@ -44,3 +44,5 @@ jobs:
           done
           node --check integrations/materials/motionlab/audio_review_core.js
           node --test integrations/materials/motionlab/repo-tests/test_audio_review.mjs
+          node --test integrations/materials/motionlab/repo-tests/test_scene_pages.mjs
+          node --test integrations/materials/motionlab/repo-tests/test_drive_v2_inbox.mjs

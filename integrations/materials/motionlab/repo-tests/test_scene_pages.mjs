@@ -98,3 +98,47 @@ test('private A2E launch never falls back silently to Bavaria demo while loading
  assert.match(bridge,/safeEditorHash=.*scene\\\/\\d/);
  assert.match(bridge,/sessionStorage\.getItem\('simba:motionlab:project-link:v1'\)/);
 });
+
+
+test('universal storyboard dynamically builds 3, 10, 15 and 24 actual scene cards and transitions',()=>{
+ const dom=new Map();
+ const mock=id=>{
+  if(!dom.has(id))dom.set(id,{textContent:'',innerHTML:''});
+  return dom.get(id);
+ };
+ const context={document:{getElementById:mock},location:{search:''}};
+ const setup=String.raw`
+globalThis.dynamicallyBuilt=[];
+for (const count of [3,10,15,24]) {
+ state.request={id:'verified-owner-project',projectId:'dynamic-test'};
+ state.scenes=Array.from({length:count},(_,i)=>makeScene({
+  scene_id:'source-'+String(i+1).padStart(2,'0'),
+  asset_id:'a2e:'+String(i%2),
+  duration_s:2.4,
+  name:'A2E video scene '+(i+1),
+  media:{kind:'video',asset_sha256:'b'.repeat(64),duration_s:5.0},
+  title_text:'Approved scene title '+(i+1)
+ },i));
+ renderSceneList();
+ dynamicallyBuilt.push({
+  count,
+  cards:(document.getElementById('sceneList').innerHTML.match(/data-edit-scene="/g)||[]).length,
+  cuts:(document.getElementById('sceneList').innerHTML.match(/data-edit-cut="/g)||[]).length,
+  first:document.getElementById('sceneList').innerHTML.includes('A2E video scene 1'),
+  last:document.getElementById('sceneList').innerHTML.includes('A2E video scene '+count),
+  stock:document.getElementById('sceneList').innerHTML.includes('static.wixstatic.com'),
+  counter:document.getElementById('sceneCount').textContent
+ });
+}
+`;
+ runInNewContext(scenes.replace(/\bwire\(\);\s*$/,'')+setup,context,{timeout:2000});
+ for(const row of context.dynamicallyBuilt){
+  assert.equal(row.cards,row.count);
+  assert.equal(row.cuts,row.count-1);
+  assert.equal(row.counter,String(row.count));
+  assert.equal(row.first,true);
+  assert.equal(row.last,true);
+  assert.equal(row.stock,false);
+ }
+ assert.equal(context.dynamicallyBuilt.length,4);
+});

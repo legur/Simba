@@ -14,6 +14,8 @@
     /^https:\/\/(?:[A-Za-z0-9-]+\.)*googleusercontent\.com$/.test(origin)
     ||origin==='https://script.google.com';
   const SHA=/^[a-f0-9]{64}$/;
+  // Mirrors Python motionlab_scene_contract.MAX_SCENES; checked in CI.
+  const MAX_SCENES=24;
   const sorted=v=>Array.isArray(v)?v.map(sorted)
     :v&&typeof v==='object'
       ?Object.fromEntries(Object.keys(v).sort().map(k=>[k,sorted(v[k])]))
@@ -100,7 +102,7 @@
       ||p.schema!=='bontours.motionlab.proposals/v2'
       ||m.audio_alignment_status!=='AUDIO_ALIGNMENT_VERIFIED_AUTO'
       ||p.analysis?.status!=='REAL_VIDEO_AUTOMATICALLY_ANALYZED'
-      ||!Array.isArray(m.scenes)||!m.scenes.length||m.scenes.length>12
+      ||!Array.isArray(m.scenes)||!m.scenes.length||m.scenes.length>MAX_SCENES
       ||!Array.isArray(p.proposals)||p.proposals.length!==3
       ||!Array.isArray(assets)||!assets.length||assets.length>m.scenes.length)
       throw Error('Не получен проверенный пакет v2 с тремя предложениями и автоматической проверкой озвучки.');
