@@ -83,3 +83,35 @@ def save_files(drive, project_id, category, files, *, root=ROOT_FOLDER):
             raise ArchiveError('ARCHIVE_FILE_READBACK_MISMATCH')
         results.append({'name':name, 'drive_file_id':item['id'], 'sha256':expected_sha, 'reused':reused})
     return {'status':'INDIVIDUAL_FILES_VERIFIED', 'project_folder_id':project, 'folder_id':target, 'files':results}
+
+
+def copy_files(drive, project_id, category, files, *, root=ROOT_FOLDER):
+    """Copy existing Drive binary files into a project, verifying size and MD5."""
+    if not SAFE.fullmatch(project_id) or not SAFE.fullmatch(category) or not files or len(files) > 100:
+        raise ArchiveError('INVALID_ARCHIVE_REQUEST')
+    if any(not SAFE.fullmatch(name) or not re.fullmatch(r'[A-Za-z0-9_-]{10,120}', file_id) for name,file_id in files.items()):
+        raise ArchiveError('INVALID_ARCHIVE_FILES')
+    project = folder(drive, root, project_id)
+    target = folder(drive, project, category)
+    result = []
+    for name, file_id in sorted(files.items()):
+        source = call(drive.files().get(fileId=file_id, fields='id,name,mimeType,size,md5Checksum,trashed,permissions(type,role)'))
+        permissions = source.get('permissions')
+        if (source.get('id') != file_id or source.get('trashed') or
+            not source.get('size') or not re.fullmatch(r'[0-9a-f]{32}', source.get('md5Checksum') or '') or
+            not isinstance(permissions, list) or not permissions or any(p.get('type') != 'user' for p in permissions)):
+            raise ArchiveError('SOURCE_FILE_NOT_PRIVATE_OR_CHECKSUM_MISSING')
+        item = find_one(drive, target, name)
+        reused = item is not None
+        if item is None:
+            item = call(drive.files().copy(fileId=file_id, body={'name':name, 'parents':[target]}, fields='id,name,parents,size,md5Checksum'))
+        if (item.get('name') != name or item.get('parents') != [target] or
+            item.get('size') != source.get('size') or item.get('md5Checksum') != source.get('md5Checksum')):
+            raise ArchiveError('ARCHIVE_FILE_COLLISION_OR_METADATA_MISMATCH')
+        verified = call(drive.files().get(fileId=item['id'], fields='id,name,parents,size,md5Checksum,trashed'))
+        if (verified.get('id') != item['id'] or verified.get('trashed') or verified.get('name') != name or
+            verified.get('parents') != [target] or verified.get('size') != source.get('size') or
+            verified.get('md5Checksum') != source.get('md5Checksum')):
+            raise ArchiveError('ARCHIVE_FILE_READBACK_MISMATCH')
+        result.append({'name':name, 'drive_file_id':item['id'], 'reused':reused})
+    return {'status':'INDIVIDUAL_COPIES_VERIFIED', 'project_folder_id':project, 'folder_id':target, 'files':result}

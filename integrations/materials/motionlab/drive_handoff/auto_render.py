@@ -18,6 +18,11 @@ import subprocess
 import sys
 import tempfile
 
+MATERIALS_DIR = Path(__file__).resolve().parents[2]
+if str(MATERIALS_DIR) not in sys.path:
+    sys.path.insert(0, str(MATERIALS_DIR))
+import studio_archive
+
 from googleapiclient.http import MediaIoBaseDownload, MediaFileUpload, MediaIoBaseUpload
 from issue_ticket import drive, LAUNCH_DIR
 from notify_montage import INBOX_ID, read_private, validate as validate_receipt, InboxError
@@ -469,6 +474,13 @@ def apply(svc,plan,video,qa,path):
        "motionlab_record_id":receipt_file_id}
     svc.files().update(fileId=plan["file_id"],body={"appProperties":props},
                       fields="id,appProperties").execute()
+    # Mark the render durable before a second archive copy. If that copy fails,
+    # retries take ALREADY_RENDERED and never repeat the render.
+    try:
+        studio_archive.copy_files(svc, plan['record']['project_id'], 'results', {
+            stem+'.mp4':video_id, stem+'_QA.json':qa_id})
+    except studio_archive.ArchiveError:
+        raise RenderError('PROJECT_ARCHIVE_PENDING_RECONCILE_BEFORE_RETRY') from None
     return {"status":"RENDERED_PENDING_OWNER_REVIEW","video_file_id":video_id,
        "qa_file_id":qa_id,"render_record_id":receipt_file_id,
        "sha256":qa["sha256"],"uploaded_reused":reuse}
@@ -490,6 +502,12 @@ def run(svc,receipt_file_id,do_apply=False):
     if app.get("motionlab_render_status")=="RENDERED_PENDING_OWNER_REVIEW":
         require(app.get("motionlab_video_file_id") and app.get("motionlab_qa_file_id"),
           "INCONSISTENT_PRIOR_RENDER")
+        stem="Alaska_Studio_Auto_"+plan["record"]["receipt_id"][:8]
+        try:
+            studio_archive.copy_files(svc, plan['record']['project_id'], 'results', {
+                stem+'.mp4':app['motionlab_video_file_id'], stem+'_QA.json':app['motionlab_qa_file_id']})
+        except studio_archive.ArchiveError:
+            raise RenderError('PROJECT_ARCHIVE_PENDING_RECONCILE_BEFORE_RETRY') from None
         return {**data,"status":"ALREADY_RENDERED",
             "video_file_id":app["motionlab_video_file_id"],
             "qa_file_id":app["motionlab_qa_file_id"]}

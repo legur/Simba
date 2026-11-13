@@ -39,6 +39,8 @@ class FakeDrive:
         self.nodes[node['id']] = node
         return Request(dict(node))
     def get_media(self, fileId): return Request(self.payloads[fileId])
+    def copy(self, fileId, body, fields):
+        return self.create(body, fields, Media(self.payloads[fileId], None, False))
 
 
 class Media:
@@ -78,3 +80,19 @@ class ArchiveTests(unittest.TestCase):
         with self.assertRaises(archive.ArchiveError): archive.save_files(self.drive,'../p','storyboard',{'x':b'x'})
         with self.assertRaises(archive.ArchiveError): archive.save_files(self.drive,'p','storyboard',{'../x':b'x'})
         with self.assertRaises(archive.ArchiveError): archive.save_files(self.drive,'p','storyboard',{'x':b''})
+
+    def test_copies_existing_large_result_once_and_rejects_collision(self):
+        source_id='source-file-12345'
+        data=b'rendered-result'
+        self.drive.nodes[source_id]={'id':source_id, 'name':'render.mp4', 'mimeType':'video/mp4',
+                                     'size':str(len(data)), 'md5Checksum':hashlib.md5(data).hexdigest()}
+        self.drive.payloads[source_id]=data
+        first=archive.copy_files(self.drive,'p','results',{'render.mp4':source_id})
+        count=self.drive.created
+        second=archive.copy_files(self.drive,'p','results',{'render.mp4':source_id})
+        self.assertEqual(first['status'],'INDIVIDUAL_COPIES_VERIFIED')
+        self.assertTrue(second['files'][0]['reused'])
+        self.assertEqual(self.drive.created,count)
+        self.drive.nodes[source_id]['md5Checksum']='a'*32
+        with self.assertRaises(archive.ArchiveError):
+            archive.copy_files(self.drive,'p','results',{'render.mp4':source_id})

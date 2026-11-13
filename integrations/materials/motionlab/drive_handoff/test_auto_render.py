@@ -39,6 +39,39 @@ def fixture():
     return record,launch
 
 class RenderChecks(unittest.TestCase):
+    def test_completed_render_reconciles_project_archive_without_rerender(self):
+        record, launch=fixture()
+        record['receipt_id']='12345678-0000-0000-0000-000000000000'
+        plan={'record':record, 'selection':record['selection']}
+        class Request:
+            def execute(self): return {'appProperties':{'motionlab_render_status':'RENDERED_PENDING_OWNER_REVIEW',
+                'motionlab_video_file_id':'source-file-12345', 'motionlab_qa_file_id':'source-file-67890'}}
+        class Drive:
+            def files(self): return self
+            def get(self, **kwargs): return Request()
+        with patch.object(m,'prepare',return_value=plan), patch.object(m,'render') as render, \
+             patch.object(m.studio_archive,'copy_files') as copy_files:
+            result=m.run(Drive(),'private-receipt',do_apply=True)
+        self.assertEqual(result['status'],'ALREADY_RENDERED')
+        render.assert_not_called()
+        self.assertEqual(len(copy_files.call_args.args[3]),2)
+
+    def test_completed_render_reports_pending_if_project_archive_fails(self):
+        record, launch=fixture()
+        record['receipt_id']='12345678-0000-0000-0000-000000000000'
+        plan={'record':record, 'selection':record['selection']}
+        class Request:
+            def execute(self): return {'appProperties':{'motionlab_render_status':'RENDERED_PENDING_OWNER_REVIEW',
+                'motionlab_video_file_id':'source-file-12345', 'motionlab_qa_file_id':'source-file-67890'}}
+        class Drive:
+            def files(self): return self
+            def get(self, **kwargs): return Request()
+        with patch.object(m,'prepare',return_value=plan), patch.object(m,'render') as render, \
+             patch.object(m.studio_archive,'copy_files',side_effect=m.studio_archive.ArchiveError('fail')):
+            with self.assertRaisesRegex(m.RenderError,'PROJECT_ARCHIVE_PENDING'):
+                m.run(Drive(),'private-receipt',do_apply=True)
+        render.assert_not_called()
+
     def test_profile_requires_exact_real_approval_and_no_publication(self):
         profile=m.get_profile("alaska-voyager-2027")
         self.assertFalse(profile["publication_authorized"])
