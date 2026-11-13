@@ -119,10 +119,10 @@
   }
   async function openProjectLink(api) {
     const fromLink=projectCapability(location.hash);
-    if(location.hash.startsWith('#project=')&&!fromLink){api.status('Неверная ссылка проекта. Запросите новую ссылку у Киностудии.');return;}
+    if(location.hash.startsWith('#project=')&&!fromLink){api.status('Неверная ссылка проекта. Запросите новую ссылку у Киностудии.');api.failed?.('Неверная приватная ссылка. Исходники не открыты.');return;}
     let handoff=fromLink;
     if(!handoff && !location.hash){try{handoff=projectCapability(sessionStorage.getItem('simba:motionlab:project-link:v1'));}catch{}}
-    if(!handoff)return;
+    if(!handoff){api.missing?.();return;}
     // Fragment capabilities are never sent in an HTTP URL/referrer or saved
     // in localStorage. Same-tab reload uses sessionStorage; server checks TTL.
     if(fromLink){try{sessionStorage.setItem('simba:motionlab:project-link:v1',location.hash);}catch{}history.replaceState(null,'',location.pathname+location.search);}
@@ -151,6 +151,7 @@
         await api.asset(a.asset_id,new File([bytes],'project-'+i+'.mp4',{type:'video/mp4'}));
       }
       api.status('Проект открыт. Все клипы проверены. Выбор еще не передан в Montage.');
+      api.complete?.(data.launch);
       // Read-only owner render status; no rendering is initiated by this call.
       if(root.motionlabRenderPollStop)root.motionlabRenderPollStop();
       let stopped=false,timer=null;
@@ -173,6 +174,7 @@
       poll();
     } catch(error){
       api.status('Исходный проект недоступен: '+String(error.message||error));
+      api.failed?.('Исходники A2E не открыты: '+String(error.message||error));
       // The 3-hour media ticket might have expired before the scheduled
       // renderer completed. A separately bounded consumed-ticket read can
       // still show the private result link without returning any original MP4.
