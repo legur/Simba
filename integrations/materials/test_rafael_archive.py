@@ -123,7 +123,9 @@ class ArchiveTests(unittest.TestCase):
     def test_full_existing_remote_checksum_and_bytes(self):
         data = self.path.read_bytes()
         fake = FakeDrive(data=data)
-        result = archive.archive_private(fake, archive.ARCHIVE_FOLDER, self.path)
+        with patch.object(archive.studio_archive, 'save_files', return_value={'status':'INDIVIDUAL_FILES_VERIFIED'}) as save:
+            result = archive.archive_private(fake, archive.ARCHIVE_FOLDER, self.path)
+        self.assertEqual(len(save.call_args.args[3]), 13)
         self.assertEqual(result["status"], "ALREADY_VERIFIED_PRIVATE")
         self.assertTrue(result["archive_verified"])
         self.assertFalse(result["leo_approved"])
@@ -143,7 +145,8 @@ class ArchiveTests(unittest.TestCase):
         with patch.dict(sys.modules, {"googleapiclient":fake_google,
                                       "googleapiclient.http":fake_http}):
             fake = FakeDrive()
-            result = archive.archive_private(fake, archive.ARCHIVE_FOLDER, self.path)
+            with patch.object(archive.studio_archive, 'save_files', return_value={'status':'INDIVIDUAL_FILES_VERIFIED'}):
+                result = archive.archive_private(fake, archive.ARCHIVE_FOLDER, self.path)
         self.assertEqual(result["status"], "VERIFIED_PRIVATE_UPLOAD")
         self.assertTrue(result["archive_verified"])
         self.assertEqual(fake.calls, 1)
