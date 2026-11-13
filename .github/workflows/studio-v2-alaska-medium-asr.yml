@@ -1,0 +1,85 @@
+name: "Studio v2 Alaska independent MEDIUM ASR (NO PAID / NO RENDER)"
+
+on:
+  pull_request:
+    paths:
+      - '.github/workflows/studio-v2-alaska-medium-asr.yml'
+      - 'integrations/video/alaska_private_medium_asr.py'
+      - 'integrations/video/tests/test_alaska_private_medium_asr.py'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/studio-v2-alaska-medium-asr.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: simba-alaska-medium-asr-once
+  cancel-in-progress: false
+
+jobs:
+  contract:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Synthetic language and confidence regression
+        run: |
+          python -m py_compile integrations/video/alaska_private_medium_asr.py
+          python -m unittest discover -s integrations/video/tests -p 'test_alaska_private_medium_asr.py' -v
+
+  private_medium:
+    if: >-
+      github.event_name == 'push' &&
+      github.ref == 'refs/heads/main' &&
+      github.repository == 'legur/Simba'
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Validate trusted exact main checkout
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          test "$GITHUB_REF" = "refs/heads/main"
+          test "$GITHUB_REPOSITORY" = "legur/Simba"
+          git diff --exit-code HEAD --
+      - name: Install official clients and offline medium ASR
+        run: |
+          python -m pip install --disable-pip-version-check \
+            'faster-whisper==1.2.1' \
+            'google-api-python-client>=2.140,<3' \
+            'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+      - name: Fetch PUBLIC medium model BEFORE accessing owner WAV
+        env:
+          HF_HUB_DISABLE_TELEMETRY: "1"
+        run: |
+          python - <<'PY'
+          from faster_whisper import WhisperModel
+          WhisperModel('medium',device='cpu',compute_type='int8')
+          print('PUBLIC_OFFLINE_MEDIUM_WEIGHTS_AVAILABLE')
+          PY
+      - name: Re-read owner-private SHA-verified WAV and save ONLY redacted diagnostics
+        env:
+          HF_HUB_DISABLE_TELEMETRY: "1"
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+        run: python integrations/video/alaska_private_medium_asr.py
+      - name: Record non-approval state
+        if: always()
+        run: |
+          echo "Secondary local unprompted ASR is diagnostic only. No customer audio or transcript is exported." >> "$GITHUB_STEP_SUMMARY"
+          echo "No new A2E/TTS, no paid provider and no owner approval, render or publication." >> "$GITHUB_STEP_SUMMARY"
