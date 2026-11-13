@@ -93,3 +93,12 @@ PURPOSE: Facebook travel news preview poster 1:1 (variant 5). SCENE: Плака�
 - All prior preview images remain REJECTED, not selectable; neither approved text nor exact saved production prompts are changed.
 - Third attempt must use image generator explicit 1024x1024 square size and one variant per render, referencing full five prompts in this file; after generating, mark a candidate preview only if format/Simba/exact text/variation pass actual QA.
 - Generation model or quality/thinking controls are not claimed available in this ChatGPT tool unless confirmed.
+
+## SELECTED_VARIANT_FINAL_RENDER — 2026-11-13
+
+- Leo choice: `1` from five-panel preview image in conversation.
+- `SELECTED_VARIANT_ID`: `1`.
+- Selected full production prompt: the exact `## VARIANT 1` / `### Exact saved production prompt` in this same file, re-read from GitHub main before renderer.
+- Note: preview image was a five-panel collage rather than five standalone previews, and diverged from the stored variant-1 prompt. Follow canonical saved variant-1 prompt for independent final artwork; do not claim collage QA PASS.
+- State: `FINAL_RENDER_REQUESTED`; `FINAL_VISUAL_READY`: pending actual render/QA; `PUBLISHED`: NO.
+- Image generator: ChatGPT image_gen; explicit 1:1 aspect size requested; ChatGPT model/quality controls unavailable to verify.
