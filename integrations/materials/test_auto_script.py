@@ -161,6 +161,15 @@ class ScriptRunnerTests(unittest.TestCase):
             auto_script.render_markdown(self.project, 'f'*64, 'a'*64,
                                        [SCRIPT_BASE, SCRIPT_BASE, SCRIPT_BASE])
 
+    def test_source_is_archived_exactly_and_failures_are_not_acknowledged(self):
+        with patch.object(auto_script.studio_archive, 'save_files') as save:
+            auto_script.archive_script_files(FakeDrive(), self.root, self.project, 'draft.md', b'draft')
+        saved = save.call_args.args[3]
+        self.assertIn(self.source.read_bytes(), saved.values())
+        with patch.object(auto_script.studio_archive, 'save_files', side_effect=auto_script.studio_archive.ArchiveError('failure')):
+            with self.assertRaises(auto_script.AgentError):
+                auto_script.archive_script_files(FakeDrive(), self.root, self.project, 'draft.md', b'draft')
+
     def test_synthetic_smoke_stays_private_without_real_tour_or_api(self):
         calls = []
         uploads = []
