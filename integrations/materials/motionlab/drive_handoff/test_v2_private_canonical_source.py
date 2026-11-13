@@ -20,9 +20,10 @@ class Exec:
 
 class FakeDrive:
     def __init__(self, data, *, shared=False, name="project.json",
-                 folder_shared=False):
+                 folder_shared=False, extra_user=False):
         self.raw = json.dumps(data).encode()
         self.shared, self.folder_shared, self.name = shared, folder_shared, name
+        self.extra_user = extra_user
 
     def files(self):
         return self
@@ -40,7 +41,8 @@ class FakeDrive:
     def list(self, fileId, fields, pageSize):
         bad = self.folder_shared if fileId == "F"*26 else self.shared
         return Exec({"permissions":[{"type":"anyone" if bad else "user",
-                                      "role":"owner"}]})
+                                      "role":"owner"}] +
+                     ([{"type":"user","role":"reader"}] if self.extra_user else [])})
 
     def get_media(self, fileId):
         return Exec(self.raw)
@@ -83,6 +85,10 @@ class PrivateSourceTests(unittest.TestCase):
             with self.subTest(flag=flag),self.assertRaises(
                     source.PrivateCanonicalError):
                 self.runcheck(**{flag:True})
+
+    def test_second_named_user_is_not_owner_only(self):
+        with self.assertRaisesRegex(source.PrivateCanonicalError,"ACL_UNTRUSTED"):
+            self.runcheck(extra_user=True)
 
     def test_filename_rejected(self):
         with self.assertRaisesRegex(source.PrivateCanonicalError,
