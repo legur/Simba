@@ -322,7 +322,9 @@ def run(root: Path, report: dict, folder: str, *, infer=ollama_chat, drive_facto
                 if not isinstance(data, bytes) or not 250 <= len(data) <= 30_000:
                     raise AgentError('existing script bytes unavailable or invalid')
                 archive_script_files(drive, root, project, name, data)
-            except (OSError, AttributeError):
+            except AgentError:
+                raise
+            except Exception:
                 raise AgentError('project script archive failed; reconcile before retry') from None
             output.append({'project_id': project['id'], 'status': 'ALREADY_PRIVATE_ARCHIVED'})
             continue
