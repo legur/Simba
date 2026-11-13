@@ -51,6 +51,47 @@ def _private_job(root:Path,private_root:Path,project_id:str)->Path:
     return job
 
 
+
+def _unique_approved_a2e_v2(project: dict) -> list[dict]:
+    """Read canonical F2U approvals: up to 12 UNIQUE sources for 12 scenes.
+
+    v1 _clips() intentionally remains untouched (max six). Alaska's approved
+    ten-scene timeline references seven original A2E files, not ten new files.
+    Do not infer clip approval from a folder or browser-provided metadata.
+    """
+    import math
+    handoffs = project.get("stage_handoffs")
+    if not isinstance(handoffs, dict):
+        raise V2SourceError("V2_CANONICAL_A2E_HANDOFF_REQUIRED")
+    approved = handoffs.get("a2e_clips")
+    ids = approved.get("assets") if isinstance(approved, dict) else None
+    if (not isinstance(ids, list) or not 1 <= len(ids) <= renderer.MAX_SCENES
+            or any(not isinstance(i, str) or not i for i in ids)
+            or len(ids) != len(set(ids))):
+        raise V2SourceError("V2_APPROVED_UNIQUE_A2E_LIST_INVALID")
+    assets = {a["id"]: a for a in project.get("assets", [])
+              if isinstance(a, dict) and isinstance(a.get("id"), str)}
+    if len(assets) != len([a for a in project.get("assets", [])
+                            if isinstance(a, dict) and isinstance(a.get("id"), str)]):
+        raise V2SourceError("V2_DUPLICATE_CANONICAL_ASSET_IDS")
+    result = []
+    for aid in ids:
+        asset = assets.get(aid)
+        duration = asset.get("recorded_duration_seconds") if asset else None
+        if (not isinstance(asset, dict) or asset.get("kind") != "animated_clip"
+                or asset.get("state") != "available"
+                or not isinstance(asset.get("task_id"), str) or not asset["task_id"]
+                or not isinstance(asset.get("recorded_sha256"), str)
+                or not old.SHA.fullmatch(asset["recorded_sha256"])
+                or type(duration) not in (int, float) or not math.isfinite(duration)
+                or not 3 <= duration <= 15
+                or not isinstance(asset.get("drive_file_id"), str)
+                or not old.DRIVE_ID.fullmatch(asset["drive_file_id"])):
+            raise V2SourceError("V2_UNVERIFIED_CANONICAL_A2E_ASSET")
+        result.append(asset)
+    return result
+
+
 def source_context(root:Path,private_root:Path,project_id:str,request_id:str):
     """Recover actual verified media and unchanged current voice/music handoff.
 
@@ -60,7 +101,7 @@ def source_context(root:Path,private_root:Path,project_id:str,request_id:str):
     if not isinstance(request_id,str) or not old.REQUEST_ID.fullmatch(request_id):
         raise V2SourceError("Invalid request ID")
     path,project,packet=old._open_stage(root,project_id)
-    clips=old._clips(project)
+    clips=_unique_approved_a2e_v2(project)
     job=_private_job(root,private_root,project_id)
     for filename in (PRIVATE_FILE,PRIVATE_MEDIA):
         path=job/filename
@@ -72,17 +113,37 @@ def source_context(root:Path,private_root:Path,project_id:str,request_id:str):
     except (OSError,UnicodeError,ValueError):
         raise V2SourceError("Private source metadata invalid") from None
     if not isinstance(media,list) or len(media)!=len(clips):
-        raise V2SourceError("Private media count differs from approved F2U stage")
-    for i,(asset,known) in enumerate(zip(media,clips),1):
-        if (not isinstance(asset,dict)
-                or asset.get("scene_id")!=f"clip-{i:02d}"
-                or asset.get("asset_id")!=known.get("id")
-                or asset.get("sha256")!=known.get("recorded_sha256")
-                or abs(float(asset.get("duration_s",-1))-
-                       float(known["recorded_duration_seconds"]))>.15):
+        raise V2SourceError("Private UNIQUE media count differs from approved F2U stage")
+    # The private manifest is one row per original A2E MP4; scene count may
+    # be larger. Do not require A2E files in scene order or the old clip-01
+    # naming scheme. Each original source must appear exactly once.
+    known_by_id={a["id"]:a for a in clips}
+    observed=set()
+    for asset in media:
+        if not isinstance(asset,dict):
+            raise V2SourceError("V2_PRIVATE_MEDIA_ASSET_INVALID")
+        aid=asset.get("asset_id")
+        known=known_by_id.get(aid) if isinstance(aid,str) else None
+        if aid in observed or known is None:
+            raise V2SourceError("V2_PRIVATE_MEDIA_SOURCE_MISSING_OR_DUPLICATED")
+        observed.add(aid)
+        duration=asset.get("duration_s")
+        if (not isinstance(asset.get("sha256"),str)
+                or asset["sha256"]!=known["recorded_sha256"]
+                or type(duration) not in (int,float)
+                or not 3<=duration<=15
+                or abs(float(duration)-float(known["recorded_duration_seconds"]))>.15):
             raise V2SourceError("F2U asset fingerprint or duration changed")
+    if observed!=set(known_by_id):
+        raise V2SourceError("V2_PRIVATE_MEDIA_SOURCE_MISSING_OR_DUPLICATED")
     if spec.get("packageId")!=project_id:
         raise V2SourceError("Approved spec package differs from canonical project")
+    try:
+        # Enforces all ten original Alaska scene IDs, approved source_asset_id,
+        # filenames and strict reuse of the seven unique verified originals.
+        v2.expand_scene_media(spec.get("scenes"),media)
+    except (ValueError,TypeError,KeyError):
+        raise V2SourceError("V2_APPROVED_SCENE_TO_SOURCE_BINDING_CHANGED") from None
     # Owner-controlled staged files; never accept filenames or hashes from Wix.
     # Studio owns the metadata contract (PR #127); Montage verifies bytes.
     try:
