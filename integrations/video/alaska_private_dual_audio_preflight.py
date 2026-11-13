@@ -244,10 +244,17 @@ def check_two_methods(approved,wav_path,duration):
          return_char_alignments=False)
     ctc=mapped.get("word_segments") or []
     ctc_tokens=[token for x in ctc for token in normalize(str(x.get("word","")))]
-    ctc_valid=all(type(x.get("start")) in (int,float)
-                  and type(x.get("end")) in (int,float)
-                  and 0<=x["start"]<x["end"]<=duration+.1
-                  for x in ctc)
+    ctc_valid=True
+    previous_ctc_end=0.0
+    for row in ctc:
+        start,end=row.get("start"),row.get("end")
+        if (type(start) not in (int,float)
+                or type(end) not in (int,float)
+                or not 0<=start<end<=duration+.1
+                or start+.05<previous_ctc_end):
+            ctc_valid=False
+        if type(end) in (int,float):
+            previous_ctc_end=max(previous_ctc_end,float(end))
     # No metadata promotion from a forced alignment alone. Even with a
     # very plausible CTC timeline, the unprompted independent ASR must agree.
     match=(spoken==expected and ctc_tokens==expected and ctc_valid
@@ -312,7 +319,11 @@ def audit(svc):
         # Local Whisper/WhisperX only; models cannot access the Drive bearer.
         try:
             independent=check_two_methods(source,path,duration)
-        except (ImportError,RuntimeError,OSError,ValueError,KeyError,Blocked):
+        except Blocked as exc:
+            independent={"status":str(exc),
+                         "source_audio_verified":True,
+                         "word_timing_verified_for_canonical_v2":False}
+        except (ImportError,RuntimeError,OSError,ValueError,KeyError):
             independent={"status":"BLOCKED_MODEL_OR_ALIGNMENT_FAILED",
                          "source_audio_verified":True,
                          "word_timing_verified_for_canonical_v2":False}
