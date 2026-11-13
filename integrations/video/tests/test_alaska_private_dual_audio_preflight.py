@@ -83,6 +83,53 @@ class AlaskaPrivateAudioSourceTests(unittest.TestCase):
             a.read_private(FakeDrive(raw),a.WAV_ID,a.AUDIO_DIR,
                  "WarmBaritone.wav","f"*64,a.MAX_WAV,{"audio/x-wav"})
 
+    def test_phrasewise_ctc_uses_unprompted_asr_time_anchors(self):
+        spoken="Первый красивый лайнер на море. Второй лайнер идет домой. Третий большой лайнер прибыл вечером."
+        words=a.normalize(spoken)
+        observations=[]
+        for i,word in enumerate(words):
+            # Each lexical token carries genuine independent ASR timing
+            # positions in the test, not any fabricated user-selected edit.
+            observations.append({"word":word,
+                                 "start":i*.45+(i//5)*.60,
+                                 "end":i*.45+.26+(i//5)*.60,
+                                 "probability":.98})
+        windows=a.sentence_windows(spoken,observations,12.0)
+        self.assertEqual(len(windows),3)
+        self.assertEqual([a.normalize(x["text"]) for x in windows],
+                         [a.normalize(x) for x in
+                          ("Первый красивый лайнер на море.",
+                           "Второй лайнер идет домой.",
+                           "Третий большой лайнер прибыл вечером.")])
+        for earlier,later in zip(windows,windows[1:]):
+            self.assertLessEqual(earlier["end"],later["start"])
+        self.assertTrue(all(0<=x["start"]<x["end"]<=12 for x in windows))
+
+    def test_missing_unprompted_asr_sentence_anchors_blocks_ctc(self):
+        spoken="Ледники возле моря. Возвращение через порт. Лайнер идет на север."
+        observation=[{"word":word,"start":i*.25,
+                      "end":i*.25+.15,"probability":.9}
+                     for i,word in enumerate(a.normalize("Ледники возле моря. Лайнер идет на север."))]
+        with self.assertRaisesRegex(a.Blocked,
+                        "CTC_INSUFFICIENT_INDEPENDENT_SENTENCE_ANCHORS"):
+            a.sentence_windows(spoken,observation,10)
+
+    def test_redacted_diagnostic_pinpoints_missing_numeric_ctc_timings(self):
+        approved=["двадцать","27","августа","джуно"]
+        asr=[{"word":w,"start":i*.5,"end":i*.5+.3,"probability":.9}
+             for i,w in enumerate(["двадцать","двадцать","августа","джуну"])]
+        asr[-1]["probability"]=.51
+        ctc=[{"word":word,"start":i*.5,"end":i*.5+.3}
+             for i,word in enumerate(approved)]
+        ctc[1].pop("start")
+        detail=a.redacted_evidence(approved,asr,ctc,5)
+        self.assertEqual(detail["approved_numeric_token_positions"],[1])
+        self.assertEqual(detail["ctc_missing_timing_positions"],[1])
+        self.assertEqual(detail["independent_asr_weak_word_positions"],[3])
+        self.assertFalse("джуно" in str(detail))
+        self.assertFalse("джуну" in str(detail))
+        self.assertTrue(detail["independent_asr_mismatch_spans"])
+
     def test_narration_tokenizer_does_not_invent_subtitles(self):
         self.assertEqual(a.normalize("Джуно, Сиэтл!"),["джуно","сиэтл"])
         self.assertEqual(a.normalize("Voyager of the Seas"),["voyager","of","the","seas"])
