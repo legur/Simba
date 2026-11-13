@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-11-13 | [Вена или Будапешт? Рождественские ярмарки](2026-11-13__NEWS__VIENNA-BUDAPEST-CHRISTMAS-MARKETS__APPROVED.md) | APPROVED_TEXT; Rafael previews pending; PUBLISHED NO | News / hybrid / Facebook, охват | Вена, Будапешт, ярмарки, Israir 13–15 Nov 2026 | $99 sale / даты Rathaus до 26.12 и Basilica до 01.01 / вопрос-выбор | «утверждаем» после нескольких проходов внешнего Critic | high for text approval; time-sensitive facts |
 | 2026-11-12 | [Старая добрая Англия](2026-11-12__SIMBA__OLD-ENGLAND__APPROVED.md) | APPROVED_TEXT | Simba / продающий / лиды | экскурсионный тур Англия 23.04.2027 | Лондон и провинция за неделю, состав цены | «отлично» после четырех проходов Critic | high |
 | 2026-11-12 | [MSC Seascape: тайна каюты](2026-11-12__NEWS__MSC-SEASCAPE-INVESTIGATION__APPROVED.md) | APPROVED_TEXT; Rafael previews pending | news / documentary detective / discussion | MSC Seascape / FBI investigation | 21:15 clothing change → incident chronology → crew towels; facts with judicial caveat | «Отлично» после редакторских правок | high for approval; factual sources linked |
 | 2026-11-11 | [Шуточный прейскурант услуг турагента](2026-11-11__LEO__TRAVEL-AGENT-SATIRICAL-SERVICES__APPROVED.md) | APPROVED_TEXT; visual not requested | Leo / humor / personal brand | вымышленные платные услуги турагента | 11 абсурдных услуг, узнаваемые запросы туристов, самоирония | «отлично» после усиления плотности и разнообразия шуток | high |
