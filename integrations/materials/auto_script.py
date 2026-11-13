@@ -19,6 +19,7 @@ from urllib.request import Request, urlopen
 
 import catalog
 import handoff
+import studio_archive
 
 REPOSITORY = 'legur/Simba'
 FOLDER_ID_RE = re.compile(r'^[A-Za-z0-9_-]{10,120}$')
@@ -285,6 +286,21 @@ def upload_private(drive, folder: str, name: str, content: str, revision: str) -
         raise AgentError('private Drive upload failed; do not claim completion') from None
 
 
+def archive_script_files(drive, root: Path, project: dict, name: str, data: bytes) -> None:
+    files = {name: data}
+    for item in project['sources']:
+        path = catalog.inside(root, item['path'])
+        raw = path.read_bytes()
+        fingerprint = hashlib.sha256(raw).hexdigest()
+        if fingerprint != item['sha256']:
+            raise AgentError('source changed before project archive')
+        files['source_' + fingerprint[:16] + '.md'] = raw
+    try:
+        studio_archive.save_files(drive, project['id'], 'scripts', files)
+    except studio_archive.ArchiveError:
+        raise AgentError('project script archive failed; reconcile before retry') from None
+
+
 def run(root: Path, report: dict, folder: str, *, infer=ollama_chat, drive_factory=drive_client) -> list[dict]:
     tasks = read_created_script_tasks(root, report)
     if not tasks:
@@ -296,12 +312,22 @@ def run(root: Path, report: dict, folder: str, *, infer=ollama_chat, drive_facto
     output = []
     for project, revision in tasks:
         name = private_name(project['id'], revision)
-        if find_existing(drive, folder, name, revision):
-            output.append({'project_id': project['id'], 'status': 'ALREADY_PRIVATE_ARCHIVED'})
-            continue
         source, current_revision, source_hash = extract_approved_source(root, project)
         if current_revision != revision:
             raise AgentError('source changed between handoff and generation')
+        existing = find_existing(drive, folder, name, revision)
+        if existing:
+            try:
+                data = drive.files().get_media(fileId=existing).execute(num_retries=0)
+                if not isinstance(data, bytes) or not 250 <= len(data) <= 30_000:
+                    raise AgentError('existing script bytes unavailable or invalid')
+                archive_script_files(drive, root, project, name, data)
+            except AgentError:
+                raise
+            except Exception:
+                raise AgentError('project script archive failed; reconcile before retry') from None
+            output.append({'project_id': project['id'], 'status': 'ALREADY_PRIVATE_ARCHIVED'})
+            continue
         variants = []
         for title, angle in ANGLES:
             for attempt in range(2):
@@ -321,6 +347,7 @@ def run(root: Path, report: dict, folder: str, *, infer=ollama_chat, drive_facto
             variants.append(result)
         content = render_markdown(project, source_hash, revision, variants)
         status = upload_private(drive, folder, name, content, revision)
+        archive_script_files(drive, root, project, name, content.encode('utf-8'))
         output.append({'project_id': project['id'], 'stage': 'script',
                        'status': status, 'draft_options': 3,
                        'approved': False, 'media_generated': False,
