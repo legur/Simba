@@ -121,7 +121,12 @@
     const fromLink=projectCapability(location.hash);
     if(location.hash.startsWith('#project=')&&!fromLink){api.status('Неверная ссылка проекта. Запросите новую ссылку у Киностудии.');api.failed?.('Неверная приватная ссылка. Исходники не открыты.');return;}
     let handoff=fromLink;
-    if(!handoff && !location.hash){try{handoff=projectCapability(sessionStorage.getItem('simba:motionlab:project-link:v1'));}catch{}}
+    // Scene/cut editor uses its own hash. A refresh from #scene/0, #cut/1,
+    // #style or #overview must still recover the SAME owner-private ticket.
+    const safeEditorHash=/^#(?:overview|style|scene\\/\\d+|cut\\/\\d+)$/.test(location.hash);
+    if(!handoff && (!location.hash||safeEditorHash)){
+      try{handoff=projectCapability(sessionStorage.getItem('simba:motionlab:project-link:v1'));}catch{}
+    }
     if(!handoff){api.missing?.();return;}
     // Fragment capabilities are never sent in an HTTP URL/referrer or saved
     // in localStorage. Same-tab reload uses sessionStorage; server checks TTL.
