@@ -12,6 +12,9 @@ on:
       - 'integrations/materials/motionlab/drive_handoff/test_v2_private_canonical_source.py'
       - 'integrations/materials/motionlab/drive_handoff/v2_private_workspace.py'
       - 'integrations/materials/motionlab/drive_handoff/test_v2_private_workspace.py'
+      - 'integrations/materials/motionlab/drive_handoff/v2_private_drive_head.py'
+      - 'integrations/materials/motionlab/drive_handoff/test_v2_private_drive_head.py'
+      - 'integrations/materials/motionlab/drive_handoff/private_heads/**'
       - 'integrations/materials/motionlab_v2_stage_writeback.py'
       - 'integrations/video/motionlab_v2_contract.py'
 
@@ -41,9 +44,12 @@ jobs:
           python -m py_compile integrations/materials/motionlab/drive_handoff/test_v2_private_canonical_source.py
           python -m py_compile integrations/materials/motionlab/drive_handoff/v2_private_workspace.py
           python -m py_compile integrations/materials/motionlab/drive_handoff/test_v2_private_workspace.py
+          python -m py_compile integrations/materials/motionlab/drive_handoff/v2_private_drive_head.py
+          python -m py_compile integrations/materials/motionlab/drive_handoff/test_v2_private_drive_head.py
       - name: Authenticated private Drive receipts and zero-write GitHub SHA CAS
         run: |
           python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_v2_receipt_preflight.py' -v
           python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_v2_canonical_cas.py' -v
           python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_v2_private_canonical_source.py' -v
           python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_v2_private_workspace.py' -v
+          python -m unittest discover -s integrations/materials/motionlab/drive_handoff -p 'test_v2_private_drive_head.py' -v
