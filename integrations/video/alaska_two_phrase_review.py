@@ -9,7 +9,6 @@ owner-only Drive audio folder, with source SHA and non-render guards.
 """
 from __future__ import annotations
 
-from datetime import datetime, timezone
 from pathlib import Path
 import hashlib
 import io
@@ -145,7 +144,6 @@ def audit(svc):
         "schema":"bontours.studio.private-targeted-listening/v1",
         "project_id":original.PROJECT,
         "status":"TWO_SHORT_OWNER_ONLY_LISTENING_EXCERPTS_READY_UNREVIEWED",
-        "created_utc":datetime.now(timezone.utc).isoformat(),
         "original_wav_sha256":original.WAV_SHA,
         "clips":entries,
         "owner_v2_voice_music_lock_approved":False,
