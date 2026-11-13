@@ -7,10 +7,10 @@
  <meta name="description" content="Конструктор раскадровки Bon Tours с выбором камер, переходов, титров и субтитров. Возврат выбранных настроек агенту.">
  <link rel="preconnect" href="https://fonts.googleapis.com">
  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet">
- <link rel="stylesheet" href="storyboard.css?v=private-review-20261112-1">
- <script defer src="storyboard.js?v=verified-a2e-posters-20261113"></script>
+ <link rel="stylesheet" href="storyboard.css?v=private-a2e-gate-20261113">
+ <script defer src="storyboard.js?v=private-a2e-gate-20261113"></script>
   <script defer src="motionlab_drive_config.js"></script>
-  <script defer src="motionlab_drive_bridge.js?v=active-queue-20261112-1"></script>
+  <script defer src="motionlab_drive_bridge.js?v=private-a2e-gate-20261113"></script>
  <script defer src="visual_editor.js"></script>
  <script defer src="scene_pages.js"></script>
  <script defer src="director_core.js"></script>
@@ -37,6 +37,10 @@
   <section class="connection-strip" aria-live="polite">
    <div class="conn-state"><span id="connLed" class="conn-led"></span><div><strong id="connectionTitle">Демонстрационный режим</strong><p id="connectionText">Настройки можно экспортировать в JSON. Для прямой передачи агент должен открыть модуль и подключить канал ответа.</p></div></div>
    <div class="conn-actions"><label for="requestFile" class="secondary-btn file-label">Загрузить задание JSON</label><input type="file" id="requestFile" accept=".json,application/json" hidden><button type="button" id="resetDemo" class="secondary-btn">Демо</button></div>
+  </section>
+  <section id="privateProjectGate" class="private-project-gate" role="status" aria-live="polite" hidden>
+   <strong id="privateProjectGateTitle">Проверяю приватный проект A2E</strong>
+   <p id="privateProjectGateText">Загружаю реальные исходные видео и сверяю контрольные суммы. Монтаж не запускается.</p>
   </section>
   <div class="workspace" id="overviewWorkspace">
    <section class="design-panel">
