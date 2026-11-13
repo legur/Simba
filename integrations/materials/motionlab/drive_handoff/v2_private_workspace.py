@@ -12,7 +12,6 @@ from contextlib import contextmanager
 import hashlib
 import os
 from pathlib import Path, PurePosixPath
-import stat
 import tempfile
 
 import v2_private_canonical_source as owner
@@ -62,7 +61,8 @@ def _paths(document: dict, project_id: str) -> dict[str,str]:
                   and path.parts[:2]==("campaigns",project_id)
                   and not any(p in (".","..","") for p in path.parts)
                   and "\\" not in name and name==str(path)
-                  and name not in specs,
+                  and name not in specs
+                  and name != f"campaigns/{project_id}/project.json",
                   "V2_PRIVATE_SOURCE_PATH_UNSAFE")
             specs[name]=sha
     guard(0<len(specs)<=MAX_FILES, "V2_PRIVATE_SOURCE_COUNT_INVALID")
