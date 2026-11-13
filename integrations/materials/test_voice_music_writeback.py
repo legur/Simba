@@ -75,6 +75,23 @@ class PrivateDrive:
 
 
 class VoiceMusicWritebackTests(unittest.TestCase):
+    def test_project_audio_archive_preserves_selection_and_selected_files(self):
+        class Request:
+            def __init__(self, fid): self.fid=fid
+            def execute(self, **kwargs): return {'id':self.fid, 'mimeType':'audio/mpeg'}
+        class Drive:
+            def files(self): return self
+            def get(self, fileId, fields): return Request(fileId)
+        candidate={'stage_handoffs':{'voice_music':{'assets':['music-1']}},
+                   'assets':[{'id':'music-1','kind':'music','drive_file_id':'private-music-file',
+                              'recorded_sha256':'a'*64}]}
+        with patch.object(bridge.studio_archive,'copy_files') as copy:
+            bridge.archive_project_audio('project-1',candidate,'manifest-file-id',drive=Drive())
+        self.assertEqual(copy.call_args.args[3], {'audio_selection_manifest-file-id.json':'manifest-file-id',
+                                                  'music_'+'a'*16+'.mp3':'private-music-file'})
+        with patch.object(bridge.studio_archive,'copy_files',side_effect=bridge.studio_archive.ArchiveError('x')):
+            with self.assertRaises(bridge.AudioHandoffError):
+                bridge.archive_project_audio('project-1',candidate,'manifest-file-id',drive=Drive())
     def setUp(self):
         self.fixture=StageHandoffTests("test_first_stage_requires_explicit_script_selection")
         self.fixture.setUp()

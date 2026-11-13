@@ -36,6 +36,7 @@ import handoff
 import auto_script
 import rafael_archive
 import a2e_writeback
+import studio_archive
 import studio_v2_audio_stage
 import simba_voice
 import simba_voice_issue
@@ -443,6 +444,32 @@ def build_candidate(root: Path, project_id: str, manifest_id: str,
     return path, result, report
 
 
+def archive_project_audio(project_id: str, candidate: dict, manifest_id: str, *, drive=None) -> None:
+    """Archive the already-verified selection record and selected audio files."""
+    ids = set(candidate['stage_handoffs']['voice_music']['assets'])
+    rows = [row for row in candidate['assets'] if row.get('id') in ids]
+    if not ids or len(rows) != len(ids):
+        raise AudioHandoffError('project audio archive mapping incomplete')
+    drive = drive or auto_script.drive_client()
+    files = {'audio_selection_' + manifest_id + '.json': manifest_id}
+    for row in rows:
+        fid, sha, kind = row.get('drive_file_id'), row.get('recorded_sha256'), row.get('kind')
+        if not isinstance(fid, str) or not DRIVE_ID.fullmatch(fid) or not isinstance(sha, str) or not SHA.fullmatch(sha) or kind not in ('music', 'narration'):
+            raise AudioHandoffError('project audio archive identity invalid')
+        try:
+            meta = drive.files().get(fileId=fid, fields='id,mimeType').execute(num_retries=0)
+        except Exception:
+            raise AudioHandoffError('project audio archive metadata unavailable') from None
+        ext = MIMES.get(meta.get('mimeType'))
+        if meta.get('id') != fid or not ext:
+            raise AudioHandoffError('project audio archive format invalid')
+        files[kind + '_' + sha[:16] + '.' + ext] = fid
+    try:
+        studio_archive.copy_files(drive, project_id, 'audio', files)
+    except studio_archive.ArchiveError:
+        raise AudioHandoffError('project audio archive failed; reconcile before retry') from None
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
@@ -462,6 +489,7 @@ def main(argv=None) -> int:
             root, args.project, args.manifest_file_id, args.manifest_sha256,
             v2_approved_text_source=args.v2_approved_text_source)
         if args.apply:
+            archive_project_audio(args.project, updated, args.manifest_file_id)
             a2e_writeback.apply_candidate(
                 root, target, updated, original_sha256=before)
             report["status"] = "VOICE_MUSIC_APPLIED_LOCALLY_GIT_PUSH_PENDING"
