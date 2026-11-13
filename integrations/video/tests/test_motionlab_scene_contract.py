@@ -114,6 +114,41 @@ class CrossStageSceneCountTests(unittest.TestCase):
                 self.assertTrue(all(x["run_paid_operations"] is False
                                     for x in [selection["guards"]]))
 
+    def test_fifteen_distinct_original_a2e_assets_are_not_assumed_to_be_ten(self):
+        fx=self.fixture()
+        import hashlib
+        spec=copy.deepcopy(fx.spec)
+        spec["scenes"]=[]
+        media=[]
+        for i in range(15):
+            name=f"unique-a2e-{i+1:02d}.mp4"
+            raw=f"synthetic distinct no-real-media source {i}".encode()
+            (fx.job/name).write_bytes(raw)
+            aid=f"a2e-unique-{i+1}"
+            media.append({"scene_id":f"unique-{i+1:02d}",
+                          "asset_id":aid,"file":name,
+                          "sha256":hashlib.sha256(raw).hexdigest(),
+                          "duration_s":5.0})
+            spec["scenes"].append({
+                "scene_id":f"unique-{i+1:02d}",
+                "source_asset_id":aid,
+                "scene_duration_s":3.0,
+                "source_playback":"freeze",
+                "clip":name,
+                "title":f"Approved scene {i+1}",
+                "lines":[{"text":f"Approved line {i+1}"}],
+            })
+        materials=v2.make_materials_v2(
+            "unique-source-test","unique-source-session","a"*64,
+            spec,media,fx.job,probe=fx.probe)
+        self.assertEqual(len(materials["scenes"]),15)
+        self.assertEqual(len({x["asset_id"] for x in materials["scenes"]}),15)
+        self.assertEqual(len({x["media"]["asset_sha256"]
+                              for x in materials["scenes"]}),15)
+        self.assertFalse(materials["constraints"]["allow_paid_operations"])
+        self.assertEqual(sum(s["scene_duration_s"]
+                             for s in materials["scenes"]),45.0)
+
     def test_25_scenes_and_zero_scenes_are_rejected_before_any_video_io(self):
         fx=self.fixture()
         for count in (0,25):
