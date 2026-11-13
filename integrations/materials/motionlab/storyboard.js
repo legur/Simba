@@ -722,6 +722,19 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  $('requestFile').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>300_000){say('Максимальный размер задания 300 КБ');return;}try{const source=JSON.parse(await file.text());if(state.bridge){say('Задание от агента активно. Импорт недоступен.');return;}loadLaunch(source,null);}catch(err){say('Ошибка JSON: '+err.message);}});
  $('downloadJson').addEventListener('click',jsonDownload);$('copyBrief').addEventListener('click',copyBrief);$('sendToAgent').addEventListener('click',sendSelection);
  window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);stopFilm(false);clearPreviews();closeDriveRenderPreview();});prepareDemo();restoreLocalDraft();
+ // A private project ticket must never masquerade as the Bavaria demo.
+ const privateProjectRequested=location.hash.startsWith('#project=')||(()=>{
+  if(location.hash)return false;
+  try{return Boolean(sessionStorage.getItem('simba:motionlab:project-link:v1'));}catch{return false}
+ })();
+ if(privateProjectRequested){
+  document.body.classList.add('private-project-pending');
+  $('privateProjectGate').hidden=false;
+  $('resetDemo').disabled=true;
+  $('connectionTitle').textContent='Загружаю приватный проект A2E';
+  $('connectionText').textContent='Список сцен появится только после проверки исходных MP4. Демо скрыто.';
+ }
+
  // Creative templates apply ONLY to the local demo. Agent launch with three options remains authoritative.
  const creativeId=new URLSearchParams(location.search).get('creativePreset');
  const creativeSuggestions={
@@ -737,7 +750,20 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
    choicesFromPreset(1);say('Шаблон применен только к демонстрации. Для проекта нужен выбор трех предложений агента.');
  }
  announceReady();
- const openProject=()=>globalThis.MotionLabDrive?.openProjectLink({
+ const privateProjectError=reason=>{
+  if(!privateProjectRequested)return;
+  document.body.classList.add('private-project-pending');
+  $('privateProjectGate').hidden=false;
+  $('privateProjectGateTitle').textContent='Исходные видео A2E не открыты';
+  $('privateProjectGateText').textContent=String(reason||'Нужна действующая приватная ссылка проекта.');
+  $('connectionTitle').textContent='Проект не загружен — демонстрационный ролик скрыт';
+ };
+ const openProject=()=>{
+  if(!globalThis.MotionLabDrive){
+   privateProjectError('Приемник приватного проекта не подключен. Редактор не подменяет материалы демо.');
+   return;
+  }
+  return globalThis.MotionLabDrive.openProjectLink({
   load:launch=>{
    clearDriveRenderReview();
    const current=state.request,rows=new Map(launch.scenes.map(s=>[s.scene_id,s]));
@@ -747,13 +773,33 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
    else loadLaunch(launch,null);
   },
   asset:async(id,file)=>{const matches=state.scenes.filter(s=>s.asset===id);if(!matches.length)throw Error('Исходник отсутствует в проекте');for(const s of matches)await localFileChosen(file,s);},
-  status:text=>{$('connectionTitle').textContent='Проект из закрытого Drive';$('connectionText').textContent=text;},
+  status:text=>{
+   $('connectionTitle').textContent='Проект из закрытого Drive';$('connectionText').textContent=text;
+   if(privateProjectRequested)$('privateProjectGateText').textContent=text;
+  },
+  missing:()=>privateProjectError('В этой вкладке нет ключа приватного проекта. Откройте исходную персональную ссылку из чата.'),
+  failed:reason=>privateProjectError(reason),
+  complete:()=>{
+   const verified=Boolean(state.request)&&state.scenes.length>0
+     &&state.scenes.every(s=>previewFor(s)?.shaVerified===true);
+   if(!verified){
+    privateProjectError('Не все видеоклипы подтверждены по SHA-256. Редактирование заблокировано.');
+    return;
+   }
+   document.body.classList.remove('private-project-pending');
+   $('privateProjectGate').hidden=true;
+   $('resetDemo').disabled=false;
+   $('connectionTitle').textContent='Настоящие исходные A2E загружены';
+   $('connectionText').textContent=state.scenes.length+' сцен; исходные MP4 сверены. Настройте монтаж перед подтверждением.';
+   render();
+  },
   result:r=>{
    if(!r||(state.project?.id&&r.project_id!==state.project.id))return;
    showDriveRenderResult(r);
   },
   busy:on=>{for(const id of ['overviewWorkspace','handoff'])$(id).inert=on;}
- });
+  });
+ };
  // Deferred scripts execute in document order; the Drive bridge follows this
  // editor, so project loading must wait until all deferred scripts are ready.
  if(document.readyState!=='complete')document.addEventListener('DOMContentLoaded',openProject,{once:true});
