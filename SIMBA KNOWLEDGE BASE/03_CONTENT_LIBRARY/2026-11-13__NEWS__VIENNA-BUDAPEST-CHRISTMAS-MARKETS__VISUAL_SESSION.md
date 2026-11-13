@@ -85,3 +85,11 @@ PURPOSE: Facebook travel news preview poster 1:1 (variant 5). SCENE: Плака�
 - Required correction: 5 distinctly different new square 1:1 preview candidates, one per VARIANT 1..5, based on stored full prompts above; adult photoreal Simba present in every one, exact Russian strings once, strong negative space, no contacts/QR/alcohol/extra text, brand signature exactly once; verify outputs before allowing selection.
 - No change to approved post text, Leo editorial approval and archived copy. Final render and publication NOT authorized.
 - RENDERER for corrective pass: ChatGPT image_gen; technical model controls not exposed in this runtime.
+
+## QA INCIDENT — SECOND RENDER PASS REJECTED
+
+- Leo explicitly asked to reread Rafael rules on 2026-11-13, then «делай» to redo.
+- Subsequent attempted image renders in conversation also failed: tall portrait instead of square, no actual anthropomorphic Simba mascot, numerous extra headings/ribbons, similar layouts, sometimes contact details or alcohol props contrary to contract.
+- All prior preview images remain REJECTED, not selectable; neither approved text nor exact saved production prompts are changed.
+- Third attempt must use image generator explicit 1024x1024 square size and one variant per render, referencing full five prompts in this file; after generating, mark a candidate preview only if format/Simba/exact text/variation pass actual QA.
+- Generation model or quality/thinking controls are not claimed available in this ChatGPT tool unless confirmed.
