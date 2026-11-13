@@ -42,11 +42,15 @@ jobs:
         run: |
           PYTHONPATH=integrations/materials:integrations/video python - <<'PY'
           from a2e_drive_archiver import oauth_drive_client
-          from studio_archive import save_files
+          from studio_archive import save_files, copy_files
           drive=oauth_drive_client()
           files={'archive-smoke.txt':b'Simba Studio archive smoke test. No media or paid operations.\n'}
           first=save_files(drive,'studio-archive-smoke','test',files)
           second=save_files(drive,'studio-archive-smoke','test',files)
           assert first['status']=='INDIVIDUAL_FILES_VERIFIED' and second['files'][0]['reused']
-          print('DRIVE_INDIVIDUAL_FILE_READBACK_AND_REUSE_PASS')
+          copies={'result-smoke.txt':first['files'][0]['drive_file_id']}
+          copy=copy_files(drive,'studio-archive-smoke','results',copies)
+          again=copy_files(drive,'studio-archive-smoke','results',copies)
+          assert copy['status']=='INDIVIDUAL_COPIES_VERIFIED' and again['files'][0]['reused']
+          print('DRIVE_INDIVIDUAL_FILE_AND_COPY_READBACK_AND_REUSE_PASS')
           PY
