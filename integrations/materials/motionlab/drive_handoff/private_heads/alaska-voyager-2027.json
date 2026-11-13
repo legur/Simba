@@ -1,0 +1,9 @@
+{
+  "schema": "bontours.studio.owner-private-blind-head/v1",
+  "project_id": "alaska-voyager-2027",
+  "revision": 0,
+  "state": "UNINITIALIZED",
+  "blind_commitment": null,
+  "render_authorized": false,
+  "publication_authorized": false
+}
