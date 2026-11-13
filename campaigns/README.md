@@ -6,7 +6,7 @@
 |---|---|---|
 | Бавария. Новый год | [project.json](bavaria-new-year-2027/project.json) | [Производственная сессия](../SIMBA%20KNOWLEDGE%20BASE/03_CONTENT_LIBRARY/2026-11-08__SELLING__BAVARIA-NEW-YEAR__APPROVED.md) |
 | Прага. Новый год | [project.json](prague-new-year-2027/project.json) | [Материалы и версии](prague-new-year-2027/README.md) |
-| Вьетнам и Камбоджа, январь 2027 (рабочий сценарий №2) | [10 сцен — редактируемый черновик](vietnam-cambodia-2027/storyboard_variant_2_WORKING.md) | Рекламный пост Лео от 13.11.2026; еще не утвержден для производства |
+| Вьетнам и Камбоджа, январь 2027 (сценарий №2) | [Редактор 10 сцен, визуальный вариант №2](vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json) | [Рабочий сценарий](vietnam-cambodia-2027/storyboard_variant_2_WORKING.md); «Путевой дневник» выбран, производство не утверждено |
 
 ## Быстрые действия
 
