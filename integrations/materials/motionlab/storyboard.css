@@ -251,3 +251,12 @@
 .drive-render-note{color:#e7c990;font-size:12px}
 .drive-render-panel [hidden]{display:none!important}
 @media(max-width:560px){.drive-render-actions{display:grid;grid-template-columns:1fr}.drive-render-actions>*{width:100%;justify-content:center;text-align:center}.drive-render-panel{padding:14px}}
+
+
+/* Connected owner-private A2E project cannot silently display the demo. */
+.private-project-gate{max-width:900px;margin:22px auto;padding:22px 24px;border-radius:16px;border:1px solid #517d87;background:#162b33;color:#f2f7f2;font-size:15px;line-height:1.65}
+.private-project-gate strong{display:block;font-size:18px}
+.private-project-gate p{margin:8px 0 0;color:#e2edeb}
+.private-project-gate[hidden]{display:none!important}
+body.private-project-pending #overviewWorkspace,
+body.private-project-pending #detailView{display:none!important}
