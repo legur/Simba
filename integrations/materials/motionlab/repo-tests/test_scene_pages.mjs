@@ -80,3 +80,21 @@ test('connected A2E scenes never show stock art and bind the actual verified MP4
  assert.equal(ctx.after.shaVerified,true);
  assert.ok(!ctx.afterHtml.includes('static.wixstatic.com'));
 });
+
+
+test('private A2E launch never falls back silently to Bavaria demo while loading or failing',()=>{
+ const bridge=read('motionlab_drive_bridge.js');
+ const css=read('storyboard.css');
+ assert.match(html,/id="privateProjectGate"/);
+ assert.match(html,/id="privateProjectGateText"/);
+ assert.match(html,/private-a2e-gate-20261113/);
+ assert.match(css,/body\.private-project-pending #overviewWorkspace/);
+ assert.match(scenes,/document\.body\.classList\.add\('private-project-pending'\)/);
+ assert.match(scenes,/complete:\(\)=>/);
+ assert.match(scenes,/state\.scenes\.every\(s=>previewFor\(s\)\?\.shaVerified===true\)/);
+ assert.match(scenes,/ДЕМО · /);
+ assert.match(bridge,/api\.complete\?\.\(data\.launch\)/);
+ assert.match(bridge,/api\.failed\?\./);
+ assert.match(bridge,/safeEditorHash=.*scene\\\/\\d/);
+ assert.match(bridge,/sessionStorage\.getItem\('simba:motionlab:project-link:v1'\)/);
+});
