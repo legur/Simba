@@ -123,7 +123,7 @@
     let handoff=fromLink;
     // Scene/cut editor uses its own hash. A refresh from #scene/0, #cut/1,
     // #style or #overview must still recover the SAME owner-private ticket.
-    const safeEditorHash=/^#(?:overview|style|scene\\/\\d+|cut\\/\\d+)$/.test(location.hash);
+    const safeEditorHash=/^#(?:overview|style|scene\/\d+|cut\/\d+)$/.test(location.hash);
     if(!handoff && (!location.hash||safeEditorHash)){
       try{handoff=projectCapability(sessionStorage.getItem('simba:motionlab:project-link:v1'));}catch{}
     }
