@@ -11,6 +11,7 @@ import argparse, asyncio, difflib, glob, hashlib, json, os, re, shutil, subproce
 from pathlib import Path
 
 import motionlab_layout_contract as layout_contract
+import motionlab_scene_contract as scene_contract
 
 for _s in (sys.stdout, sys.stderr): _s.reconfigure(encoding='utf-8', errors='replace')   # Windows consoles default to a code page
 HERE = Path(__file__).resolve().parent
@@ -116,7 +117,8 @@ def load_spec(job: Path):
             'position': substyle.get('position', 'bottom'),
             'scale_percent': size,
         }
-    need(isinstance(s.get('scenes'), list) and 1 <= len(s['scenes']) <= 12, 'scenes: 1–12 scenes')
+    need(isinstance(s.get('scenes'), list) and scene_contract.MIN_SCENES <= len(s['scenes']) <= scene_contract.MAX_SCENES,
+         f'scenes: {scene_contract.MIN_SCENES}–{scene_contract.MAX_SCENES} scenes')
     for i, sc in enumerate(s['scenes']):
         transition = sc.get('transition')
         if transition is not None:
