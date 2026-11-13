@@ -86,6 +86,17 @@ class Drive:
 
 
 class WritebackTests(unittest.TestCase):
+    def test_copy_verified_project_clips_without_provider_calls(self):
+        candidate={'stage_handoffs':{'a2e_clips':{'assets':['a2e-'+TASKS[0]]}},
+                   'assets':[{'id':'a2e-'+TASKS[0], 'task_id':TASKS[0], 'drive_file_id':'private-file-12345'}]}
+        drive=object()
+        with patch.object(bridge.studio_archive,'copy_files') as copy_files:
+            bridge.archive_project_clips('test-project',candidate,drive=drive)
+        self.assertEqual(copy_files.call_args.args[3], {'A2E_'+TASKS[0]+'.mp4':'private-file-12345'})
+        with patch.object(bridge.studio_archive,'copy_files',side_effect=bridge.studio_archive.ArchiveError('x')):
+            with self.assertRaises(bridge.WritebackError):
+                bridge.archive_project_clips('test-project',candidate,drive=drive)
+
     def setUp(self):
         fixture=SourceFixture("test_selected_real_frames_and_prompts_go_to_existing_universal")
         fixture.setUp()

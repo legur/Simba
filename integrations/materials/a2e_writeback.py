@@ -33,6 +33,7 @@ if str(VIDEO) not in sys.path:
 import catalog
 import handoff
 import a2e_drive_archiver as archive
+import studio_archive
 
 PROJECT = re.compile(r"^[a-z0-9][a-z0-9-]{0,63}$")
 SHA = re.compile(r"^[a-f0-9]{64}$")
@@ -304,6 +305,27 @@ def apply_candidate(root: Path, path: Path, candidate: dict,
         tmp.unlink(missing_ok=True)
 
 
+def archive_project_clips(project_id: str, candidate: dict, *, drive=None) -> None:
+    """Copy already-verified A2E assets by project; never call A2E or render."""
+    ids = set(candidate['stage_handoffs']['a2e_clips']['assets'])
+    rows = [row for row in candidate['assets'] if row.get('id') in ids]
+    if not ids or len(rows) != len(ids):
+        raise WritebackError('project A2E archive mapping incomplete')
+    files = {}
+    for row in rows:
+        tid = row.get('task_id')
+        fid = row.get('drive_file_id')
+        if not isinstance(tid, str) or not archive.VALID_TASK.fullmatch(tid) or not isinstance(fid, str):
+            raise WritebackError('project A2E archive identity invalid')
+        files['A2E_' + tid + '.mp4'] = fid
+    if len(files) != len(ids):
+        raise WritebackError('project A2E archive contains duplicate task')
+    try:
+        studio_archive.copy_files(drive or archive.oauth_drive_client(), project_id, 'clips', files)
+    except studio_archive.ArchiveError:
+        raise WritebackError('project A2E archive failed; reconcile before retry') from None
+
+
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path(__file__).resolve().parents[2])
@@ -326,6 +348,7 @@ def main(argv=None) -> int:
             root, args.project, state, owner_issue_number=args.owner_issue,
             source_run_id=args.source_run)
         if args.apply:
+            archive_project_clips(args.project, candidate)
             apply_candidate(root, target, candidate, original_sha256=before)
             result["status"] = "A2E_WRITEBACK_APPLIED_LOCALLY_GIT_PUSH_PENDING"
             result["project_written"] = True
