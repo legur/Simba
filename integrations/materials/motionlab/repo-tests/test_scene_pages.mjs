@@ -65,3 +65,18 @@ test('global typography, scene overrides and v2 export guards exist',()=>{
  assert.ok(!pages.includes('fetch('));
  assert.ok(!pages.includes('upload('));
 });
+
+
+test('connected A2E scenes never show stock art and bind the actual verified MP4 poster',()=>{
+ const dom=new Map();
+ const mock=id=>{if(!dom.has(id))dom.set(id,{innerHTML:'',textContent:''});return dom.get(id)};
+ const ctx={document:{getElementById:mock},location:{search:''}};
+ const extra="\nconst approved=makeScene({scene_id:'alaska-01',name:'Аляска',asset_id:'a2e:test',duration_s:5,media:{kind:'video',asset_sha256:'b'.repeat(64),duration_s:5}},0);state.scenes=[approved];state.request={id:'approved-source'};globalThis.before=scenePhoto(approved);renderSceneList();globalThis.beforeHtml=document.getElementById('sceneList').innerHTML;localPreviews.set('alaska-01',{assetId:'a2e:test',type:'video',shaVerified:true,url:'blob:original-a2e',poster:'data:image/jpeg;base64,A2EFRAME'});renderSceneList();globalThis.afterHtml=document.getElementById('sceneList').innerHTML;globalThis.after=previewFor(approved);";
+ runInNewContext(scenes.replace(/\bwire\(\);\s*$/,'')+extra,ctx,{timeout:2000});
+ assert.match(ctx.before,/^data:image\/svg\+xml/);
+ assert.ok(!ctx.before.includes('static.wixstatic.com'));
+ assert.ok(!ctx.beforeHtml.includes('static.wixstatic.com'));
+ assert.ok(ctx.afterHtml.includes('data:image/jpeg;base64,A2EFRAME'));
+ assert.equal(ctx.after.shaVerified,true);
+ assert.ok(!ctx.afterHtml.includes('static.wixstatic.com'));
+});

@@ -89,13 +89,50 @@ function clearPreviews(){
  globalThis.MotionLabDirector?.invalidate();
  const urls=new Set();
  for(const p of localPreviews.values()){if(p.url)urls.add(p.url);if(p.poster)urls.add(p.poster);}
- for(const url of urls)URL.revokeObjectURL(url);
+ for(const url of urls)if(url?.startsWith('blob:'))URL.revokeObjectURL(url);
  localPreviews.clear();
  const audio=$('importedFilmAudio');if(audio){audio.pause();audio.removeAttribute('src');audio.load();}
  globalThis.MotionLabVideoImport?.resetMeta?.();
  const v=$('previewVideo');if(v){v.pause();v.removeAttribute('src');}
 }
 function previewFor(s){const p=localPreviews.get(s.id);return p&&p.assetId===s.asset?p:null;}
+// Only real, SHA-checked local MP4 pixels may become project thumbnails.
+// This frame extraction occurs entirely in the owner's browser, not on Wix
+// or a public image service. A failure never substitutes an unrelated photo.
+async function verifiedVideoPoster(url,duration){
+ return await new Promise(resolve=>{
+  const video=document.createElement('video');
+  video.muted=true;video.playsInline=true;video.preload='auto';
+  let done=false;
+  const finish=poster=>{
+   if(done)return;done=true;clearTimeout(timer);
+   video.pause();video.removeAttribute('src');video.load();
+   resolve(poster);
+  };
+  const timer=setTimeout(()=>finish(null),8500);
+  video.onerror=()=>finish(null);
+  video.onloadedmetadata=()=>{
+   try{
+    const target=Math.min(.3,Math.max(.05,Math.min(duration,video.duration)*.08));
+    video.currentTime=target;
+   }catch{finish(null)}
+  };
+  video.onseeked=()=>{
+   try{
+    if(!video.videoWidth||!video.videoHeight)return finish(null);
+    const canvas=document.createElement('canvas');
+    canvas.width=360;canvas.height=640;
+    const c=canvas.getContext('2d');
+    if(!c)return finish(null);
+    const scale=Math.max(canvas.width/video.videoWidth,canvas.height/video.videoHeight);
+    const width=video.videoWidth*scale,height=video.videoHeight*scale;
+    c.drawImage(video,(canvas.width-width)/2,(canvas.height-height)/2,width,height);
+    finish(canvas.toDataURL('image/jpeg',.78));
+   }catch{finish(null)}
+  };
+  video.src=url;
+ });
+}
 async function localFileChosen(file,sourceScene=null){
  if(!file)return;const scene=sourceScene||state.scenes[state.selectedIndex];if(!scene)return;
  const ext=file.name.toLowerCase().split('.').pop();
@@ -105,7 +142,7 @@ async function localFileChosen(file,sourceScene=null){
  if(expected?.kind&&expected.kind!==type)throw Error('Тип файла не совпадает с утвержденным');
  const url=URL.createObjectURL(file);let added=false;
  try{
-  let shaVerified=false,duration=null;
+  let shaVerified=false,duration=null,poster=null;
   if(expected?.asset_sha256){
    if(!globalThis.crypto?.subtle)throw Error('Для SHA-256 нужен защищенный HTTPS');
    const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',await file.arrayBuffer()))).map(n=>n.toString(16).padStart(2,'0')).join('');
@@ -120,15 +157,16 @@ async function localFileChosen(file,sourceScene=null){
    });
    if(!Number.isFinite(duration)||duration<=0)throw Error('Нет правильной длительности');
    if(expected?.duration_s&&Math.abs(expected.duration_s-duration)>.45)throw Error('Длительность отличается от утвержденного ассета');
+   poster=await verifiedVideoPoster(url,duration);
   }
   if(!state.scenes.includes(scene)||(!sourceScene&&state.scenes[state.selectedIndex]!==scene))throw Error('Сцена изменилась: выберите файл снова');
   const old=localPreviews.get(scene.id);
    if(old){for(const previous of [old.url,old.poster]){
-    if(previous&&![...localPreviews.entries()].some(([id,other])=>id!==scene.id&&(other.url===previous||other.poster===previous)))URL.revokeObjectURL(previous);
+    if(previous?.startsWith('blob:')&&![...localPreviews.entries()].some(([id,other])=>id!==scene.id&&(other.url===previous||other.poster===previous)))URL.revokeObjectURL(previous);
    }}
-  localPreviews.set(scene.id,{url,assetId:scene.asset,type,duration,shaVerified});added=true;
+  localPreviews.set(scene.id,{url,assetId:scene.asset,type,duration,poster,shaVerified});added=true;
   globalThis.MotionLabDirector?.invalidate();
-  renderEditor();say(shaVerified?'Локальный файл совпал по SHA-256':'Локальный файл открыт. SHA-256 не подтвержден');
+  renderSceneList();renderEditor();globalThis.MotionLabPages?.sync?.();say(shaVerified?'Локальный файл совпал по SHA-256':'Локальный файл открыт. SHA-256 не подтвержден');
  }finally{if(!added)URL.revokeObjectURL(url);}
 }
 let toastTimer, previewTimers=[], pendingAckTimer;
@@ -167,7 +205,14 @@ function prepareDemo(){stopFilm(false);clearPreviews();state.confirmed=false;sta
 function populateSelect(id,items){$(id).replaceChildren(...items.map(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;return o}));}
 function titleChoice(index){if(film.active||film.paused)stopFilm(false);let s=state.scenes[index];state.selectedIndex=index;resetPreview();render();}
 function renderConcepts(){ $('conceptList').innerHTML=state.concepts.map(c=>`<button class="concept ${state.selectedOption===c.id?'selected':''}" data-option="${c.id}" aria-pressed="${state.selectedOption===c.id}"><span class="number">ВАРИАНТ 0${c.id} / ${esc(c.tag||'')}</span><strong>${esc(c.name)}</strong><p>${esc(c.desc)}</p><span class="concept-support">${!RENDER_MOVES.has(c.camera)||c.titleFx!=='none'?'Есть эффекты только для предпросмотра':'Нужна проверка рендерера'}</span><span class="pick">${state.selectedOption===c.id?'✓ Выбран':'Выбрать вариант'} →</span></button>`).join(''); }
-function scenePhoto(scene){return scene.previewUrl||IMAGES[scene.image]||IMAGES.mountains;}
+// The demo still uses Wix stock art, but connected A2E projects NEVER do.
+const A2E_LOADING_FRAME='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(
+ '<svg xmlns="http://www.w3.org/2000/svg" width="360" height="640" viewBox="0 0 360 640"><rect width="360" height="640" fill="#132630"/><rect x="75" y="235" width="210" height="170" rx="18" fill="#243e49"/><path d="m140 282 90 39-90 39z" fill="#b5d1d0"/><text x="180" y="450" fill="#f4f7f8" font-family="sans-serif" font-size="21" text-anchor="middle">A2E VIDEO</text><text x="180" y="481" fill="#b2cad0" font-family="sans-serif" font-size="17" text-anchor="middle">Загрузка исходника</text></svg>'
+);
+function scenePhoto(scene){
+ if(state.request&&scene.media?.kind==='video')return A2E_LOADING_FRAME;
+ return scene.previewUrl||IMAGES[scene.image]||IMAGES.mountains;
+}
 function renderSceneList(){
  $('sceneCount').textContent=String(state.scenes.length);$('metricScenes').textContent=String(state.scenes.length);
  $('sceneList').innerHTML=state.scenes.map((scene,index)=>{
