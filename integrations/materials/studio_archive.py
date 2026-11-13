@@ -6,6 +6,7 @@ generation, external publication, or credential handling occurs here.
 from __future__ import annotations
 
 import hashlib
+import mimetypes
 import re
 
 ROOT_FOLDER = '18Nv8mJ-pAafpGIkxNaDBnlVdBZ51cJ_2'
@@ -72,7 +73,8 @@ def save_files(drive, project_id, category, files, *, root=ROOT_FOLDER):
         item = find_one(drive, target, name)
         reused = item is not None
         if item is None:
-            item = call(drive.files().create(body={'name':name, 'parents':[target]}, media_body=MediaInMemoryUpload(data, mimetype='application/octet-stream', resumable=False), fields='id,name,parents,size,md5Checksum'))
+            mime = mimetypes.guess_type(name)[0] or 'application/octet-stream'
+            item = call(drive.files().create(body={'name':name, 'parents':[target]}, media_body=MediaInMemoryUpload(data, mimetype=mime, resumable=False), fields='id,name,parents,size,md5Checksum'))
         if (item.get('name') != name or item.get('parents') != [target] or
             int(item.get('size') or -1) != len(data) or item.get('md5Checksum') != expected_md5):
             raise ArchiveError('ARCHIVE_FILE_COLLISION_OR_METADATA_MISMATCH')
