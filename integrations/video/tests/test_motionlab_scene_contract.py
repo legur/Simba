@@ -32,7 +32,7 @@ class CrossStageSceneCountTests(unittest.TestCase):
 
     def spec_for(self,fx,count,seconds=None):
         spec=copy.deepcopy(fx.spec)
-        seconds=seconds if seconds is not None else min(3.0,52.0/count)
+        seconds=seconds if seconds is not None else min(3.0,52.0/max(count,1))
         spec["scenes"]=[]
         for i in range(count):
             clip=fx.asset[i%len(fx.asset)]
