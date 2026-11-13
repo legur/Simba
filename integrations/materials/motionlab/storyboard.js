@@ -241,7 +241,7 @@ function renderSceneList(){
 }
 function setField(id,value){const n=$(id);if(n)n.value=value;}
 function renderEditor(){const s=state.scenes[state.selectedIndex];if(!s)return;
- $('previewHeading').textContent='Сцена '+String(state.selectedIndex+1).padStart(2,'0');$('activeCounter').textContent=`${String(state.selectedIndex+1).padStart(2,'0')} / ${String(state.scenes.length).padStart(2,'0')}`;
+ $('previewHeading').textContent=(state.request?'':'ДЕМО · ')+'Сцена '+String(state.selectedIndex+1).padStart(2,'0');$('activeCounter').textContent=`${String(state.selectedIndex+1).padStart(2,'0')} / ${String(state.scenes.length).padStart(2,'0')}`;
  setField('sceneName',s.name);setField('sceneDuration',s.duration);setField('sceneImage',s.image);setField('sceneAsset',s.asset);setField('sceneCamera',s.camera);setField('sceneTransition',s.transition);setField('sceneTitleFx',s.titleFx);setField('sceneSubtitleStyle',s.subtitleStyle);setField('sceneWordMotion',s.wordMotion);setField('sceneIntensity',s.intensity);setField('sceneTitle',s.title);setField('sceneSubtitle',s.subtitle);
  $('intensityValue').textContent=s.intensity+'%';$('sceneTransition').disabled=state.selectedIndex===0;
  const lock=Boolean(state.request);
@@ -724,7 +724,8 @@ function wire(){populateSelect('sceneCamera',CATALOG.camera);populateSelect('sce
  window.addEventListener('message',onMessage);window.addEventListener('pagehide',()=>{clearTimeout(pendingAckTimer);stopFilm(false);clearPreviews();closeDriveRenderPreview();});prepareDemo();restoreLocalDraft();
  // A private project ticket must never masquerade as the Bavaria demo.
  const privateProjectRequested=location.hash.startsWith('#project=')||(()=>{
-  if(location.hash)return false;
+  const editorHash=/^#(?:overview|style|scene\/\d+|cut\/\d+)$/.test(location.hash);
+  if(location.hash&&!editorHash)return false;
   try{return Boolean(sessionStorage.getItem('simba:motionlab:project-link:v1'));}catch{return false}
  })();
  if(privateProjectRequested){
