@@ -1,0 +1,52 @@
+name: Studio private Drive individual-file archive smoke
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'integrations/materials/studio_archive.py'
+      - 'integrations/materials/test_studio_archive.py'
+      - 'integrations/materials/rafael_archive.py'
+      - 'integrations/materials/test_rafael_archive.py'
+      - '.github/workflows/studio-archive-smoke.yml'
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - run: python -m pip install Pillow
+      - run: python -m unittest discover -s integrations/materials -p 'test_*archive.py' -v
+  live_smoke:
+    if: github.event_name == 'workflow_dispatch' && github.actor == github.repository_owner
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'google-api-python-client>=2.140,<3' 'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+      - name: Store and re-read one synthetic file, without generation
+        env:
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+        run: |
+          PYTHONPATH=integrations/materials:integrations/video python - <<'PY'
+          from a2e_drive_archiver import oauth_drive_client
+          from studio_archive import save_files
+          drive=oauth_drive_client()
+          files={'archive-smoke.txt':b'Simba Studio archive smoke test. No media or paid operations.\n'}
+          first=save_files(drive,'studio-archive-smoke','test',files)
+          second=save_files(drive,'studio-archive-smoke','test',files)
+          assert first['status']=='INDIVIDUAL_FILES_VERIFIED' and second['files'][0]['reused']
+          print('DRIVE_INDIVIDUAL_FILE_READBACK_AND_REUSE_PASS')
+          PY

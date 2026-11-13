@@ -17,6 +17,7 @@ import zipfile
 from pathlib import Path
 
 import auto_script
+import studio_archive
 
 ARCHIVE_FOLDER = "1GMoSVogs0SKuTAXCdMVcG-U7bTn-IuCt"
 SHA = re.compile(r"^[a-f0-9]{64}$")
@@ -163,10 +164,22 @@ def archive_private(drive, folder: str, path: Path) -> dict:
     remote = drive_call(drive.files().get_media(fileId=file_id))
     if not isinstance(remote, bytes) or digest(remote) != expected_sha:
         raise ArchiveError("remote ZIP byte readback SHA-256 mismatch")
+    # Keep the ZIP only as the existing Montage transport; archive every
+    # verified original separately for the owner in the project folder.
+    with zipfile.ZipFile(io.BytesIO(payload)) as package:
+        individual = {
+            receipt[:16] + '_' + name.replace('/', '_'): package.read(name)
+            for name in package.namelist()
+        }
+    try:
+        source_archive = studio_archive.save_files(drive, pid, 'storyboard', individual)
+    except studio_archive.ArchiveError:
+        raise ArchiveError('individual storyboard archive failed; reconcile before retry') from None
     return {"status": status, "project_id": pid, "input_receipt": receipt,
             "drive_file_id": file_id, "folder_id": folder, "sha256": expected_sha,
             "actual_frames": 9, "actual_previews": 3, "leo_approved": False,
-            "paid_api_calls": 0, "published": False, "archive_verified": True}
+            "paid_api_calls": 0, "published": False, "archive_verified": True,
+            "individual_files": source_archive}
 
 
 def main(argv=None) -> int:
