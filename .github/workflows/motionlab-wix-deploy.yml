@@ -60,7 +60,7 @@ jobs:
           python3 integrations/materials/motionlab/deploy_static.py build --bundle "$RUNNER_TEMP/motionlab-site.zip"
       - name: Check public JavaScript syntax
         run: |
-          for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js motionlab_drive_config.js motionlab_drive_bridge.js visual_editor.js scene_pages.js creative.js; do
+          for file in app.js transitions.js text.js subtitles.js camera.js storyboard.js studio-v2.js motionlab_drive_config.js motionlab_drive_bridge.js visual_editor.js scene_pages.js creative.js; do
             node --check "integrations/materials/motionlab/$file"
           done
           node --test integrations/materials/motionlab/repo-tests/test_local_draft.mjs
