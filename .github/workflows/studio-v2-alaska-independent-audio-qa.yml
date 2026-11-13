@@ -1,4 +1,4 @@
-name: "Studio v2 Alaska private autonomous audio QA (NO PAID / NO PUBLISH)"
+name: "Studio v2 Alaska phrasewise ASR/CTC diagnostics v2 (NO PAID / NO PUBLISH)"
 
 on:
   pull_request:
@@ -15,7 +15,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: simba-alaska-private-asr-one-time
+  group: simba-alaska-private-asr-phrasewise-v2-one-time
   cancel-in-progress: false
 
 jobs:
@@ -74,7 +74,7 @@ jobs:
           WhisperModel('small', device='cpu', compute_type='int8')
           print('PUBLIC_ASR_WEIGHTS_AVAILABLE')
           PY
-      - name: Exact-byte private WAV+music, independent CTC/ASR, private JSON only
+      - name: Exact-byte private WAV+music, independently anchored sentence CTC/ASR, private JSON v2 only
         env:
           HF_HUB_DISABLE_TELEMETRY: "1"
           GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
