@@ -44,8 +44,9 @@ def verify_private_folder(svc, folder_id: str):
             and info.get("trashed") is False
             and not perms.get("nextPageToken")
             and isinstance(perms.get("permissions"), list)
-            and len(perms["permissions"]) > 0
-            and all(p.get("type") == "user" for p in perms["permissions"]),
+            and len(perms["permissions"]) == 1
+            and perms["permissions"][0].get("type") == "user"
+            and perms["permissions"][0].get("role") == "owner",
             "V2_PRIVATE_CANONICAL_FOLDER_ACL_UNTRUSTED")
 
 
@@ -99,6 +100,19 @@ def inspect_private_canonical(svc, *, folder_id: str, file_id: str,
             and private.SHA.fullmatch(expected_sha256),
             "V2_PRIVATE_CANONICAL_EXPECTED_SHA_REQUIRED")
     verify_private_folder(svc, folder_id)
+    # A user-only share with a second named user is not *owner-private*.
+    # Check the FILE as well, before any content download.
+    try:
+        perms = svc.permissions().list(fileId=file_id,
+            fields="nextPageToken,permissions(type,role)",pageSize=100).execute()
+    except Exception:
+        raise PrivateCanonicalError("V2_PRIVATE_CANONICAL_FILE_ACL_UNAVAILABLE") from None
+    require(not perms.get("nextPageToken")
+            and isinstance(perms.get("permissions"), list)
+            and len(perms["permissions"]) == 1
+            and perms["permissions"][0].get("type") == "user"
+            and perms["permissions"][0].get("role") == "owner",
+            "V2_PRIVATE_CANONICAL_FILE_ACL_UNTRUSTED")
     try:
         raw = private.secure_private_bytes(svc, file_id, folder_id,
             MAX_PROJECT_BYTES, mime={"application/json"}, filename="project.json")
