@@ -130,6 +130,40 @@ class AlaskaPrivateAudioSourceTests(unittest.TestCase):
         self.assertFalse("джуну" in str(detail))
         self.assertTrue(detail["independent_asr_mismatch_spans"])
 
+    def test_numpy_style_real_timestamp_scalars_are_not_missing(self):
+        from fractions import Fraction
+        import math
+        # Fraction is an alternative numbers.Real scalar with a different
+        # exact type. WhisperX Pandas often uses np.float64/np.float32.
+        self.assertTrue(a.verified_time(Fraction(2,5)))
+        self.assertTrue(a.verified_time(Fraction(3,2)))
+        self.assertFalse(a.verified_time(True))
+        self.assertFalse(a.verified_time("0.2"))
+        self.assertFalse(a.verified_time(float("nan")))
+        self.assertFalse(a.verified_time(float("inf")))
+        self.assertFalse(a.verified_time(None))
+        approved=["ледники","алясκа"]
+        asr=[{"word":"ледники","probability":.99},
+             {"word":"алясκа","probability":.99}]
+        ctc=[
+          {"word":"ледники","start":Fraction(1,10),"end":Fraction(2,5)},
+          {"word":"алясκа","start":Fraction(2,5),"end":Fraction(9,10)}
+        ]
+        evidence=a.redacted_evidence(approved,asr,ctc,1.0)
+        self.assertEqual(evidence["ctc_missing_count"],0)
+        self.assertEqual(evidence["ctc_invalid_type_count"],0)
+        self.assertEqual(evidence["ctc_out_of_range_count"],0)
+        self.assertEqual(evidence["ctc_nonmonotonic_count"],0)
+        self.assertEqual(evidence["ctc_start_types"],{"Fraction":2})
+
+    def test_timeline_diagnostic_still_blocks_bad_numeric_values(self):
+        approved=["ледники"]
+        asr=[{"word":"ледники","probability":.99}]
+        ctc=[{"word":"ледники","start":True,"end":float("nan")}]
+        e=a.redacted_evidence(approved,asr,ctc,3.0)
+        self.assertEqual(e["ctc_invalid_type_count"],1)
+        self.assertEqual(e["ctc_missing_count"],0)
+
     def test_narration_tokenizer_does_not_invent_subtitles(self):
         self.assertEqual(a.normalize("Джуно, Сиэтл!"),["джуно","сиэтл"])
         self.assertEqual(a.normalize("Voyager of the Seas"),["voyager","of","the","seas"])
