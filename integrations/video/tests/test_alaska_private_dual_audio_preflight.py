@@ -50,7 +50,7 @@ def synthetic_wav(duration_s=41.36):
 class AlaskaPrivateAudioSourceTests(unittest.TestCase):
     def test_real_named_source_requires_editorial_prefix_and_removes_it(self):
         actual={"packageId":a.PROJECT,
-                "sourcePost":"Сводная утвержденная озвучка v1: Ледники, горы и Аляска с моря. "*8}
+                "sourcePost":"Сводная утвержденная озвучка v1: " + "Ледники, горы и Аляска с моря. "*8}
         spoken=a.approved_narration(actual)
         self.assertNotIn("Сводная",spoken)
         self.assertTrue(spoken.startswith("Ледники"))
