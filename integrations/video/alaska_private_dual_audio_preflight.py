@@ -34,7 +34,7 @@ SPEC_ID="1O1MT_CgTfyH-s1uBFCSQLR5CT1tyrAli"
 WAV_SHA="0a503ad3656f5a44e5921558f19c75d4dfe696a46bf53a7b990e601321b2570e"
 MUSIC_SHA="cc92050b8e2e3a1c8a13d4ee85bc74cd95799c2088096e680167a73b2b390560"
 SOURCE_SHA="bdf88225ce6771281484f00123791cd8bfd89d22b4d19cf577b4f475249a233f"
-NAME="Alaska_v2_offline_dual_asr_prerequisite.json"
+NAME="Alaska_v2_offline_dual_asr_phrasewise_v2.json"
 MAX_WAV=4*1024*1024
 MAX_MP3=6*1024*1024
 MAX_SPEC=100_000
@@ -119,6 +119,100 @@ def words_from_whisper(segments):
             })
     return words
 
+def sentence_windows(approved, observations, duration):
+    """Place short approved utterances in acoustic windows using UNPROMPTED ASR.
+
+    The whole-41-second CTC segment was too coarse to locate problem words.
+    Each sentence requires independent unprompted ASR anchors before any
+    forced alignment; a missing sentence blocks, never guesses timing.
+    These ASR anchors are window hints, NOT proof that words were spoken.
+    """
+    import difflib
+    sentences=[part.strip() for part in re.split(r'(?<=[.!?])\\s+',approved)
+               if part.strip()]
+    need(1<len(sentences)<=24,"CTC_SENTENCE_SEGMENTATION_INVALID")
+    expected=normalize(approved)
+    heard=[word for row in observations for word in normalize(row["word"])]
+    matches=difflib.SequenceMatcher(
+        a=expected,b=heard,autojunk=False).get_matching_blocks()
+    locations={i+at:j+at for i,j,size in matches for at in range(size)}
+    offset=0
+    positions=[]
+    for phrase in sentences:
+        size=len(normalize(phrase))
+        need(size>0,"CTC_EMPTY_APPROVED_SENTENCE")
+        indices=[j for i,j in sorted(locations.items())
+                 if offset<=i<offset+size]
+        # Two independent lexical anchors per sentence; one is too weak
+        # for an accurate phrase window, particularly for place names.
+        need(len(indices)>=2,"CTC_INSUFFICIENT_INDEPENDENT_SENTENCE_ANCHORS")
+        start=max(0.0,float(observations[indices[0]]["start"])-0.40)
+        end=min(float(duration),float(observations[indices[-1]]["end"])+0.40)
+        need(start+0.10<end,"CTC_SENTENCE_WINDOW_INVALID")
+        positions.append({"text":phrase,"start":start,"end":end,
+                          "_asr_first":indices[0],"_asr_last":indices[-1]})
+        offset+=size
+    need(offset==len(expected),"CTC_APPROVED_SENTENCE_TOKENS_INVALID")
+    for i in range(1,len(positions)):
+        previous,current=positions[i-1],positions[i]
+        need(previous["_asr_last"]<current["_asr_first"],
+             "CTC_SENTENCE_ANCHORS_OUT_OF_ORDER")
+        if current["start"]<previous["end"]:
+            previous_end=observations[previous["_asr_last"]]["end"]
+            current_start=observations[current["_asr_first"]]["start"]
+            border=(float(previous_end)+float(current_start))/2.0
+            need(previous["start"]+0.03<border<current["end"]-0.03,
+                 "CTC_SENTENCE_BOUNDARY_UNRESOLVED")
+            previous["end"]=min(previous["end"],border)
+            current["start"]=max(current["start"],border)
+    for item in positions:
+        need(0<=item["start"]<item["end"]<=duration+.05,
+             "CTC_SENTENCE_WINDOW_INVALID")
+    # Preserve no ASR text, no source content in diagnostics.
+    return [{"text":item["text"],
+             "start":round(item["start"],3),
+             "end":round(item["end"],3)} for item in positions]
+
+
+def redacted_evidence(approved_tokens,observations,ctc,duration):
+    """Private review only: positions/scores, NO spoken words or transcript."""
+    import difflib
+    heard=[t for w in observations for t in normalize(w["word"])]
+    differing=[{
+        "source_position":i,
+        "source_token_count":end-i,
+        "asr_position":j,
+        "asr_token_count":other-j,
+    } for code,i,end,j,other in difflib.SequenceMatcher(
+        a=approved_tokens,b=heard,autojunk=False).get_opcodes()
+        if code!="equal"]
+    absent=[];nonmonotonic=[];outofrange=[]
+    previous_end=0.0
+    for i,row in enumerate(ctc):
+        begin,end=row.get("start"),row.get("end")
+        if type(begin) not in (int,float) or type(end) not in (int,float):
+            absent.append(i)
+        elif not 0<=begin<end<=duration+.1:
+            outofrange.append(i)
+        elif begin+0.08<previous_end:
+            nonmonotonic.append(i)
+        if type(end) in (int,float):
+            previous_end=max(previous_end,float(end))
+    return {
+        "approved_numeric_token_positions":[i for i,t in enumerate(approved_tokens)
+                                            if any(char.isdigit() for char in t)],
+        "independent_asr_mismatch_spans":differing[:24],
+        "independent_asr_weak_word_positions":[i for i,x in enumerate(observations)
+                                              if x["probability"]<.64][:25],
+        "ctc_missing_timing_positions":absent[:25],
+        "ctc_invalid_timing_positions":outofrange[:25],
+        "ctc_nonmonotonic_positions":nonmonotonic[:25],
+        "ctc_output_tokens":len(ctc),
+        "approved_tokens":len(approved_tokens),
+        "notes":"Indices only; no transcript, audio or client text is included."
+    }
+
+
 def check_two_methods(approved,wav_path,duration):
     """Locally downloaded MODEL weights; NO remote audio calls.
 
@@ -129,9 +223,10 @@ def check_two_methods(approved,wav_path,duration):
     import whisperx
     model=WhisperModel("small",device="cpu",compute_type="int8",
                        local_files_only=True)
-    segments,info=model.transcribe(str(wav_path),beam_size=5,
+    segments,info=model.transcribe(str(wav_path),language="ru",
+        beam_size=5,temperature=0.0,
         word_timestamps=True,condition_on_previous_text=False,
-        vad_filter=False,initial_prompt=None)
+        vad_filter=False,initial_prompt=None,prefix=None)
     speech=list(segments)
     observations=words_from_whisper(speech)
     spoken=[token for row in observations for token in normalize(row["word"])]
@@ -144,8 +239,8 @@ def check_two_methods(approved,wav_path,duration):
     # WhisperX alignment is a distinct CTC family from Whisper/CT2 ASR.
     audio=whisperx.load_audio(str(wav_path))
     model_a,metadata=whisperx.load_align_model(language_code="ru",device="cpu")
-    mapped=whisperx.align([{"text":approved,"start":0.0,"end":duration}],
-         model_a,metadata,audio,device="cpu",
+    windows=sentence_windows(approved,observations,duration)
+    mapped=whisperx.align(windows,model_a,metadata,audio,device="cpu",
          return_char_alignments=False)
     ctc=mapped.get("word_segments") or []
     ctc_tokens=[token for x in ctc for token in normalize(str(x.get("word","")))]
@@ -174,6 +269,8 @@ def check_two_methods(approved,wav_path,duration):
       "ctc_timeline_valid":ctc_valid,
       "asr_approved_similarity":round(similarity,4),
       "weak_asr_words":sum(x["probability"]<.64 for x in observations),
+      "ctc_sentence_windows":len(windows),
+      "review_diagnostics":redacted_evidence(expected,observations,ctc,duration),
       "word_timing_verified_for_canonical_v2":False,
       "reasons":([] if match else [
         "Canonical owner audio revision and dual-model current stage replay remain mandatory.",
@@ -215,7 +312,7 @@ def audit(svc):
         # Local Whisper/WhisperX only; models cannot access the Drive bearer.
         try:
             independent=check_two_methods(source,path,duration)
-        except (ImportError,RuntimeError,OSError,ValueError,KeyError):
+        except (ImportError,RuntimeError,OSError,ValueError,KeyError,Blocked):
             independent={"status":"BLOCKED_MODEL_OR_ALIGNMENT_FAILED",
                          "source_audio_verified":True,
                          "word_timing_verified_for_canonical_v2":False}
