@@ -1,0 +1,130 @@
+{
+  "selected_by": "owner",
+  "owner_decision_text": "берем ее",
+  "decision_date": "2026-11-14",
+  "project_id": "vietnam-cambodia-2027",
+  "scenario_variant": 2,
+  "visual_direction": "Путевой дневник",
+  "selection_rule": "A for scenes 1-4 and 6-10; B for scene 5",
+  "source_editor_path": "campaigns/vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json",
+  "source_editor_blob_sha_before_selection": "f5e297404328dc396f44fbd604c570dfdde406d1",
+  "source_archive_folder_url": "https://drive.google.com/drive/folders/1wpuCHmgqFb4t2DTP0JLEOr8CxwuoqxFe",
+  "scene_count": 10,
+  "images": [
+    {
+      "scene_id": "s01",
+      "scene_number": 1,
+      "option": "A",
+      "image_drive_file_id": "1s1YywnsjCnslYJT1B7fWFqANVMjKLc5N",
+      "image_filename": "S01_A.png",
+      "image_url": "https://drive.google.com/file/d/1s1YywnsjCnslYJT1B7fWFqANVMjKLc5N/view?usp=drivesdk",
+      "spoken_text": "Вьетнам или Камбоджа?",
+      "screen_text": "ВЬЕТНАМ ИЛИ КАМБОДЖА?",
+      "preliminary_time": "00:00–00:03"
+    },
+    {
+      "scene_id": "s02",
+      "scene_number": 2,
+      "option": "A",
+      "image_drive_file_id": "1DrRfRdHWOMa3M2L44ntjBQhqIx2_O6Jm",
+      "image_filename": "S02_A.png",
+      "image_url": "https://drive.google.com/file/d/1DrRfRdHWOMa3M2L44ntjBQhqIx2_O6Jm/view?usp=drivesdk",
+      "spoken_text": "Выбирать не придется.",
+      "screen_text": "ВЫБИРАТЬ НЕ ПРИДЕТСЯ",
+      "preliminary_time": "00:03–00:05"
+    },
+    {
+      "scene_id": "s03",
+      "scene_number": 3,
+      "option": "A",
+      "image_drive_file_id": "1xp6ZhiKtKJxgWpAaY5CAvG5fQv38ehR5",
+      "image_filename": "S03_A.png",
+      "image_url": "https://drive.google.com/file/d/1xp6ZhiKtKJxgWpAaY5CAvG5fQv38ehR5/view?usp=drivesdk",
+      "spoken_text": "В одном путешествии вас ждут ночь на корабле среди скал бухты Халонг,",
+      "screen_text": "БУХТА ХАЛОНГ\nНОЧЬ НА КОРАБЛЕ",
+      "preliminary_time": "00:05–00:12"
+    },
+    {
+      "scene_id": "s04",
+      "scene_number": 4,
+      "option": "A",
+      "image_drive_file_id": "1UJxbXcd2I_Em8YA9NmZfG4xH0EFeDfXs",
+      "image_filename": "S04_A.png",
+      "image_url": "https://drive.google.com/file/d/1UJxbXcd2I_Em8YA9NmZfG4xH0EFeDfXs/view?usp=drivesdk",
+      "spoken_text": "рассвет на палубе",
+      "screen_text": "РАССВЕТ НА ПАЛУБЕ",
+      "preliminary_time": "00:12–00:15"
+    },
+    {
+      "scene_id": "s05",
+      "scene_number": 5,
+      "option": "B",
+      "image_drive_file_id": "19KqeoBNf5ILe8YecY3lM6aqiNCRmYk82",
+      "image_filename": "S05_B.png",
+      "image_url": "https://drive.google.com/file/d/19KqeoBNf5ILe8YecY3lM6aqiNCRmYk82/view?usp=drivesdk",
+      "spoken_text": "и храмы Ангкора, где корни деревьев переплелись с древней кладкой.",
+      "screen_text": "ХРАМЫ АНГКОРА",
+      "preliminary_time": "00:15–00:22"
+    },
+    {
+      "scene_id": "s06",
+      "scene_number": 6,
+      "option": "A",
+      "image_drive_file_id": "1549O5Xlvq0GfKxVHatbHVKf8OPk9SJEE",
+      "image_filename": "S06_A.png",
+      "image_url": "https://drive.google.com/file/d/1549O5Xlvq0GfKxVHatbHVKf8OPk9SJEE/view?usp=drivesdk",
+      "spoken_text": "Это организованный тур в сопровождении Татьяны Горфман.",
+      "screen_text": "ОРГАНИЗОВАННЫЙ ТУР\nТАТЬЯНА ГОРФМАН",
+      "preliminary_time": "00:22–00:27"
+    },
+    {
+      "scene_id": "s07",
+      "scene_number": 7,
+      "option": "A",
+      "image_drive_file_id": "1yzhtDWT9HetRiE5hwVMj9MqBxyd1QqEm",
+      "image_filename": "S07_A.png",
+      "image_url": "https://drive.google.com/file/d/1yzhtDWT9HetRiE5hwVMj9MqBxyd1QqEm/view?usp=drivesdk",
+      "spoken_text": "С 12 по 29 января 2027 года, вылет из Тель-Авива рейсами Etihad через Абу-Даби.",
+      "screen_text": "12–29.01.2027\nТЕЛЬ-АВИВ · ETIHAD",
+      "preliminary_time": "00:27–00:35"
+    },
+    {
+      "scene_id": "s08",
+      "scene_number": 8,
+      "option": "A",
+      "image_drive_file_id": "1cdKy6vqiVhnRzkIUkkgAEOq02facK4Fk",
+      "image_filename": "S08_A.png",
+      "image_url": "https://drive.google.com/file/d/1cdKy6vqiVhnRzkIUkkgAEOq02facK4Fk/view?usp=drivesdk",
+      "spoken_text": "В программе — завтраки и обеды или ужины по маршруту.",
+      "screen_text": "ЗАВТРАКИ + ОБЕДЫ ИЛИ УЖИНЫ\nПО ПРОГРАММЕ",
+      "preliminary_time": "00:35–00:41"
+    },
+    {
+      "scene_id": "s09",
+      "scene_number": 9,
+      "option": "A",
+      "image_drive_file_id": "1HG8CQN7ynbwVK17pXHB3AeSunkc7Pjjm",
+      "image_filename": "S09_A.jpg",
+      "image_url": "https://drive.google.com/file/d/1HG8CQN7ynbwVK17pXHB3AeSunkc7Pjjm/view?usp=drivesdk",
+      "spoken_text": "Цена — 4950 долларов на человека. Доплата за одноместное размещение — 1030 долларов.",
+      "screen_text": "4950 $ НА ЧЕЛОВЕКА\nОДНОМЕСТНОЕ +1030 $",
+      "preliminary_time": "00:41–00:49"
+    },
+    {
+      "scene_id": "s10",
+      "scene_number": 10,
+      "option": "A",
+      "image_drive_file_id": "1yZXgxYUosE_X0_UUqsDWt1dHqQ6jIybd",
+      "image_filename": "S10_A.png",
+      "image_url": "https://drive.google.com/file/d/1yZXgxYUosE_X0_UUqsDWt1dHqQ6jIybd/view?usp=drivesdk",
+      "spoken_text": "Напишите мне «ВЬЕТНАМ» — и я отправлю программу по дням, чтобы вы спокойно оценили маршрут и темп поездки. Лео, Bon Tours.",
+      "screen_text": "НАПИШИТЕ «ВЬЕТНАМ»\nWhatsApp 058-677-8492\nОфис 08-996-1127\nАшдод, Ацмаут 89\nSimba by Bon Tours",
+      "preliminary_time": "00:49–01:00"
+    }
+  ],
+  "status": "TEN_IMAGES_OWNER_SELECTED_A2E_PENDING",
+  "a2e_generated": false,
+  "a2e_credits_limit": null,
+  "a2e_preflight_complete": false,
+  "notes": "AI-generated stills. Scenes 1-10 each have selected source ID; subtitles/prices/contacts are to be overlaid in Studio, not burned into A2E source. No paid A2E start until required technical and credit-quote gates are met; do not assume image selection approved charges."
+}
