@@ -1,0 +1,47 @@
+{
+  "schema": "simba.a2e_preflight_report/v1",
+  "project_id": "vietnam-cambodia-2027",
+  "date": "2026-11-14",
+  "source_selection_manifest": "campaigns/vietnam-cambodia-2027/selected_images_2026-11-14.json",
+  "scene_count": 10,
+  "selected_variants": "1A,2A,3A,4A,5B,6A,7A,8A,9A,10A",
+  "image_source_provider": "Wix Media Manager, site 489d3aa0-caf3-400e-bdc3-7c9510d86236",
+  "source_upload_status": "10/10 READY (confirmed by Wix upload response)",
+  "a2e_model": "a2e",
+  "clip_seconds": 5,
+  "expected_clip_count": 10,
+  "expected_generated_seconds": 50,
+  "script_duration_preliminary_seconds": 60,
+  "montage_timing_note": "50 seconds of 5-second A2E clips versus preliminary 60-second spoken script; final voice alignment and scene pacing must be reviewed in Studio, not presumed.",
+  "price_quote_status": "QUOTED_NO_CHARGE",
+  "credits_per_clip": 30,
+  "quote_batches": [
+    {
+      "scenes": "1-5",
+      "github_issue_number": 200,
+      "quote_url": "https://github.com/legur/Simba/issues/200",
+      "credits": 150
+    },
+    {
+      "scenes": "6-10",
+      "github_issue_number": 201,
+      "quote_url": "https://github.com/legur/Simba/issues/201",
+      "credits": 150
+    }
+  ],
+  "total_quoted_credits": 300,
+  "total_approved_credit_ceiling": null,
+  "paid_start_authorized": false,
+  "paid_start_attempted": false,
+  "a2e_task_ids": [],
+  "completed_mp4_count": 0,
+  "studio_handoff_status": "BLOCKED_WAITING_FOR_ACTUAL_MP4",
+  "important_caveats": [
+    "Quote is an estimate, not reserved pricing; generationRequestValidated not proven.",
+    "Do not use a2e-generate-approved label until owner accepts total quoted credit ceiling.",
+    "On any ambiguous A2E start outcome, reconcile task history before retry; no automatic paid retry.",
+    "Media assets staged via Wix Media Manager have publicly addressable URLs; source Google Drive stays archive.",
+    "Image generation is approved, but soundtrack, overlays and Montage remain pending."
+  ],
+  "next_gate": "explicit owner acceptance of 300 A2E credits for 10 clips, max 150 per 5-scene issue"
+}
