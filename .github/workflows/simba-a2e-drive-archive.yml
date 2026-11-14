@@ -5,6 +5,9 @@ on:
     # Once daily at 06:00 UTC (08:00/09:00 Israel depending on DST).
     - cron: "0 6 * * *"
   workflow_dispatch:
+  # Owner-requested one-off read-only A2E -> private Drive backup; never start A2E.
+  issues:
+    types: [labeled]
   pull_request:
     paths:
       - ".github/workflows/simba-a2e-drive-archive.yml"
@@ -34,7 +37,15 @@ jobs:
 
   archive:
     name: Detect completed A2E tasks and preserve MP4 in Drive
-    if: github.event_name != 'pull_request' && vars.SIMBA_A2E_DRIVE_ENABLED == 'true'
+    if: >-
+      (github.event_name == 'issues'
+       && github.event.label.name == 'a2e-archive-owner-approved'
+       && github.event.sender.login == 'legur'
+       && github.event.issue.user.login == 'legur'
+       && github.event.issue.pull_request == null)
+      || (github.event_name != 'issues'
+          && github.event_name != 'pull_request'
+          && vars.SIMBA_A2E_DRIVE_ENABLED == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 50
     steps:
