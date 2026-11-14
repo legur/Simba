@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "STUDIO_OPTION2_WARMBARITONE_AUDIO_DRAFT_QA_PENDING_NOT_FINAL",
+  "status": "STUDIO_OPTION_2_TECHNICAL_AUDIO_SYNC_PREVIEW_PREPARED_NOT_FINAL",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -588,5 +588,18 @@
   "studio_approved_voice_music_final_lock": false,
   "studio_source_pinned_visual_qa_pass": true,
   "studio_auto_publish": false,
-  "studio_final_master_ready": false
+  "studio_final_master_ready": false,
+  "studio_option2_voice_sync_qa_path": "campaigns/vietnam-cambodia-2027/studio_option2_sync_qa_2026-11-14.json",
+  "studio_option2_technical_preview": {
+    "status": "LOCAL_TECHNICAL_AUDITION_QA_PASS_NOT_FINAL",
+    "source_receipt_id": "14481802-0761-4ebd-bfbb-886a52f5f524",
+    "chosen_option": 2,
+    "duration_seconds": 51.291667,
+    "sha256": "6c8f79d557ede6e6f43b0638a5d4481352cd0a3d37cef6d63d0295583cbdd667",
+    "audio_original_speed": true,
+    "subtitle_alignment": "ASR_INFORMED_APPROXIMATE_NOT_VERIFIED",
+    "music_status": "ORIGINAL_TEMPORARY_SYNTHETIC_NOT_LOCKED",
+    "final_master": false,
+    "published": false
+  }
 }
