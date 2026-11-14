@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "STUDIO_OPTION_2_SAVED_MONTAGE_PENDING_NO_APPROVED_RENDER_PROFILE",
+  "status": "STUDIO_OPTION2_WARMBARITONE_AUDIO_DRAFT_QA_PENDING_NOT_FINAL",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -581,5 +581,12 @@
     "contact_approval_not_inferred": true,
     "note": "Studio selection was persisted, but file records DRAFT_NOT_DELIVERED as decision state and render_authorized=false. Never silently reinterpret as final render approval or strip visual layout/flash."
   },
-  "studio_montage_issue": "https://github.com/legur/Simba/issues/206"
+  "studio_montage_issue": "https://github.com/legur/Simba/issues/206",
+  "studio_audio_preview_drive_id": "1jJvh0SGQGaij8O-Ef_2BXfJXuKWum5U9",
+  "studio_voice_profile": "WarmBaritone",
+  "studio_audio_preview_seconds": 42.75,
+  "studio_approved_voice_music_final_lock": false,
+  "studio_source_pinned_visual_qa_pass": true,
+  "studio_auto_publish": false,
+  "studio_final_master_ready": false
 }
