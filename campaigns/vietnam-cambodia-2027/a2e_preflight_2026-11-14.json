@@ -46,7 +46,7 @@
     "6af80e7a12f2d31bad470eed"
   ],
   "completed_mp4_count": 10,
-  "studio_handoff_status": "OWNER_STUDIO_SELECTION_SAVED_MONTAGE_ISSUE_CREATED_RENDER_BLOCKED_NO_PROFILE",
+  "studio_handoff_status": "OPTION_2_SELECTED_WITH_VERIFIED_ORIGINALS_AND_WARMBARITONE_VOICE_DRAFT_NOT_FINAL",
   "important_caveats": [
     "Quote is an estimate, not reserved pricing; generationRequestValidated not proven.",
     "Do not use a2e-generate-approved label until owner accepts total quoted credit ceiling.",
@@ -55,7 +55,7 @@
     "Image generation is approved, but soundtrack, overlays and Montage remain pending."
   ],
   "next_gate": "Read actual A2E task IDs and completed MP4s from workflow receipts; do not retry charged POSTs.",
-  "status": "STUDIO_SELECTION_RECEIVED_OPTION_2_MONTAGE_BLOCKED_PROFILE_AND_AUDIO",
+  "status": "STUDIO_OPTION2_VOICE_MUSIC_PREVIEW_ARCHIVED_FULL_AUDIO_QA_PENDING",
   "prompt_source": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
   "replaces_old_quote_issue_numbers": [
     200,
@@ -269,5 +269,18 @@
     "layout_override_status": "PENDING_MONTAGE_V2_LAYOUT_SUPPORT",
     "contact_approval_not_inferred": true,
     "note": "Studio selection was persisted, but file records DRAFT_NOT_DELIVERED as decision state and render_authorized=false. Never silently reinterpret as final render approval or strip visual layout/flash."
-  }
+  },
+  "studio_approved_selected_option": 2,
+  "studio_voice_profile": "WarmBaritone",
+  "studio_voice_parts_drive_ids": [
+    "1eDH5Nv3fcnGlgiZrJFEnaUSsIDocmD4J",
+    "1G3YAmv610UywU_jZIXVC_bprFRRPQRNo"
+  ],
+  "studio_audio_preview_drive_id": "1jJvh0SGQGaij8O-Ef_2BXfJXuKWum5U9",
+  "studio_audio_preview_qa_sha256": "dfe9de5ae6eede863a650d33202ab7709a6568f630aea1e207e98f680aeb629c",
+  "studio_audio_preview_seconds": 42.75,
+  "studio_audio_preview_status": "SOURCE_VERIFIED_AUDITION_ONLY_NO_INDEPENDENT_ASR",
+  "studio_qa_receipt_path": "campaigns/vietnam-cambodia-2027/studio_option2_voice_preview_receipt_2026-11-14.json",
+  "studio_publication_authorized": false,
+  "studio_final_master_ready": false
 }
