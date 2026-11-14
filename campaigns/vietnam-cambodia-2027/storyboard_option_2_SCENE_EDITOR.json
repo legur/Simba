@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "A2E_TEN_COMPLETED_MP4_STUDIO_HANDoFF_PENDING",
+  "status": "STUDIO_V1_PRIVATE_PROJECT_OPEN_READY_NO_OWNER_SELECTION_ACK",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -541,8 +541,15 @@
     "6af80e7a12f2d31bad470eed"
   ],
   "a2e_mp4s_local_verified": true,
-  "a2e_mp4s_individual_drive_verified": false,
+  "a2e_mp4s_individual_drive_verified": true,
   "a2e_drive_backup_zip_verified": true,
   "a2e_video_preview_ready": true,
-  "studio_video_clips_imported": false
+  "studio_video_clips_imported": true,
+  "studio_handoff_workflow_run": "https://github.com/legur/Simba/actions/runs/43576207969",
+  "studio_private_previews": 10,
+  "studio_montage_options": 3,
+  "studio_browser_open_ack": false,
+  "studio_owner_selected_option": null,
+  "studio_tts_produced": false,
+  "studio_music_selected": false
 }
