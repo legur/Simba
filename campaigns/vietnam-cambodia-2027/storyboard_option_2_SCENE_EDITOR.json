@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "VISUAL_STYLE_2_SELECTED_REAL_IMAGE_SETS_REQUIRED",
+  "status": "THREE_SETS_30_INDIVIDUAL_FRAMES_READY_FOR_OWNER_VISUAL_REVIEW",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -198,11 +198,11 @@
     "music_authorized": false,
     "publication_authorized": false,
     "visual_style_2_selected": true,
-    "three_image_sets_shown": false,
+    "three_image_sets_shown": true,
     "individual_images_approved": false
   },
   "external_paid_cost_quote_status": "NOT_PREPARED",
-  "image_generation_status": "COLLAGE_PREVIEWS_ONLY_NOT_A2E_READY",
-  "archive_status": "PREVIEW_ARCHIVE_PENDING_AND_INDIVIDUAL_IMAGES_MISSING",
-  "notes": "Прежние контактные листы не являются тремя полноценными наборами индивидуальных изображений. Должны быть созданы/загружены 3×10 отдельных чистых кадров с individual files+QA; только после выбора набора допустим переход к A2E с указанным бюджетом и владельческим решением. Studio принимает настоящие MP4 клипы."
+  "image_generation_status": "30_STANDALONE_AI_ILLUSTRATIONS_EXPORTED_AS_9x16_JPG_IN_CHAT_ARTIFACT",
+  "archive_status": "CHATGPT_ZIP_AVAILABLE; GOOGLE_DRIVE_30_FILE_ARCHIVE_NOT_VERIFIED",
+  "notes": "30 отдельных JPG S01_A..S10_C, 1080×1920, в архиве vietnam_cambodia_30_individual_images.zip и интерактивной галерее vietnam_cambodia_choose_30_images.html. Проверить качество после выбора: S04_C пейзаж вместо палубы; S07_B,C виды назначения вместо самолета; S08_B,C рынки фруктов вместо готовых блюд. Исходные файлы доступны в текущем чате; на Drive архив не подтвержден. Присутствие трех вариантов не означает выбор кадров или разрешение A2E."
 }
