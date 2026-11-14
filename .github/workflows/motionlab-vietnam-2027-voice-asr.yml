@@ -1,0 +1,54 @@
+name: MotionLab Vietnam Cambodia — private independent voice ASR diagnostic
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: motionlab-vietnam-cambodia-2027-asr-diagnostic
+  cancel-in-progress: false
+
+jobs:
+  private_voice_asr:
+    if: >-
+      github.repository == 'legur/Simba'
+      && github.event.label.name == 'motionlab-vietnam-voice-asr'
+      && github.event.sender.login == 'legur'
+      && github.event.issue.user.login == 'legur'
+      && github.event.issue.number == 204
+      && github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e671ad5d87065 # v5.6.0
+        with:
+          python-version: '3.11'
+      - name: Install private Drive OAuth client and local open-source ASR
+        run: |
+          python -m pip install --disable-pip-version-check 'faster-whisper==1.2.1' 'google-api-python-client>=2.140,<3' 'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+          python -m py_compile integrations/materials/motionlab/drive_handoff/qa_vietnam_voice_offline.py
+      - name: Independently recognize already-produced private WAVs (no TTS calls)
+        env:
+          HF_HUB_DISABLE_TELEMETRY: '1'
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+          SIMBA_NO_PAID_OPERATIONS: 'true'
+          SIMBA_AUTO_PUBLISH: 'false'
+        run: |
+          python integrations/materials/motionlab/drive_handoff/qa_vietnam_voice_offline.py \
+            --report "$RUNNER_TEMP/vietnam-voice-asr-diagnostic.json"
+      - name: Preserve sanitized ASR receipt; spoken content remains private in Drive
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-cambodia-2027-private-asr-report
+          path: ${{ runner.temp }}/vietnam-voice-asr-diagnostic.json
+          retention-days: 14
+          if-no-files-found: warn
