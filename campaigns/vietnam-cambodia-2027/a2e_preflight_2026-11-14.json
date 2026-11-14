@@ -46,7 +46,7 @@
     "6af80e7a12f2d31bad470eed"
   ],
   "completed_mp4_count": 10,
-  "studio_handoff_status": "PRIVATE_STUDIO_V1_TICKET_RENEWED_OWNER_SELECTION_PENDING",
+  "studio_handoff_status": "OWNER_STUDIO_SELECTION_SAVED_MONTAGE_ISSUE_CREATED_RENDER_BLOCKED_NO_PROFILE",
   "important_caveats": [
     "Quote is an estimate, not reserved pricing; generationRequestValidated not proven.",
     "Do not use a2e-generate-approved label until owner accepts total quoted credit ceiling.",
@@ -55,7 +55,7 @@
     "Image generation is approved, but soundtrack, overlays and Montage remain pending."
   ],
   "next_gate": "Read actual A2E task IDs and completed MP4s from workflow receipts; do not retry charged POSTs.",
-  "status": "A2E_COMPLETE_10_MP4_PRIVATE_DRIVE_INDIVIDUALS_VERIFIED_STUDIO_V1_OWNER_REVIEW_PENDING",
+  "status": "STUDIO_SELECTION_RECEIVED_OPTION_2_MONTAGE_BLOCKED_PROFILE_AND_AUDIO",
   "prompt_source": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
   "replaces_old_quote_issue_numbers": [
     200,
@@ -214,8 +214,8 @@
   "studio_private_media_verified_count": 10,
   "studio_options_present": 3,
   "studio_ticket_expiration_utc": "2026-11-14T16:26:45.791185Z",
-  "studio_owner_browser_open_verified": false,
-  "studio_owner_selection_receipt_verified": false,
+  "studio_owner_browser_open_verified": true,
+  "studio_owner_selection_receipt_verified": true,
   "preview_variants_created_local": [
     {
       "id": 1,
@@ -240,5 +240,34 @@
   "preview_variants_music_status": "NOT_SELECTED",
   "studio_latest_private_ticket_id": "12aOImzwSQqxtb79kfGiaXSqE-r-wxazA",
   "studio_latest_private_ticket_issued_utc": "2026-11-14T13:26:45.791185Z",
-  "studio_ticket_renewal_run": "https://github.com/legur/Simba/actions/runs/43599762648"
+  "studio_ticket_renewal_run": "https://github.com/legur/Simba/actions/runs/43599762648",
+  "studio_selected_option": 2,
+  "studio_selection_receipt": {
+    "receipt_file_id": "1-2BFlzjHdiqhVskR5ooCDP164SRwfzSd",
+    "receipt_id": "14481802-0761-4ebd-bfbb-886a52f5f524",
+    "selection_sha256": "0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10",
+    "source_fingerprint": "b7dbe0068919332275117c927410345fb47f0c8dcf59733981949e6510e12633",
+    "option": 2,
+    "option_name": "Киноистория",
+    "scenes": 10,
+    "selected_utc": "2026-11-14T14:20:35.766Z",
+    "receipt_saved_utc": "2026-11-14T14:20:42.234Z",
+    "montage_issue": "https://github.com/legur/Simba/issues/206",
+    "montage_attempt": "https://github.com/legur/Simba/actions/runs/43604384067",
+    "montage_attempt_status": "FAILED_NO_OWNER_APPROVED_RENDER_PROFILE",
+    "rendered_mp4": false,
+    "requested_scene2_transition": "flash",
+    "other_scene_transitions": "crossfade",
+    "requested_camera": {
+      "id": "cinematic-zoom",
+      "intensity_percent": 20
+    },
+    "requested_subtitles": {
+      "style_id": "clean",
+      "word_motion_id": "karaoke"
+    },
+    "layout_override_status": "PENDING_MONTAGE_V2_LAYOUT_SUPPORT",
+    "contact_approval_not_inferred": true,
+    "note": "Studio selection was persisted, but file records DRAFT_NOT_DELIVERED as decision state and render_authorized=false. Never silently reinterpret as final render approval or strip visual layout/flash."
+  }
 }
