@@ -46,7 +46,7 @@
     "6af80e7a12f2d31bad470eed"
   ],
   "completed_mp4_count": 10,
-  "studio_handoff_status": "NOT_YET_IMPORTED_TO_STUDIO",
+  "studio_handoff_status": "PRIVATE_STUDIO_V1_LAUNCH_AND_TICKET_ISSUED_OWNER_SELECTION_NOT_ACKED",
   "important_caveats": [
     "Quote is an estimate, not reserved pricing; generationRequestValidated not proven.",
     "Do not use a2e-generate-approved label until owner accepts total quoted credit ceiling.",
@@ -55,7 +55,7 @@
     "Image generation is approved, but soundtrack, overlays and Montage remain pending."
   ],
   "next_gate": "Read actual A2E task IDs and completed MP4s from workflow receipts; do not retry charged POSTs.",
-  "status": "A2E_10_OF_10_COMPLETED_LOCAL_TECH_QA_PASS_STUDIO_NOT_STARTED",
+  "status": "A2E_COMPLETE_10_MP4_PRIVATE_DRIVE_INDIVIDUALS_VERIFIED_STUDIO_V1_OWNER_REVIEW_PENDING",
   "prompt_source": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
   "replaces_old_quote_issue_numbers": [
     200,
@@ -206,7 +206,36 @@
     }
   ],
   "google_drive_backup_readback_count": 2,
-  "google_drive_individual_mp4_count": 0,
-  "google_drive_individual_files_pending": true,
-  "status_note": "10 original A2E MP4s extracted, probed and fully decoded successfully; GitHub artifacts retained, two archive ZIPs saved and listed on private Drive. User requires individual MP4 copies, not just ZIPs. Studio not imported or reviewed."
+  "google_drive_individual_mp4_count": 10,
+  "google_drive_individual_files_pending": false,
+  "status_note": "10 original A2E MP4s extracted, probed and fully decoded successfully; GitHub artifacts retained, two archive ZIPs saved and listed on private Drive. User requires individual MP4 copies, not just ZIPs. Studio not imported or reviewed.",
+  "google_drive_individual_clips_folder_url": "https://drive.google.com/drive/folders/1X79seJaleD4JctrjwPYE3RZZH77_lerq",
+  "studio_handoff_workflow_run": "https://github.com/legur/Simba/actions/runs/43576207969",
+  "studio_private_media_verified_count": 10,
+  "studio_options_present": 3,
+  "studio_ticket_expiration_utc": "2026-11-14T11:31:33.409367Z",
+  "studio_owner_browser_open_verified": false,
+  "studio_owner_selection_receipt_verified": false,
+  "preview_variants_created_local": [
+    {
+      "id": 1,
+      "title": "Путевой дневник",
+      "file": "Vietnam_Cambodia_Studio_Drafts/01_diary.mp4",
+      "duration_s": 45.0625
+    },
+    {
+      "id": 2,
+      "title": "Киноистория",
+      "file": "Vietnam_Cambodia_Studio_Drafts/02_cinema.mp4",
+      "duration_s": 46.25
+    },
+    {
+      "id": 3,
+      "title": "Энергичный маршрут",
+      "file": "Vietnam_Cambodia_Studio_Drafts/03_dynamic.mp4",
+      "duration_s": 47.625
+    }
+  ],
+  "preview_variants_voice_status": "NOT_RECORDED",
+  "preview_variants_music_status": "NOT_SELECTED"
 }
