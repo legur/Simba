@@ -64,7 +64,7 @@ def existing_only(drive, folder, name):
         raise RuntimeError("Ambiguous existing private file")
     return entries[0] if entries else None
 
-def stage():
+def stage(renew: bool = False):
     selection = load("campaigns/vietnam-cambodia-2027/selected_images_2026-11-14.json")
     receipt = load("campaigns/vietnam-cambodia-2027/a2e_preflight_2026-11-14.json")
     editorial = load("campaigns/vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json")
@@ -158,7 +158,9 @@ def stage():
             raise RuntimeError("New launch failed exact content readback")
 
     ticket_name = "motionlab-" + REQUEST + "-ticket.json"
-    if existing_only(drive, issue_ticket.TICKET_DIR, ticket_name):
+    # Renewal is an explicit owner-only operation; do not discard an existing
+    # approved launch or change any immutable video sources.
+    if not renew and archive.drive_matches(drive, issue_ticket.TICKET_DIR, ticket_name):
         return {"status": "ALREADY_ISSUED_CHECK_OWNER_DRIVE", "launch_file_id": launch_id,
                 "scene_count": len(scenes), "media_verified": True,
                 "paid_calls": 0, "token_printed": False}
@@ -180,9 +182,11 @@ def stage():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--report", type=Path, required=True)
+    parser.add_argument("--renew", action="store_true",
+                        help="Issue a new 3-hour owner-private Studio ticket for the same verified clips.")
     args = parser.parse_args()
     try:
-        result = stage()
+        result = stage(renew=args.renew)
     except Exception as exc:
         # Do not print secret bearer tokens, raw remote responses or signed URLs.
         result = {"status": "STUDIO_LAUNCH_BLOCKED", "reason": str(exc)[:160], "paid_calls": 0}
