@@ -6,7 +6,7 @@
   const $ = id => document.getElementById(id);
   const S = {
     handoff:null,materials:null,proposals:null,assets:[],
-    option:null,scenes:[],busy:false,receipt:null,previewUrls:new Set()
+    option:null,scenes:[],layout:null,busy:false,receipt:null,previewUrls:new Set()
   };
   const SCRIPT=String(window.MOTIONLAB_DRIVE_RECEIVER_URL||'');
   const TRUSTED_SCRIPT=/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]{15,200}\/exec$/;
@@ -155,6 +155,10 @@
     S.option=n;
     const chosen=S.proposals.proposals[n-1];
     S.scenes=structuredClone(chosen.scenes);
+    S.layout=structuredClone(chosen.scene_layout||S.materials.scenes.map(s=>({
+      scene_id:s.scene_id,asset_id:s.asset_id,
+      layout:{title:{x:50,y:47,scale:100},subtitle:{x:50,y:82,scale:100}}
+    })));
     invalidate();render();
   }
   function card(option){
@@ -214,7 +218,27 @@
       const button=element('button','Открыть MP4','subtle');
       button.type='button';
       button.addEventListener('click',()=>preview(row,i,button,video));
-      actions.append(button);prev.append(video,actions);
+      actions.append(button);
+      const frame=element('div',null,'layout-frame');frame.append(video);
+      const layout=S.layout[i].layout;
+      for(const kind of ['title','subtitle']){
+        const overlay=element('div',kind==='title'?source.locked.title_text:source.locked.subtitle_preview,'layout-overlay '+kind);
+        const update=()=>{const v=layout[kind];overlay.style.left=v.x+'%';overlay.style.top=v.y+'%';overlay.style.fontSize=(kind==='title'?8.7:4.2)*v.scale/100+'cqw'};
+        update();frame.append(overlay);
+        if(caps.visual_layout?.schema==='bontours.montage.visual-layout/v1'){
+          const group=element('fieldset',null,'layout-controls');
+          group.append(element('legend',kind==='title'?'Расположение титра':'Расположение субтитров'));
+          for(const [key,label,min,max,step] of [['x','По горизонтали',36,64,1],['y','По вертикали',13,87,1],['scale','Размер',70,140,5]]){
+            const field=element('label',label+' (%)'),input=document.createElement('input');
+            input.type='number';input.min=String(min);input.max=String(max);input.step=String(step);input.value=String(layout[kind][key]);
+            input.addEventListener('change',()=>{const v=Number(input.value);if(!Number.isInteger(v)||v<min||v>max||(v-min)%step){input.value=String(layout[kind][key]);return}layout[kind][key]=v;update();invalidate()});
+            field.append(input);group.append(field);
+          }
+          actions.append(group);
+        }
+      }
+      actions.append(element('p','Положение показано приблизительно. Окончательный вид проверяется в готовом видео.','muted'));
+      prev.append(frame,actions);
       box.append(prev);
       const controls=element('div',null,'controls');
       controls.append(
@@ -265,9 +289,12 @@
     if(!S.option||!$('ownerConfirm').checked||S.receipt)
       throw Error('Нужны выбранный вариант и явное подтверждение.');
     const m=S.materials,p=S.proposals;
-    if(p.proposals[S.option-1].scene_layout)
-      throw Error('Этот макет содержит расширенную геометрию, которая пока не принимается отдельным редактором v2.');
-    return {
+    const initial=p.proposals[S.option-1].scene_layout||m.scenes.map(s=>({scene_id:s.scene_id,asset_id:s.asset_id,
+      layout:{title:{x:50,y:47,scale:100},subtitle:{x:50,y:82,scale:100}}}));
+    const edited=canonical(S.layout)!==canonical(initial);
+    if(edited&&m.renderer_capabilities?.visual_layout?.schema!=='bontours.montage.visual-layout/v1')
+      throw Error('Рендерер этого проекта не поддерживает изменение положения текста.');
+    const result={
       schema:'bontours.motionlab.selection/v2',
       project_id:m.project_id,
       request_id:m.request_id,
@@ -281,7 +308,7 @@
         options_presented:3,
         state:'USER_SELECTED_IN_CONNECTED_SESSION',
         explicit_approval:true,
-        visual_layout_edited:false,
+        visual_layout_edited:edited,
         user_selected_at:new Date().toISOString()
       },
       guards:{
@@ -292,6 +319,8 @@
       },
       scenes:structuredClone(S.scenes)
     };
+    if(edited||p.proposals[S.option-1].scene_layout)result.scene_layout=structuredClone(S.layout);
+    return result;
   }
   async function load(){
     if(!TRUSTED_SCRIPT.test(SCRIPT)||!crypto?.subtle)
