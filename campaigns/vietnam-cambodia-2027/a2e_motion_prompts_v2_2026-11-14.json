@@ -7,15 +7,15 @@
     200,
     201
   ],
-  "status": "REVISED_PROMPTS_QUOTED_NO_CHARGE_OWNER_CREDIT_CAP_PENDING",
+  "status": "A2E_START_SUBMITTED_IN_PROGRESS_NO_RESULTS_VERIFIED",
   "scene_count": 10,
   "model_version": "a2e",
   "generation_duration_per_scene_seconds": 5,
   "audio_in_a2e": false,
   "shared_negative_prompt": "blurry, distorted, static",
   "shot_motion_design": "Use actual physical motion of subjects, water, light and foliage; no artificial zoom-only photo slideshow.",
-  "approved_credit_ceiling": null,
-  "generation_authorized": false,
+  "approved_credit_ceiling": 300,
+  "generation_authorized": true,
   "scenes": [
     {
       "scene_number": 1,
