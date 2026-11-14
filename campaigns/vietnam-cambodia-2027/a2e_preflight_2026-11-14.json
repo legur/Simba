@@ -33,9 +33,20 @@
   "total_approved_credit_ceiling": 300,
   "paid_start_authorized": true,
   "paid_start_attempted": true,
-  "a2e_task_ids": [],
-  "completed_mp4_count": 0,
-  "studio_handoff_status": "BLOCKED_WAITING_FOR_ACTUAL_MP4",
+  "a2e_task_ids": [
+    "6af80e57d3477bfe7205319c",
+    "6af80e5855360d7e3320a5a3",
+    "6af80e5c9b283da24d6503fd",
+    "6af80e5d55360d7e3320a61f",
+    "6af80e5f55360d7e3320a657",
+    "6af80e71879932a87cf1a9ff",
+    "6af80e73879932a87cf1aa26",
+    "6af80e7512f2d31bad470e46",
+    "6af80e7712f2d31bad470e98",
+    "6af80e7a12f2d31bad470eed"
+  ],
+  "completed_mp4_count": 10,
+  "studio_handoff_status": "NOT_YET_IMPORTED_TO_STUDIO",
   "important_caveats": [
     "Quote is an estimate, not reserved pricing; generationRequestValidated not proven.",
     "Do not use a2e-generate-approved label until owner accepts total quoted credit ceiling.",
@@ -44,7 +55,7 @@
     "Image generation is approved, but soundtrack, overlays and Montage remain pending."
   ],
   "next_gate": "Read actual A2E task IDs and completed MP4s from workflow receipts; do not retry charged POSTs.",
-  "status": "A2E_PAID_START_ATTEMPTED_RUNS_IN_PROGRESS_NOT_YET_COMPLETED",
+  "status": "A2E_10_OF_10_COMPLETED_LOCAL_TECH_QA_PASS_STUDIO_NOT_STARTED",
   "prompt_source": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
   "replaces_old_quote_issue_numbers": [
     200,
@@ -82,5 +93,120 @@
       "run_id": 43571516030,
       "run_url": "https://github.com/legur/Simba/actions/runs/43571516030"
     }
-  ]
+  ],
+  "a2e_video_total_duration_seconds": 50.625,
+  "local_mp4_technical_decode_pass": 10,
+  "local_mp4_verified_format": "1080x1920 H.264, 16 FPS, ~5.0625 seconds each",
+  "local_mp4_manifest": [
+    {
+      "scene_number": 1,
+      "task_id": "6af80e57d3477bfe7205319c",
+      "name": "scene_01.mp4",
+      "size_bytes": 8234247,
+      "sha256": "025b433259509b9c5702c800938847cd940e162a53eeb1d432912cbea6c3ea42"
+    },
+    {
+      "scene_number": 2,
+      "task_id": "6af80e5855360d7e3320a5a3",
+      "name": "scene_02.mp4",
+      "size_bytes": 9339363,
+      "sha256": "6129f82bcc77d2aa30f695f462f5e33c845bb7b8aa781bde531b7e85cc6bdf88"
+    },
+    {
+      "scene_number": 3,
+      "task_id": "6af80e5c9b283da24d6503fd",
+      "name": "scene_03.mp4",
+      "size_bytes": 8967899,
+      "sha256": "d550349043ac186fa7533426ce78477891c25786813bf68e4101656007560ce0"
+    },
+    {
+      "scene_number": 4,
+      "task_id": "6af80e5d55360d7e3320a61f",
+      "name": "scene_04.mp4",
+      "size_bytes": 6022753,
+      "sha256": "3ba1141ebed410db75f6ef48fcbe3bd67005a0abcf54f5c281518eb34760fbf4"
+    },
+    {
+      "scene_number": 5,
+      "task_id": "6af80e5f55360d7e3320a657",
+      "name": "scene_05.mp4",
+      "size_bytes": 7827521,
+      "sha256": "e983e5302f03c424f6c707ba6f70325a714fb14267fa8ef49cf82da035ee8e8e"
+    },
+    {
+      "scene_number": 6,
+      "task_id": "6af80e71879932a87cf1a9ff",
+      "name": "scene_06.mp4",
+      "size_bytes": 12723631,
+      "sha256": "55b987acf817636b40884f158c2a9890b176ac8305c08f39045166462af29626"
+    },
+    {
+      "scene_number": 7,
+      "task_id": "6af80e73879932a87cf1aa26",
+      "name": "scene_07.mp4",
+      "size_bytes": 8613028,
+      "sha256": "cc0009b2a031292f3cb1cd2ace0e80ce56d684800ed7e69552bd738d92a05986"
+    },
+    {
+      "scene_number": 8,
+      "task_id": "6af80e7512f2d31bad470e46",
+      "name": "scene_08.mp4",
+      "size_bytes": 5905037,
+      "sha256": "a5721f20b862c1c817cb8f90eb81d2ce97a38c16a1d485e9d890d33cb9ce7103"
+    },
+    {
+      "scene_number": 9,
+      "task_id": "6af80e7712f2d31bad470e98",
+      "name": "scene_09.mp4",
+      "size_bytes": 7424888,
+      "sha256": "0af679ea3351d7029dfbf727124d63886e5754c6105d4c3b037b82e96b9b377a"
+    },
+    {
+      "scene_number": 10,
+      "task_id": "6af80e7a12f2d31bad470eed",
+      "name": "scene_10.mp4",
+      "size_bytes": 8628005,
+      "sha256": "9698088c62ffbdf7b5f2c43f2aa9c5e93e3ddec666fe5723ad925559b12896e8"
+    }
+  ],
+  "a2e_workflow_conclusions": [
+    {
+      "run_id": 43571488643,
+      "status": "success",
+      "completed": 5
+    },
+    {
+      "run_id": 43571516030,
+      "status": "success",
+      "completed": 5
+    }
+  ],
+  "a2e_github_artifacts": [
+    {
+      "id": 14103694125,
+      "issue_number": 204,
+      "file_count": 5
+    },
+    {
+      "id": 14105250163,
+      "issue_number": 205,
+      "file_count": 5
+    }
+  ],
+  "google_drive_backups": [
+    {
+      "name": "A2E_Vietnam_Cambodia_scenes_01-05_ARCHIVE.zip",
+      "drive_id": "12TDPeRHX8VFoO4wyFQqS7cR8qntajkyH",
+      "size_bytes": 40400047
+    },
+    {
+      "name": "A2E_Vietnam_Cambodia_scenes_06-10_ARCHIVE.zip",
+      "drive_id": "1lBONSu0ImS1Q9N5BXe8nlcCqBI5Mwgcv",
+      "size_bytes": 43303763
+    }
+  ],
+  "google_drive_backup_readback_count": 2,
+  "google_drive_individual_mp4_count": 0,
+  "google_drive_individual_files_pending": true,
+  "status_note": "10 original A2E MP4s extracted, probed and fully decoded successfully; GitHub artifacts retained, two archive ZIPs saved and listed on private Drive. User requires individual MP4 copies, not just ZIPs. Studio not imported or reviewed."
 }
