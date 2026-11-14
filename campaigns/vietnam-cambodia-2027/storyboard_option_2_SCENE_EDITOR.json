@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "STORYBOARD_2_SELECTED_SCENE_EDITS_OPEN",
+  "status": "VISUAL_STYLE_2_SELECTED_REAL_IMAGE_SETS_REQUIRED",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -196,10 +196,13 @@
     "a2e_authorized": false,
     "tts_authorized": false,
     "music_authorized": false,
-    "publication_authorized": false
+    "publication_authorized": false,
+    "visual_style_2_selected": true,
+    "three_image_sets_shown": false,
+    "individual_images_approved": false
   },
   "external_paid_cost_quote_status": "NOT_PREPARED",
-  "image_generation_status": "NOT_REQUESTED_FOR_SELECTED_SCENES",
-  "archive_status": "PREVIEW_ARCHIVE_PENDING",
-  "notes": "Редактировать поля scenes и default_style без замены source_script_path. При правках текста озвучки синхронизировать полный сценарий; при правках времени нужна повторная проверка непрерывности сетки. Изменение любого поля не дает права на генерацию или публикацию."
+  "image_generation_status": "COLLAGE_PREVIEWS_ONLY_NOT_A2E_READY",
+  "archive_status": "PREVIEW_ARCHIVE_PENDING_AND_INDIVIDUAL_IMAGES_MISSING",
+  "notes": "Прежние контактные листы не являются тремя полноценными наборами индивидуальных изображений. Должны быть созданы/загружены 3×10 отдельных чистых кадров с individual files+QA; только после выбора набора допустим переход к A2E с указанным бюджетом и владельческим решением. Studio принимает настоящие MP4 клипы."
 }
