@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "A2E_REQUEST_SUBMITTED_10_SCENES_UNDER_300_CREDIT_CAP",
+  "status": "A2E_TEN_COMPLETED_MP4_STUDIO_HANDoFF_PENDING",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -526,5 +526,23 @@
   ],
   "a2e_ready_issue_labels_applied": true,
   "a2e_clips_drive_folder": "https://drive.google.com/drive/folders/1X79seJaleD4JctrjwPYE3RZZH77_lerq",
-  "studio_exports_drive_folder": "https://drive.google.com/drive/folders/14ZYeTB6a7Qd1K11npIdlwPGFYlcvdFvi"
+  "studio_exports_drive_folder": "https://drive.google.com/drive/folders/14ZYeTB6a7Qd1K11npIdlwPGFYlcvdFvi",
+  "a2e_completed_mp4_count": 10,
+  "a2e_completed_task_ids": [
+    "6af80e57d3477bfe7205319c",
+    "6af80e5855360d7e3320a5a3",
+    "6af80e5c9b283da24d6503fd",
+    "6af80e5d55360d7e3320a61f",
+    "6af80e5f55360d7e3320a657",
+    "6af80e71879932a87cf1a9ff",
+    "6af80e73879932a87cf1aa26",
+    "6af80e7512f2d31bad470e46",
+    "6af80e7712f2d31bad470e98",
+    "6af80e7a12f2d31bad470eed"
+  ],
+  "a2e_mp4s_local_verified": true,
+  "a2e_mp4s_individual_drive_verified": false,
+  "a2e_drive_backup_zip_verified": true,
+  "a2e_video_preview_ready": true,
+  "studio_video_clips_imported": false
 }
