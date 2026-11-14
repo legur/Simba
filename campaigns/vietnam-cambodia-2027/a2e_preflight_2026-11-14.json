@@ -44,11 +44,27 @@
     "Image generation is approved, but soundtrack, overlays and Montage remain pending."
   ],
   "next_gate": "explicit owner acceptance of 300 A2E credits for 10 clips, max 150 per 5-scene issue",
-  "status": "PROMPT_V2_QUOTED_NO_CHARGE",
+  "status": "READY_FOR_A2E_GENERATION_OWNER_CREDIT_CAP_UNCONFIRMED",
   "prompt_source": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
   "replaces_old_quote_issue_numbers": [
     200,
     201
   ],
-  "pricing_version": 2
+  "pricing_version": 2,
+  "ready_to_generate_issue_numbers": [
+    204,
+    205
+  ],
+  "ready_to_generate_issue_urls": [
+    "https://github.com/legur/Simba/issues/204",
+    "https://github.com/legur/Simba/issues/205"
+  ],
+  "ready_job_credit_limits": [
+    150,
+    150
+  ],
+  "ready_jobs_trigger_labels_applied": false,
+  "original_media_archive": "https://drive.google.com/drive/folders/1wpuCHmgqFb4t2DTP0JLEOr8CxwuoqxFe",
+  "generated_clips_archive": "https://drive.google.com/drive/folders/1X79seJaleD4JctrjwPYE3RZZH77_lerq",
+  "studio_exports_archive": "https://drive.google.com/drive/folders/14ZYeTB6a7Qd1K11npIdlwPGFYlcvdFvi"
 }
