@@ -18,14 +18,14 @@
   "quote_batches": [
     {
       "scenes": "1-5",
-      "github_issue_number": 200,
-      "quote_url": "https://github.com/legur/Simba/issues/200",
+      "github_issue_number": 202,
+      "quote_url": "https://github.com/legur/Simba/issues/202",
       "credits": 150
     },
     {
       "scenes": "6-10",
-      "github_issue_number": 201,
-      "quote_url": "https://github.com/legur/Simba/issues/201",
+      "github_issue_number": 203,
+      "quote_url": "https://github.com/legur/Simba/issues/203",
       "credits": 150
     }
   ],
@@ -43,5 +43,12 @@
     "Media assets staged via Wix Media Manager have publicly addressable URLs; source Google Drive stays archive.",
     "Image generation is approved, but soundtrack, overlays and Montage remain pending."
   ],
-  "next_gate": "explicit owner acceptance of 300 A2E credits for 10 clips, max 150 per 5-scene issue"
+  "next_gate": "explicit owner acceptance of 300 A2E credits for 10 clips, max 150 per 5-scene issue",
+  "status": "PROMPT_V2_QUOTED_NO_CHARGE",
+  "prompt_source": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
+  "replaces_old_quote_issue_numbers": [
+    200,
+    201
+  ],
+  "pricing_version": 2
 }
