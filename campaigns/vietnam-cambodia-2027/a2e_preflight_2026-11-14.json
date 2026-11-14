@@ -46,7 +46,7 @@
     "6af80e7a12f2d31bad470eed"
   ],
   "completed_mp4_count": 10,
-  "studio_handoff_status": "PRIVATE_STUDIO_V1_LAUNCH_AND_TICKET_ISSUED_OWNER_SELECTION_NOT_ACKED",
+  "studio_handoff_status": "PRIVATE_STUDIO_V1_TICKET_RENEWED_OWNER_SELECTION_PENDING",
   "important_caveats": [
     "Quote is an estimate, not reserved pricing; generationRequestValidated not proven.",
     "Do not use a2e-generate-approved label until owner accepts total quoted credit ceiling.",
@@ -213,7 +213,7 @@
   "studio_handoff_workflow_run": "https://github.com/legur/Simba/actions/runs/43576207969",
   "studio_private_media_verified_count": 10,
   "studio_options_present": 3,
-  "studio_ticket_expiration_utc": "2026-11-14T11:31:33.409367Z",
+  "studio_ticket_expiration_utc": "2026-11-14T16:26:45.791185Z",
   "studio_owner_browser_open_verified": false,
   "studio_owner_selection_receipt_verified": false,
   "preview_variants_created_local": [
@@ -237,5 +237,8 @@
     }
   ],
   "preview_variants_voice_status": "NOT_RECORDED",
-  "preview_variants_music_status": "NOT_SELECTED"
+  "preview_variants_music_status": "NOT_SELECTED",
+  "studio_latest_private_ticket_id": "12aOImzwSQqxtb79kfGiaXSqE-r-wxazA",
+  "studio_latest_private_ticket_issued_utc": "2026-11-14T13:26:45.791185Z",
+  "studio_ticket_renewal_run": "https://github.com/legur/Simba/actions/runs/43599762648"
 }
