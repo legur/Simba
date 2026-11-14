@@ -1,0 +1,60 @@
+name: MotionLab Vietnam Cambodia — WarmBaritone audio audition (no new paid APIs)
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: motionlab-vietnam-cambodia-2027-audio-audition
+  cancel-in-progress: false
+
+jobs:
+  mix_private_audio:
+    if: >-
+      github.repository == 'legur/Simba'
+      && github.event.label.name == 'motionlab-vietnam-voice-audition'
+      && github.event.sender.login == 'legur'
+      && github.event.issue.user.login == 'legur'
+      && github.event.issue.number == 204
+      && github.event.issue.pull_request == null
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Install official Drive OAuth and free media tools
+        run: |
+          python -m pip install --disable-pip-version-check 'google-api-python-client>=2.140,<3' 'google-auth>=2.30,<3' 'google-auth-httplib2>=0.2,<1'
+          if ! command -v ffmpeg >/dev/null || ! command -v ffprobe >/dev/null || ! test -d /usr/share/fonts/truetype/dejavu; then
+            sudo apt-get update -qq
+            sudo apt-get install -y --no-install-recommends ffmpeg fonts-dejavu-core fonts-liberation
+          fi
+      - name: Verify exact approved audio audition code
+        run: |
+          python -m py_compile integrations/materials/motionlab/drive_handoff/mix_vietnam_approved_voice_preview.py
+          python -m py_compile integrations/materials/motionlab/drive_handoff/render_vietnam_selected_preview.py
+      - name: Mix existing approved private WarmBaritone WAVs into a non-publishable draft
+        env:
+          GDRIVE_OAUTH_CLIENT_ID: ${{ secrets.GDRIVE_OAUTH_CLIENT_ID }}
+          GDRIVE_OAUTH_CLIENT_SECRET: ${{ secrets.GDRIVE_OAUTH_CLIENT_SECRET }}
+          GDRIVE_OAUTH_REFRESH_TOKEN: ${{ secrets.GDRIVE_OAUTH_REFRESH_TOKEN }}
+          SIMBA_NO_PAID_OPERATIONS: "true"
+          SIMBA_AUTO_PUBLISH: "false"
+        run: |
+          python integrations/materials/motionlab/drive_handoff/mix_vietnam_approved_voice_preview.py \
+            --report "$RUNNER_TEMP/vietnam-studio-option2-voice-audition-report.json"
+      - name: Preserve private media QA report (no audio in Github artifacts)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vietnam-cambodia-option2-voice-audition-report
+          path: ${{ runner.temp }}/vietnam-studio-option2-voice-audition-report.json
+          retention-days: 14
+          if-no-files-found: warn
