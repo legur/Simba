@@ -30,9 +30,9 @@
     }
   ],
   "total_quoted_credits": 300,
-  "total_approved_credit_ceiling": null,
-  "paid_start_authorized": false,
-  "paid_start_attempted": false,
+  "total_approved_credit_ceiling": 300,
+  "paid_start_authorized": true,
+  "paid_start_attempted": true,
   "a2e_task_ids": [],
   "completed_mp4_count": 0,
   "studio_handoff_status": "BLOCKED_WAITING_FOR_ACTUAL_MP4",
@@ -43,8 +43,8 @@
     "Media assets staged via Wix Media Manager have publicly addressable URLs; source Google Drive stays archive.",
     "Image generation is approved, but soundtrack, overlays and Montage remain pending."
   ],
-  "next_gate": "explicit owner acceptance of 300 A2E credits for 10 clips, max 150 per 5-scene issue",
-  "status": "READY_FOR_A2E_GENERATION_OWNER_CREDIT_CAP_UNCONFIRMED",
+  "next_gate": "Read actual A2E task IDs and completed MP4s from workflow receipts; do not retry charged POSTs.",
+  "status": "A2E_PAID_START_ATTEMPTED_RUNS_IN_PROGRESS_NOT_YET_COMPLETED",
   "prompt_source": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
   "replaces_old_quote_issue_numbers": [
     200,
@@ -63,8 +63,24 @@
     150,
     150
   ],
-  "ready_jobs_trigger_labels_applied": false,
+  "ready_jobs_trigger_labels_applied": true,
   "original_media_archive": "https://drive.google.com/drive/folders/1wpuCHmgqFb4t2DTP0JLEOr8CxwuoqxFe",
   "generated_clips_archive": "https://drive.google.com/drive/folders/1X79seJaleD4JctrjwPYE3RZZH77_lerq",
-  "studio_exports_archive": "https://drive.google.com/drive/folders/14ZYeTB6a7Qd1K11npIdlwPGFYlcvdFvi"
+  "studio_exports_archive": "https://drive.google.com/drive/folders/14ZYeTB6a7Qd1K11npIdlwPGFYlcvdFvi",
+  "paid_start_receipts": [
+    "https://github.com/legur/Simba/issues/204#issuecomment-6873859441",
+    "https://github.com/legur/Simba/issues/205#issuecomment-6873865661"
+  ],
+  "active_runs": [
+    {
+      "issue_number": 204,
+      "run_id": 43571488643,
+      "run_url": "https://github.com/legur/Simba/actions/runs/43571488643"
+    },
+    {
+      "issue_number": 205,
+      "run_id": 43571516030,
+      "run_url": "https://github.com/legur/Simba/actions/runs/43571516030"
+    }
+  ]
 }
