@@ -131,9 +131,11 @@ def look_for_existing(drive, sha1, sha2):
         return None
     m=rows["files"][0]
     props=m.get("appProperties") or {}
-    must(props.get("voice1_sha256")==sha1 and props.get("voice2_sha256")==sha2
-         and props.get("selection_sha256")==visual.RECEIPT_SHA if hasattr(visual, "RECEIPT_SHA") else
-         (props.get("selection_sha256")=="0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10"),
+    must(props.get("voice1_sha256")==sha1 and
+         props.get("voice2_sha256")==sha2 and
+         props.get("selection_sha256")==
+         "0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10" and
+         props.get("preview_only")=="true" and props.get("final_master")=="false",
          "EXISTING_OUTPUT_OTHER_INPUTS")
     return m
 
