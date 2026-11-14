@@ -166,14 +166,24 @@ def execute():
                  "VOICE_WAV_DURATION_CHANGED")
             voices.append(path)
 
-        joined=tmp/"joined_voice.wav"
-        run_ffmpeg(["-i",str(voices[0]),"-f","lavfi","-t",".35",
-               "-i","anullsrc=r=24000:cl=mono","-i",str(voices[1]),
-               "-filter_complex",
-               "[0:a][1:a][2:a]concat=n=3:v=0:a=1,atempo=1.185,"
-               "aresample=48000,adelay=200|200[a]",
-               "-map","[a]","-c:a","pcm_s16le",str(joined)],
-               "NARRATION_MIX_FAILED")
+        # Normalize both WAVs independently, then concatenate with the
+        # ffmpeg concat demuxer: robust across GitHub-hosted FFmpeg versions.
+        norm = []
+        for i, item in enumerate(voices, 1):
+            audio48 = tmp / ("voice_%02d_48k_mono.wav" % i)
+            run_ffmpeg(["-i", str(item), "-ar", "48000", "-ac", "1",
+                        "-c:a", "pcm_s16le", str(audio48)],
+                       "NARRATION_NORMALIZATION_FAILED")
+            norm.append(audio48)
+        concat_list = tmp / "narration_concat.txt"
+        concat_list.write_text(
+            "".join("file '" + str(x).replace("'", "") + "'\n" for x in norm),
+            encoding="utf8")
+        joined = tmp / "joined_voice.wav"
+        run_ffmpeg(["-f", "concat", "-safe", "0", "-i", str(concat_list),
+                    "-af", "atempo=1.185,adelay=200:all=1",
+                    "-ar", "48000", "-ac", "1", "-c:a", "pcm_s16le",
+                    str(joined)], "NARRATION_CONCAT_FAILED")
         duration=float(visual.fp(joined)["format"]["duration"])
         must(41.5 < duration < DURATION, "NARRATION_DOES_NOT_FIT")
         score=tmp/"original_temp_score.wav"
