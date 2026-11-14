@@ -285,6 +285,38 @@
     renderScenes();
     $('submit').disabled=S.option===null||!$('ownerConfirm').checked||!!S.receipt||S.busy;
   }
+  function importLegacyLayout(draft){
+    if(!S.option)throw Error('Сначала выберите вариант монтажа.');
+    if(S.materials.renderer_capabilities?.visual_layout?.schema!=='bontours.montage.visual-layout/v1')
+      throw Error('Этот рендерер не поддерживает положение текста.');
+    if(draft?.schema!=='bontours.motionlab.visual-layout-draft/v2'||draft.status!=='DRAFT_NOT_DELIVERED'
+      ||draft.project_id!==S.materials.project_id
+      ||draft.expected_input_fingerprint!==S.materials.expected_input_fingerprint
+      ||draft.selected_option!==S.option||!Array.isArray(draft.scene_layout)
+      ||draft.scene_layout.length!==S.materials.scenes.length)
+      throw Error('Черновик относится к другому проекту, исходникам или варианту.');
+    const defaults={title:{family:'Unbounded',color:'#ffffff',size:100},subtitle:{family:'Manrope',color:'#ffffff',size:100}};
+    const imported=draft.scene_layout.map((row,i)=>{
+      const source=S.materials.scenes[i];
+      if(row?.scene_id!==source.scene_id||row.asset_id!==source.asset_id)
+        throw Error('Сцены или исходные материалы черновика не совпадают с проектом.');
+      const layout={};
+      for(const kind of ['title','subtitle']){
+        const text=row.typography?.[kind],v=row.layout?.[kind],d=defaults[kind];
+        if(!text||text.family!==d.family||String(text.color).toLowerCase()!==d.color||text.size!==d.size)
+          throw Error('В черновике изменены шрифты или цвета. Они пока не переносятся; сохраните черновик.');
+        if(!v||!Number.isInteger(v.x)||v.x<36||v.x>64||!Number.isInteger(v.y)||v.y<13||v.y>87
+          ||!Number.isInteger(v.scale)||v.scale<70||v.scale>140||(v.scale-70)%5!==0)
+          throw Error('В черновике обнаружено недопустимое положение текста.');
+        layout[kind]={x:v.x,y:v.y,scale:v.scale};
+      }
+      if(source.locked.title_text.trim()&&source.locked.subtitle_preview.trim()
+        &&Math.abs(layout.title.y-layout.subtitle.y)<Math.max(12,(layout.title.scale+layout.subtitle.scale)/16))
+        throw Error('Титр и субтитры могут перекрываться в сцене '+(i+1)+'.');
+      return {scene_id:source.scene_id,asset_id:source.asset_id,layout};
+    });
+    S.layout=imported;invalidate();render();
+  }
   function buildSelection(){
     if(!S.option||!$('ownerConfirm').checked||S.receipt)
       throw Error('Нужны выбранный вариант и явное подтверждение.');
@@ -338,6 +370,15 @@
   }
   $('ownerConfirm').addEventListener('change',()=>{
     $('submit').disabled=S.option===null||!$('ownerConfirm').checked||!!S.receipt||S.busy;
+  });
+  $('layoutImport').addEventListener('change',async event=>{
+    try{
+      const file=event.target.files?.[0];
+      if(!file||file.size>1024*1024)throw Error('Выберите черновик JSON размером до 1 МБ.');
+      importLegacyLayout(JSON.parse(await file.text()));
+      display('Положение текста перенесено. Проверьте все сцены и подтвердите выбор заново.');
+    }catch(err){display(String(err.message||err),true)}
+    finally{event.target.value=''}
   });
   $('submit').addEventListener('click',async()=>{
     const button=$('submit');button.disabled=true;
