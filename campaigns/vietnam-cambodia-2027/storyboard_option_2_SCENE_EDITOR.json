@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "THREE_SETS_30_INDIVIDUAL_FRAMES_READY_FOR_OWNER_VISUAL_REVIEW",
+  "status": "30_INDIVIDUAL_IMAGES_ARCHIVED_DRIVE_OWNER_SELECTION_PENDING",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -41,7 +41,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1s1YywnsjCnslYJT1B7fWFqANVMjKLc5N",
+          "filename": "S01_A.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1s1YywnsjCnslYJT1B7fWFqANVMjKLc5N/view?usp=drivesdk",
+          "size_bytes": 2413179,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "1ADJuolPULeszjMgBvW5XmXEMmF8nxRbG",
+          "filename": "S01_B.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1ADJuolPULeszjMgBvW5XmXEMmF8nxRbG/view?usp=drivesdk",
+          "size_bytes": 2787033,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "1ZtxRLMqH7FbuquC_lOLNxNO2yZSNiPV6",
+          "filename": "S01_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1ZtxRLMqH7FbuquC_lOLNxNO2yZSNiPV6/view?usp=drivesdk",
+          "size_bytes": 2596338,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     },
     {
       "scene_id": "s02",
@@ -57,7 +84,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1DrRfRdHWOMa3M2L44ntjBQhqIx2_O6Jm",
+          "filename": "S02_A.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1DrRfRdHWOMa3M2L44ntjBQhqIx2_O6Jm/view?usp=drivesdk",
+          "size_bytes": 2427553,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "1vXvhNK_18a-5YJWFJOmVk_pCDCAvbI8Y",
+          "filename": "S02_B.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1vXvhNK_18a-5YJWFJOmVk_pCDCAvbI8Y/view?usp=drivesdk",
+          "size_bytes": 2903984,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "101mDZQbU5maRJb3OnKygdBSorvJIfwfw",
+          "filename": "S02_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/101mDZQbU5maRJb3OnKygdBSorvJIfwfw/view?usp=drivesdk",
+          "size_bytes": 3044446,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     },
     {
       "scene_id": "s03",
@@ -73,7 +127,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1xp6ZhiKtKJxgWpAaY5CAvG5fQv38ehR5",
+          "filename": "S03_A.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1xp6ZhiKtKJxgWpAaY5CAvG5fQv38ehR5/view?usp=drivesdk",
+          "size_bytes": 2302672,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "1H2JYDJE9egZubiAcfJeSe9PzKy6dCGTi",
+          "filename": "S03_B.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1H2JYDJE9egZubiAcfJeSe9PzKy6dCGTi/view?usp=drivesdk",
+          "size_bytes": 2773548,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "19L6SXOmcX-ky5e2U_TkS36fAUdbGyho8",
+          "filename": "S03_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/19L6SXOmcX-ky5e2U_TkS36fAUdbGyho8/view?usp=drivesdk",
+          "size_bytes": 2539320,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     },
     {
       "scene_id": "s04",
@@ -89,7 +170,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1UJxbXcd2I_Em8YA9NmZfG4xH0EFeDfXs",
+          "filename": "S04_A.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1UJxbXcd2I_Em8YA9NmZfG4xH0EFeDfXs/view?usp=drivesdk",
+          "size_bytes": 2457923,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "1vYEp67AB94EXUYtTuHMwsjN_vrAHp57A",
+          "filename": "S04_B.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1vYEp67AB94EXUYtTuHMwsjN_vrAHp57A/view?usp=drivesdk",
+          "size_bytes": 2492032,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "1ubTc1TAHz9P5KrEeoYr4JMOhZsgcflhy",
+          "filename": "S04_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1ubTc1TAHz9P5KrEeoYr4JMOhZsgcflhy/view?usp=drivesdk",
+          "size_bytes": 2671953,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     },
     {
       "scene_id": "s05",
@@ -105,7 +213,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1dl1ZpG1OJdIh_P0vcWEQ-MOGYdqacGBF",
+          "filename": "S05_A.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1dl1ZpG1OJdIh_P0vcWEQ-MOGYdqacGBF/view?usp=drivesdk",
+          "size_bytes": 3437591,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "19KqeoBNf5ILe8YecY3lM6aqiNCRmYk82",
+          "filename": "S05_B.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/19KqeoBNf5ILe8YecY3lM6aqiNCRmYk82/view?usp=drivesdk",
+          "size_bytes": 3688583,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "1H8dIwv9t5kFnlREGqtWu_FzwR0KpHpic",
+          "filename": "S05_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1H8dIwv9t5kFnlREGqtWu_FzwR0KpHpic/view?usp=drivesdk",
+          "size_bytes": 3249779,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     },
     {
       "scene_id": "s06",
@@ -121,7 +256,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1549O5Xlvq0GfKxVHatbHVKf8OPk9SJEE",
+          "filename": "S06_A.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1549O5Xlvq0GfKxVHatbHVKf8OPk9SJEE/view?usp=drivesdk",
+          "size_bytes": 2885050,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "1seaOGMbIIe-M1EuVHYA0SFTek7HtZeEm",
+          "filename": "S06_B.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1seaOGMbIIe-M1EuVHYA0SFTek7HtZeEm/view?usp=drivesdk",
+          "size_bytes": 3167979,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "1ZFZnfJ_yEGj0bZ8Pg82cD-Cuq6covJNN",
+          "filename": "S06_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1ZFZnfJ_yEGj0bZ8Pg82cD-Cuq6covJNN/view?usp=drivesdk",
+          "size_bytes": 3175352,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     },
     {
       "scene_id": "s07",
@@ -137,7 +299,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1yzhtDWT9HetRiE5hwVMj9MqBxyd1QqEm",
+          "filename": "S07_A.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1yzhtDWT9HetRiE5hwVMj9MqBxyd1QqEm/view?usp=drivesdk",
+          "size_bytes": 2163008,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "12E2BP7emFO6IBwDaClCaNTZnp3hqFlxT",
+          "filename": "S07_B.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/12E2BP7emFO6IBwDaClCaNTZnp3hqFlxT/view?usp=drivesdk",
+          "size_bytes": 3318162,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "1iETStX1S0bhsCKHx8TA5zeEsRoTwq_O_",
+          "filename": "S07_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1iETStX1S0bhsCKHx8TA5zeEsRoTwq_O_/view?usp=drivesdk",
+          "size_bytes": 2778260,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     },
     {
       "scene_id": "s08",
@@ -153,7 +342,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1cdKy6vqiVhnRzkIUkkgAEOq02facK4Fk",
+          "filename": "S08_A.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1cdKy6vqiVhnRzkIUkkgAEOq02facK4Fk/view?usp=drivesdk",
+          "size_bytes": 2502650,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "1FWVn3NDS2vyMZTZB9XNBylNRToKbEM6M",
+          "filename": "S08_B.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1FWVn3NDS2vyMZTZB9XNBylNRToKbEM6M/view?usp=drivesdk",
+          "size_bytes": 3004806,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "1RcP6B26VhHpBMnYjOoOJ56ZB5-bx8qSh",
+          "filename": "S08_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1RcP6B26VhHpBMnYjOoOJ56ZB5-bx8qSh/view?usp=drivesdk",
+          "size_bytes": 3126882,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     },
     {
       "scene_id": "s09",
@@ -169,7 +385,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1HG8CQN7ynbwVK17pXHB3AeSunkc7Pjjm",
+          "filename": "S09_A.jpg",
+          "mime_type": "image/jpeg",
+          "url": "https://drive.google.com/file/d/1HG8CQN7ynbwVK17pXHB3AeSunkc7Pjjm/view?usp=drivesdk",
+          "size_bytes": 647208,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "1FyNevZC_vU8d6raANPbJW9KSuwCRvw67",
+          "filename": "S09_B.jpg",
+          "mime_type": "image/jpeg",
+          "url": "https://drive.google.com/file/d/1FyNevZC_vU8d6raANPbJW9KSuwCRvw67/view?usp=drivesdk",
+          "size_bytes": 754942,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "1_BJkmAfU_GBNGwtzcNANK_YCzRlbGW7U",
+          "filename": "S09_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1_BJkmAfU_GBNGwtzcNANK_YCzRlbGW7U/view?usp=drivesdk",
+          "size_bytes": 3088513,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     },
     {
       "scene_id": "s10",
@@ -185,7 +428,34 @@
       "notes": "",
       "media_asset_id": null,
       "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "scene_approval": "PENDING_SCENE_REVIEW",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "1yZXgxYUosE_X0_UUqsDWt1dHqQ6jIybd",
+          "filename": "S10_A.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1yZXgxYUosE_X0_UUqsDWt1dHqQ6jIybd/view?usp=drivesdk",
+          "size_bytes": 2658632,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "1Ax9REEqGQ1UnuyEnvyOugGxTn6A5SIas",
+          "filename": "S10_B.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/1Ax9REEqGQ1UnuyEnvyOugGxTn6A5SIas/view?usp=drivesdk",
+          "size_bytes": 3169079,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "11tstIh0G6AEMTda1rel3tDVJyENLOe7C",
+          "filename": "S10_C.png",
+          "mime_type": "image/png",
+          "url": "https://drive.google.com/file/d/11tstIh0G6AEMTda1rel3tDVJyENLOe7C/view?usp=drivesdk",
+          "size_bytes": 2898666,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": null
     }
   ],
   "decisions": {
@@ -202,7 +472,10 @@
     "individual_images_approved": false
   },
   "external_paid_cost_quote_status": "NOT_PREPARED",
-  "image_generation_status": "30_STANDALONE_AI_ILLUSTRATIONS_EXPORTED_AS_9x16_JPG_IN_CHAT_ARTIFACT",
-  "archive_status": "CHATGPT_ZIP_AVAILABLE; GOOGLE_DRIVE_30_FILE_ARCHIVE_NOT_VERIFIED",
-  "notes": "30 отдельных JPG S01_A..S10_C, 1080×1920, в архиве vietnam_cambodia_30_individual_images.zip и интерактивной галерее vietnam_cambodia_choose_30_images.html. Проверить качество после выбора: S04_C пейзаж вместо палубы; S07_B,C виды назначения вместо самолета; S08_B,C рынки фруктов вместо готовых блюд. Исходные файлы доступны в текущем чате; на Drive архив не подтвержден. Присутствие трех вариантов не означает выбор кадров или разрешение A2E."
+  "image_generation_status": "ALL_30_SEPARATE_AI_ILLUSTRATIONS_CREATED; FRAME_EXPORTS_1080x1920_IN_CONVERSATION_ZIP",
+  "archive_status": "ALL_30_SOURCE_IMAGES_PRESENT_ON_PRIVATE_GOOGLE_DRIVE; 9x16_JPEG_EXPORTS_CURRENT_CHAT_ZIP; SELECTED_PRODUCTION_IMAGES_PENDING",
+  "notes": "30 отдельных вариантов по 10 сценам (A/B/C), реально созданных, с Drive ID в сценах. Их можно выбирать по каждой сцене. Никаких готовых видео или A2E пока нет. Ограничения: S04C нет палубы; S07B/C — пейзажи назначения вместо самолета; S08B/C — овощи/фрукты рынка вместо готового обеда; S10B/C — визуальные иллюстрации с географическим смешением, не документальные фото. Подходящие кадры — прежде всего A этих сцен. Исходники ИИ, не рекламировать как реальную съемку.",
+  "archived_media_folder_url": "https://drive.google.com/drive/folders/1wpuCHmgqFb4t2DTP0JLEOr8CxwuoqxFe",
+  "owner_selection_gallery": "vietnam_cambodia_choose_30_images.html (current ChatGPT conversation artifact)",
+  "separate_still_image_bundle": "vietnam_cambodia_30_individual_images.zip (current ChatGPT conversation artifact)"
 }
