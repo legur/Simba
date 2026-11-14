@@ -1,0 +1,39 @@
+{
+  "schema": "simba.studio.option2.layout_override/v1",
+  "project_id": "vietnam-cambodia-2027",
+  "date": "2026-11-14",
+  "source_studio_receipt": "14481802-0761-4ebd-bfbb-886a52f5f524",
+  "source_selection_sha256": "0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10",
+  "selected_option": 2,
+  "owner_request": "поменяй местами титры и субтитры",
+  "layout": {
+    "titles": "TOP, keep original title font and design",
+    "subtitles": "BOTTOM, keep original karaoke text and timing",
+    "brand_and_taglines": "move with original title card"
+  },
+  "preview": {
+    "filename": "Vietnam_Cambodia_Studio_Option2_TITLES_TOP_SUBTITLES_BOTTOM.mp4",
+    "sha256": "e07f5a9022c0e20d394d9b26afcfc707317177cca32f61ca5da8bd1493cba906",
+    "duration_seconds": 51.291667,
+    "size_bytes": 23807609,
+    "resolution": "540x960",
+    "video_codec": "H.264",
+    "audio_codec": "AAC",
+    "full_decode": "PASS",
+    "file_in_chat": "sandbox:/mnt/data/Vietnam_Cambodia_Selected_Render/Vietnam_Cambodia_Studio_Option2_TITLES_TOP_SUBTITLES_BOTTOM.mp4"
+  },
+  "unchanged": [
+    "all 10 A2E original clips",
+    "scene order",
+    "9 transitions, flash between 1-2",
+    "source voice track and temporary music — AAC stream copied without reencode",
+    "word timing and text"
+  ],
+  "previous_preview": "Vietnam_Cambodia_Studio_Option2_NaturalVoice_SYNC_AUDITION.mp4",
+  "status": "LAYOUT_SWAP_LOCAL_RENDER_QA_PASS_NOT_FINAL",
+  "updated_existing_studio_session": false,
+  "voice_pronunciation_qa_complete": false,
+  "music_approved": false,
+  "final_master": false,
+  "publication_authorized": false
+}
