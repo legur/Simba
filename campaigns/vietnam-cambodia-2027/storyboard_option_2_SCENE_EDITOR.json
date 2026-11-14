@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "IMAGE_SELECTION_LOCKED_A2E_PREFLIGHT_REQUIRED",
+  "status": "A2E_300_CREDITS_QUOTED_WAITING_EXPLICIT_CAP_APPROVAL",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -507,5 +507,12 @@
   "notes": "30 отдельных вариантов по 10 сценам (A/B/C), реально созданных, с Drive ID в сценах. Их можно выбирать по каждой сцене. Никаких готовых видео или A2E пока нет. Ограничения: S04C нет палубы; S07B/C — пейзажи назначения вместо самолета; S08B/C — овощи/фрукты рынка вместо готового обеда; S10B/C — визуальные иллюстрации с географическим смешением, не документальные фото. Подходящие кадры — прежде всего A этих сцен. Исходники ИИ, не рекламировать как реальную съемку.\n14.11.2026: owner approved A all scenes except scene 5 B. Source selection manifest selected_images_2026-11-14.json. A2E not started; charged action pending exact quote/credit cap and technical preflight.",
   "archived_media_folder_url": "https://drive.google.com/drive/folders/1wpuCHmgqFb4t2DTP0JLEOr8CxwuoqxFe",
   "owner_selection_gallery": "vietnam_cambodia_choose_30_images.html (current ChatGPT conversation artifact)",
-  "separate_still_image_bundle": "vietnam_cambodia_30_individual_images.zip (current ChatGPT conversation artifact)"
+  "separate_still_image_bundle": "vietnam_cambodia_30_individual_images.zip (current ChatGPT conversation artifact)",
+  "a2e_preflight_report_path": "campaigns/vietnam-cambodia-2027/a2e_preflight_2026-11-14.json",
+  "a2e_quote_status": "QUOTED_NO_CHARGE_300_CREDITS",
+  "a2e_total_quote_credits": 300,
+  "a2e_credits_limit_approved": null,
+  "a2e_scene_count": 10,
+  "a2e_clip_duration_seconds": 5,
+  "media_status": "STILLS_STAGED_WIX_READY; CLIPS_NOT_GENERATED"
 }
