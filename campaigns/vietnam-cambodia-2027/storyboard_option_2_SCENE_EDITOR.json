@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "STUDIO_V1_PRIVATE_PROJECT_OPEN_READY_NO_OWNER_SELECTION_ACK",
+  "status": "STUDIO_OPTION_2_SAVED_MONTAGE_PENDING_NO_APPROVED_RENDER_PROFILE",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -549,7 +549,37 @@
   "studio_private_previews": 10,
   "studio_montage_options": 3,
   "studio_browser_open_ack": false,
-  "studio_owner_selected_option": null,
+  "studio_owner_selected_option": 2,
   "studio_tts_produced": false,
-  "studio_music_selected": false
+  "studio_music_selected": false,
+  "studio_owner_selection_receipt_verified": true,
+  "studio_selection_receipt": {
+    "receipt_file_id": "1-2BFlzjHdiqhVskR5ooCDP164SRwfzSd",
+    "receipt_id": "14481802-0761-4ebd-bfbb-886a52f5f524",
+    "selection_sha256": "0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10",
+    "source_fingerprint": "b7dbe0068919332275117c927410345fb47f0c8dcf59733981949e6510e12633",
+    "option": 2,
+    "option_name": "Киноистория",
+    "scenes": 10,
+    "selected_utc": "2026-11-14T14:20:35.766Z",
+    "receipt_saved_utc": "2026-11-14T14:20:42.234Z",
+    "montage_issue": "https://github.com/legur/Simba/issues/206",
+    "montage_attempt": "https://github.com/legur/Simba/actions/runs/43604384067",
+    "montage_attempt_status": "FAILED_NO_OWNER_APPROVED_RENDER_PROFILE",
+    "rendered_mp4": false,
+    "requested_scene2_transition": "flash",
+    "other_scene_transitions": "crossfade",
+    "requested_camera": {
+      "id": "cinematic-zoom",
+      "intensity_percent": 20
+    },
+    "requested_subtitles": {
+      "style_id": "clean",
+      "word_motion_id": "karaoke"
+    },
+    "layout_override_status": "PENDING_MONTAGE_V2_LAYOUT_SUPPORT",
+    "contact_approval_not_inferred": true,
+    "note": "Studio selection was persisted, but file records DRAFT_NOT_DELIVERED as decision state and render_authorized=false. Never silently reinterpret as final render approval or strip visual layout/flash."
+  },
+  "studio_montage_issue": "https://github.com/legur/Simba/issues/206"
 }
