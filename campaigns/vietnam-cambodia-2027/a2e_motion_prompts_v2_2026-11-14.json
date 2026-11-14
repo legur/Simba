@@ -7,7 +7,7 @@
     200,
     201
   ],
-  "status": "PROMPTS_REVISED_REQUOTE_REQUIRED_NO_PAID_EXECUTION",
+  "status": "REVISED_PROMPTS_QUOTED_NO_CHARGE_OWNER_CREDIT_CAP_PENDING",
   "scene_count": 10,
   "model_version": "a2e",
   "generation_duration_per_scene_seconds": 5,
@@ -187,5 +187,11 @@
       "auto_add_audio": false,
       "note": null
     }
-  ]
+  ],
+  "requote_issues": [
+    202,
+    203
+  ],
+  "requoted_credits_per_clip": 30,
+  "requoted_credits_total": 300
 }
