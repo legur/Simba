@@ -20,7 +20,11 @@
     "video_codec": "H.264",
     "audio_codec": "AAC",
     "full_decode": "PASS",
-    "file_in_chat": "sandbox:/mnt/data/Vietnam_Cambodia_Selected_Render/Vietnam_Cambodia_Studio_Option2_TITLES_TOP_SUBTITLES_BOTTOM.mp4"
+    "file_in_chat": "sandbox:/mnt/data/Vietnam_Cambodia_Selected_Render/Vietnam_Cambodia_Studio_Option2_TITLES_TOP_SUBTITLES_BOTTOM.mp4",
+    "drive_file_id": "1o5rQOk0D7UQypChxJk0ThvzEPFE5vQo2",
+    "drive_url": "https://drive.google.com/file/d/1o5rQOk0D7UQypChxJk0ThvzEPFE5vQo2/view",
+    "drive_size_verified": true,
+    "drive_parent_verified": true
   },
   "unchanged": [
     "all 10 A2E original clips",
