@@ -25,22 +25,32 @@
     "original_mp4_sha_verified_count": 10,
     "transitions": "0.9s fade to white between 1-2; other eight are 0.9s crossfades",
     "overlay": "Crisp rebuilt HD titles on top, karaoke subtitles below, dates price and Bon Tours contacts",
-    "watermark_removed": true
+    "watermark_removed": true,
+    "google_drive_id": "1oEYX4yxuwVVDx4CtktMdZOXS_WsZmVPV",
+    "google_drive_url": "https://drive.google.com/file/d/1oEYX4yxuwVVDx4CtktMdZOXS_WsZmVPV/view",
+    "google_drive_size_verified": true,
+    "google_drive_parent_verified": true
   },
   "preview": {
     "filename": "Vietnam_Cambodia_2027_BonTours_FINAL_Preview.mp4",
     "sha256": "f180496a12681388b1d35b943eb91fe52c6acffe4131b1445cc9d2856559c2c7",
     "bytes": 5123366,
     "video": "H.264 540x960",
-    "location": "ChatGPT Library /Vietnam_Cambodia_2027/Vietnam_Cambodia_2027_BonTours_FINAL_Preview.mp4"
+    "location": "ChatGPT Library /Vietnam_Cambodia_2027/Vietnam_Cambodia_2027_BonTours_FINAL_Preview.mp4",
+    "google_drive_id": "1n1aDJGTJzLyuhuEpImUvk1SdpiD-blwp",
+    "google_drive_url": "https://drive.google.com/file/d/1n1aDJGTJzLyuhuEpImUvk1SdpiD-blwp/view",
+    "google_drive_size_verified": true,
+    "google_drive_parent_verified": true
   },
   "constraints": {
     "paid_api_calls": 0,
     "existing_A2E_clips_modified": false,
     "publication_done": false,
-    "external_google_drive_master_upload_verified": false,
+    "external_google_drive_master_upload_verified": true,
     "acoustic_pronunciation_listening_qa": "NOT_INDEPENDENTLY_PASSED",
     "original_preview_temporary_music_preserved": true
   },
-  "status": "FINAL_MASTER_RENDERED_TECHNICAL_QA_PASS_NOT_PUBLISHED"
+  "status": "FINAL_MASTER_RENDERED_QA_PASS_PRIVATE_GOOGLE_DRIVE_ARCHIVED_NOT_PUBLISHED",
+  "google_drive_folder": "https://drive.google.com/drive/folders/14ZYeTB6a7Qd1K11npIdlwPGFYlcvdFvi",
+  "google_drive_privacy": "OWNER_ONLY_NO_PUBLIC_SHARING"
 }
