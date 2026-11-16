@@ -13,9 +13,9 @@
 - Dynamic facts caution: даты, цены 40 ₪ и 10 ₪ и наличие мест относятся к заявленному событию 2026 года; перепроверять перед публикацией и не превращать в постоянный тариф.
 - QA: финальный текст после поправок Critic; HUMANIZER_PASS зафиксирован в рабочем цикле; LEO_APPROVAL: true.
 - TEXT_ID: NEWS-AYALON-20261116-bff72363 (локальный контрольный ID редакции).
-- VISUAL_EXECUTOR: Rafael v6.2; status: triggered after approval; previews not yet confirmed.
-- RENDERER: not yet executed or confirmed.
-- STATUS: APPROVED_TEXT; waiting for Rafael preview choice; no publication permission/execution.
+- VISUAL_EXECUTOR: Rafael v6.2; FIVE_PREVIEWS_READY; visual session: `2026-11-16__NEWS__AYALON-INSTITUTE-HANUKKAH-FAMILY-QUEST__VISUAL-SESSION.md`.
+- RENDERER: ChatGPT image_gen (five preview concepts generated; final image not rendered).
+- STATUS: APPROVED_TEXT; waiting for Leo to select preview 1–5; no publication permission/execution.
 
 ## Exact approved Facebook text
 
