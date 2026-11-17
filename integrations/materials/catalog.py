@@ -212,7 +212,7 @@ def project_progress(root: Path, path: Path, data: dict) -> dict:
         action = data.get("next_action") or "Проверить рабочую версию и принять решение."
     else:
         state, status, owner = "IN_PROGRESS", "В РАБОТЕ", "PROFILE_EXECUTOR"
-        if not working and "REVIEW" in stage.upper():
+        if not working and re.search(r"(?:^|[_-])REVIEW(?:$|[_-])", stage.upper()):
             action = ("Указать конкретный проверенный рабочий файл в working_asset_id "
                       "до передачи Лео на утверждение.")
         else:
