@@ -6,7 +6,7 @@
 
 Прямое поручение Leo: установить rea-video, дать имя, отдельно готовить базу для монтажёра как TIA для Simba. Имя «Кадр» и структура карточек выбраны исполнителем; не выданы за выбор Leo. Локальный анализ по умолчанию без VLM, генерации/публикации; реальный Instagram и полный аудио/OCR ещё не проверены.
 
-Версия: 1.33 · 17.11.2026
+Версия: 1.34 · 17.11.2026
 
 
 ## Архитектурные решения
@@ -828,3 +828,13 @@ KB-LINT: PASS — L01/L02 прямая команда Leo; L03 непровер�
 **Новый конфликт:** действующий `storyboard_option_2_SCENE_EDITOR.json` одновременно заявлял `a2e_completed_mp4_count=10` с подтвержденным архивом, но ошибочно помечал весь проект `CLIPS_NOT_GENERATED` и десять сцен `A2E_NOT_STARTED`. Это могло вызвать повторную генерацию и списание средств. Исправлены только media-status и связанные подтвержденные readback flags в editor и `project.json`, добавлена offline-регрессия. Выбор Лео storyboard №2 сохранен; `studio_tts_produced=false`, `studio_music_selected=false`, `studio_final_master_ready=false`, editorial/publication approvals `pending` без изменения. Все оставшиеся задачи сведены к проверке соответствия кадра-клипу, voice/music lock, таймингов, титров и финального монтажа, а не к повторному A2E.
 
 **KB-LINT: WARNING** — L01/02: прямое задание Лео и проверенные private media reads; L03: новых тарифов/цен нет; L04/08: действующие канонические project/editor/registry без дублей; L05/06: противоречие статусов устранено и платный повтор заблокирован; L07: внешние библиотеки не требовались; L09: финальный approval/publish не повышен. До подтвержденного audio/music lock и финального smoke + проверки визуального соответствия сцен задача остается `MONTAGE_PENDING`.
+
+## 17.11.2026 — Audit CORE Simba: конечный цикл Internal Critic
+
+**Область:** по указанию Лео исправления сфокусированы на **проекте Simba в целом**: Router, META-Governance, AGENTS, AI-Маркетолог, Simba и Content Pipeline. Это изменение не затрагивает производство видеороликов и медиахранилища.
+
+**Подтвержденный конфликт:** профиль `Critic/Critic-5.7.md` версии 6.0 определял `BLOCKED_CRITIC_NO_PROGRESS` после трех подряд безрезультатных исправлений. Но активный профиль `Симба (Писатель)/Simba-v5.0.md` предписывал повторять цикл без лимита до PASS или блокеров по фактам/политике/скоупу, **не перечисляя no-progress**; Router, AGENTS, META и основная граф-схема Content Pipeline содержали только петлю `REVISE*` и `PASS`. Это делало конечное условие неоднозначным и рисковало бесконечной внутренней редактурой или ложной отметкой PASS.
+
+**Исправлено:** в канонических файлах согласован терминальный `BLOCKED_CRITIC_NO_PROGRESS → STOP`; при действительном PASS автор переходит к `SIMBA_FINALIZE → HUMANIZER_PASS`. Три подряд исправления без движения по конкретным блокерам останавливают автоматический цикл, но редакции с реальным прогрессом не получают общего искусственного лимита. Блокировка не может перейти к `READY`, approval, публикации; повторная работа допускается на новом брифе или по явному решению Leo. Версии приведены к META: Router 20.2, Simba 10.2, Marketer 6.1, Content Pipeline 11.1, runtime adapter 3.2, META 19.2. Добавлены offline regression проверки и CI CORE; тесты проверяют согласованность текстов правил и версии, **не доказывают реального исполнения agent workflow**.
+
+**KB-LINT:** WARNING: L01 direct decision Leo to resume Simba core audit; L02 direct source Critic 6.0 + contradicting profile and routing; L03 no dynamic claims; L04 target-layer files updated; L05 duplicate conflict resolved; L06 bounded only to Simba internal Critic, no expansion to Info/News/Travel/Leo; L07 no new external reference; L08 canonical paths updated, no parallel copies; L09 no approved content changed. WARNING because static text QA alone does not prove production orchestration.
