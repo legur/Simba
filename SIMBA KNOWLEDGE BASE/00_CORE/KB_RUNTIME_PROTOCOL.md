@@ -9,7 +9,7 @@ Runtime 8.0 — 08.11.2026. Для поиска рилсов по запросу
 Runtime 7.2. После общего gate читать профиль; для пополнения базы — индекс/схему, доступное видео. Для адаптации — BRAND_RULES, VISUAL_RULES, VIDEO_PIPELINE и целевой сценарий, если есть. Утверждённый пост для анализа не нужен. TIA/Humanizer/Internal Critic не применяются. Инструмент/видео недоступны → KADR_TOOL_BLOCKED, не KB failure. Перед новой сборкой/существенной переработкой монтажёр читает индекс и до трёх релевантных READY-карточек; фиксирует ID/применение либо NONE. Нет READY — монтаж продолжается. К мелким техническим правкам не добавлять этап.
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Редакция: runtime 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
+Редакция: runtime 9.2 · 17.11.2026 (news & author fail-closed); ранее 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
 Дата: 22.10.2026 · Сценарист: preflight и производственная выдача по сценам
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
@@ -150,6 +150,7 @@ Legacy `Feedback-Learning-*` не является runtime-зависимост�
 - `07_LEARNINGS/PATTERN_WATCH.md`
 
 ### Новости туризма / News
+Сначала классифицировать `NEWS_SINGLE_EVENT` (отдельное подтвержденное изменение) или `NEWS_DIGEST` (несколько событий за выбранный период). В одиночном News не запрашивать искусственный период/дату сбора дайджеста. Источник/дату получать из фактически присланного, извлеченного через Router или самостоятельно найденного текущего официального материала; уже найденное не просить повторно у Leo. Текущие правила, маршруты и даты действия подтверждать доступным актуальным источником. При невозможности — `BLOCKED_NEWS_SOURCE_UNVERIFIED` до ready. Для News не добавлять Internal Critic Simba, но обязательны собственный author QA и Humanizer.
 Обязательно:
 - `01_BRAND/STYLE_LEO.md`
 - `01_BRAND/ANTI_STYLE.md`
@@ -189,7 +190,7 @@ Humanizer является обязательной runtime-зависимост
 
 Недоступность внешнего сканера не блокирует маршрут: выполнить ручной Humanizer по каноническому файлу. Недоступность самого канонического Humanizer или его обязательных внутренних KB-зависимостей даёт `BLOCKED_KB_UNAVAILABLE`.
 
-Для Simba вход в Humanizer разрешён только после `INTERNAL_CRITIC_PASS → SIMBA_FINALIZE`. Для Info, Travel, Leo и News Internal Critic автоматически не добавляется. Смысловая правка возвращает текст профильному автору; Simba повторяет Internal Critic, другие авторы — собственную проверку. `HUMANIZER_PASS` обязателен до ready-state и approval/policy-trigger.
+Для Simba вход в Humanizer разрешён только после `INTERNAL_CRITIC_PASS → SIMBA_FINALIZE`. Для Info, Travel, Leo и News Internal Critic автоматически не добавляется; их двухитерационный fallback действует только для мягкого стиля и не преодолевает `BLOCKED_FACTS`, `BLOCKED_AUTHOR_PROVENANCE` или `BLOCKED_NEWS_SOURCE_UNVERIFIED`. Смысловая правка возвращает текст профильному автору; Simba повторяет Internal Critic, другие авторы — собственную проверку. `HUMANIZER_PASS` обязателен до ready-state и approval/policy-trigger.
 
 ### Сценарист / разговорные короткие видео
 Обязательно:
