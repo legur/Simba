@@ -33,7 +33,7 @@ py -3.12 -m venv .venv
 |---|---|
 | `packageId` | id ролика (латиница, цифры, `.-_`), из него имя файла |
 | `sourcePost` | путь к утвержденному посту от корня репозитория (`STATUS: APPROVED`, раздел `## APPROVED_TEXT`) |
-| `sourceScript` | альтернатива `sourcePost`: путь к самостоятельному сценарию (`STATUS: APPROVED_SCRIPT`, `APPROVAL_EVIDENCE`, `SOURCE_REFERENCE`, раздел `## APPROVED_SCRIPT`); ровно одно из двух полей обязательно |
+| `sourceScript` | альтернатива `sourcePost`: путь к самостоятельному сценарию (`STATUS: APPROVED_SCRIPT`, проверенный owner GitHub comment ID в `APPROVAL_EVIDENCE`, безопасный `SOURCE_REFERENCE`, раздел `## APPROVED_SCRIPT`); ровно одно из двух полей обязательно |
 | `voice` | `{"provider": "simba"}` (по умолчанию, выбранный постоянный Google Gemini WarmBaritone); Edge TTS только при явном `{"provider": "edge", "name": "ru-RU-DmitryNeural", "rate": "-4%"}` |
 | `scenes[]` | 1–8 сцен: `image`, `move` (`push` / `pull` / `pan-left` / `pan-right` / `rise`), необязательный `title`, `focus` `[x, y]` 0–1, `lines[]` |
 | `offer` | карточка оффера: `title`, `rows[]`, `price`, `note`, `lines[]`, необязательный `bg` (картинка фона) |
@@ -46,12 +46,22 @@ py -3.12 -m venv .venv
 
 ```md
 STATUS: APPROVED_SCRIPT
-APPROVAL_EVIDENCE: подтверждение Лео конкретной редакции (дата/ID)
-SOURCE_REFERENCE: исходный подтвержденный бриф или документ
+APPROVAL_EVIDENCE: github-issue-comment:1234567890
+SOURCE_REFERENCE: verified-brief-2026-11-17
 
 ## APPROVED_SCRIPT
 Полный дословный утвержденный текст для рилса.
 ```
+
+Для `sourceScript` рендерер сверяет текущий GitHub-комментарий от **владельца `legur`** (в репозитории `legur/Simba`) через GitHub API. Его тело должно содержать только публично безопасные строки:
+
+```text
+SIMBA_SCRIPT_APPROVAL_V1
+SCRIPT_SHA256: <SHA-256 точных UTF-8 байтов тела раздела APPROVED_SCRIPT>
+SOURCE_REFERENCE_SHA256: <SHA-256 точной строки SOURCE_REFERENCE>
+```
+
+Только тогда текст `APPROVAL_EVIDENCE: github-issue-comment:<ID>` валиден. Комментарий создается **после реального утверждения конкретной редакции Лео**, но не является вторым творческим согласованием; при отсутствии безопасного доверенного owner-write механизма остановиться, не подделывать approval. Если комментарий недоступен, принадлежит не `legur` или SHA не совпадает, рендер блокируется; API-read не выполняет публикацию. Нельзя размещать приватные ссылки, токены или клиентские данные в этих записях. `SOURCE_REFERENCE` — безопасный ID, не URL закрытого Drive.
 
 `sourcePost` и `sourceScript` взаимоисключающие; `--draft` не разрешает публикацию и не подделывает approval.
 
