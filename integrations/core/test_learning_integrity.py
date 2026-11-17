@@ -111,9 +111,20 @@ class LearningIntegrityTests(unittest.TestCase):
 
     def test_meta_versions_for_active_kb_are_not_stale(self):
         meta = read(ROOT / "META-Governance-v8.1.md")
+        # Extract from canonical module headers; later legitimate revisions
+        # must not make old test snapshots fail.
+        import re
+        pat = re.search(r"^Версия:\s*(\d+\.\d+)", read(LEARN / "PATTERN_WATCH.md"), re.M)
+        mapv = re.search(r"^Версия:\s*(\d+\.\d+)", read(CORE / "KNOWLEDGE_MAP.md"), re.M)
+        runtimev = re.search(r"^Редакция: runtime\s*(\d+\.\d+)",
+                             read(CORE / "KB_RUNTIME_PROTOCOL.md"), re.M)
+        self.assertIsNotNone(pat)
+        self.assertIsNotNone(mapv)
+        self.assertIsNotNone(runtimev)
         for label, current in (
-            ("Feedback Learning / PATTERN_WATCH", "2.2"),
-            ("SIMBA Knowledge Base", "Knowledge Map 2.1 / runtime 9.3"),
+            ("Feedback Learning / PATTERN_WATCH", pat.group(1)),
+            ("SIMBA Knowledge Base", "Knowledge Map " + mapv.group(1)
+             + " / runtime " + runtimev.group(1)),
         ):
             rows = [line for line in meta.splitlines()
                     if line.startswith(f"| {label} |")]
