@@ -13,7 +13,7 @@ SHA = re.compile(r'^[a-f0-9]{64}$')
 SAFE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$')
 class InboxError(RuntimeError): pass
 
-PRIVATE_PUBLIC_ISSUE = re.compile(r'https?://(?:drive|docs)\\.google\\.com/|(?:[?&](?:token|access_token|signature|x-goog-signature)=)', re.I)
+PRIVATE_PUBLIC_ISSUE = re.compile(r'https?://(?:drive|docs)\.google\.com/|(?:[?&](?:token|access_token|signature|x-goog-signature)=)', re.I)
 
 def assert_public_issue_safe(body, private_file_id):
     """Never disclose a private Drive URL or receipt-file identifier in public GitHub Issues."""
