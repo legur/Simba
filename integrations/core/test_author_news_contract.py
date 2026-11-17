@@ -66,19 +66,24 @@ class AuthorAndNewsContractTests(unittest.TestCase):
 
     def test_meta_versions_match_current_author_modules(self):
         meta = TEXT["meta"]
-        expected = {
-            "Router": "20.3",
-            "Info": "1.3",
-            "Travel": "1.4",
-            "Leo": "1.4",
-            "News": "1.3",
-            "Content Pipeline": "11.2",
+        # Version cells must track current canonical headers, not snapshot
+        # numbers frozen when the News module was last audited.
+        source = {
+            "Router": ("router", r"^Версия:\s*(\d+\.\d+)"),
+            "Info": ("info", r"^v(\d+\.\d+)"),
+            "Travel": ("travel", r"^v(\d+\.\d+)"),
+            "Leo": ("leo", r"^v(\d+\.\d+)"),
+            "News": ("news", r"^v(\d+\.\d+)"),
+            "Content Pipeline": ("pipeline", r"^Версия:\s*(\d+\.\d+)"),
         }
-        for label, version in expected.items():
+        for label, (key, pattern) in source.items():
             with self.subTest(component=label):
+                current = re.search(pattern, TEXT[key], re.M)
+                self.assertIsNotNone(current, f"Active version missing: {key}")
                 matches = [x for x in meta.splitlines() if x.startswith(f"| {label} |")]
                 self.assertEqual(len(matches), 1)
-                self.assertIn(version, matches[0])
+                self.assertEqual(matches[0].split("|")[3].strip().split()[0],
+                                 current.group(1))
 
         # KB Runtime evolves independently from News. Compare META against
         # the current runtime header instead of pinning a stale 9.x constant.
