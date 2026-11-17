@@ -132,6 +132,15 @@ def project_issues(root: Path, path: Path, data: dict) -> list[str]:
                 or not isinstance(library_id, str)
                 or not re.fullmatch(r"libfile_[a-z0-9]{16,64}", library_id)):
                 issues.append(f"Invalid private Library reference: {asset.get('id')}")
+        elif asset.get("storage") == "owner_private_drive":
+            # Historic private URLs were escrowed to the OWNER-ONLY archive and
+            # redacted from this public project manifest. Neither the registry
+            # nor a redaction marker proves that the private media is readable.
+            safe = (not url and asset.get("private_locator_status") == "OWNER_ONLY_LOOKUP_REQUIRED"
+                    and asset.get("private_locator_key") == "PRIVATE_MEDIA_ESCROW_20261117"
+                    and (data.get("private_media_redaction") or {}).get("status") == "OWNER_PRIVATE_LOOKUP_REQUIRED")
+            if not safe:
+                issues.append(f"Invalid owner-private asset locator: {asset.get('id')}")
         else:
             parsed = urlsplit(url)
             if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.password:
@@ -222,6 +231,8 @@ def project_progress(root: Path, path: Path, data: dict) -> dict:
             "editorial": approvals.get("editorial", "unknown"),
             "publication": approvals.get("publication", "unknown"),
             "external_media_and_actual_publication": "NOT_VERIFIED_BY_CATALOG",
+            "private_asset_lookup_required": [a["id"] for a in data.get("assets", [])
+                if a.get("storage") == "owner_private_drive"],
             "publication_report": (data.get("publication_record") or {}).get("status", "NOT_RECORDED"),
         },
         "verification_scope": "LOCAL_REPOSITORY_ONLY",
@@ -309,6 +320,8 @@ def human(output: list | dict, command: str) -> str:
             "Недостает: " + ("; ".join(output["missing"]) or "нет"),
             "Ошибки: " + ("; ".join(output["issues"]) or "нет"),
             "Внешние файлы: не проверены",
+            "Закрытые медиа: требуется авторизованная сверка с приватным escrow"
+              if output.get("checks", {}).get("private_asset_lookup_required") else "Закрытые медиа: не заявлены",
         ])
     if command == "resume":
         lines.extend(["Этап: " + output["stage"], "Дальше: " + output["next_action"],
@@ -320,7 +333,9 @@ def human(output: list | dict, command: str) -> str:
         lines.append("Чего не хватает: " + "; ".join(output.get("missing", [])))
         lines.extend("Источник: " + x["path"] for x in output["sources"])
     for asset in output.get("assets", []):
-        location = asset.get("url") or asset.get("library_path") or "location not recorded"
+        location = ("OWNER-PRIVATE: lookup + byte readback required (never auto-generate)"
+                    if asset.get("storage") == "owner_private_drive"
+                    else asset.get("url") or asset.get("library_path") or "location not recorded")
         lines.append(f"{asset['id']} [{asset['state']}]: {asset['title']}\n{location}")
     lines.extend("Повторное использование: " + x for x in output.get("reuse_notes", []))
     if output.get("note"):
