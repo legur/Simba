@@ -4,6 +4,7 @@ This is documentation/transition consistency testing, not evidence that
 the live GPT orchestration actually executed these gates.
 """
 import unittest
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -49,18 +50,27 @@ class CoreCriticContractTests(unittest.TestCase):
 
     def test_meta_component_versions_match_updated_canonical_docs(self):
         meta = TEXTS["META"]
-        for component, version in [
-            ("Router", "20.2"),
-            ("Simba", "10.2"),
-            ("AI-Маркетолог", "6.1"),
-            ("Content Pipeline", "11.1"),
-            ("Critic", "6.0"),
-        ]:
+        # Compare the first, actual version in each module against META.
+        # Never hardcode a stale version number: this must keep working when
+        # a neighboring CORE module is correctly revised by a later audit.
+        modules = [
+            ("Router", "ROUTER", r"^Версия:\s*(\d+\.\d+)"),
+            ("Simba", "SIMBA", r"^Версия\s*(\d+\.\d+)"),
+            ("AI-Маркетолог", "MARKETER", r"^Версия\s*(\d+\.\d+)"),
+            ("Content Pipeline", "PIPELINE", r"^Версия:\s*(\d+\.\d+)"),
+            ("Critic", "CRITIC", r"^\*\*Версия:\*\*\s*(\d+\.\d+)"),
+        ]
+        for component, module, pattern in modules:
             with self.subTest(component=component):
+                match = re.search(pattern, TEXTS[module], re.M)
+                self.assertIsNotNone(match, f"Missing active version in {module}")
                 rows = [row for row in meta.splitlines()
                         if row.startswith("| " + component + " |")]
                 self.assertEqual(len(rows), 1)
-                self.assertIn(version, rows[0])
+                # Require the version cell to contain the current version,
+                # not just a number that happens to occur in older prose.
+                self.assertEqual(rows[0].split("|")[3].strip().split()[0],
+                                 match.group(1))
 
 
 if __name__ == "__main__":

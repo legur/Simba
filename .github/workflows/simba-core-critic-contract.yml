@@ -5,6 +5,13 @@ on:
       - 'AGENTS.md'
       - 'ROUTER_v10.1.md'
       - 'META-Governance-v8.1.md'
+      - 'Симба (Писатель)/Info-v1.2.md'
+      - 'Симба (Писатель)/Travel-v1.3.md'
+      - 'Симба (Писатель)/Leo-v1.3.md'
+      - 'Симба (Писатель)/News-v1.2.md'
+      - 'SIMBA KNOWLEDGE BASE/00_CORE/KB_RUNTIME_PROTOCOL.md'
+      - 'SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AGENT_ROLES.md'
+      - 'integrations/core/test_author_news_contract.py'
       - 'Симба (Писатель)/Simba-v5.0.md'
       - 'AI-Marketer-Simba-by-Bon-Tours-v5.0.md'
       - 'Critic/Critic-5.7.md'
@@ -17,6 +24,13 @@ on:
       - 'AGENTS.md'
       - 'ROUTER_v10.1.md'
       - 'META-Governance-v8.1.md'
+      - 'Симба (Писатель)/Info-v1.2.md'
+      - 'Симба (Писатель)/Travel-v1.3.md'
+      - 'Симба (Писатель)/Leo-v1.3.md'
+      - 'Симба (Писатель)/News-v1.2.md'
+      - 'SIMBA KNOWLEDGE BASE/00_CORE/KB_RUNTIME_PROTOCOL.md'
+      - 'SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AGENT_ROLES.md'
+      - 'integrations/core/test_author_news_contract.py'
       - 'Симба (Писатель)/Simba-v5.0.md'
       - 'AI-Marketer-Simba-by-Bon-Tours-v5.0.md'
       - 'Critic/Critic-5.7.md'
@@ -37,4 +51,4 @@ jobs:
         with:
           python-version: '3.12'
       - name: CORE consistency checks - no external calls
-        run: python -m unittest discover -s integrations/core -p 'test_critic_contract.py' -v
+        run: python -m unittest discover -s integrations/core -p 'test_*.py' -v

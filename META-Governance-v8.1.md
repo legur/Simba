@@ -8,7 +8,7 @@ Amendment 18.0 — 08.11.2026. Структурное расширение су�
 
 Amendment 17.4. META Шаг 0: самостоятельная библиотечная роль, иной вход/выход, не вариант автора и не монтаж. Цель — база для монтажёра, русский нейтральный голос, аудитория монтажёр, без CTA/контактов; три уровня затрат, без Internal Critic. Routing/KB/профиль/база синхронизированы. Smoke не заменяет пилот Leo. Нет платных/публикационных полномочий.
 
-Версия: 19.2 · 17.11.2026: Simba core Critic stop-state consensus; ранее 19.1 · 17.11.2026: read-only audit stage 3 remediation, owner-bound script approval and private media escrow; ранее 19.0 · 17.11.2026: audit fixes, безопасность публичного GitHub, standalone visual/video и карта версий; ранее 18.0 · 08.11.2026: поиск Кадра по запросу; ранее 17.3 · 05.11.2026: Музыкальный редактор (draft); 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
+Версия: 19.3 · 17.11.2026: News single event/digest + fail-closed author gates; ранее 19.2 · 17.11.2026: Simba core Critic stop-state consensus; ранее 19.1 · 17.11.2026: read-only audit stage 3 remediation, owner-bound script approval and private media escrow; ранее 19.0 · 17.11.2026: audit fixes, безопасность публичного GitHub, standalone visual/video и карта версий; ранее 18.0 · 08.11.2026: поиск Кадра по запросу; ранее 17.3 · 05.11.2026: Музыкальный редактор (draft); 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
 Дата: 17.11.2026
 
 
@@ -103,6 +103,10 @@ Knowledge Base не хранит текущую цену/наличие как �
 ## Amendment 19.2 — 17.11.2026: единый terminal-state для Internal Critic
 Согласован механизм ядра Simba: три последовательных исправления без прогресса → `BLOCKED_CRITIC_NO_PROGRESS → STOP`, а не бесконечный `SIMBA_REPAIR`. При реальном PASS сохраняются Simba finalize и обязательный Humanizer. Ветка no-progress не может перейти к готовому тексту, утверждению или публикации. Синхронизированы Router, AI-Маркетолог, Simba, Content Pipeline и runtime adapter; Critic 6.0 остается источником критерия. Добавлена offline-проверка согласованности CORE; она не доказывает фактическое выполнение творчества или критики.
 
+## Amendment 19.3 — 17.11.2026: авторские модули и одиночная новость
+Прямой запрос отдельной новости и внешний одиночный инфоповод не превращаются в дайджест с обязательным периодом. News проверяет доступные источники через Router SOURCE_RESOLUTION и официальные актуальные сведения, **не запрашивает повторно** уже известные ссылки и даты. Отдельные `NEWS_SINGLE_EVENT` и `NEWS_DIGEST` ветки; при неподтвержденных ключевых сведениях `BLOCKED_NEWS_SOURCE_UNVERIFIED`, не вымышленный готовый пост. Ядро Router/Content Pipeline/KB/AGENT_ROLES и профиль News 1.3 синхронизированы; прямой `USER_DIRECT_NEWS_TASK` не зависит от маркетингового `NEWS_SCORE_HIGH`.
+Профили Info 1.3, Travel 1.4, Leo 1.4 и News 1.3 разграничивают **локальные редакторские итерации** от обязательных фактических проверок, подтверждения личной позиции и `HUMANIZER_PASS`. Нельзя выдавать неподтвержденную личную историю за опыт Лео; hard blocker не заменяется «лучшей» неготовой редакцией. Internal Critic для этих четырех авторов автоматически не добавляется. Ни одна правка не меняет финальные полномочия Leo по утверждению и публикации. Тесты проверяют структуру правил, а не реальный автономный вызов агентов.
+
 ## КАРТА СИСТЕМЫ (обновлять при каждом структурном изменении)
 
 Audit 17.11.2026: активные ссылки и внутренние версии синхронизированы; сами имена физических файлов по контракту AGENTS.md сохранены. Новая поддержка самостоятельного визуала и `APPROVED_SCRIPT` требует offline/production QA до статуса полностью проверенного релиза. Старые публичные ссылки в истории Issues остаются отдельной задачей проверки ACL/истории. У Vietnam/Cambodia создан канонический `project.json` только с подтвержденными рабочими решениями; доступность приватных файлов, голос и финальный MP4 пока требуют проверки, approvals не повышены до финальных.
@@ -110,7 +114,7 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 20.2 · 17.11.2026 | ✅ routing; добавлен запрос поиска референсов Кадром; его реальный пилот ожидается |
+| Router | ROUTER_v10.1.md | 20.3 · 17.11.2026 | ✅ routing; добавлен запрос поиска референсов Кадром; его реальный пилот ожидается |
 | Кадр | `Кадр/KADR_v1.0.md` + `Кадр/База/INDEX.md` | 2.1 · 08.11.2026 | 🔧 поиск по запросу → отбор → разбор лучших → база; реальный Instagram-пилот не проверен |
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 3.1 · 17.11.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
 | Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 2.1 · 17.11.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
@@ -119,10 +123,10 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 | Simba | Simba-v5.0.md | 10.2 · 17.11.2026 | ✅ активен — точные пути TIA; проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Копирайтер-универсал (тест) | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/COPYWRITER_TEST.md` | 1.0 · 31.10.2026 | TEST — дополнительный кандидат внутри Simba; не новый автор; META Шаг 0 |
 | Интриган | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/INTRIGAN.md` | 1.0 · 31.10.2026 | ✅ редакторский этап до черновика; не самостоятельный автор; актуальный AGENT_ROLES 5.7 |
-| Info | Info-v1.2.md | 1.2 | ✅ активен |
-| Travel | Travel-v1.3.md | 1.3 | ✅ активен |
-| Leo | Leo-v1.3.md | 1.3 | ✅ активен |
-| News | News-v1.2.md | 1.2 | ✅ активен |
+| Info | Info-v1.2.md | 1.3 · 17.11.2026 | ✅ активен |
+| Travel | Travel-v1.3.md | 1.4 · 17.11.2026 | ✅ активен |
+| Leo | Leo-v1.3.md | 1.4 · 17.11.2026 | ✅ активен |
+| News | News-v1.2.md | 1.3 · 17.11.2026 | ✅ активен |
 | Humanizer | Humanizer-v1.4.md | 3.1 · 31.10.2026 | ✅ активен — обязательная чистка постов до approval; hard blocker не допускает финализацию |
 | Critic | Critic-5.7.md | 6.0 · 17.11.2026 | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo: первым шагом цель поста (поболтать / лиды / лайки и охват / доверие и позиция; вопрос до разбора, если не названа), дальше весь разбор и блок «Оптика читателя» (механизм, читатель и цель, прогноз с главной осью, динамика серии, визуал, углы, направления правки) строятся под цель; отчёты внешнего критика — эталон: Critic синхронизирует с ними рекомендации и отметки и пополняет «Эталонную методику»; Session Log — один на весь завершённый цикл правок; критерии оценки сохранены |
 | Rafael (Architecture / System / Styles / Routing) | `Rafael/RAFAEL_Architecture_v5.0.md` | 5.1 / 6.3 / 3.4 / 3.4 · 17.11.2026 | ✅ активен; GPT Image 2.5 Protocol + Visual Example Library; Archivarius trusted-first + blocklist + YouMind |
@@ -131,8 +135,8 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 | Audit | Audit-v1.2.md | 2.5 · 27.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.1 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
-| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 2.0 / runtime 9.1 | ✅ обязательный общий контекст; preflight поиска Кадра |
-| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 11.1 · 17.11.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
+| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 2.0 / runtime 9.2 | ✅ обязательный общий контекст; preflight поиска Кадра |
+| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 11.2 · 17.11.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
 | Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 3.1 · 17.11.2026 | Пост → сценарий → визуал (optional A2E via Wix) → Монтажер Клод → QA → Leo; публикация отдельно |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 3.0 · 17.11.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
