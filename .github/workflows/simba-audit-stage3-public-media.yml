@@ -1,9 +1,10 @@
-name: Simba stage 3 - offline public media/privacy regression
+name: Simba public media/privacy and studio-state regression
 on:
   pull_request:
     paths:
       - 'campaigns/bavaria-new-year-2027/project.json'
       - 'campaigns/prague-new-year-2027/project.json'
+      - 'campaigns/vietnam-cambodia-2027/project.json'
       - 'campaigns/vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json'
       - 'integrations/materials/catalog.py'
       - 'integrations/materials/test_private_media_redaction.py'
@@ -15,6 +16,7 @@ on:
     paths:
       - 'campaigns/bavaria-new-year-2027/project.json'
       - 'campaigns/prague-new-year-2027/project.json'
+      - 'campaigns/vietnam-cambodia-2027/project.json'
       - 'campaigns/vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json'
       - 'integrations/materials/catalog.py'
       - 'integrations/materials/test_private_media_redaction.py'
