@@ -1,6 +1,6 @@
 # CONTENT PIPELINE
 
-Версия: 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
+Версия: 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
 
 ## COPYWRITER_TEST_MODE — 31.10.2026
 
@@ -94,8 +94,8 @@ NEW_SOURCE
   → SIMBA_DRAFT_READY
   → INTERNAL_CRITIC_MODE
   → [REVISE → SIMBA_REPAIR → INTERNAL_CRITIC_MODE]*
-  → INTERNAL_CRITIC_PASS
-  → SIMBA_FINALIZE
+  → [INTERNAL_CRITIC_PASS → SIMBA_FINALIZE | BLOCKED_CRITIC_NO_PROGRESS → STOP]
+  (STOP: после трех подряд безрезультатных исправлений; никаких HUMANIZER/APPROVED/PUBLISHED)
   → HUMANIZER_EXECUTED
   → HUMANIZER_PASS
   → TEXT_READY_FOR_LEO
