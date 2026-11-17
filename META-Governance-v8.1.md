@@ -8,8 +8,8 @@ Amendment 18.0 — 08.11.2026. Структурное расширение су�
 
 Amendment 17.4. META Шаг 0: самостоятельная библиотечная роль, иной вход/выход, не вариант автора и не монтаж. Цель — база для монтажёра, русский нейтральный голос, аудитория монтажёр, без CTA/контактов; три уровня затрат, без Internal Critic. Routing/KB/профиль/база синхронизированы. Smoke не заменяет пилот Leo. Нет платных/публикационных полномочий.
 
-Версия: 18.0 · 08.11.2026: поиск Кадра по запросу; ранее 17.3 · 05.11.2026: Музыкальный редактор (draft); 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
-Дата: 31.10.2026
+Версия: 19.0 · 17.11.2026: audit fixes, безопасность публичного GitHub, standalone visual/video и карта версий; ранее 18.0 · 08.11.2026: поиск Кадра по запросу; ранее 17.3 · 05.11.2026: Музыкальный редактор (draft); 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
+Дата: 17.11.2026
 
 
 Это не модуль генерации контента. Это слой правил для ЛЮБОГО изменения архитектуры:
@@ -65,7 +65,7 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 ## ИСТОЧНИК ИСТИНЫ — GITHUB
 
-С 02.10.2026 единственный канонический источник истины системы — приватный репозиторий **`legur/Simba`**, ветка **`main`**.
+Единственный канонический источник истины системы — **публичный** на 17.11.2026 репозиторий **`legur/Simba`**, ветка **`main`**. Не считать хранящееся здесь конфиденциальным: рабочие тексты, файлы и Issues доступны без доступа к закрытому Google Drive. При этом приватный архив Drive остается закрытым. Публичные задачи GitHub содержат только безопасные ID/этапы/receipt; запрещено включать Drive URL/ID, клиентские данные, закрытые media/handoff и секреты. Внешние создатели Issues (MotionLab/Studio/Wix) должны применять ту же санитизацию, что `dispatcher.py`. Изменение visibility репозитория **не производится** этим документом: предварительно оценить GitHub Actions/публичные раннеры и возможные расходы. Редактирование публичной Issue не гарантирует удаления старой редакции из истории; при необходимости отдельно отзывать доступ к ресурсам.
 
 ### Обязательный процесс системной правки
 
@@ -94,36 +94,41 @@ Knowledge Base не хранит текущую цену/наличие как �
 
 ---
 
+## Amendment 19.0 — 17.11.2026
+По прямому решению Лео после read-only аудита синхронизированы действующие пути и версии, два законных входа Rafael и два источника видео, ограничен цикл Critic. Репозиторий фактически публичный; публичные Issues нельзя использовать для закрытых Drive URL/ID. Внешний MotionLab producer, исторические записи и размещение private data требуют отдельной технической проверки: изменение документа не считается их устранением. Платные операции, публикация и изменение видимости GitHub не разрешены автоматически.
+
 ## КАРТА СИСТЕМЫ (обновлять при каждом структурном изменении)
+
+Audit 17.11.2026: активные ссылки и внутренние версии синхронизированы; сами имена физических файлов по контракту AGENTS.md сохранены. Новая поддержка самостоятельного визуала и `APPROVED_SCRIPT` требует offline/production QA до статуса полностью проверенного релиза. Старые публичные ссылки в истории Issues и отсутствие общего `project.json` у Vietnam/Cambodia остаются отдельными проверяемыми задачами.
 
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
 | Router | ROUTER_v10.1.md | 20.0 · 08.11.2026 | ✅ routing; добавлен запрос поиска референсов Кадром; его реальный пилот ожидается |
 | Кадр | `Кадр/KADR_v1.0.md` + `Кадр/База/INDEX.md` | 2.1 · 08.11.2026 | 🔧 поиск по запросу → отбор → разбор лучших → база; реальный Instagram-пилот не проверен |
-| Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 2.1 · 22.10.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
-| Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 1.0 · 22.10.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
+| Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 3.0 · 17.11.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
+| Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 2.0 · 17.11.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
 | Музыкальный редактор | `Музыкальный редактор/MUSIC_EDITOR_v1.0.md` | 1.0 · 05.11.2026 | 🔧 в разработке — бесплатные треки, проверка коммерческих лицензий, music-handoff → Монтажер Клод |
 | AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
 | Simba | Simba-v5.0.md | 10.1 · 31.10.2026 | ✅ активен — точные пути TIA; проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Копирайтер-универсал (тест) | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/COPYWRITER_TEST.md` | 1.0 · 31.10.2026 | TEST — дополнительный кандидат внутри Simba; не новый автор; META Шаг 0 |
-| Интриган | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/INTRIGAN.md` | 1.0 · 31.10.2026 | ✅ редакторский этап до черновика; не самостоятельный автор; AGENT_ROLES 4.0 |
+| Интриган | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/INTRIGAN.md` | 1.0 · 31.10.2026 | ✅ редакторский этап до черновика; не самостоятельный автор; актуальный AGENT_ROLES 5.7 |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
 | Travel | Travel-v1.3.md | 1.3 | ✅ активен |
 | Leo | Leo-v1.3.md | 1.3 | ✅ активен |
 | News | News-v1.2.md | 1.2 | ✅ активен |
 | Humanizer | Humanizer-v1.4.md | 3.1 · 31.10.2026 | ✅ активен — обязательная чистка постов до approval; hard blocker не допускает финализацию |
-| Critic | Critic-5.7.md | 5.9 · 31.10.2026 | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo: первым шагом цель поста (поболтать / лиды / лайки и охват / доверие и позиция; вопрос до разбора, если не названа), дальше весь разбор и блок «Оптика читателя» (механизм, читатель и цель, прогноз с главной осью, динамика серии, визуал, углы, направления правки) строятся под цель; отчёты внешнего критика — эталон: Critic синхронизирует с ними рекомендации и отметки и пополняет «Эталонную методику»; Session Log — один на весь завершённый цикл правок; критерии оценки сохранены |
-| Rafael (Architecture / System / Styles / Routing) | см. RAFAEL_Architecture_v5.0.md | 5.0 / 6.2 / 3.3 / 3.3 | ✅ активен; GPT Image 2.5 Protocol + Visual Example Library; Archivarius trusted-first + blocklist + YouMind |
+| Critic | Critic-5.7.md | 6.0 · 17.11.2026 | ✅ два режима: обязательный `INTERNAL_CRITIC_MODE` для Simba + внешний review по инициативе Leo: первым шагом цель поста (поболтать / лиды / лайки и охват / доверие и позиция; вопрос до разбора, если не названа), дальше весь разбор и блок «Оптика читателя» (механизм, читатель и цель, прогноз с главной осью, динамика серии, визуал, углы, направления правки) строятся под цель; отчёты внешнего критика — эталон: Critic синхронизирует с ними рекомендации и отметки и пополняет «Эталонную методику»; Session Log — один на весь завершённый цикл правок; критерии оценки сохранены |
+| Rafael (Architecture / System / Styles / Routing) | `Rafael/RAFAEL_Architecture_v5.0.md` | 5.1 / 6.2 / 3.4 / 3.4 · 17.11.2026 | ✅ активен; GPT Image 2.5 Protocol + Visual Example Library; Archivarius trusted-first + blocklist + YouMind |
 | Archivarius | Archivarius-System-v2.7.md + `01_Изображения` | 2.7 | ✅ внешняя библиотека; Rafael ищет trusted-first, затем по релевантным active visual cards вне blocklist |
 | YouMind AI Image Prompts | GitHub `YouMind-OpenLab/ai-image-prompts-skill` / `references/*` | external live | ✅ активен; постоянный reference-source Rafael, external failure non-blocking |
 | Audit | Audit-v1.2.md | 2.5 · 27.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
-| Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.0 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
+| Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.1 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
-| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 2.0 / runtime 8.0 | ✅ обязательный общий контекст; preflight поиска Кадра |
-| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 9.1 · 31.10.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
-| Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 1.2 · 05.11.2026 | Пост → сценарий → визуал (optional A2E via Wix) → Монтажер Клод → QA → Leo; публикация отдельно |
-| Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 2.3 · 18.10.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
+| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 2.0 / runtime 9.0 | ✅ обязательный общий контекст; preflight поиска Кадра |
+| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 11.0 · 17.11.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
+| Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 3.0 · 17.11.2026 | Пост → сценарий → визуал (optional A2E via Wix) → Монтажер Клод → QA → Leo; публикация отдельно |
+| Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 3.0 · 17.11.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
 
 Эта таблица — источник правды о текущем состоянии. Если файл изменён, а таблица не обновлена —
