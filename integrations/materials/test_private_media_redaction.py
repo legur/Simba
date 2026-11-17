@@ -60,6 +60,18 @@ class PublicMediaPrivacyTests(unittest.TestCase):
         issues = project_issues(ROOT, p, data)
         self.assertTrue(any(x.startswith("Invalid owner-private asset locator") for x in issues))
 
+    def test_vietnam_cambodia_joins_registry_without_inventing_final_approval(self):
+        p = ROOT / "campaigns/vietnam-cambodia-2027/project.json"
+        data = json.loads(p.read_text(encoding="utf-8"))
+        self.assertEqual(data["id"], "vietnam-cambodia-2027")
+        self.assertEqual(data["approvals"]["editorial"], "pending")
+        self.assertEqual(data["approvals"]["publication"], "pending")
+        self.assertIsNone(data["approved_asset_id"])
+        self.assertIsNone(data["working_asset_id"])
+        self.assertIn("Монтажер", data["next_action"])
+        self.assertFalse(project_issues(ROOT, p, data))
+        self.assertEqual(project_progress(ROOT, p, data)["state"], "IN_PROGRESS")
+
     def test_restoration_source_must_not_be_fake(self):
         data = json.loads((ROOT / PROJECTS[1]).read_text(encoding="utf-8"))
         self.assertNotIn("APPROVED_BY_BOT", json.dumps(data))
