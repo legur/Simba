@@ -18,7 +18,7 @@
       "sha256": "52c0f5f72d194c6a6209a45254c8d2e1c99fe4097cea04129c0380faa8e2a4e5"
     }
   ],
-  "next_action": "Монтажер: восстановить через авторизованный закрытый архив выбранные исходники; проверить SHA медиа, утвержденную озвучку и музыку, тайминги слов, расположение титров и технический QA. Не запускать MP4-рендер, A2E, TTS или платные операции без соответствующего разрешения.",
+  "next_action": "Монтажер: ПОВТОРНО ИСПОЛЬЗОВАТЬ уже подтвержденные 10 выбранных кадров и 10 существующих A2E MP4 из закрытого Google Drive. Сверить соответствие движений сценам, утвержденный голос и музыкальный lock, тайминги слов, титры и субтитры; только затем решить вопрос об итоговом MP4/QA через отдельный approval gate. Не повторять платную генерацию A2E/TTS и не публиковать без явного разрешения.",
   "working_asset_id": null,
   "approved_asset_id": null,
   "approvals": {
@@ -55,12 +55,13 @@
   "reuse_notes": [
     "Owner selected option 2 for scenario 2. Reuse only saved files after independent authorized private-media SHA readback.",
     "Selected stills and technical audio-preview decisions have provenance in private archive; this registry does not assert final MP4 or finished TTS.",
-    "Issue #206 is a notification for Montage and not proof that Montage completed work."
+    "Issue #206 is a notification for Montage and not proof that Montage completed work.",
+    "17.11.2026 PRIVATE QA: 10/10 selected stills downloaded and decoded; 10/10 previously archived A2E MP4 downloaded, ffprobe validated and fully decoded. No new A2E/TTS requests. Byte SHA-256 proofs in owner-only Media QA document; clip content-to-still matching, final audio and master approval remain pending."
   ],
   "missing": [
-    "Не подтверждена возможность открыть текущие 10 выбранных кадров и видеоклипы по приватному owner-only архиву.",
-    "Точный утвержденный voice/music audio lock и тайминги слов для итогового рендера не проверены.",
-    "Финальный проверенный MP4/QA и редакционное утверждение финала отсутствуют."
+    "Визуальное соответствие каждого из 10 A2E MP4 выбранным кадрам и сценарию не подтверждено в отдельном финальном QA.",
+    "Утвержденный голос/музыка и точные тайминги слов для финального рендера не подтверждены.",
+    "Финальный MP4 с проверкой QA и отдельным редакционным утверждением Лео отсутствует."
   ],
   "private_media_redaction": {
     "status": "OWNER_PRIVATE_LOOKUP_REQUIRED",
@@ -69,5 +70,19 @@
     "note": "No private Drive URLs/IDs in public registry. Owner-only file lookup and readback required."
   },
   "source_editor_path": "campaigns/vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json",
-  "montage_issue": 206
+  "montage_issue": 206,
+  "technical_media_qa_latest": {
+    "audit_date": "2026-11-17",
+    "verified_selected_stills": 10,
+    "verified_existing_a2e_clips": 10,
+    "selected_stills_size_matches_registry": 10,
+    "video_codec_decode_pass": 10,
+    "video_resolution": "1080x1920",
+    "video_duration_seconds": 5.0625,
+    "private_acl_checked_reference_ids": 52,
+    "private_acl_result": "OWNER_ONLY",
+    "paid_regeneration_authorized": false,
+    "private_digest_record": "Simba_Vietnam_Cambodia_2027_Private_Media_QA_2026-11-17",
+    "status": "EXISTING_MEDIA_TECHNICAL_QA_PASS__FINAL_VISUAL_AUDIO_MONTAGE_QA_PENDING"
+  }
 }
