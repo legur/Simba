@@ -40,7 +40,7 @@
       "transition_to_next": "Легкое перелистывание разворота: две фотографии уступают место маршрутной странице",
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -86,7 +86,7 @@
       "transition_to_next": "Плавное раскрытие фотографии корабля на странице дневника",
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -132,7 +132,7 @@
       "transition_to_next": "Мягкое затухание снимка и появление полароидного кадра рассвета",
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -178,7 +178,7 @@
       "transition_to_next": "Неспешное перелистывание к странице с корнями и архитектурой Ангкора",
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -224,7 +224,7 @@
       "transition_to_next": "Простая склейка на разворот с кадром экскурсионной группы",
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -270,7 +270,7 @@
       "transition_to_next": "Перелистывание к путевой карточке с датами и перелетом",
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -316,7 +316,7 @@
       "transition_to_next": "Плавная смена карточки на фуд-фото без декоративных спецэффектов",
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -362,7 +362,7 @@
       "transition_to_next": "Появление бумажной ценовой карточки без движения цифр",
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -408,7 +408,7 @@
       "transition_to_next": "Спокойный переход к финальной карточке с WhatsApp и контактами",
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -454,7 +454,7 @@
       "transition_to_next": null,
       "notes": "",
       "media_asset_id": "",
-      "media_status": "STILL_SELECTED_A2E_NOT_STARTED",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
       "scene_approval": "IMAGE_SELECTED_OWNER",
       "visual_alternatives": {
         "A": {
@@ -503,7 +503,7 @@
   },
   "external_paid_cost_quote_status": "NOT_PREPARED",
   "image_generation_status": "ALL_10_SELECTED_FROM_ARCHIVED_30_STILLS",
-  "archive_status": "ALL_30_SOURCE_IMAGES_PRESENT_ON_PRIVATE_GOOGLE_DRIVE; 9x16_JPEG_EXPORTS_CURRENT_CHAT_ZIP; SELECTED_PRODUCTION_IMAGES_PENDING",
+  "archive_status": "ALL_30_SOURCE_IMAGES_PRESENT_ON_PRIVATE_GOOGLE_DRIVE_HISTORICAL_RECORD; SELECTED_10_STILLS_AND_10_A2E_MP4S_PRIVATE_BYTE_READBACK_PASS_2026-11-17; FINAL_MASTER_PENDING",
   "notes": "30 отдельных вариантов по 10 сценам (A/B/C), реально созданных, с Drive ID в сценах. Их можно выбирать по каждой сцене. Никаких готовых видео или A2E пока нет. Ограничения: S04C нет палубы; S07B/C — пейзажи назначения вместо самолета; S08B/C — овощи/фрукты рынка вместо готового обеда; S10B/C — визуальные иллюстрации с географическим смешением, не документальные фото. Подходящие кадры — прежде всего A этих сцен. Исходники ИИ, не рекламировать как реальную съемку.\n14.11.2026: owner approved A all scenes except scene 5 B. Source selection manifest selected_images_2026-11-14.json. A2E not started; charged action pending exact quote/credit cap and technical preflight.",
   "archived_media_folder_url": "",
   "owner_selection_gallery": "vietnam_cambodia_choose_30_images.html (current ChatGPT conversation artifact)",
@@ -514,7 +514,7 @@
   "a2e_credits_limit_approved": 300,
   "a2e_scene_count": 10,
   "a2e_clip_duration_seconds": 5,
-  "media_status": "STILLS_STAGED_WIX_READY; CLIPS_NOT_GENERATED",
+  "media_status": "STILLS_AND_A2E_10_MP4S_TECHNICALLY_READBACK_VERIFIED; FINAL_AUDIO_TIMINGS_AND_MASTER_PENDING",
   "a2e_motion_prompt_plan_path": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
   "a2e_current_quote_issues": [
     202,
@@ -608,5 +608,21 @@
     "redacted_at": "2026-11-17",
     "original_public_commit": "8f143e94a89c58ac2e71e346c96d5e338986523a",
     "note": "Original project and Drive pointers copied to owner-only archive, exact bytes read back; no private lookup is possible from this public file alone. Do not claim media verified without authorized readback."
+  },
+  "technical_media_qa_latest": {
+    "audit_date": "2026-11-17",
+    "audit_mode": "READ_ONLY_PRIVATE_OWNER_ARCHIVE_BYTE_READBACK_NO_PAID_CALLS",
+    "verified_selected_stills": 10,
+    "verified_archived_a2e_mp4s": 10,
+    "selected_stills_size_matches_registry": 10,
+    "still_decode_pass": 10,
+    "video_probe_pass": 10,
+    "video_full_decode_pass": 10,
+    "clips_encoding": "H264 / 1080x1920 / 16 fps / about 5.0625 seconds each / no embedded audio stream",
+    "private_acl_checked_reference_ids": 52,
+    "private_acl_result": "ALL_OWNER_ONLY_AS_OF_AUDIT",
+    "digest_record": "Owner-only Simba_Vietnam_Cambodia_2027_Private_Media_QA_2026-11-17",
+    "paid_regeneration_authorized": false,
+    "limitations": "Codec/byte checks are not final visual match, voice/music lock, word-level subtitle alignment, final MP4 or owner approval."
   }
 }
