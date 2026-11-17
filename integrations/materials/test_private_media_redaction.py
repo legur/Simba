@@ -97,8 +97,8 @@ class PublicMediaPrivacyTests(unittest.TestCase):
         self.assertFalse(registry["technical_media_qa_latest"]["paid_regeneration_authorized"])
         self.assertIn("ПОВТОРНО ИСПОЛЬЗОВАТЬ", registry["next_action"])
         self.assertNotIn("Не подтверждена возможность открыть текущие 10", " ".join(registry["missing"]))
-        self.assertNotRegex(json.dumps(editor, ensure_ascii=False), r"https?://(?:drive|docs)\\.google\\.com/")
-        self.assertNotRegex(json.dumps(registry, ensure_ascii=False), r"https?://(?:drive|docs)\\.google\\.com/")
+        self.assertNotRegex(json.dumps(editor, ensure_ascii=False), r"https?://(?:drive|docs)\.google\.com/")
+        self.assertNotRegex(json.dumps(registry, ensure_ascii=False), r"https?://(?:drive|docs)\.google\.com/")
 
     def test_restoration_source_must_not_be_fake(self):
         data = json.loads((ROOT / PROJECTS[1]).read_text(encoding="utf-8"))
