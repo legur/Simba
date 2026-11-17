@@ -247,12 +247,12 @@ def parse_approved_source(md):
 
 def parse_approved_script(md):
     """Fail closed: standalone scripts require explicit owner approval and source provenance."""
-    body = re.search(r'^## APPROVED_SCRIPT\\s*$(.*?)(?=^## |\\Z)', md, re.M | re.S)
+    body = re.search(r'^## APPROVED_SCRIPT\s*$(.*?)(?=^## |\Z)', md, re.M | re.S)
     if not body or not body.group(1).strip():
         return None, False
-    status = re.search(r'^STATUS:\\s*APPROVED_SCRIPT\\s*$', md, re.M) is not None
-    evidence = re.search(r'^APPROVAL_EVIDENCE:\\s*\\S.+$', md, re.M) is not None
-    provenance = re.search(r'^SOURCE_REFERENCE:\\s*\\S.+$', md, re.M) is not None
+    status = re.search(r'^STATUS:\s*APPROVED_SCRIPT\s*$', md, re.M) is not None
+    evidence = re.search(r'^APPROVAL_EVIDENCE:\s*\S.+$', md, re.M) is not None
+    provenance = re.search(r'^SOURCE_REFERENCE:\s*\S.+$', md, re.M) is not None
     return body.group(1), bool(status and evidence and provenance)
 
 
@@ -608,7 +608,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('job'); ap.add_argument('--fps', type=int, default=24); ap.add_argument('--no-final-asr', action='store_true')
     ap.add_argument('--workers', type=int, default=2, help='parallel browsers for the render (2 suits integrated graphics)')
-    ap.add_argument('--draft', action='store_true', help='accept a source post that is not approved yet; the video is marked as a draft, not for publication')
+    ap.add_argument('--draft', action='store_true', help='accept an unapproved post/script solely as a nonpublishable preview')
     ap.add_argument('--plan-only', action='store_true', help='stop after the timeline and the reading check (no render): for previewing stills')
     a = ap.parse_args(); job = Path(a.job).resolve(); qa = []
     try:
@@ -616,7 +616,9 @@ def main():
         if not (HERE / 'node_modules' / 'playwright-core').is_dir(): raise Stop(f'run "npm install" in {HERE} first (see README.md)')
         spec = load_spec(job); log('spec', spec['packageId'], f'{len(spec["scenes"])} scenes')
         source, approved = approved_text(spec, a.draft)
-        qa.append(f'- Source: `{spec["sourcePost"]}` — ' + ('STATUS: APPROVED' if approved else 'NOT APPROVED (draft preview, not for publication)'))
+        key = 'sourceScript' if 'sourceScript' in spec else 'sourcePost'
+        approved_state = 'APPROVED_SCRIPT' if key == 'sourceScript' else 'APPROVED'
+        qa.append(f'- Source: `{spec[key]}` — ' + (f'STATUS: {approved_state}' if approved else 'NOT APPROVED (draft preview, not for publication)'))
         qa.append(f'- Fact gate (numbers on screen ⊂ approved text): {fact_gate(spec, source)}')
         prepare_clips(spec, job, a.fps)
         qa.append('- Narration: ' + ('Simba / Google Gemini Voice Design / WarmBaritone (approved)' if voice_provider(spec) == 'simba' else 'explicit Edge TTS legacy voice'))
