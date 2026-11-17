@@ -41,7 +41,7 @@ class StandaloneScriptSourceTests(unittest.TestCase):
             with patch.object(make_video, "REPO", root):
                 source, approved = make_video.approved_text({"sourceScript": "script.md"})
             self.assertTrue(approved)
-            self.assertEqual(make_video.fact_gate({"scenes": [{"lines": [{"text": "10 дней"}]}]}, source), "PASS")
+            self.assertEqual(make_video.fact_gate({"scenes": [{"lines": [{"text": "10 дней"}]}], "end": {"brand": "Simba by Bon Tours"}}, source), "PASS")
 
     def test_unapproved_script_fails_closed_except_explicit_draft(self):
         with tempfile.TemporaryDirectory() as folder:
