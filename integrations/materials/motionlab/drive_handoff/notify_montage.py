@@ -13,6 +13,15 @@ SHA = re.compile(r'^[a-f0-9]{64}$')
 SAFE = re.compile(r'^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$')
 class InboxError(RuntimeError): pass
 
+PRIVATE_PUBLIC_ISSUE = re.compile(r'https?://(?:drive|docs)\\.google\\.com/|(?:[?&](?:token|access_token|signature|x-goog-signature)=)', re.I)
+
+def assert_public_issue_safe(body, private_file_id):
+    """Never disclose a private Drive URL or receipt-file identifier in public GitHub Issues."""
+    if (PRIVATE_PUBLIC_ISSUE.search(body) or (private_file_id and private_file_id in body)
+            or len(body) > 4096):
+        raise InboxError('UNSAFE_PUBLIC_ISSUE_BODY')
+
+
 def canonical(value):
     def norm(x):
         if isinstance(x, float) and x.is_integer(): return int(x)
@@ -90,12 +99,13 @@ def notify(data,file_id):
         'Receipt: '+rid,
         'Source fingerprint: '+data['source_fingerprint'],
         'Selection SHA-256: '+data['selection_sha256'],
-        'Owner-only Drive selection: https://drive.google.com/file/d/'+file_id+'/view',
+        'Selection storage: OWNER_PRIVATE_DRIVE; authorized Montage resolves by receipt in the private Inbox, never from this public Issue.',
         '',
         'Status: SAVED_IN_DRIVE_PENDING_MONTAGE. No MP4 render, TTS, A2E or publication authorized.',
         'Montage must verify source files, approved audio lock, word timings, visual layout and QA.',
         '<!-- motionlab-drive-receipt:'+rid+' -->'
     ]))
+    assert_public_issue_safe(body, file_id)
     result=github('POST','/issues',{'title':'MotionLab to Montage | '+data['project_id']+' | '+data['session_id'], 'body':body})
     return int(result['number'])
 
