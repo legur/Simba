@@ -9,7 +9,7 @@ Runtime 8.0 — 08.11.2026. Для поиска рилсов по запросу
 Runtime 7.2. После общего gate читать профиль; для пополнения базы — индекс/схему, доступное видео. Для адаптации — BRAND_RULES, VISUAL_RULES, VIDEO_PIPELINE и целевой сценарий, если есть. Утверждённый пост для анализа не нужен. TIA/Humanizer/Internal Critic не применяются. Инструмент/видео недоступны → KADR_TOOL_BLOCKED, не KB failure. Перед новой сборкой/существенной переработкой монтажёр читает индекс и до трёх релевантных READY-карточек; фиксирует ID/применение либо NONE. Нет READY — монтаж продолжается. К мелким техническим правкам не добавлять этап.
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Редакция: runtime 9.3 · 17.11.2026 (learning provenance, historical supersession & index coverage); ранее 9.2 · 17.11.2026 (news & author fail-closed); ранее 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
+Редакция: runtime 9.4 · 17.11.2026 (source-only Critic and fulfillment); ранее 9.3 · 17.11.2026 (learning provenance, historical supersession & index coverage); ранее 9.2 · 17.11.2026 (news & author fail-closed); ранее 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
 Дата: 22.10.2026 · Сценарист: preflight и производственная выдача по сценам
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
@@ -190,7 +190,7 @@ Humanizer является обязательной runtime-зависимост
 
 Недоступность внешнего сканера не блокирует маршрут: выполнить ручной Humanizer по каноническому файлу. Недоступность самого канонического Humanizer или его обязательных внутренних KB-зависимостей даёт `BLOCKED_KB_UNAVAILABLE`.
 
-Для Simba вход в Humanizer разрешён только после `INTERNAL_CRITIC_PASS → SIMBA_FINALIZE`. Для Info, Travel, Leo и News Internal Critic автоматически не добавляется; их двухитерационный fallback действует только для мягкого стиля и не преодолевает `BLOCKED_FACTS`, `BLOCKED_AUTHOR_PROVENANCE` или `BLOCKED_NEWS_SOURCE_UNVERIFIED`. Смысловая правка возвращает текст профильному автору; Simba повторяет Internal Critic, другие авторы — собственную проверку. `HUMANIZER_PASS` обязателен до ready-state и approval/policy-trigger.
+Для Simba вход в Humanizer разрешён только после `INTERNAL_CRITIC_PASS → SIMBA_FINALIZE` **для каждого конкретного видимого варианта**, в том числе при входе `SOURCE_ONLY_INPUT`. Несколько вариантов не наследуют PASS друг друга. Для Info, Travel, Leo и News Internal Critic автоматически не добавляется; их двухитерационный fallback действует только для мягкого стиля и не преодолевает `BLOCKED_FACTS`, `BLOCKED_AUTHOR_PROVENANCE` или `BLOCKED_NEWS_SOURCE_UNVERIFIED`. Смысловая правка возвращает текст профильному автору; Simba повторяет Internal Critic, другие авторы — собственную проверку. `HUMANIZER_PASS` обязателен до ready-state и approval/policy-trigger.
 
 ### Сценарист / разговорные короткие видео
 Обязательно:
@@ -310,6 +310,10 @@ EXCLUDED_AS_CURRENT_FACTS:
 
 ### Системное решение Leo
 Записать в `07_LEARNINGS/DECISION_LOG.md`.
+
+### Обещанный артефакт перед публикацией
+
+Если текст обещает выдачу PDF, ссылки на загрузку, купона, формы, чеклиста или другого фактического результата, `APPROVED_TEXT` остается допустимым при неготовом результате, но перед любым публикационным permission/ready выполнить `FULFILLMENT_VERIFIED` на реальном файле/URL/процессе передачи с readback; при отсутствии `BLOCKED_FULFILLMENT_NOT_VERIFIED`. Не менять текст с прямым approval Лео молча. Конкретное ограничение архива Vietnam seasons (17.11.2026): PDF fulfillment не проверен, следовательно публикационный gate не пройден.
 
 ### Утвержденный текст
 После `APPROVED_TEXT` сохранить полный текст в `03_CONTENT_LIBRARY` со статусом `APPROVED` и обновить `_INDEX.md`.
