@@ -158,8 +158,10 @@ Actions автоматически, при валидном handoff, созда�
 ## 2. Состояния
 
 ```text
-[APPROVED_TEXT (пост) | APPROVED_SCRIPT (самостоятельный сценарий)]
+APPROVED_TEXT (пост)
   → SCRIPT_OPTIONS_3 → LEO_SCRIPT_APPROVAL               три полных сценария
+APPROVED_SCRIPT (самостоятельный сценарий)
+  → SCRIPT_APPROVAL_ALREADY_RECORDED                      не запрашивать выбор того же сценария вновь
   → STORYBOARD_OPTIONS_3 → LEO_STORYBOARD_APPROVAL       три наглядные раскадровки выбранного сценария
   → SCENE_TABLE → VISUALS_READY → LEO_VISUALS_APPROVAL   выбранный набор реальных/AI-кадров
   → A2E_QUOTE → A2E_PROMPTS_RU_OPTIONS_3 → LEO_CHOICE_AUTHORIZES_RUN
