@@ -1,6 +1,6 @@
 # CONTENT PIPELINE
 
-Версия: 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
+Версия: 11.2 · 17.11.2026 (verified news single-event/digest & author gates); ранее 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
 
 ## COPYWRITER_TEST_MODE — 31.10.2026
 
@@ -121,15 +121,16 @@ NEW_SOURCE
 ## Новостная ветка «Новости туризма»
 
 ```text
-SOURCE_RESOLVED
-  → MARKETER_NORMALIZED
-  → NEWS_SCORE_HIGH
-  → NEWS_TASK
+SOURCE_RESOLVED (user source, attached material or fetched official/current source)
+  → [MARKETER_NORMALIZED → NEWS_SCORE_HIGH | USER_DIRECT_NEWS_TASK]
+  → NEWS_TASK (NEWS_SINGLE_EVENT | NEWS_DIGEST)
   → NEWS_KB_PREFLIGHT
   → NEWS_RULES_LOADED
+  → NEWS_SOURCE_VERIFIED (event date, source, applicable current conditions)
   → INTRIGAN_SKIPPED(FACT_FIRST)
   → NEWS_EXECUTED
   → NEWS_RESULT_VALIDATED
+  → NEWS_AUTHOR_QA_PASS
   → NEWS_FINALIZE
   → HUMANIZER_EXECUTED
   → HUMANIZER_PASS
@@ -143,7 +144,7 @@ SOURCE_RESOLVED
   → PROVENANCE_SAVED
 ```
 
-News, а не Router/Маркетолог, является текстовым исполнителем. Цена не требуется для прохождения этой ветки.
+News, а не Router/Маркетолог, является текстовым исполнителем. Один подтвержденный инфоповод не требует фиктивного дайджеста или даты сбора от Leo. Для прямого задания `USER_DIRECT_NEWS_TASK` коммерческий `NEWS_SCORE_HIGH` не является блокирующим условием. У News должно быть подтверждение факта, даты события/вступления в силу и источника (сначала доступный материал, затем официальные источники), иначе `BLOCKED_NEWS_SOURCE_UNVERIFIED`; без синтетических фактов. Цена не требуется. Только `HUMANIZER_PASS` разрешает `NEWS_TEXT_READY`; Internal Critic Simba к News автоматически не применяется.
 
 ## AUTOMATION_CONTINUOUS_MODE
 
@@ -195,7 +196,7 @@ Leo по-прежнему может отдельно запускать Critic 
 Для готовых постов Simba, Info, Travel, Leo и News действует порядок: автор завершает собственную редакцию и проверки → `HUMANIZER_EXECUTED → HUMANIZER_PASS` → соответствующий ready-state → approval/policy-trigger. Этот gate не распространяется автоматически на Wix-форматтер, клиентские письма/документы, JSON или визуальные результаты.
 
 - Simba до Humanizer обязательно получает `INTERNAL_CRITIC_PASS` и выполняет `SIMBA_FINALIZE`;
-- Info, Travel, Leo и News проходят собственную финальную проверку и Humanizer без автоматического Internal Critic;
+- Info, Travel, Leo и News проходят собственную финальную проверку и Humanizer без автоматического Internal Critic. Ограниченные две локальные стилистические итерации в их профилях не разрешают выдавать как `READY` текст с неподтвержденными фактами/личным опытом либо hard blocker;
 - смысловая правка Humanizer возвращает текст профильному автору; Simba после такой правки повторяет Internal Critic, остальные авторы — только собственную проверку;
 - оставшийся Humanizer hard blocker даёт `BLOCKED_HUMANIZER`; ready-state, approval и визуальный маршрут запрещены.
 
