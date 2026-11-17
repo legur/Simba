@@ -215,7 +215,7 @@ Humanizer является обязательной runtime-зависимост
 
 ### Монтажер Клод (сборка ролика к посту)
 Обязательно:
-- утвержденный `APPROVED_TEXT` (или явная команда Leo на черновик);
+- утвержденный `APPROVED_TEXT` или самостоятельный `APPROVED_SCRIPT` с `APPROVAL_EVIDENCE` и `SOURCE_REFERENCE` (либо явная команда Leo на черновик);
 - утверждённый сценарий и таблица сцен Сценариста (§44), промпты анимации — если ролик из клипов;
 - `01_BRAND/BRAND_RULES.md`, `01_BRAND/VISUAL_RULES.md`;
 - `05_OPERATIONAL_RULES/FACTS_FRESHNESS_PRICING.md`;
