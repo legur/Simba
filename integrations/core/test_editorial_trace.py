@@ -31,7 +31,7 @@ def base(author="Simba", input_kind="SOURCE_ONLY", text="Достоверный 
 
 class EditorialSmokeTests(unittest.TestCase):
     def test_source_only_simba_complete_is_approved_not_published(self):
-        self.assertEqual(validate_trace(base()).state, "APPROVED_TEXT")
+        self.assertEqual(validate_trace(base()).state, "DECLARED_APPROVED_TEXT_UNVERIFIED")
 
     def test_missing_source_resolution_fails_closed(self):
         t = base(); t["events"].remove("SOURCE_RESOLVED")
@@ -54,7 +54,7 @@ class EditorialSmokeTests(unittest.TestCase):
         t = base(); e = t["events"]
         e[e.index("INTERNAL_CRITIC_PASS"):e.index("INTERNAL_CRITIC_PASS")] = [
             "INTERNAL_CRITIC_REVISE", "SIMBA_REPAIR", "AUTHOR_QA_PASS"]
-        self.assertEqual(validate_trace(t).state, "APPROVED_TEXT")
+        self.assertEqual(validate_trace(t).state, "DECLARED_APPROVED_TEXT_UNVERIFIED")
 
     def test_critic_no_progress_is_terminal(self):
         t = base(); t["events"].insert(8, "BLOCKED_CRITIC_NO_PROGRESS")
@@ -100,7 +100,7 @@ class EditorialSmokeTests(unittest.TestCase):
     def test_news_direct_does_not_require_simba_critic_but_needs_humanizer(self):
         t = base(author="News", input_kind="DIRECT_NEWS")
         self.assertNotIn("INTERNAL_CRITIC_PASS", t["events"])
-        self.assertEqual(validate_trace(t).state, "APPROVED_TEXT")
+        self.assertEqual(validate_trace(t).state, "DECLARED_APPROVED_TEXT_UNVERIFIED")
         t["events"].remove("HUMANIZER_PASS")
         self.assertEqual(validate_trace(t).state, "BLOCKED_EDITORIAL")
 
@@ -120,22 +120,38 @@ class EditorialSmokeTests(unittest.TestCase):
                              publication_authorization_evidence="synthetic permission fixture only")
         self.assertEqual(validate_trace(t).state, "BLOCKED_PUBLICATION")
         t["events"].append("PUBLICATION_AUTHORIZED")
-        self.assertEqual(validate_trace(t).state, "PUBLICATION_AUTHORIZED_NOT_CONFIRMED")
+        self.assertEqual(validate_trace(t).state, "DECLARED_PUBLICATION_AUTHORIZED_UNVERIFIED")
         t["events"].append("PUBLISHED_CONFIRMED")
-        self.assertEqual(validate_trace(t).state, "PUBLISHED")
+        self.assertEqual(validate_trace(t).state, "DECLARED_PUBLISHED_UNVERIFIED")
 
     def test_fourth_variant_needs_own_pass_and_unique_id(self):
         variants = [base(text=f"Вариант {i}.") for i in range(4)]
         for i, v in enumerate(variants): v["id"] = f"v{i+1}"
-        self.assertEqual(validate_variant_set(variants, 4).state, "VARIANTS_READY_FOR_LEO")
+        self.assertEqual(validate_variant_set(variants, 4).state, "DECLARED_VARIANTS_READY_FOR_LEO")
         variants[3]["events"].remove("INTERNAL_CRITIC_PASS")
         self.assertEqual(validate_variant_set(variants, 4).state, "BLOCKED_EDITORIAL")
         self.assertEqual(validate_variant_set(variants[:3], 4).state, "BLOCKED_EDITORIAL")
 
+    def test_fabricated_approval_evidence_and_fake_published_event_are_never_real_status(self):
+        t = base()
+        t["publication_requested"] = True
+        t["publication_authorization_sha256"] = digest_text(t["text"])
+        t["publication_authorization_evidence"] = "I declare publication to have been approved"
+        t["events"].extend(["PUBLICATION_AUTHORIZED", "PUBLISHED_CONFIRMED"])
+        verdict = validate_trace(t)
+        self.assertEqual(verdict.state, "DECLARED_PUBLISHED_UNVERIFIED")
+        self.assertNotEqual(verdict.state, "PUBLISHED")
+
+    def test_fabricated_approval_never_authorizes_a_real_post(self):
+        t = base()
+        t["approval_evidence"] = "synthetic Leo quote with no independent proof"
+        self.assertEqual(validate_trace(t).state, "DECLARED_APPROVED_TEXT_UNVERIFIED")
+        self.assertNotEqual(validate_trace(t).state, "APPROVED_TEXT")
+
     def test_live_workflow_is_not_claimed_by_smoke_validation(self):
         s = (ROOT / "integrations/core/editorial_trace.py").read_text(encoding="utf-8-sig")
         self.assertIn("does NOT call agents", s)
-        self.assertIn("assertions until backed by independent source evidence", s)
+        self.assertIn("all positive verdicts have DECLARED_* prefix", s)
 
 
 if __name__ == "__main__":

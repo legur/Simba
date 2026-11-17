@@ -1,6 +1,6 @@
 # CONTENT PIPELINE
 
-Версия: 11.3 · 17.11.2026 (explicit source-only author gate & fulfillment); ранее 11.2 · 17.11.2026 (verified news single-event/digest & author gates); ранее 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
+Версия: 11.4 · 17.11.2026 (truthful live role receipts and declared-only offline statuses); ранее 11.3 · 17.11.2026 (explicit source-only author gate & fulfillment); ранее 11.2 · 17.11.2026 (verified news single-event/digest & author gates); ранее 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
 
 ## COPYWRITER_TEST_MODE — 31.10.2026
 
@@ -205,6 +205,12 @@ Leo по-прежнему может отдельно запускать Critic 
 - Info, Travel, Leo и News проходят собственную финальную проверку и Humanizer без автоматического Internal Critic. Ограниченные две локальные стилистические итерации в их профилях не разрешают выдавать как `READY` текст с неподтвержденными фактами/личным опытом либо hard blocker;
 - смысловая правка Humanizer возвращает текст профильному автору; Simba после такой правки повторяет Internal Critic, остальные авторы — только собственную проверку;
 - оставшийся Humanizer hard blocker даёт `BLOCKED_HUMANIZER`; ready-state, approval и визуальный маршрут запрещены.
+
+## LIVE EXECUTION EVIDENCE — различать прогон и описание прогона
+
+Для реального редакционного цикла `SOURCE_RESOLVED → AUTHOR → INTERNAL_CRITIC (Simba only) → HUMANIZER → LEO_APPROVAL` хранить отдельные подтверждаемые receipts: фактический источник/версия KB, вызванная роль и ее результат, точный SHA256 текста на входе/выходе, Critic PASS для **этой** редакции, Humanizer PASS для **этой** редакции и явное решение Leo. Запись роли в manifest или название файла prompt **не доказывает реального вызова роли**. Если в данной среде нет доступного исполнительного механизма, ответ `BLOCKED_EXECUTOR_NOT_RUN` вместо выдуманных `INTERNAL_CRITIC_PASS`/`HUMANIZER_PASS`. Отсутствие receipts в **старом** архиве обозначается `HISTORICAL_EXECUTION_UNVERIFIED` и не является свидетельством, что работа тогда не проводилась или что Leo не утверждал текст.
+
+`integrations/core/editorial_readonly_audit.py` делает только **действительный KB/readback preflight** существующего архивного поста, но не запускает писателей/критиков; его ожидаемое состояние `BLOCKED_LIVE_EXECUTOR_NOT_RUN`. `integrations/core/editorial_trace.py` проверяет только заявленные события (synthetic/declared), поэтому даже при всех событиях возвращает лишь `DECLARED_*` и никогда не является основанием для настоящего `APPROVED_TEXT`, `PUBLISHED` или автопубликации. Для реального production нужны независимо проверенные receipts/вызовы, которых эти инструменты сами не предоставляют.
 
 ## PREPUBLICATION FULFILLMENT GATE — обещанный результат для читателя
 

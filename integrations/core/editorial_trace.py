@@ -2,7 +2,9 @@
 
 This does NOT call agents, re-run their creative judgement, authenticate Leo's
 approval, confirm external facts, prove a file exists, or publish anything.
-Trace events are assertions until backed by independent source evidence.
+Trace events and approval_evidence are untrusted assertions. SUCCESS is NEVER
+an authenticated production status: all positive verdicts have DECLARED_* prefix.
+Do not wire this checker to a publisher or production approval gate.
 """
 from dataclasses import dataclass
 from hashlib import sha256
@@ -101,7 +103,7 @@ def validate_trace(trace: Mapping[str, Any]) -> Verdict:
     if approved < 0:
         if trace.get("publication_requested"):
             return Verdict("BLOCKED_PUBLICATION", ("LEO_TEXT_APPROVAL_MISSING",))
-        return Verdict("TEXT_READY_FOR_LEO")
+        return Verdict("DECLARED_TEXT_READY_FOR_LEO")
     if trace.get("approval_sha256") != expected or not trace.get("approval_evidence"):
         return Verdict("BLOCKED_EDITORIAL", ("APPROVAL_TEXT_HASH_OR_EVIDENCE_MISSING",))
 
@@ -109,7 +111,7 @@ def validate_trace(trace: Mapping[str, Any]) -> Verdict:
     if archived < 0 or trace.get("archive_sha256") != expected:
         return Verdict("BLOCKED_ARCHIVE", ("APPROVED_ARCHIVE_READBACK_MISSING",))
     if not trace.get("publication_requested", False):
-        return Verdict("APPROVED_TEXT")
+        return Verdict("DECLARED_APPROVED_TEXT_UNVERIFIED")
 
     blockers = []
     if trace.get("publication_authorization_sha256") != expected or not trace.get("publication_authorization_evidence"):
@@ -125,12 +127,12 @@ def validate_trace(trace: Mapping[str, Any]) -> Verdict:
         return Verdict("BLOCKED_PUBLICATION", ("PUBLICATION_AUTHORIZED_EVENT_MISSING",))
     confirmed = _index_after(events, "PUBLISHED_CONFIRMED", authorized)
     if confirmed < 0:
-        return Verdict("PUBLICATION_AUTHORIZED_NOT_CONFIRMED")
-    return Verdict("PUBLISHED")
+        return Verdict("DECLARED_PUBLICATION_AUTHORIZED_UNVERIFIED")
+    return Verdict("DECLARED_PUBLISHED_UNVERIFIED")
 
 
 def validate_variant_set(variants: list[Mapping[str, Any]], expected_count: int) -> Verdict:
-    """A passed candidate does not lend a pass to another candidate."""
+    """Declared gate consistency ONLY; no candidate gains real approval."""
     if expected_count < 1 or len(variants) != expected_count:
         return Verdict("BLOCKED_EDITORIAL", ("VARIANT_COUNT_MISMATCH",))
     if len({v.get("id") for v in variants}) != len(variants):
@@ -138,8 +140,8 @@ def validate_variant_set(variants: list[Mapping[str, Any]], expected_count: int)
     outcomes = [validate_trace(v) for v in variants]
     bad = [(v.get("id"), result.state, result.blockers)
            for v, result in zip(variants, outcomes)
-           if result.state not in {"TEXT_READY_FOR_LEO", "APPROVED_TEXT"}]
+           if result.state not in {"DECLARED_TEXT_READY_FOR_LEO", "DECLARED_APPROVED_TEXT_UNVERIFIED"}]
     if bad:
         return Verdict("BLOCKED_EDITORIAL",
                        tuple(f"{name}: {state}: {blockers}" for name, state, blockers in bad))
-    return Verdict("VARIANTS_READY_FOR_LEO")
+    return Verdict("DECLARED_VARIANTS_READY_FOR_LEO")

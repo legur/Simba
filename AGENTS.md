@@ -1,6 +1,6 @@
 # AGENTS.md — Simba runtime adapter
 
-Runtime adapter revision: 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
+Runtime adapter revision: 3.6 · 17.11.2026 (declared vs verified role execution); ранее 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
 
 ## Кадр — 08.11.2026
 
@@ -134,6 +134,12 @@ Info, Travel, Leo и News не имеют права выдавать «лучш
 При входе `SOURCE_ONLY_INPUT` для Simba сохраняется полный скрытый `INTERNAL_CRITIC_PASS` до Humanizer — сокращенная цепочка source-only не может его обойти. `TEXT_READY_FOR_LEO` не равно `APPROVED_TEXT`: нужна явная команда Leo либо scoped pre-approved trigger.
 
 Если обещано выдать PDF, документ, форму регистрации, купон или иной реальный артефакт, `APPROVED_TEXT` допускается без готового файла, но **публикация и package-ready запрещены** до `FULFILLMENT_VERIFIED` с реальным readback и способом выдачи. Пример audit-case: утвержденный 17.11.2026 пост `2026-11-17__SIMBA__VIETNAM-SEASONS-GUIDE__APPROVED.md` прямо предупреждает, что PDF-гид/доставка не проверены; нельзя заявлять `PUBLISHED` или ready-for-publication из одного одобрения текста.
+
+### Проверка настоящего исполнения редакционных ролей — 17.11.2026
+
+Для реального результата сохранять доказательство работы конкретного автора, отдельного Internal Critic (только Simba), Humanizer, точную редакцию и решение Leo. Простое чтение profile Markdown, работа обычного ChatGPT «в роли» и подстановка строк `*_PASS` в synthetic-манифест **не равны** независимому вызову/проверке профильного исполнителя. Если такой вызов недоступен в данной среде, честно использовать `BLOCKED_EXECUTOR_NOT_RUN`. Не ставить `APPROVED_TEXT` или `PUBLISHED` по `integrations/core/editorial_trace.py`: его результаты только `DECLARED_*`. Прежнее одобрение Лео из Content Library сохраняется как **заявленное историческое evidence**, а отсутствие live receipts отмечается `HISTORICAL_EXECUTION_UNVERIFIED`, не подменяется выдуманным логом.
+
+Read-only проверка настоящего архивного поста и канонических файлов: `python integrations/core/editorial_readonly_audit.py`. Она читает реальные файлы, вычисляет SHA256 и возвращает честный статус блока реального исполнения; не запускает агента. Успех CI означает, что проверка выявила ограничения, **не** что прошел настоящий цикл написания/критики.
 
 ## 6. Write-back
 

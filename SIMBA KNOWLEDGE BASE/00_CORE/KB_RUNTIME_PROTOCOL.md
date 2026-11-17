@@ -9,7 +9,7 @@ Runtime 8.0 — 08.11.2026. Для поиска рилсов по запросу
 Runtime 7.2. После общего gate читать профиль; для пополнения базы — индекс/схему, доступное видео. Для адаптации — BRAND_RULES, VISUAL_RULES, VIDEO_PIPELINE и целевой сценарий, если есть. Утверждённый пост для анализа не нужен. TIA/Humanizer/Internal Critic не применяются. Инструмент/видео недоступны → KADR_TOOL_BLOCKED, не KB failure. Перед новой сборкой/существенной переработкой монтажёр читает индекс и до трёх релевантных READY-карточек; фиксирует ID/применение либо NONE. Нет READY — монтаж продолжается. К мелким техническим правкам не добавлять этап.
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Редакция: runtime 9.4 · 17.11.2026 (source-only Critic and fulfillment); ранее 9.3 · 17.11.2026 (learning provenance, historical supersession & index coverage); ранее 9.2 · 17.11.2026 (news & author fail-closed); ранее 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
+Редакция: runtime 9.5 · 17.11.2026 (verified vs declared editorial role runs); ранее 9.4 · 17.11.2026 (source-only Critic and fulfillment); ранее 9.3 · 17.11.2026 (learning provenance, historical supersession & index coverage); ранее 9.2 · 17.11.2026 (news & author fail-closed); ранее 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
 Дата: 22.10.2026 · Сценарист: preflight и производственная выдача по сценам
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
@@ -294,6 +294,12 @@ EXCLUDED_AS_CURRENT_FACTS:
 ```
 
 Этот служебный блок не показывается Leo, если он отдельно его не запросил.
+
+## 6E. LIVE EDITORIAL EVIDENCE — блокировать имитацию
+
+`EXECUTOR_RULES_LOADED` подтверждает чтение модуля, но не его `EXECUTOR_EXECUTED`. Для каждого нового текста/варианта фиксировать действительный выход профильного автора и **реальную** проверку конкретной редакции с исходным SHA256. Для Simba нужен собственный Critic PASS после author draft, затем Humanizer PASS, после чего Leo может принимать решение. Только название роли, синтетический JSON, успех GitHub Actions или сообщение «проверено» без самостоятельного evidentiary output **не являются receipts**. Если исполнитель реально не запускался/его вызов недоступен: `BLOCKED_EXECUTOR_NOT_RUN`, а не реконструированный PASS. Старый архив без таких receipts: `HISTORICAL_EXECUTION_UNVERIFIED` без выдуманного отрицания фактического решения Leo.
+
+`integrations/core/editorial_readonly_audit.py` — реальная, но ограниченная read-only проверка наличия исходного архива и обязательных KB. `integrations/core/editorial_trace.py` — offline declared-state валидатор, его положительный `DECLARED_*` **не** равен реальному `READY`, `APPROVED_TEXT`, `PUBLISHED`; подключать его напрямую к публикации запрещено.
 
 ## 7. Learning write-back
 
