@@ -54,11 +54,11 @@ class CoreCriticContractTests(unittest.TestCase):
         # Never hardcode a stale version number: this must keep working when
         # a neighboring CORE module is correctly revised by a later audit.
         modules = [
-            ("Router", "ROUTER", r"^Версия:\\s*(\\d+\\.\\d+)"),
-            ("Simba", "SIMBA", r"^Версия\\s*(\\d+\\.\\d+)"),
-            ("AI-Маркетолог", "MARKETER", r"^Версия\\s*(\\d+\\.\\d+)"),
-            ("Content Pipeline", "PIPELINE", r"^Версия:\\s*(\\d+\\.\\d+)"),
-            ("Critic", "CRITIC", r"^\\*\\*Версия:\\*\\*\\s*(\\d+\\.\\d+)"),
+            ("Router", "ROUTER", r"^Версия:\s*(\d+\.\d+)"),
+            ("Simba", "SIMBA", r"^Версия\s*(\d+\.\d+)"),
+            ("AI-Маркетолог", "MARKETER", r"^Версия\s*(\d+\.\d+)"),
+            ("Content Pipeline", "PIPELINE", r"^Версия:\s*(\d+\.\d+)"),
+            ("Critic", "CRITIC", r"^\*\*Версия:\*\*\s*(\d+\.\d+)"),
         ]
         for component, module, pattern in modules:
             with self.subTest(component=component):
