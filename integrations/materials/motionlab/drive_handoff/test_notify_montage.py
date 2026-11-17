@@ -44,6 +44,24 @@ class Tests(unittest.TestCase):
         with patch.object(m,"read_private",return_value=data):
             with self.assertRaisesRegex(m.InboxError,"PAID_OR_SOURCE_GUARD_VIOLATION"):
                 m.validate(object(),"fake")
+    def test_public_montage_issue_does_not_leak_drive_file_id_or_url(self):
+        data=record()
+        private_id='private-drive-file-123456'
+        with patch.object(m,'notified_before',return_value=None), patch.object(m,'github',return_value={'number':88}) as gh:
+            self.assertEqual(m.notify(data,private_id),88)
+            method, endpoint, payload = gh.call_args.args
+            self.assertEqual((method,endpoint),('POST','/issues'))
+            self.assertNotIn(private_id,payload['body'])
+            self.assertNotIn('drive.google.com',payload['body'])
+            self.assertNotIn('docs.google.com',payload['body'])
+            self.assertIn(data['receipt_id'],payload['body'])
+
+    def test_public_issue_privacy_gate_is_fail_closed(self):
+        with self.assertRaisesRegex(m.InboxError,'UNSAFE_PUBLIC_ISSUE_BODY'):
+            m.assert_public_issue_safe('https://drive.google.com/file/d/private/view','private')
+        with self.assertRaisesRegex(m.InboxError,'UNSAFE_PUBLIC_ISSUE_BODY'):
+            m.assert_public_issue_safe('private-file-id','private-file-id')
+
     def test_one_issue_when_retry_occurs(self):
         data=record()
         with patch.object(m,"notified_before",return_value=57):
