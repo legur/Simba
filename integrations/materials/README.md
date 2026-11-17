@@ -173,6 +173,12 @@ https://drive.google.com/drive/folders/1GMoSVogs0SKuTAXCdMVcG-U7bTn-IuCt.
 
 Для рабочего видеопроекта сообщение Leo «ролик опубликован» означает **завершение производственной задачи**, если конкретный MP4 уже редакционно утвержден. Фиксировать `approvals.publication=approved`, `publication_evidence` с точной цитатой и `publication_record.status=reported_by_leo_not_verified` (не притворяться, что страницу поста проверили). `stage=PUBLICATION_REPORTED_BY_LEO__CLOSED`, `missing=[]`. `catalog.py status` возвращает `PUBLICATION_REPORTED_COMPLETE`, а `handoff.py` — пакет со стадией `closed`; повторная публикация не выполняется. Указание URL поста **не является обязательным** для закрытия производства. Проверка актуальности фактов оффера не относится к задачам Киностудии и не добавляется в `missing` / `next_action`.
 
+## Owner-only media locator escrow (17.11.2026)
+
+Публичные `campaigns/bavaria-new-year-2027/project.json`, `campaigns/prague-new-year-2027/project.json` и `campaigns/vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json` очищены от прямых Google Drive URLs и приватных file IDs. **До очистки** точные оригинальные JSON и индекс соответствия ссылок сохранены с проверенным read-back в закрытом `Simba Media Archive` / `Simba_Private_Media_Locator_Escrow_2026-11-17` (доступ только владельцу). Не использовать публичный GitHub для хранения его ID/URL.
+
+Asset `storage: "owner_private_drive"`, `private_locator_status: "OWNER_ONLY_LOOKUP_REQUIRED"`, `private_locator_key: "PRIVATE_MEDIA_ESCROW_20261117"` — **только указатель** на необходимость закрытого lookup. `catalog.py` допускает эту форму, печатает явное предупреждение о незавершенной проверке и не утверждает, что медиафайл доступен. Для нового исполнения требуется авторизованный доступ к приватному escrow, независимый read-back байтов и проверка SHA перед `MEDIA_READY`. Не выдавать редакционное утверждение за повторную проверку ассетов и не выполнять A2E/TTS повторно. Git history остается публичной: очистка HEAD не удаляет старые коммиты, историю Issues и кеши. Проверить и при необходимости ужесточить ACL Google Drive отдельно.
+
 ## Как продолжать проект
 
 1. Обновить checkout из `main`, либо прочитать актуальные файлы через GitHub-инструменты.
