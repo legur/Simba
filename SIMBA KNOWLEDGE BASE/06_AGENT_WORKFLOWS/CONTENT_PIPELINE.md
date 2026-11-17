@@ -1,6 +1,6 @@
 # CONTENT PIPELINE
 
-Версия: 11.2 · 17.11.2026 (verified news single-event/digest & author gates); ранее 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
+Версия: 11.3 · 17.11.2026 (explicit source-only author gate & fulfillment); ранее 11.2 · 17.11.2026 (verified news single-event/digest & author gates); ранее 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
 
 ## COPYWRITER_TEST_MODE — 31.10.2026
 
@@ -45,10 +45,16 @@ SOURCE_ONLY_INPUT
   → MODULE_KB_PREFLIGHT
   → EXECUTOR_SELECTED
   → EXECUTOR_RULES_LOADED
+  → INTRIGAN_CHECK (для создаваемых/существенно редактируемых постов, возможен FACT_FIRST skip)
+  → TIA_CHECK_AND_REPORT (для пяти Facebook-авторов)
   → PROFILE_MODULE_EXECUTED
   → EXECUTOR_RESULT_VALIDATED
-  → [ДЛЯ ПОСТОВ SIMBA/INFO/TRAVEL/LEO/NEWS: AUTHOR_FINALIZE → HUMANIZER_EXECUTED → HUMANIZER_PASS]
-  → RESULT_TO_LEO
+  → [SIMBA ONLY: SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE
+       → (INTERNAL_CRITIC_REVISE → SIMBA_REPAIR → INTERNAL_CRITIC_MODE)*
+       → {INTERNAL_CRITIC_PASS → SIMBA_FINALIZE | BLOCKED_CRITIC_NO_PROGRESS → STOP}]
+  → [INFO/TRAVEL/LEO/NEWS ONLY: AUTHOR_QA_PASS → AUTHOR_FINALIZE]
+  → [ALL FIVE POST AUTHORS: HUMANIZER_EXECUTED → HUMANIZER_PASS → TEXT_READY_FOR_LEO]
+  → RESULT_TO_LEO (ready for review, not APPROVED_TEXT or PUBLISHED)
 ```
 
 Router не спрашивает назначение материала, если его можно определить из содержания.
@@ -67,7 +73,7 @@ Router не спрашивает назначение материала, есл
 
 Если Leo одновременно дал явную команду, она имеет приоритет над source-only default. Системные файлы и материалы, присланные для явного анализа/редактирования/сохранения, не превращаются автоматически в пост.
 
-Внешний Critic/внешняя критика автоматически в этот маршрут не входят. `INTERNAL_CRITIC_MODE` является обязательным скрытым gate для результата Simba.
+Внешний Critic/внешняя критика автоматически в этот маршрут не входят. `INTERNAL_CRITIC_MODE` является обязательным скрытым gate для результата Simba **при любом входе**, в том числе `SOURCE_ONLY_INPUT`. `AUTHOR_FINALIZE → HUMANIZER_PASS` никогда не заменяет его. Для каждого готового варианта нужен собственный QA/PASS: PASS одной версии не удостоверяет другие. Это распространяется и на тестовый четвертый вариант COPYWRITER_UNIVERSAL.
 
 ## Основной маршрут рекламного материала
 
@@ -199,6 +205,14 @@ Leo по-прежнему может отдельно запускать Critic 
 - Info, Travel, Leo и News проходят собственную финальную проверку и Humanizer без автоматического Internal Critic. Ограниченные две локальные стилистические итерации в их профилях не разрешают выдавать как `READY` текст с неподтвержденными фактами/личным опытом либо hard blocker;
 - смысловая правка Humanizer возвращает текст профильному автору; Simba после такой правки повторяет Internal Critic, остальные авторы — только собственную проверку;
 - оставшийся Humanizer hard blocker даёт `BLOCKED_HUMANIZER`; ready-state, approval и визуальный маршрут запрещены.
+
+## PREPUBLICATION FULFILLMENT GATE — обещанный результат для читателя
+
+Если утвержденный Facebook-текст обещает читателю фактическую выдачу конкретного PDF, файла, формы регистрации, чеклиста, купона или другого артефакта, перед публикацией проверить существование/доступность именно этого материала и возможность передать его (реальный файл/URL/допустимый процесс + readback). LEO_APPROVAL означает одобрение текста и НЕ доказывает существования вложения.
+
+`APPROVED_TEXT` может сохраняться при непроверенном fulfillment, однако `PUBLICATION_PACKAGE_READY`, `PUBLISH_AUTHORIZED` и `PUBLISHED` запрещены до `FULFILLMENT_VERIFIED`. Неизвестная доставка → `BLOCKED_FULFILLMENT_NOT_VERIFIED` (только для публикации), без выдуманного файла и без изменения уже одобренного текста.
+
+Реальный audit-case: `03_CONTENT_LIBRARY/2026-11-17__SIMBA__VIETNAM-SEASONS-GUIDE__APPROVED.md` обещает PDF-гид, но в записи явно указано, что наличие и выдача PDF НЕ проверены. Это не отменяет утверждение текста Лео и не разрешает его публиковать. Динамические данные также требуют актуального source/freshness preflight.
 
 ## Изменение утверждённого текста
 

@@ -1,6 +1,6 @@
 # AGENTS.md — Simba runtime adapter
 
-Runtime adapter revision: 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
+Runtime adapter revision: 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
 
 ## Кадр — 08.11.2026
 
@@ -88,7 +88,7 @@ Rafael является `VISUAL_EXECUTOR`; конкретный image generator 
 
 Info, Travel, Leo и News не имеют права выдавать «лучшую» неготовую версию по истечении двух локальных стилевых итераций, если факты или личный опыт автора не подтверждены. News отвечает на одиночное подтвержденное событие как `NEWS_SINGLE_EVENT`, на действительно запрошенную подборку как `NEWS_DIGEST`; источники и даты сначала извлекаются из доступных материалов, а не повторно запрашиваются у Leo. При фактическом пробеле — соответствующий `BLOCKED_*`, не вымышленная публикация.
 
-Готовые посты Simba, Info, Travel, Leo и News до финальной выдачи/утверждения проходят `HUMANIZER_EXECUTED → HUMANIZER_PASS` по `Симба (Писатель)/Humanizer-v1.4.md`. Для Simba этот этап следует после финализации автором и Internal Critic; другим авторам Internal Critic не добавляется. Смысловые правки возвращаются автору и повторяют применимые проверки. Изменение уже утверждённого текста снимает прежнее утверждение/policy и готовность зависимого пакета до нового approval и visual QA по `CONTENT_PIPELINE.md` / `RAFAEL_TRIGGER.md`.
+Готовые посты Simba, Info, Travel, Leo и News — **каждый отдельный видимый вариант** — до финальной выдачи/утверждения проходят свой `HUMANIZER_EXECUTED → HUMANIZER_PASS` по `Симба (Писатель)/Humanizer-v1.4.md`. Для Simba этот этап следует после финализации автором и Internal Critic; другим авторам Internal Critic не добавляется. Смысловые правки возвращаются автору и повторяют применимые проверки. Изменение уже утверждённого текста снимает прежнее утверждение/policy и готовность зависимого пакета до нового approval и visual QA по `CONTENT_PIPELINE.md` / `RAFAEL_TRIGGER.md`.
 
 Промежуточные внутренние оценки Critic не показывать Leo без отдельного запроса.
 
@@ -128,6 +128,12 @@ Info, Travel, Leo и News не имеют права выдавать «лучш
 - `07_LEARNINGS` — решения, исправления, наблюдаемые паттерны.
 
 Никогда не использовать архивные цены, наличие, даты, расписания, тарифы, налоги, условия отмены, визовые/entry rules как текущие факты без нового подтверждения.
+
+### Approval and fulfillment: не выдавать преждевременную публикацию
+
+При входе `SOURCE_ONLY_INPUT` для Simba сохраняется полный скрытый `INTERNAL_CRITIC_PASS` до Humanizer — сокращенная цепочка source-only не может его обойти. `TEXT_READY_FOR_LEO` не равно `APPROVED_TEXT`: нужна явная команда Leo либо scoped pre-approved trigger.
+
+Если обещано выдать PDF, документ, форму регистрации, купон или иной реальный артефакт, `APPROVED_TEXT` допускается без готового файла, но **публикация и package-ready запрещены** до `FULFILLMENT_VERIFIED` с реальным readback и способом выдачи. Пример audit-case: утвержденный 17.11.2026 пост `2026-11-17__SIMBA__VIETNAM-SEASONS-GUIDE__APPROVED.md` прямо предупреждает, что PDF-гид/доставка не проверены; нельзя заявлять `PUBLISHED` или ready-for-publication из одного одобрения текста.
 
 ## 6. Write-back
 
