@@ -9,6 +9,8 @@ text, a line the speech check cannot hear back, text on screen too short to read
 """
 import argparse, asyncio, difflib, glob, hashlib, json, os, re, shutil, subprocess, sys, unicodedata
 from pathlib import Path
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 
 import motionlab_layout_contract as layout_contract
 import motionlab_scene_contract as scene_contract
@@ -245,16 +247,75 @@ def parse_approved_source(md):
     return (body if body.strip() else None), True
 
 
-def parse_approved_script(md):
-    """Fail closed: standalone scripts require explicit owner approval and source provenance."""
-    body = re.search(r'^## APPROVED_SCRIPT\s*$(.*?)(?=^## |\Z)', md, re.M | re.S)
-    if not body or not body.group(1).strip():
-        return None, False
-    status = re.search(r'^STATUS:\s*APPROVED_SCRIPT\s*$', md, re.M) is not None
-    evidence = re.search(r'^APPROVAL_EVIDENCE:\s*\S.+$', md, re.M) is not None
-    provenance = re.search(r'^SOURCE_REFERENCE:\s*\S.+$', md, re.M) is not None
-    return body.group(1), bool(status and evidence and provenance)
+SCRIPT_APPROVAL_REPO = 'legur/Simba'
+SCRIPT_APPROVAL_OWNER = 'legur'
+SCRIPT_COMMENT_MARKER = 'SIMBA_SCRIPT_APPROVAL_V1'
+SHA256_VALUE = re.compile(r'^[a-f0-9]{64}$')
 
+
+def _script_field(md, name):
+    """One single-line field only; duplicate or multiline metadata is not trusted."""
+    rows = re.findall(r'^' + re.escape(name) + r':[ \t]*(.*)$', md, re.M)
+    return rows[0].strip() if len(rows) == 1 and rows[0].strip() else None
+
+
+def fetch_script_approval_comment(comment_id):
+    """Read current public GitHub owner evidence. No mutation, token never printed."""
+    req = Request(
+        f'https://api.github.com/repos/{SCRIPT_APPROVAL_REPO}/issues/comments/{comment_id}',
+        headers={
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28',
+            **({'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN']}
+               if os.environ.get('GITHUB_TOKEN') else {}),
+        })
+    try:
+        with urlopen(req, timeout=12) as resp:
+            return json.loads(resp.read(16384).decode('utf-8'))
+    except (HTTPError, URLError, TimeoutError, OSError, ValueError) as exc:
+        raise Stop('APPROVAL_EVIDENCE_UNAVAILABLE_OR_INVALID; owner verification not completed') from None
+
+
+def parse_approved_script(md, *, fetch_comment=None, verify=True):
+    """Only owner-verified comment evidence binds the exact script and provenance SHA."""
+    body_match = re.search(r'^## APPROVED_SCRIPT\s*$(.*?)(?=^## |\Z)', md, re.M | re.S)
+    if not body_match or not body_match.group(1).strip():
+        return None, False
+    body = body_match.group(1)
+    status = _script_field(md, 'STATUS')
+    evidence = _script_field(md, 'APPROVAL_EVIDENCE')
+    provenance = _script_field(md, 'SOURCE_REFERENCE')
+    if status != 'APPROVED_SCRIPT' or not evidence or not provenance:
+        return body, False
+    # Never embed direct private file URLs or arbitrary multiline approval claims.
+    if (len(provenance) > 160 or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:/-]{0,159}', provenance)
+            or provenance.startswith(('http:', 'https:'))):
+        return body, False
+    match = re.fullmatch(r'github-issue-comment:([1-9][0-9]{0,18})', evidence)
+    if not match or not verify:
+        return body, False
+
+    fetch = fetch_comment if fetch_comment is not None else fetch_script_approval_comment
+    try:
+        record = fetch(int(match.group(1)))
+    except Exception:
+        if fetch_comment is not None:
+            return body, False
+        raise Stop('APPROVAL_EVIDENCE_UNAVAILABLE_OR_INVALID; owner verification not completed') from None
+    if not isinstance(record, dict) or (record.get('user') or {}).get('login') != SCRIPT_APPROVAL_OWNER:
+        return body, False
+    if not str(record.get('html_url') or '').startswith('https://github.com/legur/Simba/issues/'):
+        return body, False
+    expected_script = hashlib.sha256(body.encode('utf-8')).hexdigest()
+    expected_source = hashlib.sha256(provenance.encode('utf-8')).hexdigest()
+    comment = str(record.get('body') or '')
+    verified = bool(
+        re.search(r'^' + re.escape(SCRIPT_COMMENT_MARKER) + r'$', comment, re.M)
+        and re.search(r'^SCRIPT_SHA256:\s*' + expected_script + r'\s*$', comment, re.M)
+        and re.search(r'^SOURCE_REFERENCE_SHA256:\s*' + expected_source + r'\s*$', comment, re.M)
+        and not record.get('deleted_at')
+    )
+    return body, verified
 
 def approved_text(spec, draft=False):
     """Approved post or approved standalone script; --draft remains nonpublishable."""
@@ -266,10 +327,10 @@ def approved_text(spec, draft=False):
     p = REPO / relative
     if not p.is_file(): raise Stop(f'{key} not found: {name}')
     md = p.read_text(encoding='utf-8')
-    source, approved = (parse_approved_script(md) if key == 'sourceScript'
+    source, approved = (parse_approved_script(md, verify=not draft) if key == 'sourceScript'
                         else parse_approved_source(md))
     if not approved and not draft:
-        required = ('STATUS: APPROVED_SCRIPT + APPROVAL_EVIDENCE + SOURCE_REFERENCE + ## APPROVED_SCRIPT'
+        required = ('owner-verified APPROVED_SCRIPT for the exact script and provenance (github-issue-comment ID + matching SHA-256)'
                     if key == 'sourceScript' else 'STATUS: APPROVED')
         raise Stop(f'{name} is not {required}; --draft makes only a nonpublishable preview')
     if source is None: raise Stop(f'{name} has no script/text body')
