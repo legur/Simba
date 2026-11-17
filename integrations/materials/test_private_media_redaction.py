@@ -71,6 +71,7 @@ class PublicMediaPrivacyTests(unittest.TestCase):
         self.assertIn("Монтажер", data["next_action"])
         self.assertFalse(project_issues(ROOT, p, data))
         self.assertEqual(project_progress(ROOT, p, data)["state"], "IN_PROGRESS")
+        self.assertEqual(project_progress(ROOT, p, data)["next_action"], data["next_action"])
 
     def test_restoration_source_must_not_be_fake(self):
         data = json.loads((ROOT / PROJECTS[1]).read_text(encoding="utf-8"))
