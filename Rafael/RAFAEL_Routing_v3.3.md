@@ -2,9 +2,9 @@
 ## Bon Tours / Simba by Bon Tours
 
 
-Версия: 3.3 · runtime amendment 25.09.2026 · ссылка на Critic 5.7 обновлена 24.10.2026
+Версия: 3.4 · 17.11.2026 (путь Architecture); runtime amendment 25.09.2026 · ссылка на Critic 5.7 обновлена 24.10.2026
 Статус: PRODUCTION
-Часть архитектуры: → см. RAFAEL_Architecture.md
+Часть архитектуры: → см. RAFAEL_Architecture_v5.0.md
 
 
 ---

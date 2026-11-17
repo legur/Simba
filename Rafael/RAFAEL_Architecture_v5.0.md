@@ -1,7 +1,7 @@
-# RAFAEL_Architecture.md
+# RAFAEL_Architecture_v5.0.md
 ## Bon Tours / Simba by Bon Tours
 
-Версия: 5.0
+Версия: 5.1 · 17.11.2026 (актуальные пути)
 Статус: PRODUCTION
 Дата: 03.09.2026
 
@@ -10,7 +10,7 @@
 # ЧТО ТАКОЕ RAFAEL
 
 Rafael — AI дизайнер рекламных travel-постеров для Bon Tours / Simba by Bon Tours.
-Работает в ChatGPT с доступом к DALL-E.
+Работает в ChatGPT с доступным генератором изображений.
 Ищет визуальную основу в Archivarius и YouMind → создаёт 5 текстовых концепций → пишет 5 полных prose-промтов → генерирует все 5 постеров → Лео выбирает по готовым визуалам.
 
 ---
@@ -21,9 +21,9 @@ Rafael состоит из трёх собственных файлов, одн�
 
 | Компонент | Содержание | Роль |
 |---|---|---|
-| RAFAEL_System_v6.0.md | Идентичность, правила, процесс, Simba, типографика, контроль качества и двойной reference-search Archivarius + YouMind | Главный операционный файл |
-| RAFAEL_Styles.md | Визуальные стили, Camera, Lighting, Color, Destination Mood, Composition Modules | Параметры визуального языка |
-| RAFAEL_Routing.md | Рекомендации стиля и Simba Mode по типу тура или поста | Маршрутизация подхода |
+| RAFAEL_System_v6.2.md | Идентичность, правила, процесс, Simba, типографика, контроль качества и двойной reference-search Archivarius + YouMind | Главный операционный файл |
+| RAFAEL_Styles_v3.3.md | Визуальные стили, Camera, Lighting, Color, Destination Mood, Composition Modules | Параметры визуального языка |
+| RAFAEL_Routing_v3.3.md | Рекомендации стиля и Simba Mode по типу тура или поста | Маршрутизация подхода |
 | Archivarius / 01_Изображения | Trusted-first + широкий поиск релевантных `active` visual cards вне blocklist | Внешний reference-source; усиливает, но не блокирует Rafael |
 | YouMind AI Image Prompts / `YouMind-OpenLab/ai-image-prompts-skill` | Динамический `manifest.json`, category JSON, prompt и sample images | Внешний reference-source; усиливает, но не блокирует Rafael |
 | RAFAEL-Rubrika-Template-Lock.md | Зафиксированные рамки регулярных рубрик | Внешняя память утверждённого шаблона |
@@ -40,11 +40,11 @@ Archivarius и YouMind не заменяют Styles и не отменяют п�
 
 ## Приоритет компонентов
 
-1. RAFAEL_System_v6.0.md
+1. RAFAEL_System_v6.2.md
 2. RAFAEL-Rubrika-Template-Lock.md, если применим
 3. факты и ограничения оффера
 4. выбранная концепция
-5. RAFAEL_Routing.md и RAFAEL_Styles.md
+5. RAFAEL_Routing_v3.3.md и RAFAEL_Styles_v3.3.md
 6. карточки Archivarius
 7. YouMind AI Image Prompts
 
@@ -69,6 +69,7 @@ Degraded mode: недоступна одна reference-библиотека → 
 
 | Версия | Дата | Изменения |
 |--------|------|-----------|
+| v5.1 | 17.11.2026 | Исправлены активные ссылки System/Styles/Routing и описание renderer в ChatGPT. История changelog сохранена. |
 | v5.0 runtime patch | 05.09.2026 | Archivarius переведен на trusted-first + blocklist с широким доступом к релевантным active visual cards. Archivarius и YouMind стали неблокирующими reference-sources. Добавлен обязательный REFERENCE_TRACE: названия реально использованных источников показываются Leo после генерации и сохраняются по вариантам в visual-session / публикационном пакете. |
 | v5.0 | 03.09.2026 | YouMind AI Image Prompts добавлен как третья обязательная внешняя зависимость Rafael и второй prompt-source рядом с Archivarius. Поток обновлён: Routing/Styles → Archivarius → YouMind manifest/category search → 5 концепций → 5 prose-промтов → генерация всех 5 → выбор по готовым визуалам. Зафиксированы динамический manifest, sample-image reference, максимум 3 YouMind-шаблона и stop-condition при недоступности любой обязательной библиотеки. |
 | v4.0 | 18.07.2026 | Archivarius / 01_Изображения добавлен как обязательная внешняя зависимость Rafael. Архитектурный поток изменён: Routing/Styles → поиск карточек → 5 текстовых концепций → выбор → prose-промт → генерация. Зафиксированы приоритет компонентов и stop-condition при недоступности библиотеки. |

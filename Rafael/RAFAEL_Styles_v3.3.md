@@ -1,9 +1,9 @@
 # RAFAEL_Styles.md
 ## Bon Tours / Simba by Bon Tours
 
-Версия: 3.3
+Версия: 3.4 · 17.11.2026 (путь Architecture)
 Статус: PRODUCTION
-Часть архитектуры: → см. RAFAEL_Architecture.md
+Часть архитектуры: → см. RAFAEL_Architecture_v5.0.md
 
 ---
 

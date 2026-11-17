@@ -86,7 +86,13 @@ def load_spec(job: Path):
     s = json.loads(p.read_text(encoding='utf-8'))
     need = lambda c, m: None if c else (_ for _ in ()).throw(Stop('video-spec.json: ' + m))
     need(isinstance(s.get('packageId'), str) and re.fullmatch(r'[\w.-]+', s['packageId']), 'packageId: letters, digits, . _ - only')
-    need(isinstance(s.get('sourcePost'), str), 'sourcePost: path of the APPROVED post, relative to the repository root')
+    sources = [key for key in ('sourcePost', 'sourceScript') if key in s]
+    need(len(sources) == 1, 'exactly one of sourcePost or sourceScript required')
+    source_path = s[sources[0]]
+    need(isinstance(source_path, str) and source_path.strip(), 'source path must be a nonempty string')
+    relative = Path(source_path)
+    need(not relative.is_absolute() and '..' not in relative.parts,
+         'approved source path must stay inside the repository')
     need(isinstance(s.get('renderer', 'simba'), str) and s.get('renderer', 'simba') in RENDERERS,
          f'renderer must be one of {sorted(RENDERERS)}')
     s.setdefault('renderer', 'simba')
@@ -239,16 +245,35 @@ def parse_approved_source(md):
     return (body if body.strip() else None), True
 
 
-def approved_text(spec, draft=False):
-    """The approved post text. With --draft a not-yet-approved text is accepted (a preview for Leo, never for publication)."""
-    p = REPO / spec['sourcePost']
-    if not p.is_file(): raise Stop(f'sourcePost not found: {spec["sourcePost"]}')
-    md = p.read_text(encoding='utf-8')
-    source, approved = parse_approved_source(md)
-    if not approved and not draft: raise Stop(f'{spec["sourcePost"]} is not STATUS: APPROVED; a video is made only from an approved post (--draft makes a preview that is not for publication)')
-    if source is None: raise Stop(f'{spec["sourcePost"]} has no approved text body')
-    return source, approved
+def parse_approved_script(md):
+    """Fail closed: standalone scripts require explicit owner approval and source provenance."""
+    body = re.search(r'^## APPROVED_SCRIPT\s*$(.*?)(?=^## |\Z)', md, re.M | re.S)
+    if not body or not body.group(1).strip():
+        return None, False
+    status = re.search(r'^STATUS:\s*APPROVED_SCRIPT\s*$', md, re.M) is not None
+    evidence = re.search(r'^APPROVAL_EVIDENCE:\s*\S.+$', md, re.M) is not None
+    provenance = re.search(r'^SOURCE_REFERENCE:\s*\S.+$', md, re.M) is not None
+    return body.group(1), bool(status and evidence and provenance)
 
+
+def approved_text(spec, draft=False):
+    """Approved post or approved standalone script; --draft remains nonpublishable."""
+    key = 'sourceScript' if 'sourceScript' in spec else 'sourcePost'
+    name = spec[key]
+    relative = Path(name)
+    if relative.is_absolute() or '..' in relative.parts:
+        raise Stop('approved source must stay inside the repository')
+    p = REPO / relative
+    if not p.is_file(): raise Stop(f'{key} not found: {name}')
+    md = p.read_text(encoding='utf-8')
+    source, approved = (parse_approved_script(md) if key == 'sourceScript'
+                        else parse_approved_source(md))
+    if not approved and not draft:
+        required = ('STATUS: APPROVED_SCRIPT + APPROVAL_EVIDENCE + SOURCE_REFERENCE + ## APPROVED_SCRIPT'
+                    if key == 'sourceScript' else 'STATUS: APPROVED')
+        raise Stop(f'{name} is not {required}; --draft makes only a nonpublishable preview')
+    if source is None: raise Stop(f'{name} has no script/text body')
+    return source, approved
 
 NUM = re.compile(r'[$€₪]?\s?\d[\d\s.,:/\-–]*\d|[$€₪]?\d')
 def squash(s): return re.sub(r'[\s\u00a0]', '', s).replace('–', '-')
@@ -583,7 +608,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('job'); ap.add_argument('--fps', type=int, default=24); ap.add_argument('--no-final-asr', action='store_true')
     ap.add_argument('--workers', type=int, default=2, help='parallel browsers for the render (2 suits integrated graphics)')
-    ap.add_argument('--draft', action='store_true', help='accept a source post that is not approved yet; the video is marked as a draft, not for publication')
+    ap.add_argument('--draft', action='store_true', help='accept an unapproved post/script solely as a nonpublishable preview')
     ap.add_argument('--plan-only', action='store_true', help='stop after the timeline and the reading check (no render): for previewing stills')
     a = ap.parse_args(); job = Path(a.job).resolve(); qa = []
     try:
@@ -591,7 +616,9 @@ def main():
         if not (HERE / 'node_modules' / 'playwright-core').is_dir(): raise Stop(f'run "npm install" in {HERE} first (see README.md)')
         spec = load_spec(job); log('spec', spec['packageId'], f'{len(spec["scenes"])} scenes')
         source, approved = approved_text(spec, a.draft)
-        qa.append(f'- Source: `{spec["sourcePost"]}` — ' + ('STATUS: APPROVED' if approved else 'NOT APPROVED (draft preview, not for publication)'))
+        key = 'sourceScript' if 'sourceScript' in spec else 'sourcePost'
+        approved_state = 'APPROVED_SCRIPT' if key == 'sourceScript' else 'APPROVED'
+        qa.append(f'- Source: `{spec[key]}` — ' + (f'STATUS: {approved_state}' if approved else 'NOT APPROVED (draft preview, not for publication)'))
         qa.append(f'- Fact gate (numbers on screen ⊂ approved text): {fact_gate(spec, source)}')
         prepare_clips(spec, job, a.fps)
         qa.append('- Narration: ' + ('Simba / Google Gemini Voice Design / WarmBaritone (approved)' if voice_provider(spec) == 'simba' else 'explicit Edge TTS legacy voice'))
