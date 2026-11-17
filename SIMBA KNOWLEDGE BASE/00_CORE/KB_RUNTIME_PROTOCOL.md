@@ -9,7 +9,7 @@ Runtime 8.0 — 08.11.2026. Для поиска рилсов по запросу
 Runtime 7.2. После общего gate читать профиль; для пополнения базы — индекс/схему, доступное видео. Для адаптации — BRAND_RULES, VISUAL_RULES, VIDEO_PIPELINE и целевой сценарий, если есть. Утверждённый пост для анализа не нужен. TIA/Humanizer/Internal Critic не применяются. Инструмент/видео недоступны → KADR_TOOL_BLOCKED, не KB failure. Перед новой сборкой/существенной переработкой монтажёр читает индекс и до трёх релевантных READY-карточек; фиксирует ID/применение либо NONE. Нет READY — монтаж продолжается. К мелким техническим правкам не добавлять этап.
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Редакция: runtime 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
+Редакция: runtime 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
 Дата: 22.10.2026 · Сценарист: preflight и производственная выдача по сценам
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
@@ -215,7 +215,7 @@ Humanizer является обязательной runtime-зависимост
 
 ### Монтажер Клод (сборка ролика к посту)
 Обязательно:
-- утвержденный `APPROVED_TEXT` или самостоятельный `APPROVED_SCRIPT` с `APPROVAL_EVIDENCE` и `SOURCE_REFERENCE` (либо явная команда Leo на черновик);
+- утвержденный `APPROVED_TEXT` либо самостоятельный `APPROVED_SCRIPT` с owner-verified `APPROVAL_EVIDENCE: github-issue-comment:<ID>` и SHA-привязанным безопасным `SOURCE_REFERENCE` (либо явная команда Leo на непубликуемый черновик);
 - утверждённый сценарий и таблица сцен Сценариста (§44), промпты анимации — если ролик из клипов;
 - `01_BRAND/BRAND_RULES.md`, `01_BRAND/VISUAL_RULES.md`;
 - `05_OPERATIONAL_RULES/FACTS_FRESHNESS_PRICING.md`;
