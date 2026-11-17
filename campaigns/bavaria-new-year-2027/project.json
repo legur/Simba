@@ -25,94 +25,118 @@
   "approvals": {
     "editorial": "approved",
     "publication": "pending",
-    "editorial_evidence": "10.11.2026: на прямой вопрос после выбора полного MP4 №2 «утверждаем вариант №2 без изменений или нужны правки?» Лео ответил «утверждаем». Выбранный Bavaria_NewYear_Postcards.mp4 (Drive ID 1eWThGBpNyhXPWoDs-5OyqrOYJYQf2HZr) размер 14785652 байт, SHA-256 b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3; SHA подтвержден повторно с реального MP4. Это только редакционное утверждение, не разрешение публикации."
+    "editorial_evidence": "10.11.2026: на прямой вопрос после выбора полного MP4 №2 «утверждаем вариант №2 без изменений или нужны правки?» Лео ответил «утверждаем». Выбранный Bavaria_NewYear_Postcards.mp4 (Drive ID [OWNER_PRIVATE_DRIVE_ID_REDACTED]) размер 14785652 байт, SHA-256 b457a013ca4b3fc0bedec8864c17680b622843a8c292c9d4b42c1b9708feb4c3; SHA подтвержден повторно с реального MP4. Это только редакционное утверждение, не разрешение публикации."
   },
   "assets": [
     {
       "id": "clip-1",
       "kind": "animated_clip",
       "title": "A2E 6af09197cabbb89a76fe0d5d",
-      "url": "https://drive.google.com/file/d/11Kbhkq1rKCT3dvI5Khn6bls3VjnFnIMl/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "task_id": "6af09197cabbb89a76fe0d5d",
-      "recorded_size_bytes": 10357655
+      "recorded_size_bytes": 10357655,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "clip-2",
       "kind": "animated_clip",
       "title": "A2E 6af0918bdac593f36d9222d5",
-      "url": "https://drive.google.com/file/d/10ovUXkr1uJqPzBUZJ1EvsMfvpTg8RX_M/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "task_id": "6af0918bdac593f36d9222d5",
-      "recorded_size_bytes": 13992091
+      "recorded_size_bytes": 13992091,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "clip-3",
       "kind": "animated_clip",
       "title": "A2E 6af0918c3172c3467b549513",
-      "url": "https://drive.google.com/file/d/1cmNSFlKdV6r8uUVyGcMlKdSIPQI2ZtZv/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "task_id": "6af0918c3172c3467b549513",
-      "recorded_size_bytes": 11128708
+      "recorded_size_bytes": 11128708,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "clip-4",
       "kind": "animated_clip",
       "title": "A2E 6af0918e845d35585ed9d950",
-      "url": "https://drive.google.com/file/d/1U6S41780RxnAsypNx4OpKR0NV_ybttD3/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "task_id": "6af0918e845d35585ed9d950",
-      "recorded_size_bytes": 14432770
+      "recorded_size_bytes": 14432770,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "clip-5",
       "kind": "animated_clip",
       "title": "A2E 6af091999c80028eb2e08832",
-      "url": "https://drive.google.com/file/d/1VCHSenO7qwa5m3tmGD7dMnWLu1fuj4Ui/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "task_id": "6af091999c80028eb2e08832",
-      "recorded_size_bytes": 12311159
+      "recorded_size_bytes": 12311159,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "clip-6",
       "kind": "animated_clip",
       "title": "A2E 6af0919a2d72d4e7f40057fe",
-      "url": "https://drive.google.com/file/d/1DaU5TzqkjzwzPFVgr_SXh4HXitEx2DOi/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "task_id": "6af0919a2d72d4e7f40057fe",
-      "recorded_size_bytes": 16890463
+      "recorded_size_bytes": 16890463,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "voice-recovery",
       "kind": "recovery_archive",
       "title": "Семь готовых WAV и квитанции попыток",
-      "url": "https://drive.google.com/file/d/1h6LFyStoQAZv8kepz4K6htbrYRNB6zI_/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
-      "recorded_size_bytes": 3107579
+      "recorded_size_bytes": 3107579,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "voiced-review",
       "kind": "review_video",
       "title": "Черновик с семью озвученными репликами",
-      "url": "https://drive.google.com/file/d/1Ym4OT-wNxRHiw7-PxFQnMGSOv3bzey0G/view",
+      "url": "",
       "state": "historical",
       "reuse": false,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
-      "recorded_duration_seconds": 58.666667
+      "recorded_duration_seconds": 58.666667,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "voiced-review-library",
@@ -168,11 +192,14 @@
       "id": "voice-recovery-remaining",
       "kind": "recovery_archive",
       "title": "Два недостающих WAV: цена и CTA",
-      "url": "https://drive.google.com/file/d/1JUBN4KOb95xIs4oPWVxckEKG9dRnKp3a/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "Private archive downloaded; two WAVs recognized; successful run42517540074.",
-      "recorded_size_bytes": 951542
+      "recorded_size_bytes": 951542,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "narration-complete",
@@ -189,22 +216,28 @@
       "id": "full-review-drive",
       "kind": "review_video",
       "title": "Полный ролик: все девять реплик",
-      "url": "https://drive.google.com/file/d/1OAKbxokeAGhgFtzh64YIw65ef5vW5JLn/view",
+      "url": "",
       "state": "historical",
       "reuse": false,
       "evidence": "Private upload of complete verified review; Leo acceptance pending.",
-      "recorded_duration_seconds": 54.625
+      "recorded_duration_seconds": 54.625,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "anime-festive-drive",
       "kind": "review_video",
       "title": "Новогодний вариант3 с Anime.js",
-      "url": "https://drive.google.com/file/d/1l2ov4H-087iqWvIrtPauhTCnapN_pERO/view",
+      "url": "",
       "state": "historical",
       "reuse": false,
       "evidence": "Private upload of actual Anime.js festive render; complete decode and unchanged AAC verified.",
       "recorded_duration_seconds": 54.625,
-      "recorded_size_bytes": 45621657
+      "recorded_size_bytes": 45621657,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "newyear-option-1",
@@ -300,7 +333,7 @@
       "id": "newyear-full-1-drive",
       "kind": "review_video",
       "title": "Архив полной версии1",
-      "url": "https://drive.google.com/file/d/1ToHfVnfeSXl490p9SJI8u5DqNRSkaF-u/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "10.11.2026: downloaded actual MP4 from private Google Drive, SHA-256 and size verified; 54.625s 720x1280 24fps 1311frames H264/AAC; full FFmpeg video/audio decode passes; zero >=0.1s black intervals. Documented in campaigns/bavaria-new-year-2027/step4-review-2026-11-10.md. Not editorial approval.",
@@ -312,13 +345,16 @@
       "recorded_fps": 24,
       "recorded_frame_count": 1311,
       "recorded_audio_sample_rate_hz": 96000,
-      "verified_on": "2026-11-10"
+      "verified_on": "2026-11-10",
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "newyear-full-2-drive",
       "kind": "review_video",
       "title": "Архив полной версии2",
-      "url": "https://drive.google.com/file/d/1eWThGBpNyhXPWoDs-5OyqrOYJYQf2HZr/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "10.11.2026: downloaded actual MP4 from private Google Drive, SHA-256 and size verified; 54.625s 720x1280 24fps 1311frames H264/AAC; full FFmpeg video/audio decode passes; zero >=0.1s black intervals. Documented in campaigns/bavaria-new-year-2027/step4-review-2026-11-10.md. Not editorial approval.",
@@ -330,7 +366,10 @@
       "recorded_fps": 24,
       "recorded_frame_count": 1311,
       "recorded_audio_sample_rate_hz": 96000,
-      "verified_on": "2026-11-10"
+      "verified_on": "2026-11-10",
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "newyear-full-3",
@@ -368,18 +407,21 @@
       "id": "newyear-full-3-drive",
       "kind": "review_video",
       "title": "Архив полной версии3",
-      "url": "https://drive.google.com/file/d/17EuYM5xT0A4Clqb22Dm6SD_88CpmGzcw/view",
+      "url": "",
       "state": "historical",
       "reuse": false,
       "evidence": "Private Drive copy of completed full third alternative; no new paid generation.",
       "recorded_duration_seconds": 54.625,
-      "recorded_size_bytes": 33661770
+      "recorded_size_bytes": 33661770,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "newyear-full-3-clear-drive",
       "kind": "review_video",
       "title": "Исправленный трейлер3 без плашек",
-      "url": "https://drive.google.com/file/d/1AxpEftO-BCHQBR06vUkSKpODFaxLCqYb/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "10.11.2026: downloaded actual MP4 from private Google Drive, SHA-256 and size verified; 54.625s 720x1280 24fps 1311frames H264/AAC; full FFmpeg video/audio decode passes; zero >=0.1s black intervals. Documented in campaigns/bavaria-new-year-2027/step4-review-2026-11-10.md. Not editorial approval.",
@@ -391,7 +433,10 @@
       "recorded_fps": 24,
       "recorded_frame_count": 1311,
       "recorded_audio_sample_rate_hz": 96000,
-      "verified_on": "2026-11-10"
+      "verified_on": "2026-11-10",
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     }
   ],
   "references": [
@@ -478,5 +523,12 @@
     "newyear-full-1",
     "newyear-full-2",
     "newyear-full-3"
-  ]
+  ],
+  "private_media_redaction": {
+    "status": "OWNER_PRIVATE_LOOKUP_REQUIRED",
+    "escrow_key": "Simba_Private_Media_Locator_Escrow_2026-11-17",
+    "redacted_at": "2026-11-17",
+    "original_public_commit": "8f143e94a89c58ac2e71e346c96d5e338986523a",
+    "note": "Original project and Drive pointers copied to owner-only archive, exact bytes read back; no private lookup is possible from this public file alone. Do not claim media verified without authorized readback."
+  }
 }
