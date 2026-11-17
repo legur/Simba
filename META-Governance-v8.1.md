@@ -8,7 +8,7 @@ Amendment 18.0 — 08.11.2026. Структурное расширение су�
 
 Amendment 17.4. META Шаг 0: самостоятельная библиотечная роль, иной вход/выход, не вариант автора и не монтаж. Цель — база для монтажёра, русский нейтральный голос, аудитория монтажёр, без CTA/контактов; три уровня затрат, без Internal Critic. Routing/KB/профиль/база синхронизированы. Smoke не заменяет пилот Leo. Нет платных/публикационных полномочий.
 
-Версия: 19.1 · 17.11.2026: read-only audit stage 3 remediation, owner-bound script approval and private media escrow; ранее 19.0 · 17.11.2026: audit fixes, безопасность публичного GitHub, standalone visual/video и карта версий; ранее 18.0 · 08.11.2026: поиск Кадра по запросу; ранее 17.3 · 05.11.2026: Музыкальный редактор (draft); 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
+Версия: 19.2 · 17.11.2026: Simba core Critic stop-state consensus; ранее 19.1 · 17.11.2026: read-only audit stage 3 remediation, owner-bound script approval and private media escrow; ранее 19.0 · 17.11.2026: audit fixes, безопасность публичного GitHub, standalone visual/video и карта версий; ранее 18.0 · 08.11.2026: поиск Кадра по запросу; ранее 17.3 · 05.11.2026: Музыкальный редактор (draft); 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
 Дата: 17.11.2026
 
 
@@ -100,6 +100,9 @@ Knowledge Base не хранит текущую цену/наличие как �
 ## Amendment 19.1 — 17.11.2026 (аудит №3)
 Подтвержденный direct visual сохраняет свой `DIRECT_VISUAL_BRIEF` в Router и degraded-mode Rafael, не запрашивает фиктивный `APPROVED_TEXT`. `APPROVED_SCRIPT` теперь требует авторизованное действие владельца в GitHub Issues и сверку SHA-256 точного сценария и источника; произвольная metadata строка больше не предоставляет право финального рендера. Две стартовые ветки видео соединены перед storyboard. Ссылки 62 приватных Drive URL и 53 употребления идентификаторов удалены из текущих публичных проектных JSON; до редактирования полные оригинальные JSON и индекс ссылок сохранены и прочитаны в **owner-only** Google Drive `Simba Media Archive`, документ `Simba_Private_Media_Locator_Escrow_2026-11-17`. Публичный каталог учитывает только необходимость авторизованного приватного поиска, а не заявляет успешную загрузку медиа. Комментарии Issues #145/#206 обезличены. История GitHub/кешей и прошлые копии остаются потенциально доступными; внешние файлы требуют отдельной проверки ACL/отзыва разрешений при необходимости. Это не разрешение платных вызовов или публикации.
 
+## Amendment 19.2 — 17.11.2026: единый terminal-state для Internal Critic
+Согласован механизм ядра Simba: три последовательных исправления без прогресса → `BLOCKED_CRITIC_NO_PROGRESS → STOP`, а не бесконечный `SIMBA_REPAIR`. При реальном PASS сохраняются Simba finalize и обязательный Humanizer. Ветка no-progress не может перейти к готовому тексту, утверждению или публикации. Синхронизированы Router, AI-Маркетолог, Simba, Content Pipeline и runtime adapter; Critic 6.0 остается источником критерия. Добавлена offline-проверка согласованности CORE; она не доказывает фактическое выполнение творчества или критики.
+
 ## КАРТА СИСТЕМЫ (обновлять при каждом структурном изменении)
 
 Audit 17.11.2026: активные ссылки и внутренние версии синхронизированы; сами имена физических файлов по контракту AGENTS.md сохранены. Новая поддержка самостоятельного визуала и `APPROVED_SCRIPT` требует offline/production QA до статуса полностью проверенного релиза. Старые публичные ссылки в истории Issues остаются отдельной задачей проверки ACL/истории. У Vietnam/Cambodia создан канонический `project.json` только с подтвержденными рабочими решениями; доступность приватных файлов, голос и финальный MP4 пока требуют проверки, approvals не повышены до финальных.
@@ -107,13 +110,13 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 20.1 · 17.11.2026 | ✅ routing; добавлен запрос поиска референсов Кадром; его реальный пилот ожидается |
+| Router | ROUTER_v10.1.md | 20.2 · 17.11.2026 | ✅ routing; добавлен запрос поиска референсов Кадром; его реальный пилот ожидается |
 | Кадр | `Кадр/KADR_v1.0.md` + `Кадр/База/INDEX.md` | 2.1 · 08.11.2026 | 🔧 поиск по запросу → отбор → разбор лучших → база; реальный Instagram-пилот не проверен |
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 3.1 · 17.11.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
 | Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 2.1 · 17.11.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
 | Музыкальный редактор | `Музыкальный редактор/MUSIC_EDITOR_v1.0.md` | 1.0 · 05.11.2026 | 🔧 в разработке — бесплатные треки, проверка коммерческих лицензий, music-handoff → Монтажер Клод |
-| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.0 · 18.10.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
-| Simba | Simba-v5.0.md | 10.1 · 31.10.2026 | ✅ активен — точные пути TIA; проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
+| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.1 · 17.11.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
+| Simba | Simba-v5.0.md | 10.2 · 17.11.2026 | ✅ активен — точные пути TIA; проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Копирайтер-универсал (тест) | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/COPYWRITER_TEST.md` | 1.0 · 31.10.2026 | TEST — дополнительный кандидат внутри Simba; не новый автор; META Шаг 0 |
 | Интриган | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/INTRIGAN.md` | 1.0 · 31.10.2026 | ✅ редакторский этап до черновика; не самостоятельный автор; актуальный AGENT_ROLES 5.7 |
 | Info | Info-v1.2.md | 1.2 | ✅ активен |
@@ -129,7 +132,7 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 | Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.1 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
 | SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 2.0 / runtime 9.1 | ✅ обязательный общий контекст; preflight поиска Кадра |
-| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 11.0 · 17.11.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
+| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 11.1 · 17.11.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
 | Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 3.1 · 17.11.2026 | Пост → сценарий → визуал (optional A2E via Wix) → Монтажер Клод → QA → Leo; публикация отдельно |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 3.0 · 17.11.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
@@ -197,7 +200,7 @@ AI-Маркетолог не заменяет существующие моду�
 AI-Маркетолог не подменяет Simba, Critic, Rafael и другие модули, но остается владельцем маркетингового workflow от нормализации источника до предусмотренного конечного state. Handoff другому модулю не считается завершением задачи.
 
 
-Для Simba обязательна последовательность: `SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE → [REVISE → SIMBA_REPAIR]* → INTERNAL_CRITIC_PASS → SIMBA_FINALIZE → HUMANIZER_EXECUTED → HUMANIZER_PASS → TEXT_READY_FOR_LEO`. После одобрения Leo именно этой редакции запускается установленный Rafael trigger без дополнительного вопроса.
+Для Simba обязательна конечная развилка: `SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE → [REVISE → SIMBA_REPAIR → INTERNAL_CRITIC_MODE]* → {INTERNAL_CRITIC_PASS → SIMBA_FINALIZE → HUMANIZER_EXECUTED → HUMANIZER_PASS → TEXT_READY_FOR_LEO | BLOCKED_CRITIC_NO_PROGRESS → STOP}`. По Critic 6.0 после трех последовательных безрезультатных исправлений закрыть попытку реальной блокировкой, не выдавать текст за готовый и не зацикливать исполнителей; при наличии прогресса общего искусственного лимита нет. После одобрения Leo именно этой редакции запускается установленный Rafael trigger без дополнительного вопроса.
 
 Смысловая правка возвращается профильному автору; для Simba повторяются Internal Critic и Humanizer, для остальных постов — собственные проверки автора и Humanizer. Оставшийся hard blocker Humanizer означает `BLOCKED_HUMANIZER`, без финальной выдачи. Любое изменение утверждённой редакции снимает `APPROVED_TEXT` / `POLICY_APPROVED_FOR_VISUAL` и готовность зависимого пакета; предыдущая редакция сохраняется как история. Новая редакция требует повторного разрешённого approval-trigger и QA зависимых визуалов, при необходимости нового рендера. Сокращённые цепочки выдачи поста подразумевают этот финальный этап.
 

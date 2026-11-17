@@ -1,6 +1,6 @@
 # AGENTS.md — Simba runtime adapter
 
-Runtime adapter revision: 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
+Runtime adapter revision: 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
 
 ## Кадр — 08.11.2026
 
@@ -84,7 +84,7 @@ Rafael является `VISUAL_EXECUTOR`; конкретный image generator 
 
 Для результата Simba обязателен скрытый:
 
-`SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE → [REVISE → SIMBA_REPAIR]* → INTERNAL_CRITIC_PASS → SIMBA_FINALIZE`.
+`SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE → [REVISE → SIMBA_REPAIR → INTERNAL_CRITIC_MODE]* → {INTERNAL_CRITIC_PASS → SIMBA_FINALIZE | BLOCKED_CRITIC_NO_PROGRESS → STOP}`. При трех последовательных исправлениях без сокращения конкретных блокеров прекратить самоповтор; не ставить фиктивный PASS и не показывать текст как готовый. Если есть прогресс, продолжать до PASS либо настоящего BLOCKED_*.
 
 Готовые посты Simba, Info, Travel, Leo и News до финальной выдачи/утверждения проходят `HUMANIZER_EXECUTED → HUMANIZER_PASS` по `Симба (Писатель)/Humanizer-v1.4.md`. Для Simba этот этап следует после финализации автором и Internal Critic; другим авторам Internal Critic не добавляется. Смысловые правки возвращаются автору и повторяют применимые проверки. Изменение уже утверждённого текста снимает прежнее утверждение/policy и готовность зависимого пакета до нового approval и visual QA по `CONTENT_PIPELINE.md` / `RAFAEL_TRIGGER.md`.
 
@@ -212,6 +212,9 @@ humanizer-ru диагностирует, авторские правила и у
 
 ## Changelog 2.1 — 10.11.2026
 Тип: точечное уточнение. После стадии существующий PROCESS_OWNER использует read-only catalog.py status/list, а существующий GitHub workflow проверяет измененные проектные записи. Запуск технической проверки не дает нового права на расходы и публикацию.
+
+## Changelog 3.2 — 17.11.2026
+Для Simba CORE согласован конечный `BLOCKED_CRITIC_NO_PROGRESS` по Critic 6.0 после трех последовательных безрезультатных правок. Это BLOCKED, а не READY/PASS: не выдавать финал до реального прохождения Critic и Humanizer.
 
 ## Changelog 2.2 — 10.11.2026
 Тип: структурная стыковка. Промежуточная передача рилсов по существующим ролям через локальные проверяемые JSON-пакеты и привязку выбора к исходному хешу. Нет нового агента, скрытого платного вызова, публикации или утраты истории. Свойства «передано» и «исполнено» различаются.

@@ -1,6 +1,6 @@
 # CONTENT PIPELINE
 
-Версия: 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
+Версия: 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
 
 ## COPYWRITER_TEST_MODE — 31.10.2026
 
@@ -94,8 +94,9 @@ NEW_SOURCE
   → SIMBA_DRAFT_READY
   → INTERNAL_CRITIC_MODE
   → [REVISE → SIMBA_REPAIR → INTERNAL_CRITIC_MODE]*
-  → INTERNAL_CRITIC_PASS
-  → SIMBA_FINALIZE
+  → {INTERNAL_CRITIC_PASS | BLOCKED_CRITIC_NO_PROGRESS → STOP}
+  → [ТОЛЬКО ПРИ INTERNAL_CRITIC_PASS] SIMBA_FINALIZE
+  (STOP: после трех подряд безрезультатных исправлений; НЕ переходить к HUMANIZER/APPROVED/PUBLISHED)
   → HUMANIZER_EXECUTED
   → HUMANIZER_PASS
   → TEXT_READY_FOR_LEO
@@ -263,6 +264,9 @@ Preview не подменяет финальную картинку. Повто�
 
 
 ## Changelog
+
+### 11.1 — 17.11.2026
+`BLOCKED_CRITIC_NO_PROGRESS` является терминальным состоянием в основном маршруте. Только реальный `INTERNAL_CRITIC_PASS` допускает Simba finalize, Humanizer и утверждение. Три последовательных безрезультатных исправления не допускают бесконечной петли и фиктивного PASS.
 
 ### 6.0 — 22.10.2026
 Добавлена ветка «Видео к утверждённому посту / Монтажер Клод»: из таблицы сцен и визуала собирается готовый ролик. Публикация по-прежнему отдельная команда.
