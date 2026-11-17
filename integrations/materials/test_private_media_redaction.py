@@ -73,6 +73,33 @@ class PublicMediaPrivacyTests(unittest.TestCase):
         self.assertEqual(project_progress(ROOT, p, data)["state"], "IN_PROGRESS")
         self.assertEqual(project_progress(ROOT, p, data)["next_action"], data["next_action"])
 
+    def test_vietnam_archived_a2e_clips_are_not_regenerated_or_marked_not_started(self):
+        editor = json.loads((ROOT / EDITOR).read_text(encoding="utf-8"))
+        registry = json.loads((ROOT / "campaigns/vietnam-cambodia-2027/project.json").read_text(encoding="utf-8"))
+        self.assertEqual(editor["a2e_completed_mp4_count"], 10)
+        self.assertEqual(len(editor["scenes"]), 10)
+        self.assertNotIn("CLIPS_NOT_GENERATED", editor["media_status"])
+        for i, scene in enumerate(editor["scenes"], 1):
+            self.assertNotIn("NOT_STARTED", scene["media_status"], f"scene {i} was already generated")
+            self.assertIn("FULL_DECODE_VERIFIED_NOT_FINAL", scene["media_status"])
+            self.assertEqual(scene["scene_approval"], "IMAGE_SELECTED_OWNER")
+        qa = editor["technical_media_qa_latest"]
+        self.assertEqual(qa["verified_selected_stills"], 10)
+        self.assertEqual(qa["verified_archived_a2e_mp4s"], 10)
+        self.assertEqual(qa["video_full_decode_pass"], 10)
+        self.assertEqual(qa["private_acl_checked_reference_ids"], 52)
+        self.assertFalse(qa["paid_regeneration_authorized"])
+        self.assertFalse(editor["studio_tts_produced"])
+        self.assertFalse(editor["studio_music_selected"])
+        self.assertFalse(editor["studio_final_master_ready"])
+        self.assertEqual(registry["approvals"]["editorial"], "pending")
+        self.assertEqual(registry["approvals"]["publication"], "pending")
+        self.assertFalse(registry["technical_media_qa_latest"]["paid_regeneration_authorized"])
+        self.assertIn("ПОВТОРНО ИСПОЛЬЗОВАТЬ", registry["next_action"])
+        self.assertNotIn("Не подтверждена возможность открыть текущие 10", " ".join(registry["missing"]))
+        self.assertNotRegex(json.dumps(editor, ensure_ascii=False), r"https?://(?:drive|docs)\\.google\\.com/")
+        self.assertNotRegex(json.dumps(registry, ensure_ascii=False), r"https?://(?:drive|docs)\\.google\\.com/")
+
     def test_restoration_source_must_not_be_fake(self):
         data = json.loads((ROOT / PROJECTS[1]).read_text(encoding="utf-8"))
         self.assertNotIn("APPROVED_BY_BOT", json.dumps(data))
