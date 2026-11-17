@@ -51,7 +51,7 @@ Workflow: `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md`
 
 Обязательно:
 - **Утвержденный источник:** `sourcePost` со статусом `APPROVED` или `sourceScript` со статусом `APPROVED_SCRIPT`, обязательными `APPROVAL_EVIDENCE` и `SOURCE_REFERENCE`. Без одного из них финальный ролик не собирается.
-  Исключение — явная команда Leo на черновик: `make_video.py --draft`, ролик получает статус `VIDEO_DRAFT_SOURCE_NOT_APPROVED` и не публикуется.»,
+  Исключение — явная команда Leo на черновик: `make_video.py --draft`, ролик получает статус `VIDEO_DRAFT_SOURCE_NOT_APPROVED` и не публикуется.,
 - **Реплики:** утверждённый сценарий и таблица сцен Сценариста (§44 его модуля; для клипов — промпты анимации §45).
   Строки таблицы переходят в `video-spec.json` дословно. Пересказ поста самим Монтажером допустим только как черновик
   и помечается в отчёте.
