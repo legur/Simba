@@ -49,6 +49,11 @@ Rafael выполняет оба reference-search (внешняя недосту
 
 ## Changelog
 
+### 3.0 — 17.11.2026
+Структурный вход STANDALONE_VISUAL по прямому визуальному брифу без фиктивного APPROVED_TEXT. Визуал к посту сохраняет прежние текстовые gates, выбор и финальный render.
+
+
+
 ### 2.3 — 18.10.2026
 Тип: структурное изменение text-to-visual gate.
 Rafael запускается только по утверждённой редакции после `HUMANIZER_PASS`; любое изменение текста снимает approval/policy и зависимые visual/package states до повторного QA/render.
