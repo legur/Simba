@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "vietnam-cambodia-2027",
+  "title": "Вьетнам и Камбоджа 2027 — Киностудия Simba",
+  "aliases": [
+    "Вьетнам Камбоджа 2027",
+    "Vietnam Cambodia 2027"
+  ],
+  "updated_at": "2026-11-17T14:31:00+02:00",
+  "stage": "STUDIO_OPTION_2_TECHNICAL_AUDIO_SYNC_PREVIEW_PREPARED_NOT_FINAL",
+  "sources": [
+    {
+      "path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
+      "sha256": "8a81de894a17977d395b656cc48fce46edaf3218f8fe434dc3c5d12c5e419c0b"
+    },
+    {
+      "path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
+      "sha256": "52c0f5f72d194c6a6209a45254c8d2e1c99fe4097cea04129c0380faa8e2a4e5"
+    }
+  ],
+  "next_action": "Монтажер: восстановить через авторизованный закрытый архив выбранные исходники; проверить SHA медиа, утвержденную озвучку и музыку, тайминги слов, расположение титров и технический QA. Не запускать MP4-рендер, A2E, TTS или платные операции без соответствующего разрешения.",
+  "working_asset_id": null,
+  "approved_asset_id": null,
+  "approvals": {
+    "editorial": "pending",
+    "publication": "pending",
+    "storyboard_option": 2,
+    "storyboard_decision_evidence": "14.11.2026: Leo selected storyboard 2 for scenario 2; recorded in the scene editor. Not an MP4 approval."
+  },
+  "assets": [
+    {
+      "id": "scene-editor-option-2",
+      "kind": "scene_editor",
+      "title": "Storyboard option 2 — scene editor JSON (public metadata, private media stripped)",
+      "url": "https://github.com/legur/Simba/blob/main/campaigns/vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json",
+      "state": "available",
+      "reuse": true,
+      "evidence": "Existing GitHub file read; option 2 confirmed in editor, private media is not verified by this public registry."
+    }
+  ],
+  "references": [
+    {
+      "id": "storyboard-choices",
+      "path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
+      "relationship": "Three working storyboard variants",
+      "scope": "STORYBOARD"
+    },
+    {
+      "id": "motionlab-editor",
+      "path": "campaigns/vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json",
+      "relationship": "Selected storyboard, current technical preview status",
+      "scope": "EDIT_CHOICE"
+    }
+  ],
+  "reuse_notes": [
+    "Owner selected option 2 for scenario 2. Reuse only saved files after independent authorized private-media SHA readback.",
+    "Selected stills and technical audio-preview decisions have provenance in private archive; this registry does not assert final MP4 or finished TTS.",
+    "Issue #206 is a notification for Montage and not proof that Montage completed work."
+  ],
+  "missing": [
+    "Не подтверждена возможность открыть текущие 10 выбранных кадров и видеоклипы по приватному owner-only архиву.",
+    "Точный утвержденный voice/music audio lock и тайминги слов для итогового рендера не проверены.",
+    "Финальный проверенный MP4/QA и редакционное утверждение финала отсутствуют."
+  ],
+  "private_media_redaction": {
+    "status": "OWNER_PRIVATE_LOOKUP_REQUIRED",
+    "escrow_key": "Simba_Private_Media_Locator_Escrow_2026-11-17",
+    "original_public_commit": "8f143e94a89c58ac2e71e346c96d5e338986523a",
+    "note": "No private Drive URLs/IDs in public registry. Owner-only file lookup and readback required."
+  },
+  "source_editor_path": "campaigns/vietnam-cambodia-2027/storyboard_option_2_SCENE_EDITOR.json",
+  "montage_issue": 206
+}
