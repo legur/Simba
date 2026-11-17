@@ -151,7 +151,7 @@ class EditorialSmokeTests(unittest.TestCase):
     def test_live_workflow_is_not_claimed_by_smoke_validation(self):
         s = (ROOT / "integrations/core/editorial_trace.py").read_text(encoding="utf-8-sig")
         self.assertIn("does NOT call agents", s)
-        self.assertIn("assertions until backed by independent source evidence", s)
+        self.assertIn("all positive verdicts have DECLARED_* prefix", s)
 
 
 if __name__ == "__main__":
