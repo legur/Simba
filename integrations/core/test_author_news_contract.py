@@ -3,6 +3,7 @@
 These tests inspect rules. They do not claim that live GPT agents were executed.
 """
 import unittest
+import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -72,13 +73,21 @@ class AuthorAndNewsContractTests(unittest.TestCase):
             "Leo": "1.4",
             "News": "1.3",
             "Content Pipeline": "11.2",
-            "SIMBA Knowledge Base": "9.2",
         }
         for label, version in expected.items():
             with self.subTest(component=label):
                 matches = [x for x in meta.splitlines() if x.startswith(f"| {label} |")]
                 self.assertEqual(len(matches), 1)
                 self.assertIn(version, matches[0])
+
+        # KB Runtime evolves independently from News. Compare META against
+        # the current runtime header instead of pinning a stale 9.x constant.
+        current = re.search(r"^Редакция: runtime (\d+\.\d+)", TEXT["runtime"], re.M)
+        self.assertIsNotNone(current)
+        kb = [row for row in meta.splitlines()
+              if row.startswith("| SIMBA Knowledge Base |")]
+        self.assertEqual(len(kb), 1)
+        self.assertIn("runtime " + current.group(1), kb[0].split("|")[3])
 
 
 if __name__ == "__main__":
