@@ -290,7 +290,7 @@ def parse_approved_script(md, *, fetch_comment=None, verify=True):
     # Never embed direct private file URLs or arbitrary multiline approval claims.
     if (len(provenance) > 160 or not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]{0,159}', provenance)
             or provenance.startswith(('http:', 'https:'))
-            or 'drive.google.com' in provenance.lower() or 'docs.google.com' in provenance.lower())::
+            or 'drive.google.com' in provenance.lower() or 'docs.google.com' in provenance.lower()):
         return body, False
     match = re.fullmatch(r'github-issue-comment:([1-9][0-9]{0,18})', evidence)
     if not match or not verify:
