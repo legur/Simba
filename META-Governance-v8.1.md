@@ -2,6 +2,12 @@
 
 ## Amendment 19.7 — 18.11.2026: основной текстовый runtime внутри ChatGPT
 
+### Amendment 19.8 — 18.11.2026: native ChatGPT Work subagents
+
+Для выполнения прямого запроса Leo «делай» после перехода редакции в ChatGPT выбран штатный **ChatGPT Work native subagents** как поддерживаемый способ независимых редакционных ролей без отдельного OpenAI Responses API. Канонический scoped порядок: `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_WORK_SUBAGENTS.md`. Условие — реальная доступность функции и отдельные activity/outputs Simba, Critic и Humanizer в данном чате; обычный Chat не получает автоматические субагенты от одного Markdown. При недоступности выдать honest blocker, не просить пользователя запускать внешнюю среду. Статический CI/plugin deploy подтверждают только конфигурацию, не исполнение. Одобрение Leo, источник/TIA и публикационные ограничения не изменены; Киностудию не затрагивать.
+
+
+
 Прямое решение Leo: редакционные задания Simba CORE исполняются и согласуются в **чате ChatGPT**, без обязательной локальной установки/PowerShell или отдельного платного OpenAI API. Канон: `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`, синхронизированы Router/AGENTS/KB Runtime/Knowledge Map/Content Pipeline/Agent Roles и skill частного плагина. Вариант `CHAT_NATIVE_SINGLE_MODEL` честно маркирует последовательные проходы одного ассистента без заявлений о независимости; `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` требует фактических отдельных вызовов и проверки outputs. Production claims, source/TIA/facts, Leo approval и publication не ослабляются. Предыдущий локальный MCP/Responses API-пилот остается **опциональным legacy**, не установленным по умолчанию путем пользователя. Нет разрешения платных расходов или публикации. Киностудию не менять.
 
 
