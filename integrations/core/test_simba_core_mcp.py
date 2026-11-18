@@ -118,27 +118,19 @@ class SimbaCoreMCPContractTests(unittest.TestCase):
         self.assertNotIn("SIMBA_CORE_ALLOW_BILLABLE=1", text)
         self.assertNotIn("OPENAI_API_KEY=", text)
 
-    def test_windows_install_only_archives_selected_core(self):
-        script = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
-        self.assertIn("clone --no-checkout", script)
-        self.assertIn("archive --format=zip --output=$safeArchive HEAD -- $sparseDirs", script)
-        self.assertIn("-m zipfile -e $safeArchive $RepoRoot", script)
-        self.assertIn("'integrations/core'", script)
-        self.assertIn("'plugins/simba-core'", script)
-        self.assertIn("'SIMBA KNOWLEDGE BASE'", script)
-        self.assertIn("'Симба (Писатель)'", script)
-        self.assertIn("'Critic'", script)
-        self.assertNotIn("'Archivarius'", script)
+    def test_windows_setup_uses_zip_and_never_git_checkout(self):
+        script = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8-sig")
+        self.assertIn("recover_windows.py", script)
+        self.assertIn("& $python.Source $helper", script)
+        self.assertIn("Invoke-WebRequest -UseBasicParsing", script)
+        self.assertIn("Custom RepoRoot is missing Simba CORE files", script)
+        self.assertIn("if (-not $isDedicatedRepo)", script)
+        self.assertNotIn("sparse-checkout", script)
+        self.assertNotIn("clone --no-checkout", script)
+        self.assertNotIn("archive --format=zip", script)
+        self.assertNotIn("git checkout", script)
         self.assertNotIn("reset --hard", script)
-        self.assertIn("Remove-Item -LiteralPath $safeArchive -Force", script)
-        self.assertNotIn("git clean", script)
-        self.assertNotIn("git -C $RepoRoot checkout main", script)
-
-    def test_recovery_case_keeps_existing_custom_checkouts(self):
-        script = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
-        self.assertIn("$missingCore -and $isDedicatedRepo", script)
-        self.assertIn("Existing Git origin is not legur/Simba", script)
-        self.assertIn("Kept unchanged", script)
+        self.assertIn("Remove-Item -LiteralPath $helper -Force", script)
 
     def test_windows_setup_checks_windows_5_1_correctly(self):
         text = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
