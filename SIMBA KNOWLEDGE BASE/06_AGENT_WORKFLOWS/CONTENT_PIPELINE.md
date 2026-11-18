@@ -210,6 +210,12 @@ Leo по-прежнему может отдельно запускать Critic 
 
 ## ChatGPT-native editorial lane — 18.11.2026
 
+### ChatGPT Work subagents — отдельные наблюдаемые исполнители
+
+Для `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` предпочтительна нативная делегация внутри **ChatGPT Work** по `CHATGPT_WORK_SUBAGENTS.md`. Собрать фактические результаты от **отдельных** субагентов Simba, Critic, Humanizer, проверять точное совпадение входа Critic с редакцией автора и заново проверять правки Humanizer. Недоступная функция Work, декларация о запущенном subagent или пустой результат → `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`/`CHAT_NATIVE_WORK_SUBAGENTS_EVIDENCE_INCOMPLETE`, а не production PASS. Нет внешнего API-биллинга, используются продуктовые лимиты ChatGPT. User approval и публикация — самостоятельные gates.
+
+
+
 Канонический контракт: `CHATGPT_NATIVE_EDITORIAL.md`. **ChatGPT исполняет текстовый workflow в текущем чате** по реально прочитанным Router/KB/профилям; GitHub — источник истины и write-back. Для `CHAT_NATIVE_SINGLE_MODEL` последовательные авторский, критический и языковой проходы могут дать полезный текст, однако результат — `CHAT_DRAFT_SELF_REVIEWED_INDEPENDENCE_UNVERIFIED`: не ставить независимые `INTERNAL_CRITIC_PASS`/`HUMANIZER_PASS` по self-review. Для `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` каждый вызов отдельного агента/инструмента, SHA-256 точного текста и итоговый verdict должны быть подтверждены фактическим ответом. Если таких инструментов нет, не имитировать их; при запросе независимой редколлегии → `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE` (не отменяя выдачу честно маркированного черновика, если это уместно). Local MCP/Windows/python/внешний billable API **не являются** условиями редакционной задачи в ChatGPT. Соблюдать source/TIA/fact, approval и publication gates. Киностудия не меняется.
 
 
