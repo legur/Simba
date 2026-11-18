@@ -107,6 +107,24 @@ class SimbaCoreMCPContractTests(unittest.TestCase):
         self.assertNotIn("Bearer", process.stdout)
         self.assertNotIn("simulated pass", process.stdout.lower())
 
+    def test_windows_setup_script_has_no_billable_call_or_secrets(self):
+        text = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
+        self.assertIn("simba_core_preflight", text)
+        self.assertIn("Get-Acl", text)
+        self.assertIn("SIMBA_CORE_WINDOWS_PRIVATE_ACL_VERIFIED", text)
+        self.assertIn("SIMBA_CORE_PRIVATE_DIR", text)
+        self.assertNotIn("--execute-live", text)
+        self.assertNotIn("--permit-billable-api-calls", text)
+        self.assertNotIn("SIMBA_CORE_ALLOW_BILLABLE=1", text)
+        self.assertNotIn("OPENAI_API_KEY=", text)
+
+    def test_windows_setup_checks_windows_5_1_correctly(self):
+        text = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
+        self.assertIn("[Environment]::OSVersion.Platform", text)
+        self.assertNotIn("$IsWindows", text)
+        self.assertIn("Test-Path -LiteralPath $server", text)
+        self.assertIn("No API usage", text)
+
     def test_plugin_manifest_and_mcp_shape(self):
         plugin = json.loads((ROOT / "plugins/simba-core/plugin.json").read_text())
         config = json.loads((ROOT / "plugins/simba-core/mcp.json").read_text())
