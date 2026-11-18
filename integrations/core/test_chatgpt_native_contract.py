@@ -81,7 +81,7 @@ class ChatGPTNativeContractTest(unittest.TestCase):
         self.assertIn("Work", skill)
         self.assertIn("SIMBA_CORE_ALLOW_BILLABLE", read("SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md"))
         self.assertIn("BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE", skill)
-        self.assertNotIn("subagent_thread_verified": true", skill.lower())
+        self.assertNotIn("subagent_thread_verified", skill.lower())
 
     def test_local_mcp_and_api_are_optional(self):
         manifest = json.loads(read("plugins/simba-core/plugin.json"))
