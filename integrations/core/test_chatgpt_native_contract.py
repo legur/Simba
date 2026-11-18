@@ -51,7 +51,7 @@ class ChatGPTNativeContractTest(unittest.TestCase):
     def test_real_tools_have_exact_revision_evidence(self):
         canon = read(CANON)
         scope = canon.split("### B. `CHAT_NATIVE_VERIFIED_ROLE_TOOLS`", 1)[-1]
-        for marker in ("SHA-256", "output", "tool", "фактические", "APPROVED_TEXT"):
+        for marker in ("SHA-256", "output", "инструмент", "фактические", "APPROVED_TEXT"):
             self.assertIn(marker, scope)
 
     def test_local_mcp_and_api_are_optional(self):
