@@ -1,13 +1,16 @@
-"""Offline Git regression for Windows-invalid unrelated paths.
+"""Offline Git archive regression for Windows-invalid unrelated repo paths.
 
-Linux checkout permits ':' paths, so this test validates sparse selection and
-materialization order, not the Windows PowerShell process itself.
+GitHub Actions normally runs on Linux, so it cannot reproduce the Windows
+Win32 invalid-path exception itself. It CAN prove the extracted archive omits
+Archivarius entirely, including names invalid on Windows, and never invokes
+a checkout or resets an existing index.
 """
 from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import unittest
+import zipfile
 
 
 CORE = (
@@ -35,58 +38,79 @@ def git(*arguments):
     )
 
 
-@unittest.skipUnless(shutil.which("git"), "Git is required for sparse checkout test")
-class WindowsSparseCheckoutTest(unittest.TestCase):
-    def test_no_checkout_then_sparse_then_checkout_materializes_core_only(self):
+def build_repo(root):
+    upstream = root / "upstream"
+    upstream.mkdir()
+    git("init", "-q", "-b", "main", upstream)
+    git("-C", upstream, "config", "user.name", "Offline CI")
+    git("-C", upstream, "config", "user.email", "ci@example.invalid")
+    for name in FILES + (BAD_ON_WINDOWS,):
+        path = upstream / name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text("Offline fixture: " + name, encoding="utf-8")
+    git("-C", upstream, "add", ".")
+    git("-C", upstream, "commit", "-qm", "Synthetic Windows-unfriendly repository")
+    return upstream
+
+
+def extract_selected_tree(checkout, archive):
+    git("-C", checkout, "archive", "--format=zip",
+        "--output=" + str(archive), "HEAD", "--", *CORE)
+    with zipfile.ZipFile(archive) as z:
+        names = z.namelist()
+        assert BAD_ON_WINDOWS not in names, "Bad path unexpectedly selected"
+        assert all(not name.startswith("Archivarius/") for name in names)
+        z.extractall(checkout)
+    return names
+
+
+@unittest.skipUnless(shutil.which("git"), "Git is required for archive extraction test")
+class WindowsArchiveCheckoutTest(unittest.TestCase):
+    def test_no_checkout_clone_extracts_only_safe_core_paths(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            upstream = root / "upstream"
-            upstream.mkdir()
-            git("init", "-q", "-b", "main", upstream)
-            git("-C", upstream, "config", "user.name", "Offline CI")
-            git("-C", upstream, "config", "user.email", "ci@example.invalid")
-            for name in FILES + (BAD_ON_WINDOWS,):
-                path = upstream / name
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text("Offline fixture", encoding="utf-8")
-            git("-C", upstream, "add", ".")
-            git("-C", upstream, "commit", "-qm", "Synthetic Windows sparse tree")
-
+            upstream = build_repo(root)
             checkout = root / "Repo"
+            archive = root / "safe.zip"
             git("clone", "--no-checkout", "--branch", "main", upstream, checkout)
-            git("-C", checkout, "sparse-checkout", "init", "--cone")
-            git("-C", checkout, "sparse-checkout", "set", "--cone", "--", *CORE)
-
-            # Regression: sparse-checkout set alone doesn't necessarily
-            # create files after a clone with --no-checkout.
-            git("-C", checkout, "checkout", "main")
+            self.assertFalse((checkout / FILES[0]).exists())
+            extract_selected_tree(checkout, archive)
             for name in FILES:
                 self.assertTrue((checkout / name).is_file(), name)
             self.assertFalse((checkout / BAD_ON_WINDOWS).exists())
 
-    def test_partial_clone_can_be_recovered_without_wiping_git(self):
+    def test_partial_failed_clone_recovers_without_checkout_or_reset(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
-            upstream = root / "upstream"
-            upstream.mkdir()
-            git("init", "-q", "-b", "main", upstream)
-            git("-C", upstream, "config", "user.name", "Offline CI")
-            git("-C", upstream, "config", "user.email", "ci@example.invalid")
-            for name in FILES + (BAD_ON_WINDOWS,):
-                path = upstream / name
-                path.parent.mkdir(parents=True, exist_ok=True)
-                path.write_text("Fixture", encoding="utf-8")
-            git("-C", upstream, "add", ".")
-            git("-C", upstream, "commit", "-qm", "Fixture")
+            upstream = build_repo(root)
             checkout = root / "Repo"
+            archive = root / "safe.zip"
             git("clone", "--branch", "main", upstream, checkout)
             missing = checkout / FILES[0]
             missing.unlink()
+            # User has already attempted sparse checkout but a later checkout
+            # failed because Git's existing index still lists illegal paths.
             git("-C", checkout, "sparse-checkout", "init", "--cone")
             git("-C", checkout, "sparse-checkout", "set", "--cone", "--", *CORE)
-            git("-C", checkout, "checkout", "main")
+            extract_selected_tree(checkout, archive)
             self.assertTrue(missing.is_file())
+            for name in FILES:
+                self.assertTrue((checkout / name).is_file(), name)
+            # The archive never touches unrelated folders or Git metadata.
+            self.assertTrue((checkout / ".git").exists())
             self.assertFalse((checkout / BAD_ON_WINDOWS).exists())
+
+    def test_archive_members_never_expose_bad_path(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            upstream = build_repo(root)
+            checkout = root / "Repo"
+            archive = root / "safe.zip"
+            git("clone", "--no-checkout", "--branch", "main", upstream, checkout)
+            names = extract_selected_tree(checkout, archive)
+            self.assertTrue(any(x.startswith("Симба (Писатель)/") for x in names))
+            self.assertTrue(any(x.startswith("SIMBA KNOWLEDGE BASE/") for x in names))
+            self.assertFalse(any("9:16" in x for x in names))
 
 
 if __name__ == "__main__":
