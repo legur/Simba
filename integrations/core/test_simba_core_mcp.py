@@ -118,6 +118,27 @@ class SimbaCoreMCPContractTests(unittest.TestCase):
         self.assertNotIn("SIMBA_CORE_ALLOW_BILLABLE=1", text)
         self.assertNotIn("OPENAI_API_KEY=", text)
 
+    def test_windows_install_only_sparse_checks_out_core(self):
+        script = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
+        self.assertIn("clone --no-checkout", script)
+        self.assertIn("sparse-checkout set --cone -- $sparseDirs", script)
+        self.assertIn("& $git.Source -C $RepoRoot checkout main", script)
+        self.assertIn("'integrations/core'", script)
+        self.assertIn("'plugins/simba-core'", script)
+        self.assertIn("'SIMBA KNOWLEDGE BASE'", script)
+        self.assertIn("'Симба (Писатель)'", script)
+        self.assertIn("'Critic'", script)
+        self.assertNotIn("'Archivarius'", script)
+        self.assertNotIn("reset --hard", script)
+        self.assertNotIn("Remove-Item", script)
+        self.assertNotIn("git clean", script)
+
+    def test_recovery_case_keeps_existing_custom_checkouts(self):
+        script = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
+        self.assertIn("$missingCore -and $isDedicatedRepo", script)
+        self.assertIn("Existing Git origin is not legur/Simba", script)
+        self.assertIn("Kept unchanged", script)
+
     def test_windows_setup_checks_windows_5_1_correctly(self):
         text = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
         self.assertIn("[Environment]::OSVersion.Platform", text)
