@@ -2,6 +2,8 @@
 
 ## Основной режим с 18.11.2026: все выполняется внутри чата
 
+**Частный плагин 0.1.1 обновлен в ChatGPT**: его onboarding skill и метаданные используют chat-native сценарий; `requires_local_executor=false` проверено. Наличие отдельного инструмента роли Simba/Critic/Humanizer в конкретном чате все равно нужно проверять фактическим вызовом, а не по карточке плагина.
+
 **Прямое решение Leo:** обычные текстовые задания Simba CORE выполняются в самом ChatGPT: чтение правил `legur/Simba@main` через доступные подключенные инструменты → авторский проход → QA/правки → результат и выбор в том же чате. Локальный MCP, Windows PowerShell, Python и отдельный платный OpenAI API **не требуются**. Правила и границы: `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`; onboarding `skills/simba-editorial/SKILL.md`.
 
 **Два типа свидетельств:**
