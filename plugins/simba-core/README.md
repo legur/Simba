@@ -1,4 +1,20 @@
-# Simba CORE · ChatGPT Desktop MCP bridge
+# Simba CORE · ChatGPT-first редакционная работа
+
+## Основной режим с 18.11.2026: все выполняется внутри чата
+
+**Прямое решение Leo:** обычные текстовые задания Simba CORE выполняются в самом ChatGPT: чтение правил `legur/Simba@main` через доступные подключенные инструменты → авторский проход → QA/правки → результат и выбор в том же чате. Локальный MCP, Windows PowerShell, Python и отдельный платный OpenAI API **не требуются**. Правила и границы: `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`; onboarding `skills/simba-editorial/SKILL.md`.
+
+**Два типа свидетельств:**
+- `CHAT_NATIVE_SINGLE_MODEL`: реальное написание текста в ChatGPT с последовательной самопроверкой, но не с независимыми агентами; результат — `CHAT_DRAFT_SELF_REVIEWED_INDEPENDENCE_UNVERIFIED`.
+- `CHAT_NATIVE_VERIFIED_ROLE_TOOLS`: только когда текущая ChatGPT-сессия предоставляет реальные отдельные инструменты ролей и их outputs проверены. В противном случае независимое исполнение остается `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`. Не выдавать `OFFLINE_HANDOFF_CONTRACT_OK_NOT_AGENT_EXECUTION` за работу моделей.
+
+Прежняя локальная MCP-ветка ниже сохраняется **только как опциональная legacy-диагностика/отдельный opt-in API pilot**, не как штатная инструкция по использованию Simba. Ее `simba_core_run_private_pilot` остается закрытой без отдельного утвержденного бюджета. Ни один режим не дает автоматического APPROVED/PUBLISHED и не затрагивает Киностудию.
+
+---
+
+## Legacy: локальный MCP-пилот (не требуется для работы в чате)
+
+
 
 **Scope:** Bon Tours editorial CORE only. No Studio, video, Rafael, social publication, client data, or automatic Leo approvals.
 

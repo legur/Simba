@@ -177,7 +177,7 @@ class SimbaCoreMCPContractTests(unittest.TestCase):
     def test_plugin_manifest_and_mcp_shape(self):
         plugin = json.loads((ROOT / "plugins/simba-core/plugin.json").read_text())
         config = json.loads((ROOT / "plugins/simba-core/mcp.json").read_text())
-        self.assertTrue(plugin["extensions"]["com.openai"]["requires_local_executor"])
+        self.assertFalse(plugin["extensions"]["com.openai"]["requires_local_executor"])  # optional legacy only
         server = config["mcpServers"]["simba-core"]
         self.assertEqual(server["type"], "stdio")
         self.assertIn("${PLUGIN_ROOT}", server["args"][0])

@@ -1,5 +1,11 @@
 # KB RUNTIME PROTOCOL — SIMBA KNOWLEDGE BASE
 
+## ChatGPT-native mode — runtime addendum 18.11.2026
+
+Для обычной редакции Simba CORE после MAP/PROTOCOL прочитать `06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`. Работать **в текущем чате**, при доступности GitHub tools читать реальные профильные файлы из `legur/Simba@main`. Не отправлять Leo устанавливать Python/MCP, настраивать локальные переменные или оплачивать Responses API ради текстового задания. `CHAT_NATIVE_SINGLE_MODEL` позволяет последовательные проходы одного ассистента и видимые **черновики**, но не устанавливает `EXECUTOR_EXECUTED` отдельных агентов, независимый Critic PASS или готовность публикации. `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` требует реальных tool calls и exact-text receipts. Обязательный KB недоступен → `BLOCKED_KB_UNAVAILABLE`; независимость была существенным условием → `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`. Не отменять SOURCE RESOLUTION, TIA, факт-контроль и Leo approval.
+
+
+
 ## Кадр — 08.11.2026
 
 Runtime 8.0 — 08.11.2026. Для поиска рилсов по запросу загрузить профиль Кадра 2.1, индекс/схему его базы, BRAND_RULES, VISUAL_RULES и VIDEO_PIPELINE. Применить раздел «Поиск по запросу»: до 8 уникальных кандидатов, до 3 попыток анализа лучших, без отдельного выбора Leo, затем обычный review/write-back. Инструменты поиска проверяются в текущей среде; `KADR_SEARCH_BLOCKED` / заблокированный внешний источник не являются `BLOCKED_KB_UNAVAILABLE`. Кандидат из сниппета не READY. Запрос только ссылок не запускает разбор. MP4/ссылка без поиска сохраняют прежний маршрут. Фоновых и новых платных полномочий нет.
