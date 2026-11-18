@@ -26,7 +26,7 @@ function Assert-ExternalExit {
     if ($ExitCode -ne 0) { throw "$Task failed (exit $ExitCode)." }
 }
 
-if (-not $IsWindows -and $PSVersionTable.PSEdition -eq 'Core') {
+if ([Environment]::OSVersion.Platform -ne [PlatformID]::Win32NT) {
     throw 'This is the Windows-only setup. No desktop installation performed.'
 }
 if (-not $env:LOCALAPPDATA) { throw 'LOCALAPPDATA is missing.' }
