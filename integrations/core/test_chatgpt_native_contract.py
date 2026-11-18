@@ -54,6 +54,35 @@ class ChatGPTNativeContractTest(unittest.TestCase):
         for marker in ("SHA-256", "output", "инструмент", "фактические", "APPROVED_TEXT"):
             self.assertIn(marker, scope)
 
+    def test_chatgpt_work_subagents_are_real_and_fail_closed(self):
+        playbook = read("SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_WORK_SUBAGENTS.md")
+        for required in (
+            "ChatGPT **Work**", "WORK_SUBAGENT_SIMBA", "WORK_SUBAGENT_CRITIC",
+            "WORK_SUBAGENT_HUMANIZER", "BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE",
+            "CHAT_NATIVE_WORK_SUBAGENTS_EVIDENCE_INCOMPLETE", "WORK_NATIVE_SUBAGENTS_CONTRACT_READY_NOT_EXECUTED",
+            "SHA-256", "APPROVED_TEXT", "Киностудия", "сессии", "локальный",
+        ):
+            with self.subTest(required=required):
+                self.assertIn(required, playbook)
+
+    def test_work_route_is_reference_only_until_actual_delegation(self):
+        for name in (
+            "AGENTS.md", "ROUTER_v10.1.md", "META-Governance-v8.1.md",
+            "SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md",
+            "SIMBA KNOWLEDGE BASE/00_CORE/KB_RUNTIME_PROTOCOL.md",
+            "SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md",
+            "SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AGENT_ROLES.md",
+            "SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md",
+            "plugins/simba-core/skills/simba-editorial/SKILL.md",
+        ):
+            with self.subTest(name=name):
+                self.assertIn("CHATGPT_WORK_SUBAGENTS.md", read(name))
+        skill = read("plugins/simba-core/skills/simba-editorial/SKILL.md")
+        self.assertIn("Work", skill)
+        self.assertIn("SIMBA_CORE_ALLOW_BILLABLE", read("SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md"))
+        self.assertIn("BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE", skill)
+        self.assertNotIn("subagent_thread_verified": true", skill.lower())
+
     def test_local_mcp_and_api_are_optional(self):
         manifest = json.loads(read("plugins/simba-core/plugin.json"))
         self.assertFalse(manifest["extensions"]["com.openai"]["requires_local_executor"])
