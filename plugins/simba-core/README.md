@@ -24,6 +24,27 @@ The **current ChatGPT Desktop application** needs to support local MCP servers o
 
 The ChatGPT conversation should never ask for the secret API key as a chat message or place it in GitHub. Windows shell/environment specifics vary by desktop configuration; the user sets them locally.
 
+## Windows — unattended local preparation (no API spend)
+
+A Windows PowerShell helper is provided at `plugins/simba-core/setup_simba_core_windows.ps1`. Running it **on the Windows PC**, rather than in a remote ChatGPT session, can:
+
+- Clone the public `legur/Simba` main branch into a dedicated `%LOCALAPPDATA%\\SimbaCore\\Repo` location if absent (requires Git + Python 3.9+); it does **not** overwrite an existing repo.
+- Create a dedicated new `%LOCALAPPDATA%\\SimbaCore\\Private` directory (no confidential files downloaded), remove inherited ACLs **only on that new folder**, and verify that only the current user, SYSTEM or Administrators can access it.
+- Persist non-secret, per-user `SIMBA_CORE_REPO_ROOT`, `SIMBA_CORE_PRIVATE_DIR`, `SIMBA_CORE_WINDOWS_PRIVATE_ACL_VERIFIED=1` when the ACL check passes.
+- Run a **read-only** MCP JSON-RPC preflight and print the actual status and blockers. It does not set a billing flag or API key; no model, publishing or Studio calls.
+
+In PowerShell, after saving the reviewed script locally:
+
+    .\\setup_simba_core_windows.ps1
+
+For an already existing checkout:
+
+    .\\setup_simba_core_windows.ps1 -RepoRoot "C:\\Your\\Simba\\Repo"
+
+The helper does not press buttons or install the private plugin in the ChatGPT Desktop interface. The user must open the plugin card and select Install/Connect if available, then start a new Desktop chat to load the configured local MCP tool. If the app version, workspace, or plan does not support local executor installation, the state remains **BLOCKED**; do not simulate the missing capability.
+
+The GitHub CI executes only **Python/static checks** of this PowerShell file, not Windows PowerShell on the user's machine. The only decisive Windows connection check is its local MCP preflight plus availability of the connected tool in a Desktop chat.
+
 ## Reproducible no-charge verification
 
 From a checkout, offline regression tests:
