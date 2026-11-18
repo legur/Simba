@@ -45,6 +45,23 @@ The helper does not press buttons or install the private plugin in the ChatGPT D
 
 The GitHub CI executes only **Python/static checks** of this PowerShell file, not Windows PowerShell on the user's machine. The only decisive Windows connection check is its local MCP preflight plus availability of the connected tool in a Desktop chat.
 
+## Windows: recovery after a failed full clone
+
+A previous version of the setup script ran a full Git checkout. Windows rejects several filenames in the unrelated `Archivarius` directory containing reserved characters such as `9:16`, producing `error: invalid path` and `fatal: unable to checkout working tree`. This is a **Git checkout limitation, not a Python/API/MCP failure**.
+
+The Windows installer now uses `git clone --no-checkout` followed by `git sparse-checkout` for exactly `integrations/core`, `plugins/simba-core`, `SIMBA KNOWLEDGE BASE`, `Симба (Писатель)` and `Critic`. Only after limiting the checkout does it invoke `git checkout main`. This avoids all observed Windows-invalid paths without renaming or modifying any `Archivarius` files.
+
+**For a failed clone already present in the dedicated default folder** `%LOCALAPPDATA%\\SimbaCore\\Repo`, download the **latest** installer and rerun it. It recognizes missing Simba CORE files in that exact folder, validates the Git remote and applies sparse checkout. It does **not** delete the repository or run destructive `git reset --hard`, and it will not auto-repair or alter a custom checkout.
+
+Manual recovery for that known newly-created, failed checkout, if needed:
+
+    $repo = "$env:LOCALAPPDATA\\SimbaCore\\Repo"
+    git -C $repo sparse-checkout init --cone
+    git -C $repo sparse-checkout set --cone -- "integrations/core" "plugins/simba-core" "SIMBA KNOWLEDGE BASE" "Симба (Писатель)" "Critic"
+    git -C $repo checkout main
+
+Then rerun the installer to configure the private directory and perform read-only preflight. The above does not require API credentials, paid operations, or publication.
+
 ## Reproducible no-charge verification
 
 From a checkout, offline regression tests:
