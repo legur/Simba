@@ -6,6 +6,8 @@ Archivarius entirely, including names invalid on Windows, and never invokes
 a checkout or resets an existing index.
 """
 from pathlib import Path
+import importlib.util
+import zipfile
 import shutil
 import subprocess
 import tempfile
@@ -111,6 +113,60 @@ class WindowsArchiveCheckoutTest(unittest.TestCase):
             self.assertTrue(any(x.startswith("Симба (Писатель)/") for x in names))
             self.assertTrue(any(x.startswith("SIMBA KNOWLEDGE BASE/") for x in names))
             self.assertFalse(any("9:16" in x for x in names))
+
+
+class SafeGithubZipRecoveryTest(unittest.TestCase):
+    def test_installer_filters_invalid_windows_names_without_git(self):
+        repo_root = Path(__file__).resolve().parents[2]
+        script = repo_root / "plugins/simba-core/recover_windows.py"
+        spec = importlib.util.spec_from_file_location("simba_windows_zip_recovery", script)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            archive = base / "repo.zip"
+            dest = base / "existing-partial-repo"
+            (dest / ".git").mkdir(parents=True)
+            (dest / ".git" / "index").write_bytes(b"existing-index-must-remain")
+            prefix = "Simba-" + module.PINNED_SHA + "/"
+            with zipfile.ZipFile(archive, "w") as zf:
+                for name in module.REQUIRED:
+                    zf.writestr(prefix + name, "core-fixture")
+                zf.writestr(prefix + "Archivarius/portrait 9:16.md", "invalid Windows path")
+                zf.writestr(prefix + "Archivarius/TIA/TIA-011 | bad.txt", "invalid Windows path")
+            self.assertEqual(module.recover_zip(archive, dest), len(module.REQUIRED))
+            for name in module.REQUIRED:
+                self.assertTrue((dest / name).is_file(), name)
+            self.assertFalse((dest / "Archivarius").exists())
+            self.assertEqual((dest / ".git" / "index").read_bytes(),
+                             b"existing-index-must-remain")
+
+    def test_installer_rejects_archive_missing_required_file(self):
+        repo_root = Path(__file__).resolve().parents[2]
+        script = repo_root / "plugins/simba-core/recover_windows.py"
+        spec = importlib.util.spec_from_file_location("simba_windows_zip_recovery_absent", script)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        with tempfile.TemporaryDirectory() as temp:
+            base = Path(temp)
+            archive = base / "missing.zip"
+            dest = base / "no-write-on-invalid"
+            with zipfile.ZipFile(archive, "w") as zf:
+                zf.writestr("Simba-" + module.PINNED_SHA + "/" + module.REQUIRED[0], "only one file")
+            with self.assertRaisesRegex(ValueError, "Required CORE files missing"):
+                module.recover_zip(archive, dest)
+            self.assertFalse(dest.exists())
+
+    def test_installer_is_never_billing_or_shell_execution(self):
+        root = Path(__file__).resolve().parents[2]
+        code = (root / "plugins/simba-core/recover_windows.py").read_text(encoding="utf-8")
+        self.assertIn("codeload.github.com/legur/Simba/zip/", code)
+        self.assertIn("MAX_ZIP", code)
+        self.assertNotIn("subprocess.", code)
+        self.assertNotIn("os.system", code)
+        self.assertNotIn("OPENAI_API_KEY", code)
+        self.assertNotIn("SIMBA_CORE_ALLOW_BILLABLE", code)
+        self.assertNotIn("git checkout", code.split('def main():', 1)[-1])
 
 
 if __name__ == "__main__":
