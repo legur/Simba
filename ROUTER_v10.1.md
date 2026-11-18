@@ -2,6 +2,12 @@
 
 ## ChatGPT-native редакционный маршрут — 18.11.2026
 
+### Независимые исполнители внутри ChatGPT Work
+
+При явной задаче проверить настоящую редакционную цепочку применить `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_WORK_SUBAGENTS.md`: отдельные **наблюдаемые** нативные субагенты Simba, Critic и Humanizer; зависимости выполняются последовательно с точными редакциями. Это supported mode B, не автоматический эффект наличия skill или GitHub-файлов. Если Work subagents недоступны в текущем чате, `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE` и **никакого** фиктивного `INTERNAL_CRITIC_PASS`.
+
+
+
 **Действующий scoped контракт для текстовой редакции:** `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`. ChatGPT является средой обращения, маршрутизации и выдачи; GitHub хранит инструкции, **не** исполняет роли. Нет обязательного локального MCP, PowerShell или стороннего OpenAI API. Запрет Router на подмену **исполненного профильного модуля** сохраняется. Исключение только для явно маркированного `CHAT_NATIVE_SINGLE_MODEL`: ChatGPT вправе подготовить **предварительный** текст по реально прочитанным профильным правилам, провести последовательные проходы self-review/Humanizer-style и показать его для обсуждения. Не маркировать эту работу `EXECUTOR_EXECUTED` независимого автора, `INTERNAL_CRITIC_PASS`, `HUMANIZER_PASS`, `TEXT_READY_FOR_LEO`, `APPROVED_TEXT` или `PUBLISHED`. Для реального `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` требуются вызовы отдельных доступных инструментов, точные outputs и provenance. Недоступный обязательный KB → `BLOCKED_KB_UNAVAILABLE`; явно требуемая независимость без инструментов → `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`. Обычное «делай» не авторизует внешние платные вызовы.
 
 
