@@ -39,28 +39,8 @@ Assert-ExternalExit $LASTEXITCODE 'Python version check'
 $RepoRoot = [IO.Path]::GetFullPath($RepoRoot)
 $PrivateDir = [IO.Path]::GetFullPath($PrivateDir)
 $defaultRepoRoot = [IO.Path]::GetFullPath((Join-Path $env:LOCALAPPDATA 'SimbaCore\Repo'))
-$sparseDirs = @(
-    'integrations/core',
-    'plugins/simba-core',
-    'SIMBA KNOWLEDGE BASE',
-    'Симба (Писатель)',
-    'Critic'
-)
 if ($RepoRoot -eq $PrivateDir -or $PrivateDir.StartsWith($RepoRoot + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) {
     throw 'PrivateDir must be outside the repository.'
-}
-# The public repo contains Windows-invalid ':' file names inside Archivarius.
-# NEVER run a full checkout on Windows: clone objects, then materialize ONLY CORE.
-$git = Get-Command git.exe -ErrorAction SilentlyContinue
-$createdRepo = $false
-if (-not (Test-Path -LiteralPath $RepoRoot -PathType Container)) {
-    if (-not $git) { throw 'Git is not available. Install Git or supply -RepoRoot for an existing checkout.' }
-    $parent = Split-Path -Parent $RepoRoot
-    New-Item -ItemType Directory -Path $parent -Force | Out-Null
-    Write-Host 'Cloning Simba objects without checkout (Windows-safe, no paid API calls)...'
-    & $git.Source clone --no-checkout --depth 1 --single-branch --branch main https://github.com/legur/Simba.git $RepoRoot
-    Assert-ExternalExit $LASTEXITCODE 'Git clone --no-checkout'
-    $createdRepo = $true
 }
 $server = Join-Path $RepoRoot 'plugins\simba-core\server\simba_core_mcp.py'
 $runner = Join-Path $RepoRoot 'integrations\core\editorial_live_runner.py'
@@ -68,43 +48,29 @@ $missingCore = (-not (Test-Path -LiteralPath $server -PathType Leaf)) -or
                (-not (Test-Path -LiteralPath $runner -PathType Leaf))
 $isDedicatedRepo = [string]::Equals($RepoRoot.TrimEnd('\'), $defaultRepoRoot.TrimEnd('\'),
                                     [StringComparison]::OrdinalIgnoreCase)
-
-# Recover the *known dedicated location* left by an interrupted full clone.
-# Never alter an existing custom repo or a healthy checkout.
-if ($createdRepo -or ($missingCore -and $isDedicatedRepo)) {
-    if (-not $git) { throw 'Git is required to recover the partial Simba checkout.' }
-    if (-not (Test-Path -LiteralPath (Join-Path $RepoRoot '.git'))) {
-        throw 'Dedicated Simba directory exists but is not a Git repo. Kept unchanged.'
+if ($missingCore) {
+    # Windows rejects ':' and '|' in unrelated Archivarius paths, even during
+    # Git sparse-checkout or archive on a previously broken index.
+    # Use Python HTTPS ZIP retrieval and extract ONLY safe CORE directories.
+    if (-not $isDedicatedRepo) {
+        throw 'Custom RepoRoot is missing Simba CORE files. Kept unchanged; no recovery attempted.'
     }
-    $remote = & $git.Source -C $RepoRoot remote get-url origin
-    Assert-ExternalExit $LASTEXITCODE 'Verify local Git origin'
-    $remote = $remote.Trim()
-    if ($remote -ne 'https://github.com/legur/Simba.git' -and
-        $remote -ne 'https://github.com/legur/Simba' -and
-        $remote -ne 'git@github.com:legur/Simba.git') {
-        throw 'Existing Git origin is not legur/Simba. Kept unchanged.'
-    }
-    # After a full clone has failed on Windows, the Git index may already
-    # contain invalid file names. Even "git checkout main" after switching to
-    # sparse-checkout may still reject those names. Git archive reads HEAD's
-    # safe tree paths directly and never checks out the invalid ones.
-    Write-Host 'Extracting only Simba CORE directories from Git objects (Windows-safe)...'
-    $safeArchive = Join-Path $env:TEMP ('simba-core-' + [guid]::NewGuid().ToString('N') + '.zip')
+    $helper = Join-Path $env:TEMP ('simba-core-recover-' + [guid]::NewGuid().ToString('N') + '.py')
     try {
-        & $git.Source -C $RepoRoot archive --format=zip --output=$safeArchive HEAD -- $sparseDirs
-        Assert-ExternalExit $LASTEXITCODE 'Git archive selected Simba CORE directories'
-        & $python.Source -m zipfile -e $safeArchive $RepoRoot
-        Assert-ExternalExit $LASTEXITCODE 'Extract only safe Simba CORE paths'
+        Invoke-WebRequest -UseBasicParsing -Uri 'https://raw.githubusercontent.com/legur/Simba/main/plugins/simba-core/recover_windows.py' -OutFile $helper
+        Write-Host 'Downloading only Windows-compatible Simba CORE files (no Git checkout)...'
+        & $python.Source $helper
+        Assert-ExternalExit $LASTEXITCODE 'Python Simba CORE recovery'
     }
     finally {
-        if (Test-Path -LiteralPath $safeArchive -PathType Leaf) {
-            Remove-Item -LiteralPath $safeArchive -Force
+        if (Test-Path -LiteralPath $helper -PathType Leaf) {
+            Remove-Item -LiteralPath $helper -Force
         }
     }
 }
 if (-not (Test-Path -LiteralPath $server -PathType Leaf) -or
     -not (Test-Path -LiteralPath $runner -PathType Leaf)) {
-    throw 'Simba CORE files missing after sparse checkout; no local environment settings changed.'
+    throw 'Simba CORE files are still missing after recovery; no environment settings changed.'
 }
 
 $privateCreated = $false
