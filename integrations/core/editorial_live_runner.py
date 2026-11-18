@@ -243,7 +243,9 @@ class CoreRun:
             "provider_request_id": outcome["request_id"],
             "model": outcome["model"],
             "timestamp": outcome["at"],
-            "transport": self.client.kind,
+            "transport": ("LIVE_OPENAI_RESPONSES"
+                          if type(self.client) is OpenAIResponsesClient
+                          else "UNTRUSTED_TEST_TRANSPORT"),
         }
         self.receipts.append(receipt)
         return result
@@ -330,7 +332,10 @@ class CoreRun:
     def report(self, status, detail=None):
         return {
             "run_id": self.run_id, "status": status,
-            "detail": detail, "mode": self.client.kind,
+            "detail": detail,
+            "mode": ("LIVE_OPENAI_RESPONSES"
+                     if type(self.client) is OpenAIResponsesClient
+                     else "UNTRUSTED_TEST_TRANSPORT"),
             "brief_sha256": self.brief_sha256,
             "ready_for_production": False,
             "source_resolution_verified": False,
