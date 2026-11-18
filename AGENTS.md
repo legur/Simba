@@ -1,5 +1,11 @@
 # AGENTS.md — Simba runtime adapter
 
+## ChatGPT-native редакционная работа — 18.11.2026
+
+**Прямое решение Leo:** текстовая редакция Simba CORE выполняется и согласуется **внутри ChatGPT**. Для обычного текста не требовать PowerShell, локальный MCP, внешние платные модельные API или отдельный desktop runtime. Канон: `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`. GitHub — хранилище действующих файлов и проверяемого write-back, а не исполнитель. **Режим A**: последовательные проходы одного ChatGPT допускают предварительный текст, но не утверждают независимые вызовы Simba/Critic/Humanizer. **Режим B**: отдельные инструменты действительно вызываются, их outputs/хеши проверяются до следующего шага. При недоступной независимости не выдавать фиктивные receipts/PASS/approval; при этом полезный текст для обсуждения выдавать с честным статусом `CHAT_DRAFT_SELF_REVIEWED_INDEPENDENCE_UNVERIFIED`. Не менять Киностудию и publication gates.
+
+
+
 Runtime adapter revision: 3.6 · 17.11.2026 (declared vs verified role execution); ранее 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
 
 ## Кадр — 08.11.2026
