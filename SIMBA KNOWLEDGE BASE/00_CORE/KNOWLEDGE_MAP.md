@@ -2,6 +2,12 @@
 
 ## ChatGPT-native editor runtime — 18.11.2026
 
+### Реальное независимое исполнение в ChatGPT Work
+
+Для отдельного выполнения редакционных ролей дополнительно загрузить `06_AGENT_WORKFLOWS/CHATGPT_WORK_SUBAGENTS.md`. Work subagents доступны **не во всех** сессиях; успех статического CI, Markdown или plugin install не заменяет фактические делегированные вызовы. При недоступности — `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`. При доступности — реально отдельные результаты и проверка exact revision; без отдельного платного OpenAI API.
+
+
+
 Для текстового редакционного маршрута Simba CORE читать `06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md` после этого Map и `00_CORE/KB_RUNTIME_PROTOCOL.md`. Именно ChatGPT ведет диалог/передачи; GitHub используется для получения канонических правил и write-back, а не исполнения агентных вызовов. Режим одного ассистента (редакторские проходы) **не равен** независимому вызову ролей; внешние API и локальный MCP не обязательны. При конфликте с прежними local-only шагами для **обычного редакционного чата** действует этот новый scoped runtime, без повышения статуса production/approval.
 
 

@@ -2,6 +2,12 @@
 
 ## ChatGPT-native редакционная работа — 18.11.2026
 
+### Native Work subagents — независимые роли при доступной функции
+
+Основной путь реальной независимой редакции **внутри ChatGPT** — встроенные субагенты ChatGPT Work, а не `editorial_live_runner.py`. Канон `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_WORK_SUBAGENTS.md`: реальная делегация Simba → Critic → Simba repair → Humanizer → Critic recheck с проверкой outputs и версий текста. Если текущее Chat окружение не предоставляет native Work delegation, не считать прочитанный playbook запуском; статус `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`, предлагать честно маркированный черновик режима A. Субагенты Work расходуют лимиты подписки, но не требуют отдельного OpenAI API key. Не трогать Киностудию.
+
+
+
 **Прямое решение Leo:** текстовая редакция Simba CORE выполняется и согласуется **внутри ChatGPT**. Для обычного текста не требовать PowerShell, локальный MCP, внешние платные модельные API или отдельный desktop runtime. Канон: `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`. GitHub — хранилище действующих файлов и проверяемого write-back, а не исполнитель. **Режим A**: последовательные проходы одного ChatGPT допускают предварительный текст, но не утверждают независимые вызовы Simba/Critic/Humanizer. **Режим B**: отдельные инструменты действительно вызываются, их outputs/хеши проверяются до следующего шага. При недоступной независимости не выдавать фиктивные receipts/PASS/approval; при этом полезный текст для обсуждения выдавать с честным статусом `CHAT_DRAFT_SELF_REVIEWED_INDEPENDENCE_UNVERIFIED`. Не менять Киностудию и publication gates.
 
 

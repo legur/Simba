@@ -2,6 +2,12 @@
 
 ## ChatGPT-native invocation — 18.11.2026
 
+### Отдельные роли через ChatGPT Work
+
+При доступном native Work delegation **Simba, Critic, Humanizer — отдельные subagent threads** с отдельными результатами, не одна маска ChatGPT. Точный контракт вызова и версий: `CHATGPT_WORK_SUBAGENTS.md`. Сначала проверить наличие реальной функции, затем последовательно делегировать авторство → независимый Critic → авторский repair/finalize → независимый Humanizer → Critic recheck. Если реальных подзадач нет, запрещено приписывать work-subagent receipts и `PASS`; маркировать `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`.
+
+
+
 Для текстовой редколлегии среда исполнения — **ChatGPT**, канонический контракт `CHATGPT_NATIVE_EDITORIAL.md`. Применение нескольких профилей одним ChatGPT = последовательные редакционные проходы `CHAT_NATIVE_SINGLE_MODEL`, **не** три независимых агента. Независимая роль считается фактически вызванной только при доступном отдельном tool/agent invocation с проверенным output/ревизией; статус `CHAT_NATIVE_VERIFIED_ROLE_TOOLS`. Если требуется независимая проверка, но инструмента нет, вернуть `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`, а не фиктивный `INTERNAL_CRITIC_PASS` или `HUMANIZER_PASS`. Видимый для правок черновик допустим как `CHAT_DRAFT_SELF_REVIEWED_INDEPENDENCE_UNVERIFIED`; источники, факт-контроль, TIA, утверждение Leo и публикация остаются самостоятельными gates. Локальный MCP и внешний API в обычной редакции не нужны.
 
 
