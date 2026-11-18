@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "simba-core-editorial",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Simba CORE editorial workflow in ChatGPT using GitHub rules. Local MCP is optional legacy diagnostics; no paid API, auto-approval or publication.",
   "repository": "https://github.com/legur/Simba",
   "keywords": [
