@@ -1,0 +1,31 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "simba-core-editorial",
+  "version": "0.1.0",
+  "description": "Private Simba CORE text editorial pilot for ChatGPT Desktop with opt-in, distinct OpenAI API calls for Simba, Critic and Humanizer. Never publishes or approves.",
+  "repository": "https://github.com/legur/Simba",
+  "keywords": [
+    "simba",
+    "editorial",
+    "critic",
+    "humanizer",
+    "private-pilot"
+  ],
+  "extensions": {
+    "com.openai": {
+      "requires_local_executor": true,
+      "interface": {
+        "displayName": "Simba CORE — Редколлегия",
+        "shortDescription": "Контроль редакционных этапов и приватный пилот",
+        "longDescription": "MCP-подключение к локальному исполнительному модулю Simba CORE. Только текст, отдельные вызовы Simba/Critic/Humanizer при самостоятельном разрешении API-расходов. Без автопубликации и автоматического APPROVED.",
+        "developerName": "Bon Tours",
+        "category": "Productivity",
+        "capabilities": [
+          "Read",
+          "Write"
+        ]
+      },
+      "onboardingSkill": "./skills/simba-editorial/SKILL.md"
+    }
+  }
+}
