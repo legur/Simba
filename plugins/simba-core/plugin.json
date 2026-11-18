@@ -1,15 +1,17 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "simba-core-editorial",
-  "version": "0.1.1",
-  "description": "Simba CORE editorial workflow in ChatGPT using GitHub rules. Local MCP is optional legacy diagnostics; no paid API, auto-approval or publication.",
+  "version": "0.1.2",
+  "description": "Simba CORE in-chat editorial workflows, including native ChatGPT Work subagents when available. No separate billable API or publication.",
   "repository": "https://github.com/legur/Simba",
   "keywords": [
     "simba",
     "editorial",
     "chatgpt-native",
     "critic",
-    "humanizer"
+    "humanizer",
+    "chatgpt-work",
+    "subagents"
   ],
   "extensions": {
     "com.openai": {
@@ -17,7 +19,7 @@
       "interface": {
         "displayName": "Simba CORE — Редколлегия",
         "shortDescription": "Редакция Simba непосредственно в ChatGPT",
-        "longDescription": "Работа с текстом в самом чате ChatGPT по правилам GitHub: редакционные проходы Simba, Critic и Humanizer с честным разграничением самопроверки и реальных отдельных вызовов. Локальный MCP и платные API необязательны, публикации и автоматического APPROVED нет.",
+        "longDescription": "Редакция Simba внутри ChatGPT. При доступном ChatGPT Work независимые нативные субагенты Simba, Critic и Humanizer могут последовательно выполнять авторство, проверку и редактуру с подтверждаемыми результатами. В обычном Chat — только честно отмеченная самопроверка. GitHub хранит правила; внешний платный API и локальный MCP не нужны. Без автоматического утверждения и публикации.",
         "developerName": "Bon Tours",
         "category": "Productivity",
         "capabilities": [
