@@ -46,6 +46,37 @@ class CoreLiveRunnerTests(unittest.TestCase):
             self.assertIn("=====", live.rule_context(role))
             self.assertTrue(live.rule_context(role))
 
+    def test_mandatory_core_preflight_is_loaded_for_each_role(self):
+        for role in ("Simba", "Critic", "Humanizer"):
+            rules = live.rule_context(role)
+            self.assertIn("KB_RUNTIME_PROTOCOL.md", rules)
+            self.assertIn("KNOWLEDGE_MAP.md", rules)
+            self.assertIn("CONTENT_PIPELINE.md", rules)
+            self.assertIn("PATTERN_WATCH.md", rules)
+
+    def test_spoofed_client_kind_cannot_claim_live(self):
+        class SpoofedFake(FakeClient):
+            kind = "LIVE_OPENAI_RESPONSES"
+        fake = SpoofedFake(["Черновик.", verdict(), "Черновик.", "Черновик."])
+        run = live.CoreRun(fake)
+        result = run.execute("Только синтетический тест.")
+        self.assertEqual(result["state"], "DECLARED_TEST_ONLY")
+        report = run.report(result["state"])
+        self.assertEqual(report["mode"], "UNTRUSTED_TEST_TRANSPORT")
+        self.assertTrue(all(r["transport"] == "UNTRUSTED_TEST_TRANSPORT"
+                            for r in report["receipts"]))
+        self.assertFalse(report["ready_for_production"])
+        self.assertFalse(report["source_resolution_verified"])
+        self.assertFalse(report["dynamic_fact_check_verified"])
+
+    def test_no_change_during_repair_blocks_without_extra_calls(self):
+        fake = FakeClient(["Тот же текст.", verdict("REVISE", 6.0, ["Слабый хук"]),
+                           "Тот же текст."])
+        runner = live.CoreRun(fake)
+        with self.assertRaisesRegex(live.Blocked, "SIMBA_REPAIR_NO_TEXT_CHANGE"):
+            runner.execute("Одна тестовая редакция.")
+        self.assertEqual(len(runner.receipts), 3)
+
     def test_mock_sequence_never_returns_live_ready(self):
         client = FakeClient(["Исходный текст.", verdict(), "Исходный текст.", "Исходный текст."])
         runner = live.CoreRun(client)
@@ -62,7 +93,7 @@ class CoreLiveRunnerTests(unittest.TestCase):
         report = runner.report(result["state"])
         self.assertFalse(report["publication_authorized"])
         self.assertFalse(report["leo_approval_verified"])
-        self.assertEqual(report["mode"], "SIMULATED_OFFLINE")
+        self.assertEqual(report["mode"], "UNTRUSTED_TEST_TRANSPORT")
 
     def test_independent_critic_rechecks_changed_finalize(self):
         fake = FakeClient([

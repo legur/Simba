@@ -20,6 +20,20 @@ from uuid import uuid4
 ROOT = Path(__file__).resolve().parents[2]
 API_URL = "https://api.openai.com/v1/responses"
 MAX_BODY_BYTES = 2_000_000
+# Canonical CORE preflight. A role profile alone is NOT a full KB preflight.
+# Do not count loaded documents as evidence of external fact-check or TIA execution.
+CORE_PREFLIGHT_FILES = (
+    "SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md",
+    "SIMBA KNOWLEDGE BASE/00_CORE/KB_RUNTIME_PROTOCOL.md",
+    "SIMBA KNOWLEDGE BASE/01_BRAND/BRAND_RULES.md",
+    "SIMBA KNOWLEDGE BASE/02_AUDIENCE/SEGMENTS.md",
+    "SIMBA KNOWLEDGE BASE/02_AUDIENCE/OBJECTIONS_AND_LANGUAGE.md",
+    "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/_INDEX.md",
+    "SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/_PATTERN_TRACKER.md",
+    "SIMBA KNOWLEDGE BASE/04_BUSINESS/COMPANY_AND_PRODUCTS.md",
+    "SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md",
+    "SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md",
+)
 ROLE_FILES = {
     "Simba": (
         "Симба (Писатель)/Simba-v5.0.md",
@@ -73,7 +87,7 @@ def rule_context(role):
     if role not in ROLE_FILES:
         raise Blocked("UNKNOWN_ROLE")
     parts = []
-    for rel in ROLE_FILES[role]:
+    for rel in dict.fromkeys(CORE_PREFLIGHT_FILES + ROLE_FILES[role]):
         path = ROOT / rel
         if not path.is_file():
             raise Blocked("BLOCKED_KB_UNAVAILABLE:" + rel)
@@ -200,6 +214,7 @@ class CoreRun:
         self.max_calls = max_calls
         self.run_id = str(uuid4())
         self.receipts = []
+        self.brief_sha256 = None
         self.rules = {name: rule_context(name) for name in ROLE_FILES}
 
     def call(self, role, step, text, exact_input_text=None, schema=None):
@@ -228,7 +243,9 @@ class CoreRun:
             "provider_request_id": outcome["request_id"],
             "model": outcome["model"],
             "timestamp": outcome["at"],
-            "transport": self.client.kind,
+            "transport": ("LIVE_OPENAI_RESPONSES"
+                          if type(self.client) is OpenAIResponsesClient
+                          else "UNTRUSTED_TEST_TRANSPORT"),
         }
         self.receipts.append(receipt)
         return result
@@ -240,11 +257,20 @@ class CoreRun:
             + "\n\n=== ТЕКСТ ДЛЯ ПРОВЕРКИ ===\n" + candidate
         )
         result = self.call("Critic", "independent_critic", inquiry, candidate, CRITIC_SCHEMA)
-        return checked_critic(result)
+        verdict = checked_critic(result)
+        # This is the exact structured verdict returned by the separate Critic
+        # request. It is NOT an independent quality certification.
+        self.receipts[-1]["critic_verdict"] = {
+            "decision": verdict["decision"],
+            "score": verdict["score"],
+            "blocking_issues": verdict["blocking_issues"],
+        }
+        return verdict
 
     def execute(self, brief):
         if not isinstance(brief, str) or not brief.strip() or len(brief) > 7000:
             raise Blocked("INVALID_BRIEF")
+        self.brief_sha256 = sha(brief)
         candidate = self.call(
             "Simba", "draft", "Составь одну редакцию для проверки.\n" + brief
         )
@@ -273,12 +299,15 @@ class CoreRun:
             if no_progress >= 3:
                 raise Blocked("BLOCKED_CRITIC_NO_PROGRESS")
             last_issues = issues
+            previous_candidate = candidate
             candidate = self.call(
                 "Simba", "repair", "Исправь ТОЛЬКО замечания независимого Critic.\n"
                 + "\n".join(verdict["blocking_issues"])
                 + "\n\n=== ТЕКСТ ===\n" + candidate,
                 candidate,
             )
+            if candidate == previous_candidate:
+                raise Blocked("SIMBA_REPAIR_NO_TEXT_CHANGE")
             finalized = False
         else:
             raise Blocked("CRITIC_LOOP_BUDGET_EXHAUSTED")
@@ -292,14 +321,26 @@ class CoreRun:
             after = self.critic(humanized, brief)
             if after["decision"] != "PASS":
                 raise Blocked("HUMANIZER_CHANGE_REQUIRES_SIMBA_REPAIR")
-        state = ("TEXT_READY_FOR_LEO" if self.client.kind == "LIVE_OPENAI_RESPONSES"
+        # The CLI does NOT execute Router source resolution, current fact checks,
+        # owner-bound approval, TIA or authenticated external receipt readback.
+        # Even a genuine API run is strictly a PRIVATE PILOT, never production READY.
+        state = ("LIVE_EDITORIAL_PILOT_UNVERIFIED"
+                 if type(self.client) is OpenAIResponsesClient
                  else "DECLARED_TEST_ONLY")
         return {"state": state, "text": humanized, "text_sha256": sha(humanized)}
 
     def report(self, status, detail=None):
         return {
             "run_id": self.run_id, "status": status,
-            "detail": detail, "mode": self.client.kind,
+            "detail": detail,
+            "mode": ("LIVE_OPENAI_RESPONSES"
+                     if type(self.client) is OpenAIResponsesClient
+                     else "UNTRUSTED_TEST_TRANSPORT"),
+            "brief_sha256": self.brief_sha256,
+            "ready_for_production": False,
+            "source_resolution_verified": False,
+            "dynamic_fact_check_verified": False,
+            "tia_execution_verified": False,
             "authenticity_note": "Live provider identifiers are not cryptographic attestations; independently verify before downstream authorization.",
             "publication_authorized": False,
             "leo_approval_verified": False,
@@ -314,13 +355,16 @@ def _write_private(output_dir, report, text=None):
         raise Blocked("OUTPUT_MUST_BE_OUTSIDE_PUBLIC_REPOSITORY")
     dest.mkdir(mode=0o700, parents=True, exist_ok=True)
     report_file = dest / ("simba-core-" + report["run_id"] + ".json")
-    with report_file.open("x", encoding="utf-8") as handle:
-        os.chmod(report_file, 0o600)
+    if dest.stat().st_mode & 0o077:
+        raise Blocked("UNSAFE_OUTPUT_DIRECTORY_PERMISSIONS")
+    # Mode is applied on creation, not after a potentially world-readable open.
+    fd = os.open(report_file, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+    with os.fdopen(fd, "w", encoding="utf-8") as handle:
         json.dump(report, handle, ensure_ascii=False, indent=2)
     if text is not None:
         txt = dest / ("simba-core-" + report["run_id"] + ".txt")
-        with txt.open("x", encoding="utf-8") as handle:
-            os.chmod(txt, 0o600)
+        fd = os.open(txt, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
             handle.write(text)
     return str(report_file)
 
@@ -360,7 +404,7 @@ def main(argv=None):
             report = run.report("BLOCKED_EDITORIAL", str(exc))
         saved = _write_private(args.output_dir, report, result["text"] if result else None)
         print(json.dumps({"status": report["status"], "report_path": saved, "calls": len(run.receipts)}, ensure_ascii=False))
-        return 0 if result and result["state"] == "TEXT_READY_FOR_LEO" else 1
+        return 0 if result and result["state"] == "LIVE_EDITORIAL_PILOT_UNVERIFIED" else 1
     except (Blocked, OSError, UnicodeError) as exc:
         print(json.dumps({"status": "BLOCKED_RUNTIME_INTEGRATION", "reason": str(exc)}, ensure_ascii=False), file=sys.stderr)
         return 1
