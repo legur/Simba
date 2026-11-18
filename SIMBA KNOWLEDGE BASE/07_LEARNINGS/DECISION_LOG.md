@@ -6,10 +6,26 @@
 
 Прямое поручение Leo: установить rea-video, дать имя, отдельно готовить базу для монтажёра как TIA для Simba. Имя «Кадр» и структура карточек выбраны исполнителем; не выданы за выбор Leo. Локальный анализ по умолчанию без VLM, генерации/публикации; реальный Instagram и полный аудио/OCR ещё не проверены.
 
-Версия: 1.38 · 17.11.2026
+Версия: 1.39 · 18.11.2026 (chat-native editorial runtime; прежний 1.38 · 17.11.2026)
 
 
 ## Архитектурные решения
+
+### 18.11.2026 — редакция Simba CORE работает в ChatGPT, а не в локальном API-раннере
+
+**Основание / прямое решение Leo:** «погодию мы работаем сугубо изнутри чата»; после пояснения требуемого маршрута команда «делай». Scope — **только текстовая редакция Simba CORE**. Это не разрешение запускать Киностудию, платные API или публикацию.
+
+**Решение:** ChatGPT — основной исполнительный интерфейс и место чтения/передачи/правки текста. GitHub `legur/Simba@main` — источник текущих Router/KB/профилей, а не runner. Для штатной текстовой задачи больше **не** требовать от Leo PowerShell, Windows ACL, локального MCP, отдельного `OPENAI_API_KEY` или внешнего Responses API. Канон записан в `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`, синхронизирован в Router, META, AGENTS, Knowledge Map, KB Runtime, Content Pipeline, Agent Roles и плагине Simba CORE.
+
+**Граница доказательности:** один ChatGPT может применять по очереди правила Simba/Critic/Humanizer и выдавать полезный **обсуждаемый черновик**, но это `CHAT_NATIVE_SINGLE_MODEL` / `CHAT_DRAFT_SELF_REVIEWED_INDEPENDENCE_UNVERIFIED`, а **не** независимые вызовы агентов. `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` допустим только при фактической доступности отдельных инструментов, выходов и точного provenance; иначе `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE` для требуемой независимости. Source/TIA/fact checks, Critic production PASS, Humanizer PASS, Leo approval и публикационные gates не отменены.
+
+**SUPERSEDED как DEFAULT с 18.11.2026:** предыдущая установка локального `simba_core_mcp.py` и `editorial_live_runner.py` как обязательный маршрут редакции из чата. Они сохраняются **как опциональная legacy-диагностика/отдельный платный opt-in пилот**, но не используются для обычной текстовой задачи. Ранее полученные синтетические статусы `OFFLINE_HANDOFF_CONTRACT_OK_NOT_AGENT_EXECUTION` остаются действительным test evidence, не доказательством живой роли.
+
+**Подтвержденный write-back:** GitHub PR #229 объединен; CI `44286830817` = 106 offline tests PASS (не role E2E); частный плагин `simba-core-editorial` обновлен до 0.1.1 через Plugin Creator, readback `requires_local_executor=false` и новая skill-инструкция подтверждены. Доступность отдельных инструментов ролей в любой новой сессии ChatGPT **не подтверждена**.
+
+**KB-LINT: WARNING** — L01 прямое решение Leo; L02 независимые роли не объявлены исполненными; L03 новых динамических цен/фактов нет; L04 workflow и связанное architecture evidence в правильных слоях; L05 прежний local-only путь явно SUPERSEDED для default, но legacy сохранен; L06 изменения только Simba CORE text; L07 reference/Studio не изменены; L08 канонические файлы обновлены по существующим путям; L09–L11 нет новых APPROVED/PUBLISHED текстов, history не повышена. Warning: production независимость остается неподтвержденной, поэтому Issue #220 не закрывается.
+
+
 
 ### 18.10.2026 — исправление несогласованностей по результатам аудита
 
