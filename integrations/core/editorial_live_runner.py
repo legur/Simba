@@ -355,7 +355,12 @@ def _write_private(output_dir, report, text=None):
         raise Blocked("OUTPUT_MUST_BE_OUTSIDE_PUBLIC_REPOSITORY")
     dest.mkdir(mode=0o700, parents=True, exist_ok=True)
     report_file = dest / ("simba-core-" + report["run_id"] + ".json")
-    if dest.stat().st_mode & 0o077:
+    if os.name == "nt":
+        # On Windows, POSIX st_mode is not a reliable ACL readback.
+        # The operator must restrict the directory with Windows ACLs first.
+        if os.environ.get("SIMBA_CORE_WINDOWS_PRIVATE_ACL_VERIFIED") != "1":
+            raise Blocked("WINDOWS_PRIVATE_ACL_NOT_CONFIRMED")
+    elif dest.stat().st_mode & 0o077:
         raise Blocked("UNSAFE_OUTPUT_DIRECTORY_PERMISSIONS")
     # Mode is applied on creation, not after a potentially world-readable open.
     fd = os.open(report_file, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
