@@ -25,6 +25,19 @@ TOOLS = [
         "annotations": {"title": "Simba CORE preflight", "readOnlyHint": True, "openWorldHint": False},
     },
     {
+        "name": "simba_core_handoff_selftest",
+        "description": (
+            "No-cost synthetic text handoff contract test. Exercises the real "
+            "local orchestration state machine with FIXED fake outputs for "
+            "Simba -> Critic -> Simba -> Humanizer -> Critic. NO models, "
+            "provider calls, approvals, external sources, or files written. "
+            "Never mistake a passed selftest for live agent execution."
+        ),
+        "inputSchema": {"type": "object", "properties": {}, "additionalProperties": False},
+        "annotations": {"title": "Simba CORE offline handoff selftest",
+                        "readOnlyHint": True, "openWorldHint": False},
+    },
+    {
         "name": "simba_core_run_private_pilot",
         "description": (
             "Runs independent, billable API requests for one private test text, "
@@ -153,6 +166,20 @@ def preflight():
     return report
 
 
+def handoff_selftest():
+    root = repo_root()
+    load_core()
+    from editorial_handoff_selftest import run_offline_handoff_selftest
+    module = sys.modules["editorial_handoff_selftest"]
+    expected = root / "integrations/core/editorial_handoff_selftest.py"
+    if Path(module.__file__).resolve() != expected.resolve():
+        raise BridgeBlocked("SIMBA_HANDOFF_SELFTEST_PATH_MISMATCH")
+    try:
+        return run_offline_handoff_selftest()
+    except RuntimeError as exc:
+        raise BridgeBlocked("OFFLINE_HANDOFF_SELFTEST_FAILED:" + str(exc)) from None
+
+
 def run_private_pilot(args):
     # Check three independent operator gates before even importing runtime.
     if args.get("execute_live") is not True:
@@ -238,6 +265,10 @@ def tool_call(name, args):
         if args:
             raise BridgeBlocked("INVALID_TOOL_ARGUMENTS")
         return preflight()
+    if name == "simba_core_handoff_selftest":
+        if args:
+            raise BridgeBlocked("INVALID_TOOL_ARGUMENTS")
+        return handoff_selftest()
     if name == "simba_core_run_private_pilot":
         return run_private_pilot(args)
     if name == "simba_core_audit_pilot_receipts":
