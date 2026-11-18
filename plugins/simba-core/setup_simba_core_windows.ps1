@@ -78,7 +78,22 @@ if ($createdRepo -or ($missingCore -and $isDedicatedRepo)) {
     }
     $remote = & $git.Source -C $RepoRoot remote get-url origin
     Assert-ExternalExit $LASTEXITCODE 'Verify local Git origin'
-    if ($remote -notmatch '^(https://github\.com/legur/Simba(\.git)?|git@github\.com:legur/Simba(\.git)?)
+    $remote = $remote.Trim()
+    if ($remote -ne 'https://github.com/legur/Simba.git' -and
+        $remote -ne 'https://github.com/legur/Simba' -and
+        $remote -ne 'git@github.com:legur/Simba.git') {
+        throw 'Existing Git origin is not legur/Simba. Kept unchanged.'
+    }
+    Write-Host 'Selecting Simba CORE only: avoiding Windows-invalid Archivarius filenames...'
+    & $git.Source -C $RepoRoot sparse-checkout init --cone
+    Assert-ExternalExit $LASTEXITCODE 'Git sparse-checkout init'
+    & $git.Source -C $RepoRoot sparse-checkout set --cone -- $sparseDirs
+    Assert-ExternalExit $LASTEXITCODE 'Git sparse-checkout set'
+}
+if (-not (Test-Path -LiteralPath $server -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $runner -PathType Leaf)) {
+    throw 'Simba CORE files missing after sparse checkout; no local environment settings changed.'
+}
 
 $privateCreated = $false
 if (-not (Test-Path -LiteralPath $PrivateDir)) {
