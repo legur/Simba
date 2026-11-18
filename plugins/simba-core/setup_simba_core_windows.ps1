@@ -84,14 +84,23 @@ if ($createdRepo -or ($missingCore -and $isDedicatedRepo)) {
         $remote -ne 'git@github.com:legur/Simba.git') {
         throw 'Existing Git origin is not legur/Simba. Kept unchanged.'
     }
-    Write-Host 'Selecting Simba CORE only: avoiding Windows-invalid Archivarius filenames...'
-    & $git.Source -C $RepoRoot sparse-checkout init --cone
-    Assert-ExternalExit $LASTEXITCODE 'Git sparse-checkout init'
-    & $git.Source -C $RepoRoot sparse-checkout set --cone -- $sparseDirs
-    Assert-ExternalExit $LASTEXITCODE 'Git sparse-checkout set'
-    # --no-checkout leaves an empty worktree. Apply sparse patterns BEFORE checkout.
-    & $git.Source -C $RepoRoot checkout main
-    Assert-ExternalExit $LASTEXITCODE 'Git checkout sparse main'
+    # After a full clone has failed on Windows, the Git index may already
+    # contain invalid file names. Even "git checkout main" after switching to
+    # sparse-checkout may still reject those names. Git archive reads HEAD's
+    # safe tree paths directly and never checks out the invalid ones.
+    Write-Host 'Extracting only Simba CORE directories from Git objects (Windows-safe)...'
+    $safeArchive = Join-Path $env:TEMP ('simba-core-' + [guid]::NewGuid().ToString('N') + '.zip')
+    try {
+        & $git.Source -C $RepoRoot archive --format=zip --output=$safeArchive HEAD -- $sparseDirs
+        Assert-ExternalExit $LASTEXITCODE 'Git archive selected Simba CORE directories'
+        & $python.Source -m zipfile -e $safeArchive $RepoRoot
+        Assert-ExternalExit $LASTEXITCODE 'Extract only safe Simba CORE paths'
+    }
+    finally {
+        if (Test-Path -LiteralPath $safeArchive -PathType Leaf) {
+            Remove-Item -LiteralPath $safeArchive -Force
+        }
+    }
 }
 if (-not (Test-Path -LiteralPath $server -PathType Leaf) -or
     -not (Test-Path -LiteralPath $runner -PathType Leaf)) {
