@@ -2,6 +2,12 @@
 
 ## ChatGPT-native mode — runtime addendum 18.11.2026
 
+### Native subagent preflight для текстовой редколлегии
+
+Если пользователь просит независимое исполнение Simba/Critic/Humanizer **внутри ChatGPT**, прочитать `06_AGENT_WORKFLOWS/CHATGPT_WORK_SUBAGENTS.md`, убедиться в доступности настоящего делегирования субагентам **ChatGPT Work** и вызвать их последовательно по канону. Нельзя подменить native activity локальным MCP, синтетикой, одним ChatGPT в трех ролях или статическим тестом. Недоступность Work → `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`, без требования открыть PowerShell или оплачивать API. Истинный PASS требует раздельных результатов для той же версии текста.
+
+
+
 Для обычной редакции Simba CORE после MAP/PROTOCOL прочитать `06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`. Работать **в текущем чате**, при доступности GitHub tools читать реальные профильные файлы из `legur/Simba@main`. Не отправлять Leo устанавливать Python/MCP, настраивать локальные переменные или оплачивать Responses API ради текстового задания. `CHAT_NATIVE_SINGLE_MODEL` позволяет последовательные проходы одного ассистента и видимые **черновики**, но не устанавливает `EXECUTOR_EXECUTED` отдельных агентов, независимый Critic PASS или готовность публикации. `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` требует реальных tool calls и exact-text receipts. Обязательный KB недоступен → `BLOCKED_KB_UNAVAILABLE`; независимость была существенным условием → `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`. Не отменять SOURCE RESOLUTION, TIA, факт-контроль и Leo approval.
 
 
