@@ -12,7 +12,7 @@ from pathlib import Path
 import re
 import sys
 
-HASH = re.compile(r"[a-f0-9]{64}\\Z")
+HASH = re.compile(r"[a-f0-9]{64}\Z")
 STEPS = {
     "draft": "Simba",
     "repair": "Simba",
