@@ -93,7 +93,7 @@ class CoreLiveRunnerTests(unittest.TestCase):
         report = runner.report(result["state"])
         self.assertFalse(report["publication_authorized"])
         self.assertFalse(report["leo_approval_verified"])
-        self.assertEqual(report["mode"], "SIMULATED_OFFLINE")
+        self.assertEqual(report["mode"], "UNTRUSTED_TEST_TRANSPORT")
 
     def test_independent_critic_rechecks_changed_finalize(self):
         fake = FakeClient([
