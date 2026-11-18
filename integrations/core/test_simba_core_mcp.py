@@ -118,11 +118,11 @@ class SimbaCoreMCPContractTests(unittest.TestCase):
         self.assertNotIn("SIMBA_CORE_ALLOW_BILLABLE=1", text)
         self.assertNotIn("OPENAI_API_KEY=", text)
 
-    def test_windows_install_only_sparse_checks_out_core(self):
+    def test_windows_install_only_archives_selected_core(self):
         script = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
         self.assertIn("clone --no-checkout", script)
-        self.assertIn("sparse-checkout set --cone -- $sparseDirs", script)
-        self.assertIn("& $git.Source -C $RepoRoot checkout main", script)
+        self.assertIn("archive --format=zip --output=$safeArchive HEAD -- $sparseDirs", script)
+        self.assertIn("-m zipfile -e $safeArchive $RepoRoot", script)
         self.assertIn("'integrations/core'", script)
         self.assertIn("'plugins/simba-core'", script)
         self.assertIn("'SIMBA KNOWLEDGE BASE'", script)
@@ -130,8 +130,9 @@ class SimbaCoreMCPContractTests(unittest.TestCase):
         self.assertIn("'Critic'", script)
         self.assertNotIn("'Archivarius'", script)
         self.assertNotIn("reset --hard", script)
-        self.assertNotIn("Remove-Item", script)
+        self.assertIn("Remove-Item -LiteralPath $safeArchive -Force", script)
         self.assertNotIn("git clean", script)
+        self.assertNotIn("git -C $RepoRoot checkout main", script)
 
     def test_recovery_case_keeps_existing_custom_checkouts(self):
         script = (ROOT / "plugins/simba-core/setup_simba_core_windows.ps1").read_text(encoding="utf-8")
