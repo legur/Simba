@@ -45,22 +45,25 @@ The helper does not press buttons or install the private plugin in the ChatGPT D
 
 The GitHub CI executes only **Python/static checks** of this PowerShell file, not Windows PowerShell on the user's machine. The only decisive Windows connection check is its local MCP preflight plus availability of the connected tool in a Desktop chat.
 
-## Windows: recovery after a failed full clone
+## Windows: recovery after the full checkout AND sparse checkout failures
 
-A previous version of the setup script ran a full Git checkout. Windows rejects several filenames in the unrelated `Archivarius` directory containing reserved characters such as `9:16`, producing `error: invalid path` and `fatal: unable to checkout working tree`. This is a **Git checkout limitation, not a Python/API/MCP failure**.
+On Windows PowerShell 5.1 the user's full Git clone downloaded 3,839 objects but failed when checkout reached unrelated Archivarius filenames such as `9:16`. A later attempt to switch the already-invalid Git index to sparse mode and run `git checkout main` **also failed** with the same 8 names.
 
-The Windows installer now uses `git clone --no-checkout` followed by `git sparse-checkout` for exactly `integrations/core`, `plugins/simba-core`, `SIMBA KNOWLEDGE BASE`, `Симба (Писатель)` and `Critic`. Only after limiting the checkout does it invoke `git checkout main`. This avoids all observed Windows-invalid paths without renaming or modifying any `Archivarius` files.
+**The confirmed workaround is an object-only Git archive of five safe directories, WITHOUT any Git checkout.** `git archive HEAD -- <safe dirs>` reads the Git tree directly, omitting all Archivarius paths. `python -m zipfile -e` then extracts only those safe paths into the dedicated local repository. A synthetic offline regression checks a partial clone with existing sparse metadata. No files in Archivarius need to be renamed, deleted, copied or regenerated.
 
-**For a failed clone already present in the dedicated default folder** `%LOCALAPPDATA%\\SimbaCore\\Repo`, download the **latest** installer and rerun it. It recognizes missing Simba CORE files in that exact folder, validates the Git remote and applies sparse checkout. It does **not** delete the repository or run destructive `git reset --hard`, and it will not auto-repair or alter a custom checkout.
+PowerShell **manual recovery without running an unsigned .ps1 file**:
 
-Manual recovery for that known newly-created, failed checkout, if needed:
+    $repo = "$env:LOCALAPPDATA\SimbaCore\Repo"
+    $zip = Join-Path $env:TEMP "simba-core-safe.zip"
+    git -C $repo archive --format=zip --output=$zip HEAD -- "integrations/core" "plugins/simba-core" "SIMBA KNOWLEDGE BASE" "Симба (Писатель)" "Critic"
+    if ($LASTEXITCODE -ne 0) { throw "Git archive failed" }
+    python -m zipfile -e $zip $repo
+    if ($LASTEXITCODE -ne 0) { throw "Core archive extraction failed" }
+    Test-Path "$repo\plugins\simba-core\server\simba_core_mcp.py"
 
-    $repo = "$env:LOCALAPPDATA\\SimbaCore\\Repo"
-    git -C $repo sparse-checkout init --cone
-    git -C $repo sparse-checkout set --cone -- "integrations/core" "plugins/simba-core" "SIMBA KNOWLEDGE BASE" "Симба (Писатель)" "Critic"
-    git -C $repo checkout main
+Check the Git `origin` remote first when applying these commands to a nonstandard repository. The recovery uses existing local Git objects, does not fetch or publish anything, and makes **no** paid API calls. Because PowerShell 5.1 blocks unsigned downloaded scripts under some policies, do **not** disable the Windows execution policy just to use this script. The manual archive commands are sufficient to restore the CORE files; the private ACL and environment preflight remain separate subsequent steps.
 
-Then rerun the installer to configure the private directory and perform read-only preflight. The above does not require API credentials, paid operations, or publication.
+The updated `setup_simba_core_windows.ps1` also uses this archive-based method when run on an appropriately authorized local computer. It only touches a new checkout or the dedicated failed clone after checking `origin` and never runs `git checkout main` during recovery.
 
 ## Reproducible no-charge verification
 
