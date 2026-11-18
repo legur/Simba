@@ -68,6 +68,26 @@ Success means **only** `CORE_FILES_READY_LOCAL_MCP_NOT_CONNECTED`, not a connect
 
 The PowerShell setup file now uses the same Python source-ZIP recovery method internally, but **does not need to be run** on Windows devices that prohibit unsigned PowerShell scripts.
 
+## One synthetic text: offline editorial handoff smoke test
+
+After the canonical MCP server is updated to include the new `simba_core_handoff_selftest` tool, it can exercise the **real local handoff state machine** with predetermined fixture strings and structured Critic verdicts. No API key, billing enablement, private output directory, web connection, personal data or owner approval is required for the test.
+
+The fixture follows a synthetic, explicitly fictional museum example through these steps:
+
+    Simba draft -> Critic REVISE -> Simba repair -> Critic PASS
+    -> Simba finalize unchanged -> Humanizer changes text -> Critic PASS
+
+It also confirms that a Critic REVISE after Humanizer blocks, that an unchanged Simba repair blocks, and that a fake transport claiming to be live cannot escalate `DECLARED_TEST_ONLY` to a live or production-ready state.
+
+From the local repo, in PowerShell without running an unsigned script:
+
+    $repo = "$env:LOCALAPPDATA\\SimbaCore\\Repo"
+    python "$repo\\integrations\\core\\editorial_handoff_selftest.py"
+
+From a connected ChatGPT Desktop session, use the **read-only** tool `simba_core_handoff_selftest` with empty arguments. The expected status is `OFFLINE_HANDOFF_CONTRACT_OK_NOT_AGENT_EXECUTION`, and `live_calls_made`, `publication_authorized`, `leo_approval_verified` all remain `false`.
+
+**Limitations:** a passing synthetic smoke test is not execution of actual Simba/Critic/Humanizer model roles, not authenticated provider receipts, not verified facts, TIA, owner approval or publication. This tool is a protocol/state-machine test only. No other existing approved text is modified.
+
 ## Reproducible no-charge verification
 
 From a checkout, offline regression tests:

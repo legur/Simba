@@ -28,6 +28,7 @@ class SimbaCoreMCPContractTests(unittest.TestCase):
         names = {t["name"] for t in available}
         self.assertEqual(names, {
             "simba_core_preflight",
+            "simba_core_handoff_selftest",
             "simba_core_run_private_pilot",
             "simba_core_audit_pilot_receipts",
             "simba_core_read_pilot_text",
@@ -36,6 +37,40 @@ class SimbaCoreMCPContractTests(unittest.TestCase):
         self.assertFalse(paid["annotations"]["readOnlyHint"])
         self.assertTrue(paid["annotations"]["openWorldHint"])
         self.assertIn("permit_billable_api_calls", paid["inputSchema"]["required"])
+
+    def test_handoff_selftest_via_mcp_never_requires_api_key(self):
+        env = {
+            "SIMBA_CORE_REPO_ROOT": str(ROOT),
+            "OPENAI_API_KEY": "",
+            "SIMBA_CORE_ALLOW_BILLABLE": "",
+            "SIMBA_CORE_PRIVATE_DIR": "",
+        }
+        with patch.dict(os.environ, env):
+            response = mcp.handle(mcp_request(
+                "tools/call", id=4,
+                params={"name": "simba_core_handoff_selftest", "arguments": {}},
+            ))
+        self.assertFalse(response["result"]["isError"])
+        result = json.loads(response["result"]["content"][0]["text"])
+        self.assertEqual(result["status"],
+                         "OFFLINE_HANDOFF_CONTRACT_OK_NOT_AGENT_EXECUTION")
+        self.assertEqual(result["receipts_checked"], 7)
+        self.assertFalse(result["live_calls_made"])
+        self.assertFalse(result["publication_authorized"])
+        self.assertFalse(result["tests_real_role_orchestration"])
+
+    def test_handoff_selftest_annotated_read_only_and_requires_no_inputs(self):
+        available = mcp.handle(mcp_request("tools/list"))["result"]["tools"]
+        tool = next(x for x in available if x["name"] == "simba_core_handoff_selftest")
+        self.assertTrue(tool["annotations"]["readOnlyHint"])
+        self.assertFalse(tool["annotations"]["openWorldHint"])
+        self.assertEqual(tool["inputSchema"]["properties"], {})
+        response = mcp.handle(mcp_request("tools/call", params={
+            "name": "simba_core_handoff_selftest",
+            "arguments": {"attempt_paid": True},
+        }))
+        self.assertTrue(response["result"]["isError"])
+        self.assertIn("INVALID_TOOL_ARGUMENTS", response["result"]["content"][0]["text"])
 
     def test_no_message_for_notifications(self):
         self.assertIsNone(mcp.handle({"jsonrpc": "2.0", "method": "notifications/initialized"}))
