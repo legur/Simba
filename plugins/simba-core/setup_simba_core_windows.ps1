@@ -89,74 +89,9 @@ if ($createdRepo -or ($missingCore -and $isDedicatedRepo)) {
     Assert-ExternalExit $LASTEXITCODE 'Git sparse-checkout init'
     & $git.Source -C $RepoRoot sparse-checkout set --cone -- $sparseDirs
     Assert-ExternalExit $LASTEXITCODE 'Git sparse-checkout set'
-}
-if (-not (Test-Path -LiteralPath $server -PathType Leaf) -or
-    -not (Test-Path -LiteralPath $runner -PathType Leaf)) {
-    throw 'Simba CORE files missing after sparse checkout; no local environment settings changed.'
-}
-
-$privateCreated = $false
-if (-not (Test-Path -LiteralPath $PrivateDir)) {
-    New-Item -ItemType Directory -Path $PrivateDir -Force | Out-Null
-    $privateCreated = $true
-}
-if (-not (Test-Path -LiteralPath $PrivateDir -PathType Container)) {
-    throw 'PrivateDir path is not a directory.'
-}
-$currentId = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-if ($privateCreated) {
-    # Only a NEW folder is adjusted: never rewrite ACLs of an existing folder.
-    & icacls.exe $PrivateDir /inheritance:r | Out-Null
-    Assert-ExternalExit $LASTEXITCODE 'Remove inherited permissions from NEW private folder'
-    & icacls.exe $PrivateDir /grant:r ('*{0}:(OI)(CI)F' -f $currentId) | Out-Null
-    Assert-ExternalExit $LASTEXITCODE 'Grant private folder owner access'
-}
-
-$acl = Get-Acl -LiteralPath $PrivateDir
-if (-not $acl.AreAccessRulesProtected) {
-    throw 'Existing private folder inherits permissions. Manually restrict ACL first; no environment changes made.'
-}
-$allowed = @($currentId, 'S-1-5-18', 'S-1-5-32-544')
-foreach ($rule in $acl.Access) {
-    if ($rule.AccessControlType -eq [Security.AccessControl.AccessControlType]::Allow) {
-        $sid = $rule.IdentityReference.Translate([Security.Principal.SecurityIdentifier]).Value
-        if ($allowed -notcontains $sid) {
-            throw "PrivateDir has an unexpected allowed principal. Check ACLs before retry."
-        }
-    }
-}
-$vars = @{
-    SIMBA_CORE_REPO_ROOT = $RepoRoot
-    SIMBA_CORE_PRIVATE_DIR = $PrivateDir
-    SIMBA_CORE_WINDOWS_PRIVATE_ACL_VERIFIED = '1'
-}
-foreach ($pair in $vars.GetEnumerator()) {
-    [Environment]::SetEnvironmentVariable($pair.Key, $pair.Value, 'User')
-    [Environment]::SetEnvironmentVariable($pair.Key, $pair.Value, 'Process')
-}
-# IMPORTANT: never set SIMBA_CORE_ALLOW_BILLABLE or OPENAI_API_KEY here.
-Write-Host 'Local paths and private ACL verified. Running no-charge MCP preflight:'
-$request = '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"simba_core_preflight","arguments":{}}}'
-$reply = $request | & $python.Source $server
-Assert-ExternalExit $LASTEXITCODE 'Read-only MCP handshake'
-$line = @($reply | Where-Object { $_.Trim() })[-1]
-$parsed = $line | ConvertFrom-Json
-if (-not $parsed.result -or $parsed.result.isError -or $parsed.id -ne 1) {
-    throw 'MCP server did not return a valid preflight response.'
-}
-Write-Output $line
-Write-Host ''
-Write-Host 'LOCAL SETUP COMPLETE (not installed in ChatGPT UI). No API usage.'
-Write-Host 'Open the private plugin in ChatGPT Desktop and install/connect it.'
-Write-Host 'A new ChatGPT Desktop session may be needed to see persisted variables.'
-) {
-        throw 'Existing Git origin is not legur/Simba. Kept unchanged.'
-    }
-    Write-Host 'Selecting Simba CORE only: avoiding Windows-invalid Archivarius filenames...'
-    & $git.Source -C $RepoRoot sparse-checkout init --cone
-    Assert-ExternalExit $LASTEXITCODE 'Git sparse-checkout init'
-    & $git.Source -C $RepoRoot sparse-checkout set --cone -- $sparseDirs
-    Assert-ExternalExit $LASTEXITCODE 'Git sparse-checkout set'
+    # --no-checkout leaves an empty worktree. Apply sparse patterns BEFORE checkout.
+    & $git.Source -C $RepoRoot checkout main
+    Assert-ExternalExit $LASTEXITCODE 'Git checkout sparse main'
 }
 if (-not (Test-Path -LiteralPath $server -PathType Leaf) -or
     -not (Test-Path -LiteralPath $runner -PathType Leaf)) {
