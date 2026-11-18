@@ -105,7 +105,10 @@ def private_dir():
         raise BridgeBlocked("PRIVATE_DIR_WITHIN_PUBLIC_REPOSITORY")
     if not dest.is_dir():
         raise BridgeBlocked("PRIVATE_DIR_MUST_EXIST")
-    if dest.stat().st_mode & 0o077:
+    if os.name == "nt":
+        if os.environ.get("SIMBA_CORE_WINDOWS_PRIVATE_ACL_VERIFIED") != "1":
+            raise BridgeBlocked("WINDOWS_PRIVATE_ACL_NOT_CONFIRMED")
+    elif dest.stat().st_mode & 0o077:
         raise BridgeBlocked("PRIVATE_DIR_PERMISSIONS_UNSAFE")
     return dest
 
