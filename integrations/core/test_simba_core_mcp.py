@@ -125,7 +125,7 @@ class SimbaCoreMCPContractTests(unittest.TestCase):
         self.assertIn("Invoke-WebRequest -UseBasicParsing", script)
         self.assertIn("Custom RepoRoot is missing Simba CORE files", script)
         self.assertIn("if (-not $isDedicatedRepo)", script)
-        self.assertNotIn("sparse-checkout", script)
+        self.assertNotIn("& $git.Source", script)
         self.assertNotIn("clone --no-checkout", script)
         self.assertNotIn("archive --format=zip", script)
         self.assertNotIn("git checkout", script)
