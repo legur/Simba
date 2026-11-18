@@ -208,6 +208,12 @@ Leo по-прежнему может отдельно запускать Critic 
 
 ## LIVE EXECUTION EVIDENCE — различать прогон и описание прогона
 
+## ChatGPT-native editorial lane — 18.11.2026
+
+Канонический контракт: `CHATGPT_NATIVE_EDITORIAL.md`. **ChatGPT исполняет текстовый workflow в текущем чате** по реально прочитанным Router/KB/профилям; GitHub — источник истины и write-back. Для `CHAT_NATIVE_SINGLE_MODEL` последовательные авторский, критический и языковой проходы могут дать полезный текст, однако результат — `CHAT_DRAFT_SELF_REVIEWED_INDEPENDENCE_UNVERIFIED`: не ставить независимые `INTERNAL_CRITIC_PASS`/`HUMANIZER_PASS` по self-review. Для `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` каждый вызов отдельного агента/инструмента, SHA-256 точного текста и итоговый verdict должны быть подтверждены фактическим ответом. Если таких инструментов нет, не имитировать их; при запросе независимой редколлегии → `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE` (не отменяя выдачу честно маркированного черновика, если это уместно). Local MCP/Windows/python/внешний billable API **не являются** условиями редакционной задачи в ChatGPT. Соблюдать source/TIA/fact, approval и publication gates. Киностудия не меняется.
+
+
+
 Для реального редакционного цикла `SOURCE_RESOLVED → AUTHOR → INTERNAL_CRITIC (Simba only) → HUMANIZER → LEO_APPROVAL` хранить отдельные подтверждаемые receipts: фактический источник/версия KB, вызванная роль и ее результат, точный SHA256 текста на входе/выходе, Critic PASS для **этой** редакции, Humanizer PASS для **этой** редакции и явное решение Leo. Запись роли в manifest или название файла prompt **не доказывает реального вызова роли**. Если в данной среде нет доступного исполнительного механизма, ответ `BLOCKED_EXECUTOR_NOT_RUN` вместо выдуманных `INTERNAL_CRITIC_PASS`/`HUMANIZER_PASS`. Отсутствие receipts в **старом** архиве обозначается `HISTORICAL_EXECUTION_UNVERIFIED` и не является свидетельством, что работа тогда не проводилась или что Leo не утверждал текст.
 
 `integrations/core/editorial_readonly_audit.py` делает только **действительный KB/readback preflight** существующего архивного поста, но не запускает писателей/критиков; его ожидаемое состояние `BLOCKED_LIVE_EXECUTOR_NOT_RUN`. `integrations/core/editorial_trace.py` проверяет только заявленные события (synthetic/declared), поэтому даже при всех событиях возвращает лишь `DECLARED_*` и никогда не является основанием для настоящего `APPROVED_TEXT`, `PUBLISHED` или автопубликации. Для реального production нужны независимо проверенные receipts/вызовы, которых эти инструменты сами не предоставляют.
