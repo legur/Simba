@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "STORYBOARD_OPTIONS_3_SOURCE_PREVIEW",
-  "status": "LEO_LIKES_STYLE_3_PENDING_PRODUCTION_ASSET_VERIFICATION",
+  "stage": "SILENT_ANIMATIC_PREVIEW_NEEDS_LEO_REVIEW",
+  "status": "LOCAL_SILENT_MP4_VERIFIED_AI_VISUALS_NOT_PRODUCTION_READY",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,8 +9,8 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "NOT_STARTED; no paid A2E/TTS; no MP4",
-  "licenseCheck": "PENDING, original Wikimedia CC credits in Wix article need validation for commercial reel",
+  "productionStatus": "SILENT_ANIMATIC_ONLY; PAID_A2E_NOT_STARTED; VOICE_NOT_RENDERED; FINAL_MP4_NOT_CREATED",
+  "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
       "id": 1,
@@ -170,5 +170,26 @@
     "visualProductionGate": "BLOCKED_PENDING_INDIVIDUAL_SCENE_ASSETS_AND_LICENSE_QA",
     "actualMedia": "Wix metadata confirms 12 images including blog cover; generated visual sheet is a non-production collage; no paid A2E/TTS performed"
   },
-  "preferredVisualVariant": 3
+  "preferredVisualVariant": 3,
+  "previewProducedOn": "2026-11-23",
+  "previewProof": {
+    "artifact_kind": "silent 59-second animatic MP4 based on selected script 1 and visual direction 3; not final reel",
+    "video_name": "thermal_reel_silent_animatic_59s.mp4",
+    "video_sha256": "149d561cdd5951cb16305bdf9c70d9346de84ba00651bd001272855baadeb535",
+    "video_codec": "h264",
+    "video_resolution": "720x1280",
+    "video_duration_seconds": 59,
+    "video_size_bytes": 1921308,
+    "video_audio": "NONE",
+    "scene_count": 13,
+    "preview_stills": "13 preview images with baked titles, and 13 illustrative no-title images, local sandbox only",
+    "source": "Existing AI-generated 12-location contact sheet, not authenticated destination photos; ending contains unmodified crop of owner's supplied photograph",
+    "visual_qa": "local ffprobe duration, resolution and codec checked; sampled scenes 1, 10, 13 visually inspected",
+    "exact_source_voice": "selected script #1, kept as text only; no generated voice",
+    "archive_status": "NOT_COPIED_TO_OWNER_PRIVATE_GOOGLE_DRIVE; sandbox copies available only within this chat",
+    "illustrator_warning": "NOT verified real venue imagery. Not approved as documentary visual / A2E-ready footage.",
+    "zip_name": "thermal_reel_v1_frames_and_storyboard.zip",
+    "zip_sha256": "1db0619601fb3491dcbe5fab415ed6431d834a30b44f772e5762f4e707db0596"
+  },
+  "nextAction": "Leo reviews 59s silent animatic, makes scene edits if needed. For production replace 12 AI illustrations with verified real venue photos or explicitly mark AI visuals, perform license QA, secure owner's script approval evidence, and obtain approved voice + paid quote before A2E. Do not treat preview MP4 as final."
 }
