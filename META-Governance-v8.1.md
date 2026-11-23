@@ -155,7 +155,7 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 3.1 · 17.11.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
 | Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 2.1 · 17.11.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
 | Музыкальный редактор | `Музыкальный редактор/MUSIC_EDITOR_v1.0.md` | 1.0 · 05.11.2026 | 🔧 в разработке — бесплатные треки, проверка коммерческих лицензий, music-handoff → Монтажер Клод |
-| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.1 · 17.11.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval |
+| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.2 · 23.11.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval; Longform + Info blog/FB handoff |
 | Simba | Simba-v5.0.md | 10.3 · 17.11.2026 | ✅ активен — точные пути TIA; проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Копирайтер-универсал (тест) | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/COPYWRITER_TEST.md` | 1.0 · 31.10.2026 | TEST — дополнительный кандидат внутри Simba; не новый автор; META Шаг 0 |
 | Интриган | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/INTRIGAN.md` | 1.0 · 31.10.2026 | ✅ редакторский этап до черновика; не самостоятельный автор; актуальный AGENT_ROLES 5.7 |
