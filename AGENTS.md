@@ -12,7 +12,7 @@
 
 
 
-Runtime adapter revision: 3.7 · 23.11.2026 (Longform pilot); ранее 3.6 · 17.11.2026 (declared vs verified role execution); ранее 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
+Runtime adapter revision: 3.8 · 23.11.2026 (link-free article FB teaser, manual fulfillment); ранее 3.7 · 23.11.2026 (Longform pilot); ранее 3.6 · 17.11.2026 (declared vs verified role execution); ранее 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
 
 ## Кадр — 08.11.2026
 
@@ -127,7 +127,7 @@ Info, Travel, Leo и News не имеют права выдавать «лучш
 
 ### Longform blog lane — 23.11.2026
 
-По явным запросам «статья для блога», «лонгрид», «большая SEO-статья» читать `Симба (Писатель)/Longform-v1.0.md` и его обязательный KB PREFLIGHT. Он не заменяет короткий Info/Travel, не наследует автоматический Internal Critic Simba и не утверждает неподтвержденный независимый Humanizer PASS. Связанный Facebook-анонс передается Info отдельно; ссылку на статью показывать как фактическую только после URL/readback. Модуль пилотный до теста Leo.
+По явным запросам «статья для блога», «лонгрид», «большая SEO-статья» читать `Симба (Писатель)/Longform-v1.0.md` и его обязательный KB PREFLIGHT. Он не заменяет короткий Info/Travel, не наследует автоматический Internal Critic Simba и не утверждает неподтвержденный независимый Humanizer PASS. Связанный Facebook-анонс передается Info отдельно; по прямому решению Leo **публичный URL статьи запрещен в Facebook-анонсе** даже если он существует. Вместо него один комментарий с тематическим кодовым словом; Leo лично отправляет готовый материал запросившим. До размещения анонса проверить FULFILLMENT_VERIFIED (существование текста/файла/страницы и возможность ручной выдачи). Модуль пилотный до теста Leo.
 
 ## 5. Knowledge Base
 
@@ -264,3 +264,6 @@ Runtime получает из learnings только пригодные evidence
 
 ## Changelog 3.7 — 23.11.2026
 Каноническая карта дополнена пилотным автором Longform, отделены статьи блога от коротких Facebook-постов Info, статус независимого исполнения не повышен; утверждение и публикация требуют отдельного подтверждения.
+
+## Changelog 3.8 — 23.11.2026
+Прямое решение Leo: вводные Facebook-посты к статьям Longform не содержат ссылок; CTA приглашает написать кодовое слово в комментариях. Статью Leo отправляет сам. Требуется реальная готовность выдачи до поста; права на автосообщения/публикацию не добавлены.
