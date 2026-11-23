@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "RAFAEL_SINGLE_SCENE_IMAGES_PARTIAL_3_OF_12_NEEDS_RENDERER_FIX",
-  "status": "PREVIEW_ASSETS_ONLY_NOT_FOR_A2E",
+  "stage": "RAFAEL_SINGLE_FRAMES_4_OF_12__RENDERER_SCENE_STICKINESS_BLOCKS_05",
+  "status": "4_SCENE_AI_DRAFTS_VERIFIED_BYTES_8_SCENES_MISSING",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "3/12 IMAGE DRAFTS, 0 VERIFIED_PRODUCTION_FRAMES; NO PAID_A2E, NO TTS, NO FINAL VIDEO, NOT PUBLISHED",
+  "productionStatus": "4/12 scene drafts only, 0 independently authenticated real venues, 0 A2E-ready full scene set, TTS not started, no final MP4/publication",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Resolve visual renderer repeatedly substituting Baden-Baden when asked for Roman Baths Bath. Generate remaining nine distinct single-frame 9:16 images ONLY when the chosen renderer can follow one-scene prompt; preserve existing 3 drafts and user-approved original storyboard. No silent substitute or collage.",
+  "nextAction": "Do not reuse/rename the returned Bath image as Karlovy Vary. Produce scene 05 Karlovy Vary via independent per-scene renderer execution that can verify it rendered the distinct city, then scenes 06–12. Preserve exact approved storyboard/order; per-image QA before advancing. No paid external renderer without a quoted limit and user approval.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -312,7 +312,7 @@
     "date": "2026-11-23",
     "userScope": "Generate actual individual 9:16 high-quality resort images, not collages, from approved storyboard",
     "attemptedCount": 3,
-    "acceptedCount": 3,
+    "acceptedCount": 4,
     "accepted": [
       {
         "scene": 1,
@@ -337,6 +337,14 @@
         "size": "941x1672",
         "sha256": "e6a7f9b79c5f696d105ea9c0fb533c45e2b08055a944fdafaf99c45b1f859368",
         "state": "AI_DRAFT_UNVERIFIED_SITE_COMPOSITION"
+      },
+      {
+        "scene": 4,
+        "location": "Bath, England (Roman Baths)",
+        "name": "scene_04_bath_ai_draft.png",
+        "size": "941x1672",
+        "sha256": "76f637d77d361d5301b61c826e90e60cacce5b2a3e95f78036a83958242be0d3",
+        "state": "AI_DRAFT_ONLY_NOT_VERIFIED_LOCATION_OR_APPROVED_PRODUCTION_IMAGE"
       }
     ],
     "rejected": [
@@ -354,10 +362,13 @@
     "referenceValidated": false,
     "notFinal": true,
     "update": "2026-11-23 — continued after Leo «продолжай»; only two resort scene drafts meet scene-specific visual subject; multiple attempted Bath generations repeatedly substituted Baden-Baden, and are rejected.",
-    "rejectedProductionAttempts": "Bath was repeatedly rendered as Baden-Baden despite exact requested subject and panel, so none of these attempts was accepted as Bath. No other resort scenes have been generated with correct content.",
-    "zipLocal": "thermal_reel_v1_preview/rafael_single_frames/rafael_3_individual_frames_drafts.zip",
-    "zipSha256": "b7ad4df5a531ab3690b5afd10f56fe7f59b29fd855158e003349dc3ceb3c6aa0",
-    "storage": "Actual PNGs and ZIP available in chat sandbox, not uploaded to GitHub/Drive; GitHub stores only names+hashes",
-    "completion": "3/12 unapproved separate full-frame draft images; not 12 production-ready images"
+    "rejectedProductionAttempts": "Prior Bath attempts returned Baden-Baden; now Bath succeeded. Subsequent Karlovy Vary attempts returned Bath rather than Karlovy Vary, including with a separate displayed Karlovy Vary panel. Stop repeating native image renderer without verified scene reset.",
+    "zipLocal": "thermal_reel_v1_preview/rafael_single_frames/rafael_4_individual_frames_drafts.zip",
+    "zipSha256": "1c637e47b6ba9d401666a0da873e7abea982b1db0dbc75c2d6ba2fbe7871e2d0",
+    "storage": "Four verified PNG bytes and ZIP in ChatGPT sandbox, no archive upload to Drive; GitHub is metadata and audit only",
+    "completion": "3/12 unapproved separate full-frame draft images; not 12 production-ready images",
+    "progress": "4/12 separate AI single-image drafts (Leo cover, Spa, Baden-Baden, Bath). Bath generated correctly as a standalone Roman Baths scene. Generating subsequent Karlovy Vary scene repeatedly returned the previous Roman Baths image, despite a separate source panel; these results are rejected.",
+    "newFrameFile": "thermal_reel_v1_preview/rafael_single_frames/scene_04_bath_ai_draft.png",
+    "previewLocal": "thermal_reel_v1_preview/rafael_single_frames/rafael_4_scene_preview.jpg"
   }
 }
