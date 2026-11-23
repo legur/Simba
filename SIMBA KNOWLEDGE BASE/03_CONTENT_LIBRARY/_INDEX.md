@@ -1,6 +1,6 @@
 # CONTENT LIBRARY INDEX
 
-Версия: 2.2 · 19.11.2026 (добавлен APPROVED текст «InCruises и штраф UOKiK» и Session Log); ранее 2.1 · 19.11.2026 (Гарда, Песах 2027); ранее 2.0 · 17.11.2026
+Версия: 2.3 · 23.11.2026 (добавлен APPROVED Info-пост «Ханука 2026», Session Log); ранее 2.2 · 19.11.2026 (добавлен APPROVED текст «InCruises и штраф UOKiK» и Session Log); ранее 2.1 · 19.11.2026 (Гарда, Песах 2027); ранее 2.0 · 17.11.2026
 
 ## Назначение
 
@@ -8,6 +8,7 @@
 
 | Date | Title | Status | Type | Product | Angle | Leo reaction | Confidence |
 |---|---|---|---|---|---|---|---|
+| 2026-11-23 | [Ханука 2026: бесплатные мероприятия ККЛ](2026-11-23__INFO__HANUKKAH-KKL-FB__APPROVED.md) | APPROVED_TEXT, v4; visual not created; Facebook PUBLISHED NO | Info / Facebook, лайки и охват / гид по комментарию | KKL Hanukkah 2026 / лес Нахаль ха-Шофет 7.12 и другие мероприятия | Вечерняя экскурсия с фонарями + точная бесплатная карточка → обзор альтернатив → «ХАНУКА» для ручной отправки гида | Leo «готово» 23.11.2026; внешний review v3 ≈8.1 ✅, v4 точечные правки (без новой оценки); один Session Log в файле | high for Leo text approval; independent Humanizer receipt absent, dynamic KKL registration recheck needed |
 | 2026-11-20 | [INCRUISES: штраф 5,28 млн злотых. Кто на самом деле оплачивает круизы?](2026-11-19__NEWS-EXPERT__INCRUISES-UOKIK-FINE__APPROVED.md) | APPROVED_TEXT; visual not requested; PUBLISHED NO; recheck appeal status and 3.X facts before publication | News-expert / Facebook, комментарии + лиды | InCruises / UOKiK decision RGD-5/2025, fine 5 280 388 zł; InCruises Membership 3.X | вторая сотня → арифметика баллов 3.X → штраф по прежней модели → деньги против баллов → вопрос «кто приглашал» | Лео «Готово» 20.11.2026 после внешнего Critic review 6.6 → 7.8 → 8.4 → 8.0, четыре прохода | medium-high for approval; known open fact notes (appeal wording, 3.X tariff, arithmetic) |
 | 2026-11-19 | [Песах на озере Гарда: от €5 195 за пятерых](2026-11-19__SIMBA__GARDA-PESACH-2027__APPROVED.md) | APPROVED_TEXT; Rafael not started; PUBLISHED NO; supplier recheck required | Simba / selling / Facebook, WhatsApp leads | Garda / Pesach 22–28 Apr 2027 / Israir + rental car + 6 nights | family-of-five total price + freedom to explore by car; «ГАРДА» CTA | Лео «Готово» после внешнего Critic review 8.0–8.1, редакция №4 | high for approval; dynamic offer and 2–4 party options unverified |
 | 2026-11-17 | [Вьетнам: купальник и теплая куртка в одном чемодане](2026-11-17__SIMBA__VIETNAM-SEASONS-GUIDE__APPROVED.md) | APPROVED_TEXT; Rafael previews pending; PUBLISHED NO; PDF fulfillment unverified | Simba / Facebook / destination guide / PDF lead magnet | Vietnam regions and seasonal differences (Phu Quoc, Hanoi, Sapa) | swimwear + warm jacket contrast → region choice → PDF guide CTA | Leo «утверждаем», selected option 1 «Чемодан» | high for text approval; guide availability pending |
