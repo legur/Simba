@@ -12,6 +12,10 @@
 
 
 
+## Amendment 19.10 — 23.11.2026: без публичных ссылок в анонсах статей
+
+Прямое указание Leo: для пары `Longform статья → Info вводный Facebook-пост` ссылка на статью в публичном Facebook-тексте не публикуется (включая предложение перейти по ссылке в первом комментарии). Вместо этого одно тематическое кодовое слово в комментариях; Leo **лично вручную** отправляет материал запросившим. Перед публикацией анонса проверить реальную доступность статьи для ручной выдачи (`FULFILLMENT_VERIFIED`). Это не разрешение на авторассылку или публикацию; не распространять автоматически на все посты Info.
+
 ## Amendment 19.9 — 23.11.2026: пилот Longform
 
 По прямому согласию Leo добавлен автономный профиль длинных статей для блога `Симба (Писатель)/Longform-v1.0.md`. Содержательная цель, объем, SEO и verified-source QA отличают его от коротких Info/Travel и продающего Simba. Основа — адаптированные навыки Intrigan, Копирайтер-универсал, Simba CORE editorial и Writing Style; внешние рекламные CTA/правила не наследуются. Router, AGENTS, KB Map/Protocol и Content Pipeline синхронизируются. Пока реальный тест по статье о термальных курортах не принят Leo — статус 🔧. Внутренний Critic Simba автоматически на Longform не переносить; полномочия публикации не изменять.
@@ -24,7 +28,7 @@ Amendment 18.0 — 08.11.2026. Структурное расширение су�
 
 Amendment 17.4. META Шаг 0: самостоятельная библиотечная роль, иной вход/выход, не вариант автора и не монтаж. Цель — база для монтажёра, русский нейтральный голос, аудитория монтажёр, без CTA/контактов; три уровня затрат, без Internal Critic. Routing/KB/профиль/база синхронизированы. Smoke не заменяет пилот Leo. Нет платных/публикационных полномочий.
 
-Версия: 19.9 · 23.11.2026 (Longform pilot); ранее 19.6 · 17.11.2026: live editorial verification and untrusted synthetic-status guard; ранее 19.5 · 17.11.2026: source-only editorial smoke and fulfillment publication gate; ранее 19.4 · 17.11.2026: KB learning integrity / current-vs-historical corrections / index coverage; ранее 19.3 · 17.11.2026: News single event/digest + fail-closed author gates; ранее 19.2 · 17.11.2026: Simba core Critic stop-state consensus; ранее 19.1 · 17.11.2026: read-only audit stage 3 remediation, owner-bound script approval and private media escrow; ранее 19.0 · 17.11.2026: audit fixes, безопасность публичного GitHub, standalone visual/video и карта версий; ранее 18.0 · 08.11.2026: поиск Кадра по запросу; ранее 17.3 · 05.11.2026: Музыкальный редактор (draft); 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
+Версия: 19.10 · 23.11.2026 (link-free article FB teaser, personal delivery Leo); ранее 19.9 · 23.11.2026 (Longform pilot); ранее 19.6 · 17.11.2026: live editorial verification and untrusted synthetic-status guard; ранее 19.5 · 17.11.2026: source-only editorial smoke and fulfillment publication gate; ранее 19.4 · 17.11.2026: KB learning integrity / current-vs-historical corrections / index coverage; ранее 19.3 · 17.11.2026: News single event/digest + fail-closed author gates; ранее 19.2 · 17.11.2026: Simba core Critic stop-state consensus; ранее 19.1 · 17.11.2026: read-only audit stage 3 remediation, owner-bound script approval and private media escrow; ранее 19.0 · 17.11.2026: audit fixes, безопасность публичного GitHub, standalone visual/video и карта версий; ранее 18.0 · 08.11.2026: поиск Кадра по запросу; ранее 17.3 · 05.11.2026: Музыкальный редактор (draft); 17.2 · 02.11.2026 · A2E video bridge (deploy pending); 17.1 · 31.10.2026 · редакторские приемы; 17.0 · 31.10.2026 · тест копирайтера; 16.0 · 31.10.2026 · редакторский этап Интригана; 15.0 · 30.10.2026 · GROK_ADS_MODE; 14.1 · 29.10.2026 · точные пути TIA в Simba; 14.0 · 29.10.2026 · обязательная проверка и отчет TIA; 13.4 · 27.10.2026 · Critic 5.7 rev.4: Session Log один раз за завершённый цикл; 13.3 · 26.10.2026 · Critic 5.7 rev.3: синхронизация с отчётами внешнего критика; 13.2 · 26.10.2026 · Critic 5.7 rev.2: цель поста и направления правки; 13.1 · 24.10.2026 · путь Critic → Critic-5.7.md; 13.0 · 22.10.2026 · новый модуль Монтажер Клод (сборка ролика к утверждённому посту)
 Дата: 17.11.2026
 
 
@@ -155,12 +159,12 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 3.1 · 17.11.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
 | Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 2.1 · 17.11.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
 | Музыкальный редактор | `Музыкальный редактор/MUSIC_EDITOR_v1.0.md` | 1.0 · 05.11.2026 | 🔧 в разработке — бесплатные треки, проверка коммерческих лицензий, music-handoff → Монтажер Клод |
-| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.2 · 23.11.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval; Longform + Info blog/FB handoff |
+| AI-Маркетолог | AI-Marketer-Simba-by-Bon-Tours-v5.0.md | 6.3 · 23.11.2026 | ✅ активен — PROCESS_OWNER; Source Resolution; dual Commercial/News; executor provenance; Humanizer до ready/approval; Longform + Info blog/FB handoff |
 | Simba | Simba-v5.0.md | 10.3 · 17.11.2026 | ✅ активен — точные пути TIA; проверка и видимый отчет TIA; KB PREFLIGHT, Internal Critic repair-loop и Humanizer до ready-state; правила фактов и гипербол сохранены |
 | Копирайтер-универсал (тест) | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/COPYWRITER_TEST.md` | 1.0 · 31.10.2026 | TEST — дополнительный кандидат внутри Simba; не новый автор; META Шаг 0 |
 | Интриган | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/INTRIGAN.md` | 1.0 · 31.10.2026 | ✅ редакторский этап до черновика; не самостоятельный автор; актуальный AGENT_ROLES 5.7 |
-| Info | Info-v1.2.md | 1.3 · 17.11.2026 | ✅ активен |
-| Longform | `Симба (Писатель)/Longform-v1.0.md` | 1.0 · 23.11.2026 | 🔧 новый модуль исследовательских статей для блога; пилот до тестового согласования Leo |
+| Info | Info-v1.2.md | 1.4 · 23.11.2026 | ✅ активен |
+| Longform | `Симба (Писатель)/Longform-v1.0.md` | 1.1 · 23.11.2026 | 🔧 новый модуль исследовательских статей для блога; пилот до тестового согласования Leo |
 | Travel | Travel-v1.3.md | 1.4 · 17.11.2026 | ✅ активен |
 | Leo | Leo-v1.3.md | 1.4 · 17.11.2026 | ✅ активен |
 | News | News-v1.2.md | 1.3 · 17.11.2026 | ✅ активен |
