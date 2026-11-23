@@ -1,75 +1,86 @@
-# Рилс: зимние термальные курорты — три сценария на выбор
+# Рилс по статье блога: 12 термальных курортов
 
 DATE: 2026-11-23
 STATUS: DRAFT_OPTIONS_NEED_LEO
 STAGE: SCRIPT_OPTIONS_3
+REVISION: 2
+CHANGE_REASON: Leo clarified «нет рилс на основе блога». The source is the entire published Wix article; not the short Facebook teaser.
 OWNER_SELECTION: PENDING
 PRODUCTION: NOT_STARTED
 PUBLICATION: NOT_AUTHORIZED
-SPEND: 0 / paid operations not requested or started
-SOURCE: published longform article https://www.letsgo-world.co.il/post/12-zimnih-termalnyh-kurortov and user-accepted Facebook draft SIMBA KNOWLEDGE BASE/03_CONTENT_LIBRARY/2026-11-23__INFO__WINTER-THERMAL-RESORTS-FB.md
+SPEND: zero paid operations
+SOURCE_BLOG_URL: https://www.letsgo-world.co.il/post/12-zimnih-termalnyh-kurortov
 SOURCE_BLOG_POST_ID: 60e8b25a-9288-4baa-9d25-15e52e062427
-VISUAL_CONTEXT: user-selected poster «КУПАЛЬНИ, ГДЕ НЕЛЬЗЯ КУПАТЬСЯ» featuring Leo, with the location callout removed in a subsequent edit; use as visual reference, but square poster is not a vertical 9:16 video asset.
-DISTRIBUTION: Facebook Reels, possible reuse Instagram Reels/YouTube Shorts
-FORMAT_TARGET: 9:16, spoken Russian, 45–60 seconds
-HERO: Leo; do not substitute generic face or unapproved TTS voice
-CALL_TO_ACTION: request the full existing article by commenting «ТЕРМЫ»; Leo manually sends the article. No public article link in the video CTA.
-FACT_SAFETY: venue conditions and restrictions must be checked before travel, not treated as permanent claims.
-NEXT_STEP: Leo selects exactly one of three full scripts. Then produce three complete visual storyboard options with real verified individual images for every proposed scene, and obtain storyboard selection. No A2E/TTS/studio work before applicable gates and shown cost/scope.
+SOURCE_CHECK: Full published RICH_CONTENT read from Wix on 2026-11-23. Includes all 12 numbered resort sections, editorial comparison, practical limitations, 11 inline images and a cover photo.
+SOURCE_IS_NOT: Facebook post/teaser; prior revision superseded as a source-scope misunderstanding.
+BRIEF: Reels mini-documentary based on the whole blog article; a travel experience with historical cities, natural waters and local traditions, not a promo recap of the Facebook post.
+DISTRIBUTION: Facebook Reels, optional other 9:16 social video
+FORMAT: 9:16, Russian spoken voice, target roughly 55–65 seconds (not a measured voice recording).
+HERO: Leo, based on actual user-supplied photo; no generic identity substitution.
+VISUALS: First use genuine site images to plan when appropriate, check media attribution and rights; do not count 11 embedded pictures as all 12 locations; selected edited square poster is a thematic reference only, not final vertical frame.
+VOICE: approved ongoing voice only; no free/paid TTS has been run.
+NEXT_STEP: owner selects 1, 2 or 3. After selection supply three full alternative visual storyboards with actual individual images per scene, not one poster or a collage standing in for footage. No paid A2E/TTS or publication without required gates.
 
-## Вариант 1. Купальни, где нельзя купаться (~50–55 секунд)
+## 1. Двенадцать курортов за минуту
 
-В английском Бате есть купальни, в которых нельзя купаться.
+Зимой необязательно искать жаркую страну. Иногда достаточно горячей воды. Но термы бывают совсем разными.
 
-Знаменитые римские термы сегодня работают как музей. Посмотреть можно, а поплавать придется в другом комплексе.
+Бельгийский Спа подарил миру слово «спа». В Баден-Бадене сохранился исторический банный ритуал. А в английском Бате римские купальни теперь можно только осмотреть.
 
-А теперь Италия. В Сатурнии горячая вода стекает по природным каменным террасам. В эти бассейны можно попасть бесплатно.
+Карловы Вары - это колоннады и термальный бассейн. Будапешт - пар над купальнями Сечени.
 
-В Швейцарии совсем другая картинка: Лойкербад, открытые бассейны, вокруг заснеженные Альпы.
+Дальше природа. Сатурния - горячие каскады Тосканы. Лойкербад - бассейны среди Альп. Бормио - старые купальни в горах. Исландский Sky Lagoon - вода с видом на океан.
 
-Все три места называют термальными курортами. Но отдых там получается совершенно разный.
+А потом традиции: японский Кусацу с деревянными желобами, серные бани Абанотубани в Тбилиси и речные термы испанского Оренсе.
 
-Я подготовил статью о двенадцати курортах для зимней поездки. С фотографиями и нюансами: где купаться, какие правила действуют и что проверить заранее.
+Все двенадцать мест есть в моей статье. Как видите, выбирать стоит не просто температуру воды. А целое путешествие.
 
-Хотите получить статью? Напишите в комментариях «ТЕРМЫ». Я пришлю ее лично.
+## 2. Какую зиму вы бы выбрали?
 
-## Вариант 2. Зимой в горячую воду (~50–55 секунд)
+Один вопрос: как вы хотите провести зимний вечер?
 
-Вокруг снег. Над водой поднимается пар. А вы сидите в теплом бассейне под открытым небом.
+В старинном городе? Тогда взгляните на Спа, Баден-Баден, Бат, Карловы Вары и Будапешт. Здесь горячие источники давно стали частью истории. Только учтите: в римских купальнях Бата сегодня не купаются.
 
-Так может выглядеть зимний день в швейцарском Лойкербаде. Перед вами Альпы, а вместо привычного зимнего холода - горячая вода.
+Или вам нужен пейзаж? В Сатурнии вода течет по каменным террасам. В Лойкербаде и Бормио за бассейном поднимаются Альпы. В исландском Sky Lagoon виден Атлантический океан.
 
-Но термы бывают очень разными.
+А может, интереснее местные традиции? В японском Кусацу показывают, как охлаждают горячую воду. В Тбилиси ждут серные бани Абанотубани. В испанском Оренсе термы расположились у реки.
 
-В Тоскане, например, есть Сатурния. Там вода течет по естественным каменным ступеням. А в Будапеште можно купаться в исторических городских купальнях Сечени.
+Двенадцать мест, три совершенно разных способа провести зиму.
 
-И есть неожиданный поворот: знаменитые римские купальни английского Бата доступны только для осмотра. Купаться в них нельзя.
+Вы бы выбрали историю, природу или банные традиции?
 
-Я собрал двенадцать таких мест в одной статье. Там есть фотографии, отличия между курортами и важные правила посещения.
+## 3. Почему красивой фотографии недостаточно
 
-Если хотите получить статью, напишите в комментариях «ТЕРМЫ». Пришлю лично.
+На зимнем фото бассейн выглядит прекрасно. Но я бы сначала выяснил, что за ним стоит.
 
-## Вариант 3. Три проверки перед поездкой (~50–55 секунд)
+В английском Бате древние римские купальни - музей. Купаться можно в другом комплексе.
 
-На фотографии горячий бассейн выглядит заманчиво. Но перед поездкой я бы проверил три вещи.
+В Карловых Варах курортная традиция связана прежде всего с питьевыми источниками, хотя открытый термальный бассейн тоже есть.
 
-Первое. Можно ли там вообще купаться? В английском Бате знаменитые римские купальни - музей. Для купания есть другой комплекс.
+В Сатурнии вода течет по природным каменным чашам. В Лойкербаде можно совместить термы со снежными горами. А в японском Кусацу знакомство с банными традициями важнее обычного бассейна.
 
-Второе. Можно ли приехать с детьми или внуками? В бельгийском Thermes de Spa детей младше пятнадцати лет не допускают.
+Есть и практические различия. Не все термы принимают детей, а правила купальной одежды зависят от конкретного комплекса.
 
-И третье. Какие правила внутри? В историческом Friedrichsbad, в Баден-Бадене, есть дни купания без купальников и специальные дни для посещения в купальных костюмах.
+И в испанском Оренсе бесплатные речные купальни и платные термы - разные объекты. У них даже статус работы может отличаться.
 
-Название одно - «термы». А правила совершенно разные.
+Поэтому я собрал двенадцать курортов в одной статье. Чтобы выбирать не по фотографии, а по тому, какой отдых вам нужен.
 
-Я подготовил статью о двенадцати термальных курортах: с фотографиями и подробностями, которые лучше узнать до поездки.
+## Article-derived fact mapping
 
-Хотите ее прочитать? Напишите в комментариях «ТЕРМЫ». Пришлю лично.
+1. Spa, Belgium: origin of name/spa and historic European resort.
+2. Baden-Baden, Germany: Friedrichsbad historic multi-step ritual; also Caracalla Therme.
+3. Bath, UK: Roman Baths museum, bathing only at separate Thermae Bath Spa.
+4. Karlovy Vary, Czechia: mineral drinking tradition, Saunia Thermal Resort.
+5. Budapest, Hungary: Széchenyi outdoor pools.
+6. Saturnia, Italy: Cascate del Mulino natural travertine cascade.
+7. Leukerbad, Switzerland: Alpine thermal pools and family facilities.
+8. Bormio, Italy: historic Bagni Vecchi among mountains.
+9. Sky Lagoon, Iceland: geothermal pool looking at Atlantic ocean.
+10. Kusatsu Onsen, Japan: Yubatake and traditional cooling with wooden paddles.
+11. Abanotubani, Tbilisi, Georgia: sulfur baths.
+12. Ourense, Spain: Miño riverside thermal complex; free and paid objects differ.
+Booking, age, time and access rules in the article were current as of 2026-11-23 and must be rechecked before travel. These scripts do not claim independent recent review of venue operating policies.
 
-## Stage evidence
+## Current status
 
-- Read canonical GitHub rules: AGENTS.md, ROUTER_v10.1.md, 00_CORE/KNOWLEDGE_MAP.md, 00_CORE/KB_RUNTIME_PROTOCOL.md, VIDEO_PIPELINE.md, Scenarist v3.1, relevant brand/source files.
-- Three complete substantially different spoken scripts provided, estimated running time pending recorded speech.
-- The existing approved Facebook wording was adapted for speech; this is a separate draft scenario and is NOT automatically approved by approval of the Facebook post.
-- The user-supplied photo of Leo and selected poster may be visual references at the later stage, but no media was uploaded into this project or claimed as video-ready.
-- Next storyboard must include actual individual scene images for each of three full alternatives; no single-image collage shortcut.
-- No independent script reviewer, voice render, paid generation, montage, final MP4 or publication was claimed.
+The three scripts are proposed options, not approved production scripts; final voiced lines and storyboards require Leo choice. No MP4, video shots, audio or music have been generated for this project yet.
