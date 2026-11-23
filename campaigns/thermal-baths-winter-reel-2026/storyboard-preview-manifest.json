@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "SILENT_ANIMATIC_REORDERED_NEEDS_LEO_REVIEW",
-  "status": "PREVIEW_REVISED_NOT_PRODUCTION_READY",
+  "stage": "MUSIC_AND_MOTION_DEMO_NEEDS_LEO_REVIEW",
+  "status": "DEMO_MP4_WITH_TEMPORARY_INSTRUMENTAL_READY__FINAL_VIDEO_BLOCKED",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "SILENT_ANIMATIC_ONLY; PAID_A2E_NOT_STARTED; VOICE_NOT_RENDERED; FINAL_MP4_NOT_CREATED",
+  "productionStatus": "OFFLINE_MONTAGE_WITH_TEMP_MUSIC_DONE; NO_APPROVED_NARRATION; NO_PAID_A2E; NO_FINAL_QA; NOT_PUBLISHED",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -205,9 +205,32 @@
       "viewable_in_current_chat_sandbox": true,
       "archiveStatus": "NOT_COPIED_TO_PRIVATE_DRIVE, copy stored in ChatGPT sandbox; do not claim permanent archive",
       "qa": "ffprobe shows 59.00s 1180 frames 20fps; visual sampling first and last verified"
+    },
+    "musicVersion": {
+      "file": "thermal_reel_atlas_music_draft.mp4",
+      "sha256": "740e0be84e6e49c82187a689e89c775683707b74212b79273be82283ad89af0e",
+      "duration": 59,
+      "width": 720,
+      "height": 1280,
+      "fps": 20,
+      "video": "H.264",
+      "audio": "AAC stereo 48 kHz, original locally synthesized placeholder, NOT a Mixkit track",
+      "audioMeanDbfs": -33.9,
+      "audioPeakDbfs": -19.6,
+      "soundtrackSha256": "a93f17782b72000101d35480c1b07747af3acdf8d12df04bbf39a93c60e74322",
+      "audioLicense": "Preview only; original offline-synthesized composition; not a selected production soundtrack",
+      "videoOrigin": "Prior approved rearranged storyboard, camera micro-pan and fades; all 12 place images are illustrative AI and not independently authenticated destination footage",
+      "qc": "ffprobe audio/video duration & streams verified, sampled first and last still frames examined, no independent listening",
+      "missing": [
+        "approved voice generator",
+        "real verified separate destination photographs",
+        "license attribution and owner-private archival",
+        "owner final MP4 QA",
+        "final publication approval"
+      ]
     }
   },
-  "nextAction": "User reviews reordered 59-second silent preview. Voiceover timing must be remapped for 8-second intro shift; no TTS, A2E, paid generation, publication.",
+  "nextAction": "Leo reviews new 59s music+motion demo, then the existing approved WarmBaritone voice execution must be confirmed; verify/recreate factual venue images; choose a licensed actual music asset or expressly approve original synth score; finally synchronize exact script and produce QA MP4. No production release/publishing permission.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -223,5 +246,7 @@
     10,
     11,
     12
-  ]
+  ],
+  "paidOperationsStarted": false,
+  "musicCandidatesRef": "campaigns/thermal-baths-winter-reel-2026/music-shortlist.md"
 }
