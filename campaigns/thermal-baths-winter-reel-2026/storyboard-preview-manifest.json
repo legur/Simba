@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "MUSIC_AND_MOTION_DEMO_NEEDS_LEO_REVIEW",
-  "status": "DEMO_MP4_WITH_TEMPORARY_INSTRUMENTAL_READY__FINAL_VIDEO_BLOCKED",
+  "stage": "EXACT_LEO_APPROVED_STORYBOARD_VISUAL_PREVIEW_REBUILT",
+  "status": "CORRECTED_PREVIEW_MATCHES_APPROVED_STORYBOARD_NOT_PRODUCTION_READY",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "OFFLINE_MONTAGE_WITH_TEMP_MUSIC_DONE; NO_APPROVED_NARRATION; NO_PAID_A2E; NO_FINAL_QA; NOT_PUBLISHED",
+  "productionStatus": "CORRECTED_AUDIO_MOTION_PREVIEW_READY; FINAL_DOCUMENTARY_RENDER_BLOCKED_BY_INDIVIDUAL_IMAGE_PROVENANCE_AND_NARRATION",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Leo reviews new 59s music+motion demo, then the existing approved WarmBaritone voice execution must be confirmed; verify/recreate factual venue images; choose a licensed actual music asset or expressly approve original synth score; finally synchronize exact script and produce QA MP4. No production release/publishing permission.",
+  "nextAction": "Leo reviews corrected exact-frame 59s MP4. Production must start from the approved frames, using independent higher-resolution scene assets matching them and owner-approved narration; do not silently substitute other photos or illustrations, and no paid operations without transparent quote.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -248,5 +248,26 @@
     12
   ],
   "paidOperationsStarted": false,
-  "musicCandidatesRef": "campaigns/thermal-baths-winter-reel-2026/music-shortlist.md"
+  "musicCandidatesRef": "campaigns/thermal-baths-winter-reel-2026/music-shortlist.md",
+  "latestCorrection": {
+    "reportedIssue": "Leo: «это совершенно не то. ты мне показал другие кадры»",
+    "confirmedRootCause": "Prior preview videos used a different AI-generated 4×3 collage rather than the specifically Leo-approved 3×4 layout with yellow headlines and 12 panels.",
+    "approvedSource": "ChatGPT-generated image a_vertical_cinematic_storyboard_style_reel_previe.png (last approved visual overview)",
+    "approvedSourceSha256": "23871e3325e9565d5dab3bda88f1b45232f03c6e58c21ca032bcc6f890490d0b",
+    "fix": "Physically cut all 12 panels out of the exact approved PNG image; encode the panels in original order with the printed 00:00–00:59 durations. No scene substituted or redesigned.",
+    "fullSequence": "cover/Leo, Spa, Baden-Baden, Bath, Karlovy Vary, Budapest, Saturnia, Leukerbad, Bormio, Sky Lagoon, Kusatsu, Abanotubani + Ourense combined",
+    "previewFile": "thermal_reel_v1_preview/thermal_reel_exact_approved_frames_v2.mp4",
+    "videoSha256": "ad1dd6d421c263ac739e587d6e7e9145df2885241a5c628d01330f8ea02a0b8e",
+    "durationSeconds": 59,
+    "width": 720,
+    "height": 1280,
+    "fps": 20,
+    "hasAudio": true,
+    "audioType": "The same provisional offline-generated instrumental bed used previously. NO spoken narration.",
+    "panelCount": 12,
+    "contactSheet": "thermal_reel_v1_preview/contact_sheet_exact_approved_v2.jpg",
+    "sceneCropManifest": "thermal_reel_v1_preview/approved_storyboard_exact_scenes/exact_panel_manifest.json",
+    "archive": "Local ChatGPT sandbox only. Exact images/MP4 NOT uploaded to GitHub or owner-private Drive.",
+    "limitations": "Crops are from a 941×1672 combined approved storyboard, with baked Russian titles/timecodes and variable tile resolution. They are legitimate visual-matching PREVIEW frames only; separate original A2E-ready, verified location photography, voice, licenses and QA are still missing."
+  }
 }
