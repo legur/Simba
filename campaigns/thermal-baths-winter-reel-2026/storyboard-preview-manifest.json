@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "EXACT_FRAME_PREVIEW_LEO_CONFIRMED__PRODUCTION_ASSETS_PENDING",
-  "status": "LEO_CONFIRMED_CORRECTED_PREVIEW_ONLY",
+  "stage": "INDIVIDUAL_PANEL_UPSCALES_AND_1080P_PREVIEW_READY_VOICE_BLOCKED",
+  "status": "PARTIAL_PRODUCTION_PREVIEW_DELIVERED__VOICED_FINAL_NOT_AVAILABLE",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "CORRECTED_AUDIO_MOTION_PREVIEW_READY; FINAL_DOCUMENTARY_RENDER_BLOCKED_BY_INDIVIDUAL_IMAGE_PROVENANCE_AND_NARRATION",
+  "productionStatus": "UPSCALING_RENDERED_AND_QA_VERIFIED; NO_REAL_DETAIL_GAIN; NO_APPROVED_NARRATION; NO_PAID_A2E; NOT_PUBLISHED",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Create separate high-resolution production-ready scene images visually faithful to the user-confirmed exact storyboard (cover first; all named resort scenes preserved; no substitutions). Verify venue-identity attribution and rights before any production A2E/TTS, and sync selected narration. Do not render/pay/publish without required gates.",
+  "nextAction": "Use verified selected script #1 with approved Simba WarmBaritone voice once actual synthesis connector and source-scoped authorization are available; do not replace with generic TTS. Clean original independent 1080p scene art/photos required for true sharp final; do not silently replace approved images. Perform source/license QA, sync narration, full listen/video QA and seek separate publication approval.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -278,5 +278,25 @@
     "approvedPreviewSha256": "ad1dd6d421c263ac739e587d6e7e9145df2885241a5c628d01330f8ea02a0b8e",
     "notApproved": "Final MP4 / production asset substitution / unverified venue photos / audio voice synthesis / paid A2E / publication",
     "keepExactVisualOrder": true
+  },
+  "separateSceneAssetPreparation": {
+    "date": "2026-11-23",
+    "status": "EXACT_APPROVED_PANELS_12_INDIVIDUAL_1080P_UPSCALES_PREPARED__NOT_NATIVE_DETAIL",
+    "sourceStoryboardSha256": "23871e3325e9565d5dab3bda88f1b45232f03c6e58c21ca032bcc6f890490d0b",
+    "sourceSceneResolutionRange": "308-312px wide, 360-538px high, from composite",
+    "count": 12,
+    "outputSize": "1080x1920 (resampled; no generative enhancement)",
+    "zipName": "approved_exact_12_scenes_1080x1920.zip",
+    "zipSha256": "d25329d478d5551242a0b630334c1ae451a4cfcd4cc38f1ae6b09ab40af1ca0f",
+    "videoName": "thermal_reel_approved_exact_1080_music_preview.mp4",
+    "videoSha256": "db3993f173f4e508805e54c1c3dff3bb46259b67164689c5e7151ae245739cee",
+    "videoMetadata": "59.000s, 1080x1920, H.264 20fps, AAC provisional original synthesized instrumental, NO NARRATION",
+    "frameListOrder": "Cover Leo, Spa, Baden-Baden, Bath, Karlovy Vary, Budapest, Saturnia, Leukerbad, Bormio, Sky Lagoon, Kusatsu, Abanotubani/Ourense",
+    "qa": "12/12 source/hash verified; all 1080 PNG files opened and passed PIL.verify; ZIP testzip returned None; ffprobe confirmed video streams 1080x1920/59 seconds; first and last video stills inspected.",
+    "scope": "faithful crop-and-scale of user-approved AI storyboard; no new artwork or resort substitutions; timecodes and titles are baked into pixels",
+    "voice": "NOT GENERATED; WarmBaritone specific synthesis not available in current chat toolset",
+    "license": "AI illustrations depicted generic versions of specific resorts; independent venue-photo identity and usage checks NOT verified",
+    "storage": "ChatGPT sandbox only; owner-private Drive backup pending; GitHub stores metadata not media bytes",
+    "finalStatus": "NOT FINAL_MP4; no paid A2E/TTS and no publication"
   }
 }
