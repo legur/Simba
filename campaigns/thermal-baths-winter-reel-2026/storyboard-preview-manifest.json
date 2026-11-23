@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "RAFAEL_SINGLE_FRAME_GENERATION_PARTIAL_TOOL_MISROUTED",
-  "status": "ONE_SCENE_VALID_DRAFT_OTHERS_BLOCKED_RENDERER_OUTPUT_MISMATCH",
+  "stage": "RAFAEL_SINGLE_SCENE_IMAGES_PARTIAL_3_OF_12_NEEDS_RENDERER_FIX",
+  "status": "PREVIEW_ASSETS_ONLY_NOT_FOR_A2E",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "NO_NEW_COMPLETE_IMAGE_SET; NO_A2E; NO_TTS; NOT_PUBLISHED",
+  "productionStatus": "3/12 IMAGE DRAFTS, 0 VERIFIED_PRODUCTION_FRAMES; NO PAID_A2E, NO TTS, NO FINAL VIDEO, NOT PUBLISHED",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Resume individually targeted Rafael renders only with a renderer proven to follow scene-specific prompt; use approved Baden-Baden input as next test and stop after first mismatch. Do not treat Spa draft as documentary venue photo or change already approved storyboard. Additional paid service needs clear credit cost/authorization.",
+  "nextAction": "Resolve visual renderer repeatedly substituting Baden-Baden when asked for Roman Baths Bath. Generate remaining nine distinct single-frame 9:16 images ONLY when the chosen renderer can follow one-scene prompt; preserve existing 3 drafts and user-approved original storyboard. No silent substitute or collage.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -312,15 +312,31 @@
     "date": "2026-11-23",
     "userScope": "Generate actual individual 9:16 high-quality resort images, not collages, from approved storyboard",
     "attemptedCount": 3,
-    "acceptedCount": 1,
+    "acceptedCount": 3,
     "accepted": [
       {
-        "scene": 2,
-        "location": "Спа, Бельгия",
-        "filename": "thermal_reel_v1_preview/rafael_single_frames/scene_02_spa_ai_draft.png",
-        "sha256": "e7f3d57b7c6f37351ade97b7b5bf771c1108538737552d7cd0b14b22e8c57263",
+        "scene": 1,
+        "location": "Leo opening cover",
+        "name": "scene_01_leo_cover_ai_draft.png",
         "size": "941x1672",
-        "status": "VISUAL_DRAFT_ONLY_NOT_AUTHENTICATED_LOCATION"
+        "sha256": "178d54a57f90463e6ce14a4f634374200464efaae60bb92070f5e1a696c9ee1d",
+        "state": "AI_DRAFT_IDENTITY_NOT_INDEPENDENTLY_VERIFIED"
+      },
+      {
+        "scene": 2,
+        "location": "Spa Belgium",
+        "name": "scene_02_spa_ai_draft.png",
+        "size": "941x1672",
+        "sha256": "e7f3d57b7c6f37351ade97b7b5bf771c1108538737552d7cd0b14b22e8c57263",
+        "state": "AI_DRAFT_UNVERIFIED_SITE_COMPOSITION"
+      },
+      {
+        "scene": 3,
+        "location": "Baden-Baden Germany",
+        "name": "scene_03_baden_baden_ai_draft.png",
+        "size": "941x1672",
+        "sha256": "e6a7f9b79c5f696d105ea9c0fb533c45e2b08055a944fdafaf99c45b1f859368",
+        "state": "AI_DRAFT_UNVERIFIED_SITE_COMPOSITION"
       }
     ],
     "rejected": [
@@ -336,6 +352,12 @@
     "reason": "Native renderer ignored destination-specific instruction in repeated calls, producing unrelated subjects; repeated attempts stopped to prevent more mismatched images.",
     "evidenceStorage": "One accepted AI image in ChatGPT sandbox; unapproved attempts exist in conversation only; not copied to Drive",
     "referenceValidated": false,
-    "notFinal": true
+    "notFinal": true,
+    "update": "2026-11-23 — continued after Leo «продолжай»; only two resort scene drafts meet scene-specific visual subject; multiple attempted Bath generations repeatedly substituted Baden-Baden, and are rejected.",
+    "rejectedProductionAttempts": "Bath was repeatedly rendered as Baden-Baden despite exact requested subject and panel, so none of these attempts was accepted as Bath. No other resort scenes have been generated with correct content.",
+    "zipLocal": "thermal_reel_v1_preview/rafael_single_frames/rafael_3_individual_frames_drafts.zip",
+    "zipSha256": "b7ad4df5a531ab3690b5afd10f56fe7f59b29fd855158e003349dc3ceb3c6aa0",
+    "storage": "Actual PNGs and ZIP available in chat sandbox, not uploaded to GitHub/Drive; GitHub stores only names+hashes",
+    "completion": "3/12 unapproved separate full-frame draft images; not 12 production-ready images"
   }
 }
