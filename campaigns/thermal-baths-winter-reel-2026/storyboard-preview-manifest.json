@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
   "stage": "STORYBOARD_OPTIONS_3_SOURCE_PREVIEW",
-  "status": "NEEDS_LEO_VISUAL_SELECTION",
+  "status": "LEO_LIKES_STYLE_3_PENDING_PRODUCTION_ASSET_VERIFICATION",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -159,5 +159,16 @@
       "source_image_id": "7fd7b8_e08d25b7d9844da98296fd6ba10f750d~mv2.jpg",
       "url": "https://static.wixstatic.com/media/7fd7b8_e08d25b7d9844da98296fd6ba10f750d~mv2.jpg"
     }
-  ]
+  ],
+  "latestUserFeedback": {
+    "date": "2026-11-23",
+    "message": "МНЕ НРАВИТСЯ",
+    "visualReference": "Latest displayed 15-panel storyboard overview concept, presented after 'Обзорный лист 3 — Атлас термальных курортов'",
+    "interpretation": "Positive approval of visual direction, not evidence of 15 individually verified 9:16 production assets or a final MP4",
+    "referenceStyle": "Dynamic numbered panel sequence, Leo on opening/closing, strong Russian captions, 12 resorts, bold yellow/navy highlights",
+    "approvedNarration": "Selected script option 1 unchanged; latest visual's extra CTA is not part of approved voiceover",
+    "visualProductionGate": "BLOCKED_PENDING_INDIVIDUAL_SCENE_ASSETS_AND_LICENSE_QA",
+    "actualMedia": "Wix metadata confirms 12 images including blog cover; generated visual sheet is a non-production collage; no paid A2E/TTS performed"
+  },
+  "preferredVisualVariant": 3
 }
