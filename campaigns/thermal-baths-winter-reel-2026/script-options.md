@@ -1,11 +1,11 @@
 # Рилс по статье блога: 12 термальных курортов
 
 DATE: 2026-11-23
-STATUS: DRAFT_OPTIONS_NEED_LEO
-STAGE: SCRIPT_OPTIONS_3
+STATUS: SCRIPT_1_LEO_SELECTED_STORYBOARD_PREVIEWS_PENDING
+STAGE: STORYBOARD_OPTIONS_3
 REVISION: 2
 CHANGE_REASON: Leo clarified «нет рилс на основе блога». The source is the entire published Wix article; not the short Facebook teaser.
-OWNER_SELECTION: PENDING
+OWNER_SELECTION: 1 (explicit user message «согласен 1 вариант», 2026-11-23)
 PRODUCTION: NOT_STARTED
 PUBLICATION: NOT_AUTHORIZED
 SPEND: zero paid operations
@@ -19,7 +19,7 @@ FORMAT: 9:16, Russian spoken voice, target roughly 55–65 seconds (not a measur
 HERO: Leo, based on actual user-supplied photo; no generic identity substitution.
 VISUALS: First use genuine site images to plan when appropriate, check media attribution and rights; do not count 11 embedded pictures as all 12 locations; selected edited square poster is a thematic reference only, not final vertical frame.
 VOICE: approved ongoing voice only; no free/paid TTS has been run.
-NEXT_STEP: owner selects 1, 2 or 3. After selection supply three full alternative visual storyboards with actual individual images per scene, not one poster or a collage standing in for footage. No paid A2E/TTS or publication without required gates.
+NEXT_STEP: produce three complete alternative storyboards for selected script #1, preserving all 12 named destinations. Each storyboard must have an individual visual per scene; no paid A2E/TTS/production until confirmed selection and quote.
 
 ## 1. Двенадцать курортов за минуту
 
@@ -84,3 +84,11 @@ Booking, age, time and access rules in the article were current as of 2026-11-23
 ## Current status
 
 The three scripts are proposed options, not approved production scripts; final voiced lines and storyboards require Leo choice. No MP4, video shots, audio or music have been generated for this project yet.
+
+## Leo script selection — 2026-11-23
+
+- Explicit decision in ChatGPT: «согласен 1 вариант». Working script: section **1. Двенадцать курортов за минуту** exactly as above.
+- Primary source: full 12-section Wix blog, not the Facebook teaser; the selection follows the scope correction.
+- This selection authorizes the next free visual storyboard stage, not A2E/TTS/montage cost and not publication.
+- Status for production source remains pending GitHub owner-bound approval evidence per Scenarist v3.1 and VIDEO_PIPELINE; no fabricated GitHub Issue approval comment.
+- Scene order: 1 Spa Belgium; 2 Baden-Baden Germany; 3 Bath UK; 4 Karlovy Vary Czechia; 5 Budapest Hungary; 6 Saturnia Italy; 7 Leukerbad Switzerland; 8 Bormio Italy; 9 Sky Lagoon Iceland; 10 Kusatsu Onsen Japan; 11 Abanotubani Georgia; 12 Ourense Spain. Opening line uses scenic Spa frame; closing line uses last frames.
