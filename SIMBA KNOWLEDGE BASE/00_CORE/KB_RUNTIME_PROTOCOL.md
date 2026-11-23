@@ -21,7 +21,7 @@ Runtime 8.0 — 08.11.2026. Для поиска рилсов по запросу
 Runtime 7.2. После общего gate читать профиль; для пополнения базы — индекс/схему, доступное видео. Для адаптации — BRAND_RULES, VISUAL_RULES, VIDEO_PIPELINE и целевой сценарий, если есть. Утверждённый пост для анализа не нужен. TIA/Humanizer/Internal Critic не применяются. Инструмент/видео недоступны → KADR_TOOL_BLOCKED, не KB failure. Перед новой сборкой/существенной переработкой монтажёр читает индекс и до трёх релевантных READY-карточек; фиксирует ID/применение либо NONE. Нет READY — монтаж продолжается. К мелким техническим правкам не добавлять этап.
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Редакция: runtime 9.5 · 17.11.2026 (verified vs declared editorial role runs); ранее 9.4 · 17.11.2026 (source-only Critic and fulfillment); ранее 9.3 · 17.11.2026 (learning provenance, historical supersession & index coverage); ранее 9.2 · 17.11.2026 (news & author fail-closed); ранее 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
+Редакция: runtime 9.6 · 23.11.2026 (Longform pilot); ранее runtime 9.5 · 17.11.2026 (verified vs declared editorial role runs); ранее 9.4 · 17.11.2026 (source-only Critic and fulfillment); ранее 9.3 · 17.11.2026 (learning provenance, historical supersession & index coverage); ранее 9.2 · 17.11.2026 (news & author fail-closed); ранее 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
 Дата: 22.10.2026 · Сценарист: preflight и производственная выдача по сценам
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
@@ -144,6 +144,21 @@ Legacy `Feedback-Learning-*` не является runtime-зависимост�
 - последние релевантные полные APPROVED/PUBLISHED материалы из `03_CONTENT_LIBRARY`;
 - `07_LEARNINGS/STYLE_FEEDBACK_MINING.md`;
 - `07_LEARNINGS/CORRECTIONS_LOG.md` и `DECISION_LOG.md`.
+
+### Длинная статья для блога / Longform (пилот, 23.11.2026)
+Обязательно:
+- `Симба (Писатель)/Longform-v1.0.md` (новый автор, статус 🔧 до утвержденного теста Leo);
+- `01_BRAND/STYLE_LEO.md`, `01_BRAND/ANTI_STYLE.md`, `01_BRAND/BRAND_RULES.md`;
+- `02_AUDIENCE/SEGMENTS.md`, `02_AUDIENCE/OBJECTIONS_AND_LANGUAGE.md`;
+- `05_OPERATIONAL_RULES/FACTS_FRESHNESS_PRICING.md`;
+- `03_CONTENT_LIBRARY/_INDEX.md` (проверка повторов, не архивные динамические факты);
+- `06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md`, `06_AGENT_WORKFLOWS/CHATGPT_NATIVE_EDITORIAL.md`;
+- `06_AGENT_WORKFLOWS/INTRIGAN.md` (содержательная зацепка или честный пропуск);
+- действующие официальные/независимые источники по конкретным фактам.
+
+По необходимости — реально доступные навыки Intrigan, Copywriter, Simba Editorial, Writing Style и TIA. Отсутствие внешних навыков не создает ложный `BLOCKED_KB_UNAVAILABLE`; обязательными являются канонические внутренние файлы. Не копировать рекламные CTA чужих навыков.
+
+Результат Longform: одна полная проверенная редакция статьи, 3 кандидата заголовка, SEO-метаданные, список ссылок/источников, флаги непроверенных фактов, `DRAFT` до утверждения Leo. Ни независимый Critic PASS, ни независимый Humanizer PASS не выдумывать. Для Longform внутренний Critic Simba автоматически не применяется. Связанный Facebook-анонс — отдельная задача Info со своими правилами и `HUMANIZER_PASS`; точный URL статьи допускается только после подтвержденного размещения на сайте. Стадии утверждения и публикации не смешивать.
 
 ### AI-Маркетолог
 Обязательно:
