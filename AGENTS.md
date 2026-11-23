@@ -12,7 +12,7 @@
 
 
 
-Runtime adapter revision: 3.6 · 17.11.2026 (declared vs verified role execution); ранее 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
+Runtime adapter revision: 3.7 · 23.11.2026 (Longform pilot); ранее 3.6 · 17.11.2026 (declared vs verified role execution); ранее 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
 
 ## Кадр — 08.11.2026
 
@@ -261,3 +261,6 @@ Runtime получает из learnings только пригодные evidence
 
 ## Changelog 2.2 — 10.11.2026
 Тип: структурная стыковка. Промежуточная передача рилсов по существующим ролям через локальные проверяемые JSON-пакеты и привязку выбора к исходному хешу. Нет нового агента, скрытого платного вызова, публикации или утраты истории. Свойства «передано» и «исполнено» различаются.
+
+## Changelog 3.7 — 23.11.2026
+Каноническая карта дополнена пилотным автором Longform, отделены статьи блога от коротких Facebook-постов Info, статус независимого исполнения не повышен; утверждение и публикация требуют отдельного подтверждения.
