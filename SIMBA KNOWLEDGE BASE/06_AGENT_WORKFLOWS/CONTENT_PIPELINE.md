@@ -1,6 +1,6 @@
 # CONTENT PIPELINE
 
-Версия: 11.4 · 17.11.2026 (truthful live role receipts and declared-only offline statuses); ранее 11.3 · 17.11.2026 (explicit source-only author gate & fulfillment); ранее 11.2 · 17.11.2026 (verified news single-event/digest & author gates); ранее 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
+Версия: 11.5 · 23.11.2026 (Longform article to Info teaser handoff); ранее 11.4 · 17.11.2026 (truthful live role receipts and declared-only offline statuses); ранее 11.3 · 17.11.2026 (explicit source-only author gate & fulfillment); ранее 11.2 · 17.11.2026 (verified news single-event/digest & author gates); ранее 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
 
 ## COPYWRITER_TEST_MODE — 31.10.2026
 
