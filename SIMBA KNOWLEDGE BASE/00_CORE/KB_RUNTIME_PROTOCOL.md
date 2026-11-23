@@ -21,7 +21,7 @@ Runtime 8.0 — 08.11.2026. Для поиска рилсов по запросу
 Runtime 7.2. После общего gate читать профиль; для пополнения базы — индекс/схему, доступное видео. Для адаптации — BRAND_RULES, VISUAL_RULES, VIDEO_PIPELINE и целевой сценарий, если есть. Утверждённый пост для анализа не нужен. TIA/Humanizer/Internal Critic не применяются. Инструмент/видео недоступны → KADR_TOOL_BLOCKED, не KB failure. Перед новой сборкой/существенной переработкой монтажёр читает индекс и до трёх релевантных READY-карточек; фиксирует ID/применение либо NONE. Нет READY — монтаж продолжается. К мелким техническим правкам не добавлять этап.
 
 Статус: MANDATORY RUNTIME DEPENDENCY  
-Редакция: runtime 9.6 · 23.11.2026 (Longform pilot); ранее runtime 9.5 · 17.11.2026 (verified vs declared editorial role runs); ранее 9.4 · 17.11.2026 (source-only Critic and fulfillment); ранее 9.3 · 17.11.2026 (learning provenance, historical supersession & index coverage); ранее 9.2 · 17.11.2026 (news & author fail-closed); ранее 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
+Редакция: runtime 9.7 · 23.11.2026 (manual article delivery, no public FB URL); ранее runtime 9.6 · 23.11.2026 (Longform pilot); ранее runtime 9.5 · 17.11.2026 (verified vs declared editorial role runs); ранее 9.4 · 17.11.2026 (source-only Critic and fulfillment); ранее 9.3 · 17.11.2026 (learning provenance, historical supersession & index coverage); ранее 9.2 · 17.11.2026 (news & author fail-closed); ранее 9.1 · 17.11.2026 (owner-bound script approval); ранее 9.0 · 17.11.2026 (STANDALONE_VISUAL); ранее 8.0 · 08.11.2026
 Дата: 22.10.2026 · Сценарист: preflight и производственная выдача по сценам
 Канонический путь: `legur/Simba@main / SIMBA KNOWLEDGE BASE`
 
@@ -158,7 +158,7 @@ Legacy `Feedback-Learning-*` не является runtime-зависимост�
 
 По необходимости — реально доступные навыки Intrigan, Copywriter, Simba Editorial, Writing Style и TIA. Отсутствие внешних навыков не создает ложный `BLOCKED_KB_UNAVAILABLE`; обязательными являются канонические внутренние файлы. Не копировать рекламные CTA чужих навыков.
 
-Результат Longform: одна полная проверенная редакция статьи, 3 кандидата заголовка, SEO-метаданные, список ссылок/источников, флаги непроверенных фактов, `DRAFT` до утверждения Leo. Ни независимый Critic PASS, ни независимый Humanizer PASS не выдумывать. Для Longform внутренний Critic Simba автоматически не применяется. Связанный Facebook-анонс — отдельная задача Info со своими правилами и `HUMANIZER_PASS`; точный URL статьи допускается только после подтвержденного размещения на сайте. Стадии утверждения и публикации не смешивать.
+Результат Longform: одна полная проверенная редакция статьи, 3 кандидата заголовка, SEO-метаданные, список ссылок/источников, флаги непроверенных фактов, `DRAFT` до утверждения Leo. Ни независимый Critic PASS, ни независимый Humanizer PASS не выдумывать. Для Longform внутренний Critic Simba автоматически не применяется. Связанный Facebook-анонс — отдельная задача Info со своими правилами и `HUMANIZER_PASS`. Публичный URL статьи не включать в текст Facebook-поста или комментарий даже после публикации статьи; финальное действие — тематическое кодовое слово в комментариях, после которого **Leo сам вручную** отправит читателю статью. Для термальных курортов кодовое слово «ТЕРМЫ». До публикации анонса обязателен `FULFILLMENT_VERIFIED`: материал существует и Leo реально может его отправить. Проверенный URL для внутренней передачи допустим, но никогда не показывается как публичный CTA. Стадии утверждения и публикации не смешивать.
 
 ### AI-Маркетолог
 Обязательно:
@@ -397,6 +397,9 @@ BulkPublish читать `06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` (1.0).
 FACTS_VERIFIED; SCANNED не является APPROVED_TEXT; DRAFT_CREATED не является PUBLISHED.
 Недоступность внешнего пакета не является BLOCKED_KB_UNAVAILABLE. Для Xberg/сканера
 допустим штатный reader/ручной Humanizer, для удалённого draft нужен доступ к сервису.
+
+## Runtime amendment 9.7 — 23.11.2026
+Прямое указание Leo: в Facebook-анонсе статьи исключен URL; CTA на комментарий с кодовым словом и личную отправку материала Leo. Fulfillment gate остается в силе, автоматическая отправка/публикация не разрешена.
 
 ## 12. Changelog
 
