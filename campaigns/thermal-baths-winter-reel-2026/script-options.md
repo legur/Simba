@@ -1,12 +1,12 @@
 # Рилс по статье блога: 12 термальных курортов
 
 DATE: 2026-11-23
-STATUS: SCRIPT_1_LEO_SELECTED_STORYBOARD_PREVIEWS_PENDING
-STAGE: STORYBOARD_OPTIONS_3
+STATUS: SCRIPT_1_LEO_SELECTED_OFFLINE_VIDEO_DEMO_READY
+STAGE: MUSIC_AND_MOTION_DEMO_NEEDS_LEO_REVIEW
 REVISION: 2
 CHANGE_REASON: Leo clarified «нет рилс на основе блога». The source is the entire published Wix article; not the short Facebook teaser.
 OWNER_SELECTION: 1 (explicit user message «согласен 1 вариант», 2026-11-23)
-PRODUCTION: NOT_STARTED
+PRODUCTION: FREE_OFFLINE_DEMO_ONLY; PAID_A2E_AND_TTS_NOT_STARTED
 PUBLICATION: NOT_AUTHORIZED
 SPEND: zero paid operations
 SOURCE_BLOG_URL: https://www.letsgo-world.co.il/post/12-zimnih-termalnyh-kurortov
@@ -19,7 +19,7 @@ FORMAT: 9:16, Russian spoken voice, target roughly 55–65 seconds (not a measur
 HERO: Leo, based on actual user-supplied photo; no generic identity substitution.
 VISUALS: First use genuine site images to plan when appropriate, check media attribution and rights; do not count 11 embedded pictures as all 12 locations; selected edited square poster is a thematic reference only, not final vertical frame.
 VOICE: approved ongoing voice only; no free/paid TTS has been run.
-NEXT_STEP: produce three complete alternative storyboards for selected script #1, preserving all 12 named destinations. Each storyboard must have an individual visual per scene; no paid A2E/TTS/production until confirmed selection and quote.
+NEXT_STEP: inspect 59s local demo with synthesized temporary music; obtain/execute approved Simba WarmBaritone for exact script and verify true venue imagery and licenses before final QA; no publication permitted.
 
 ## 1. Двенадцать курортов за минуту
 
@@ -83,7 +83,7 @@ Booking, age, time and access rules in the article were current as of 2026-11-23
 
 ## Current status
 
-The three scripts are proposed options, not approved production scripts; final voiced lines and storyboards require Leo choice. No MP4, video shots, audio or music have been generated for this project yet.
+Option 1 was explicitly selected by Leo. A 59-second locally rendered H.264 MP4 with provisional instrumental audio has been verified in the chat sandbox; it is not a fully voiced or publishable final MP4. Paid A2E/TTS not used; separate venue photos and rights still require verification.
 
 ## Leo script selection — 2026-11-23
 
@@ -92,3 +92,11 @@ The three scripts are proposed options, not approved production scripts; final v
 - This selection authorizes the next free visual storyboard stage, not A2E/TTS/montage cost and not publication.
 - Status for production source remains pending GitHub owner-bound approval evidence per Scenarist v3.1 and VIDEO_PIPELINE; no fabricated GitHub Issue approval comment.
 - Scene order: 1 Spa Belgium; 2 Baden-Baden Germany; 3 Bath UK; 4 Karlovy Vary Czechia; 5 Budapest Hungary; 6 Saturnia Italy; 7 Leukerbad Switzerland; 8 Bormio Italy; 9 Sky Lagoon Iceland; 10 Kusatsu Onsen Japan; 11 Abanotubani Georgia; 12 Ourense Spain. Opening line uses scenic Spa frame; closing line uses last frames.
+
+## Execution update — 2026-11-23
+
+- Leo approved visual direction #3 and the cover-at-start edit; 12 destination scenes follow with no ending selfie frame. 
+- New locally rendered 59.000s music+motion **demo**: `thermal_reel_v1_preview/thermal_reel_atlas_music_draft.mp4`; SHA-256 `740e0be84e6e49c82187a689e89c775683707b74212b79273be82283ad89af0e`. This filename refers only to the ChatGPT sandbox, not to a public GitHub-uploaded file.
+- Audio is temporary originally synthesized instrumental, not approved library music; no voice was generated or replaced. User's exact chosen script (option 1) has not been modified. Twelve place illustrations remain stylized AI, not a claim of verified photographs.
+- Source for sound options and QA: `campaigns/thermal-baths-winter-reel-2026/music-shortlist.md`; authoritative latest status is in the existing `storyboard-preview-manifest.json`.
+- Publishing gated: no verified approved WarmBaritone execution for this text, destination visual provenance/license QA outstanding, no fully voiced playback QA or final owner publication permission.
