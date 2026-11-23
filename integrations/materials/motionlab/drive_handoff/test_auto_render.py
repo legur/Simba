@@ -1,5 +1,6 @@
 """Security and contract tests for no-paid MotionLab Drive automatic renderer."""
 import copy
+from datetime import datetime, timezone
 import hashlib
 import json
 import pathlib
@@ -10,6 +11,18 @@ from unittest.mock import patch
 import auto_render as m
 
 SHA="a"*64
+
+# Historical Alaska replay was explicitly time-limited. Pin the test clock to
+# the permitted window; production expiry checks must remain unchanged.
+class InReplayWindow(datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return datetime(2026, 11, 13, 12, 0, tzinfo=timezone.utc)
+
+class AfterReplayWindow(datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return datetime(2099, 1, 1, tzinfo=timezone.utc)
 def fixture():
     profile=m.get_profile("alaska-voyager-2027")
     scene_ids=[f"alaska-{i:02}" for i in range(1,11)]
@@ -100,6 +113,7 @@ class RenderChecks(unittest.TestCase):
             with self.assertRaisesRegex(m.RenderError,"UNIMPLEMENTED_TRANSITION"):
                 m.prepare(object(),"private-receipt")
 
+    @patch.object(m.dt, 'datetime', InReplayWindow)
     def test_wrong_receipt_blocked(self):
         record,launch=fixture();record["receipt_id"]="wrong"
         with patch.object(m,"validate_receipt",return_value=record),\
@@ -115,6 +129,7 @@ class RenderChecks(unittest.TestCase):
             with self.assertRaisesRegex(m.RenderError,"UNIMPLEMENTED_VISUAL_OVERRIDES"):
                 m.prepare(object(),"private-receipt")
 
+    @patch.object(m.dt, 'datetime', InReplayWindow)
     def test_exact_replay_of_prior_alaska_selection_only(self):
         original,launch=fixture()
         # Replay input may have a new receipt+selection hash due to a new
@@ -136,6 +151,7 @@ class RenderChecks(unittest.TestCase):
             with self.assertRaisesRegex(m.RenderError,"REPLAY_SELECTION_NOT_IDENTICAL_TO_APPROVED"):
                 m.verify_exact_replay(object(),new,profile)
 
+    @patch.object(m.dt, 'datetime', InReplayWindow)
     def test_replay_does_not_accept_changed_private_source(self):
         original,launch=fixture()
         original["selection"]["decision"]["user_selected_at"]="2026-11-12T08:05:23Z"
@@ -148,6 +164,13 @@ class RenderChecks(unittest.TestCase):
              patch.object(m,"read_private",return_value=ticket):
             with self.assertRaisesRegex(m.RenderError,"REPLAY_SOURCE_NOT_PINNED"):
                 m.verify_exact_replay(object(),new,profile)
+
+    @patch.object(m.dt, 'datetime', AfterReplayWindow)
+    def test_expired_replay_still_fails_closed(self):
+        original,launch=fixture()
+        profile=m.get_profile("alaska-voyager-2027")
+        with self.assertRaisesRegex(m.RenderError,"EXACT_REPLAY_EXPIRED"):
+            m.verify_exact_replay(object(),original,profile)
 
     def test_subtitle_profile_produces_real_ass_and_facts(self):
         profile=m.get_profile("alaska-voyager-2027")

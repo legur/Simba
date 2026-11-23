@@ -1,6 +1,6 @@
-# Video: утверждённый пост → вертикальный ролик до 60 секунд
+# Video: утвержденный пост или сценарий → вертикальный ролик до 60 секунд
 
-Рендерер фото-историй Simba. Берёт **утверждённый пост** из Content Library, **кадры Рафаэля** и **реплики Сценариста**
+Рендерер фото-историй Simba. Берёт **утвержденный пост или самостоятельный утвержденный сценарий**, **кадры Рафаэля** и **реплики Сценариста**
 и собирает ролик 1080×1920 (Reels / Shorts / TikTok / Facebook): движение камеры по кадрам, утвержденный голос Simba WarmBaritone (Google Gemini Voice Design),
 субтитры с подсветкой произносимого слова, карточка оффера, финальная карточка с постером и контактом, музыка и звуки.
 
@@ -32,7 +32,8 @@ py -3.12 -m venv .venv
 | Поле | Что это |
 |---|---|
 | `packageId` | id ролика (латиница, цифры, `.-_`), из него имя файла |
-| `sourcePost` | путь к `*__APPROVED.md` от корня репозитория; файл обязан иметь `STATUS: APPROVED` и раздел `## APPROVED_TEXT` |
+| `sourcePost` | путь к утвержденному посту от корня репозитория (`STATUS: APPROVED`, раздел `## APPROVED_TEXT`) |
+| `sourceScript` | альтернатива `sourcePost`: путь к самостоятельному сценарию (`STATUS: APPROVED_SCRIPT`, проверенный owner GitHub comment ID в `APPROVAL_EVIDENCE`, безопасный `SOURCE_REFERENCE`, раздел `## APPROVED_SCRIPT`); ровно одно из двух полей обязательно |
 | `voice` | `{"provider": "simba"}` (по умолчанию, выбранный постоянный Google Gemini WarmBaritone); Edge TTS только при явном `{"provider": "edge", "name": "ru-RU-DmitryNeural", "rate": "-4%"}` |
 | `scenes[]` | 1–8 сцен: `image`, `move` (`push` / `pull` / `pan-left` / `pan-right` / `rise`), необязательный `title`, `focus` `[x, y]` 0–1, `lines[]` |
 | `offer` | карточка оффера: `title`, `rows[]`, `price`, `note`, `lines[]`, необязательный `bg` (картинка фона) |
@@ -40,6 +41,29 @@ py -3.12 -m venv .venv
 | `lines[]` | `{"text": ...}` — субтитр и то, что сверяется; `say` — что произносит голос (числа словами, латиница кириллицей); `asr` — как Whisper должен это услышать, если отличается от `text` |
 
 Пример: [`examples/costa-diadema-fjords.video-spec.json`](examples/costa-diadema-fjords.video-spec.json).
+
+Самостоятельный сценарий обязан содержать метаданные решения Лео и происхождения фактов. Схема записи:
+
+```md
+STATUS: APPROVED_SCRIPT
+APPROVAL_EVIDENCE: github-issue-comment:1234567890
+SOURCE_REFERENCE: verified-brief-2026-11-17
+
+## APPROVED_SCRIPT
+Полный дословный утвержденный текст для рилса.
+```
+
+Для `sourceScript` рендерер сверяет текущий GitHub-комментарий от **владельца `legur`** (в репозитории `legur/Simba`) через GitHub API. Его тело должно содержать только публично безопасные строки:
+
+```text
+SIMBA_SCRIPT_APPROVAL_V1
+SCRIPT_SHA256: <SHA-256 точных UTF-8 байтов тела раздела APPROVED_SCRIPT>
+SOURCE_REFERENCE_SHA256: <SHA-256 точной строки SOURCE_REFERENCE>
+```
+
+Только тогда текст `APPROVAL_EVIDENCE: github-issue-comment:<ID>` валиден. Комментарий создается **после реального утверждения конкретной редакции Лео**, но не является вторым творческим согласованием; при отсутствии безопасного доверенного owner-write механизма остановиться, не подделывать approval. Если комментарий недоступен, принадлежит не `legur` или SHA не совпадает, рендер блокируется; API-read не выполняет публикацию. Нельзя размещать приватные ссылки, токены или клиентские данные в этих записях. `SOURCE_REFERENCE` — безопасный ID, не URL закрытого Drive.
+
+`sourcePost` и `sourceScript` взаимоисключающие; `--draft` не разрешает публикацию и не подделывает approval.
 
 ### Сцены из готовых видеоклипов (Grok и др.)
 
@@ -150,8 +174,8 @@ integrations\video\.venv\Scripts\python integrations\video\make_video.py integra
 
 Порядок и gates (любой провал останавливает сборку с причиной):
 
-1. `STATUS: APPROVED` у исходного поста.
-2. **Fact gate:** каждое число на экране и в субтитрах (цены, даты, телефоны, ночи) должно стоять в `APPROVED_TEXT` буквально.
+1. `STATUS: APPROVED` у исходного поста или `STATUS: APPROVED_SCRIPT` и доказательства approval/provenance у самостоятельного сценария.
+2. **Fact gate:** каждое число на экране и в субтитрах (цены, даты, телефоны, ночи) должно буквально присутствовать в утвержденном `APPROVED_TEXT` или `APPROVED_SCRIPT`.
 3. Голос: постоянный Google Gemini WarmBaritone по каждой реплике; приватный Voice Design ID считывается из подтвержденного JSON на Drive, WAV кэшируются в `voice/.cache`. Edge TTS только по явному `voice.provider=edge`.
 4. **Speech check:** Whisper слышит каждую реплику обратно (сходство символов ≥ 0.90); заодно даёт тайминги слов для субтитров.
 5. Таймлайн из длительности реплик; ролик длиннее 60 с не собирается.

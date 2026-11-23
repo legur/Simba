@@ -1,0 +1,282 @@
+{
+  "project": "thermal-baths-winter-reel-2026",
+  "stage": "EXACT_FRAME_PREVIEW_LEO_CONFIRMED__PRODUCTION_ASSETS_PENDING",
+  "status": "LEO_CONFIRMED_CORRECTED_PREVIEW_ONLY",
+  "script_selection": "1 - explicit Leo chat approval 2026-11-23",
+  "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
+  "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
+  "format": "9:16",
+  "seconds": 59,
+  "numberOfScenes": 13,
+  "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
+  "productionStatus": "CORRECTED_AUDIO_MOTION_PREVIEW_READY; FINAL_DOCUMENTARY_RENDER_BLOCKED_BY_INDIVIDUAL_IMAGE_PROVENANCE_AND_NARRATION",
+  "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
+  "variants": [
+    {
+      "id": 1,
+      "title": "Документальное путешествие",
+      "visual": "uncropped site photo within full vertical frame; original-image context preserved"
+    },
+    {
+      "id": 2,
+      "title": "Зима и горячая вода",
+      "visual": "immersive cropped image with bold natural highlights, minimal title"
+    },
+    {
+      "id": 3,
+      "title": "Атлас термальных курортов",
+      "visual": "postcard mattes and visible full original photo, map-like scene numbering"
+    }
+  ],
+  "scenes": [
+    {
+      "scene": 1,
+      "location": "Спа",
+      "country": "Бельгия",
+      "from": 0,
+      "to": 10,
+      "duration_seconds": 10,
+      "source_image_id": "7fd7b8_2bbec15026cb47be9d4bbdf1c711f8ba~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_2bbec15026cb47be9d4bbdf1c711f8ba~mv2.jpg"
+    },
+    {
+      "scene": 2,
+      "location": "Баден-Баден",
+      "country": "Германия",
+      "from": 10,
+      "to": 14,
+      "duration_seconds": 4,
+      "source_image_id": "7fd7b8_74ad574b1c2c4819ade767f1388a3e2b~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_74ad574b1c2c4819ade767f1388a3e2b~mv2.jpg"
+    },
+    {
+      "scene": 3,
+      "location": "Бат",
+      "country": "Великобритания",
+      "from": 14,
+      "to": 19,
+      "duration_seconds": 5,
+      "source_image_id": "7fd7b8_18c1606aee284bca947f524e6fd44b84~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_18c1606aee284bca947f524e6fd44b84~mv2.jpg"
+    },
+    {
+      "scene": 4,
+      "location": "Карловы Вары",
+      "country": "Чехия",
+      "from": 19,
+      "to": 23,
+      "duration_seconds": 4,
+      "source_image_id": "7fd7b8_7de4811abe544fe98095b15293c8e757~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_7de4811abe544fe98095b15293c8e757~mv2.jpg"
+    },
+    {
+      "scene": 5,
+      "location": "Будапешт",
+      "country": "Венгрия",
+      "from": 23,
+      "to": 27,
+      "duration_seconds": 4,
+      "source_image_id": "7fd7b8_e08d25b7d9844da98296fd6ba10f750d~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_e08d25b7d9844da98296fd6ba10f750d~mv2.jpg"
+    },
+    {
+      "scene": 6,
+      "location": "Сатурния",
+      "country": "Италия",
+      "from": 27,
+      "to": 31,
+      "duration_seconds": 4,
+      "source_image_id": "7fd7b8_65ddc2a6f57b4240b06679b217e8a6e9~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_65ddc2a6f57b4240b06679b217e8a6e9~mv2.jpg"
+    },
+    {
+      "scene": 7,
+      "location": "Лойкербад",
+      "country": "Швейцария",
+      "from": 31,
+      "to": 34,
+      "duration_seconds": 3,
+      "source_image_id": "7fd7b8_0b540182763346bd8951f21aeeedd936~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_0b540182763346bd8951f21aeeedd936~mv2.jpg"
+    },
+    {
+      "scene": 8,
+      "location": "Бормио",
+      "country": "Италия",
+      "from": 34,
+      "to": 37,
+      "duration_seconds": 3,
+      "source_image_id": "7fd7b8_1f548954fbfe45529cb6d132702e5dba~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_1f548954fbfe45529cb6d132702e5dba~mv2.jpg"
+    },
+    {
+      "scene": 9,
+      "location": "Sky Lagoon",
+      "country": "Исландия",
+      "from": 37,
+      "to": 41,
+      "duration_seconds": 4,
+      "source_image_id": "7fd7b8_806b53efbf154a4d967a16bed97dbf1e~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_806b53efbf154a4d967a16bed97dbf1e~mv2.jpg"
+    },
+    {
+      "scene": 10,
+      "location": "Кусацу-Онсэн",
+      "country": "Япония",
+      "from": 41,
+      "to": 45,
+      "duration_seconds": 4,
+      "source_image_id": "7fd7b8_fe1f5f807a8c485193d53125866afcaa~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_fe1f5f807a8c485193d53125866afcaa~mv2.jpg"
+    },
+    {
+      "scene": 11,
+      "location": "Абанотубани",
+      "country": "Грузия",
+      "from": 45,
+      "to": 48,
+      "duration_seconds": 3,
+      "source_image_id": "7fd7b8_b8de88cabc0c42aab93dfb1e0ffa4c4d~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_b8de88cabc0c42aab93dfb1e0ffa4c4d~mv2.jpg"
+    },
+    {
+      "scene": 12,
+      "location": "Оренсе",
+      "country": "Испания",
+      "from": 48,
+      "to": 51,
+      "duration_seconds": 3,
+      "source_image_id": "7fd7b8_5787af82d0ec4b6fba502abc0784e1b4~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_5787af82d0ec4b6fba502abc0784e1b4~mv2.jpg"
+    },
+    {
+      "scene": 13,
+      "location": "Финал",
+      "country": "из статьи",
+      "from": 51,
+      "to": 59,
+      "duration_seconds": 8,
+      "source_image_id": "7fd7b8_e08d25b7d9844da98296fd6ba10f750d~mv2.jpg",
+      "url": "https://static.wixstatic.com/media/7fd7b8_e08d25b7d9844da98296fd6ba10f750d~mv2.jpg"
+    }
+  ],
+  "latestUserFeedback": {
+    "date": "2026-11-23",
+    "message": "МНЕ НРАВИТСЯ",
+    "visualReference": "Latest displayed 15-panel storyboard overview concept, presented after 'Обзорный лист 3 — Атлас термальных курортов'",
+    "interpretation": "Positive approval of visual direction, not evidence of 15 individually verified 9:16 production assets or a final MP4",
+    "referenceStyle": "Dynamic numbered panel sequence, Leo on opening/closing, strong Russian captions, 12 resorts, bold yellow/navy highlights",
+    "approvedNarration": "Selected script option 1 unchanged; latest visual's extra CTA is not part of approved voiceover",
+    "visualProductionGate": "BLOCKED_PENDING_INDIVIDUAL_SCENE_ASSETS_AND_LICENSE_QA",
+    "actualMedia": "Wix metadata confirms 12 images including blog cover; generated visual sheet is a non-production collage; no paid A2E/TTS performed"
+  },
+  "preferredVisualVariant": 3,
+  "previewProducedOn": "2026-11-23",
+  "previewProof": {
+    "artifact_kind": "silent 59-second animatic MP4 based on selected script 1 and visual direction 3; not final reel",
+    "video_name": "thermal_reel_silent_animatic_59s.mp4",
+    "video_sha256": "149d561cdd5951cb16305bdf9c70d9346de84ba00651bd001272855baadeb535",
+    "video_codec": "h264",
+    "video_resolution": "720x1280",
+    "video_duration_seconds": 59,
+    "video_size_bytes": 1921308,
+    "video_audio": "NONE",
+    "scene_count": 13,
+    "preview_stills": "13 preview images with baked titles, and 13 illustrative no-title images, local sandbox only",
+    "source": "Existing AI-generated 12-location contact sheet, not authenticated destination photos; ending contains unmodified crop of owner's supplied photograph",
+    "visual_qa": "local ffprobe duration, resolution and codec checked; sampled scenes 1, 10, 13 visually inspected",
+    "exact_source_voice": "selected script #1, kept as text only; no generated voice",
+    "archive_status": "NOT_COPIED_TO_OWNER_PRIVATE_GOOGLE_DRIVE; sandbox copies available only within this chat",
+    "illustrator_warning": "NOT verified real venue imagery. Not approved as documentary visual / A2E-ready footage.",
+    "zip_name": "thermal_reel_v1_frames_and_storyboard.zip",
+    "zip_sha256": "1db0619601fb3491dcbe5fab415ed6431d834a30b44f772e5762f4e707db0596",
+    "latestUserEdit": {
+      "instruction": "убери последний кадр и используй этот первым",
+      "meaning": "Move existing scene #13 ('12 МЕСТ / ОДНО ПУТЕШЕСТВИЕ' with Leo photo) to position #1, removing it from its former end position. Preserve other scenes and durations.",
+      "result": "Local preview MP4 reordered; scene order 13,1,2,3,4,5,6,7,8,9,10,11,12",
+      "file": "thermal_reel_silent_animatic_intro_first.mp4",
+      "sha256": "6a6166d3b75debd4eccff44af5292588ec80106f40abd64cb74e81498e11828d",
+      "duration_seconds": 59,
+      "resolution": "720x1280",
+      "videoCodec": "H264",
+      "audio": "NONE",
+      "timingsFile": "timings_intro_first.csv",
+      "contactSheet": "scene_contact_sheet_intro_first.jpg",
+      "viewable_in_current_chat_sandbox": true,
+      "archiveStatus": "NOT_COPIED_TO_PRIVATE_DRIVE, copy stored in ChatGPT sandbox; do not claim permanent archive",
+      "qa": "ffprobe shows 59.00s 1180 frames 20fps; visual sampling first and last verified"
+    },
+    "musicVersion": {
+      "file": "thermal_reel_atlas_music_draft.mp4",
+      "sha256": "740e0be84e6e49c82187a689e89c775683707b74212b79273be82283ad89af0e",
+      "duration": 59,
+      "width": 720,
+      "height": 1280,
+      "fps": 20,
+      "video": "H.264",
+      "audio": "AAC stereo 48 kHz, original locally synthesized placeholder, NOT a Mixkit track",
+      "audioMeanDbfs": -33.9,
+      "audioPeakDbfs": -19.6,
+      "soundtrackSha256": "a93f17782b72000101d35480c1b07747af3acdf8d12df04bbf39a93c60e74322",
+      "audioLicense": "Preview only; original offline-synthesized composition; not a selected production soundtrack",
+      "videoOrigin": "Prior approved rearranged storyboard, camera micro-pan and fades; all 12 place images are illustrative AI and not independently authenticated destination footage",
+      "qc": "ffprobe audio/video duration & streams verified, sampled first and last still frames examined, no independent listening",
+      "missing": [
+        "approved voice generator",
+        "real verified separate destination photographs",
+        "license attribution and owner-private archival",
+        "owner final MP4 QA",
+        "final publication approval"
+      ]
+    }
+  },
+  "nextAction": "Create separate high-resolution production-ready scene images visually faithful to the user-confirmed exact storyboard (cover first; all named resort scenes preserved; no substitutions). Verify venue-identity attribution and rights before any production A2E/TTS, and sync selected narration. Do not render/pay/publish without required gates.",
+  "scenesPreviousOrderRetained": true,
+  "currentSceneOrder": [
+    13,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "paidOperationsStarted": false,
+  "musicCandidatesRef": "campaigns/thermal-baths-winter-reel-2026/music-shortlist.md",
+  "latestCorrection": {
+    "reportedIssue": "Leo: «это совершенно не то. ты мне показал другие кадры»",
+    "confirmedRootCause": "Prior preview videos used a different AI-generated 4×3 collage rather than the specifically Leo-approved 3×4 layout with yellow headlines and 12 panels.",
+    "approvedSource": "ChatGPT-generated image a_vertical_cinematic_storyboard_style_reel_previe.png (last approved visual overview)",
+    "approvedSourceSha256": "23871e3325e9565d5dab3bda88f1b45232f03c6e58c21ca032bcc6f890490d0b",
+    "fix": "Physically cut all 12 panels out of the exact approved PNG image; encode the panels in original order with the printed 00:00–00:59 durations. No scene substituted or redesigned.",
+    "fullSequence": "cover/Leo, Spa, Baden-Baden, Bath, Karlovy Vary, Budapest, Saturnia, Leukerbad, Bormio, Sky Lagoon, Kusatsu, Abanotubani + Ourense combined",
+    "previewFile": "thermal_reel_v1_preview/thermal_reel_exact_approved_frames_v2.mp4",
+    "videoSha256": "ad1dd6d421c263ac739e587d6e7e9145df2885241a5c628d01330f8ea02a0b8e",
+    "durationSeconds": 59,
+    "width": 720,
+    "height": 1280,
+    "fps": 20,
+    "hasAudio": true,
+    "audioType": "The same provisional offline-generated instrumental bed used previously. NO spoken narration.",
+    "panelCount": 12,
+    "contactSheet": "thermal_reel_v1_preview/contact_sheet_exact_approved_v2.jpg",
+    "sceneCropManifest": "thermal_reel_v1_preview/approved_storyboard_exact_scenes/exact_panel_manifest.json",
+    "archive": "Local ChatGPT sandbox only. Exact images/MP4 NOT uploaded to GitHub or owner-private Drive.",
+    "limitations": "Crops are from a 941×1672 combined approved storyboard, with baked Russian titles/timecodes and variable tile resolution. They are legitimate visual-matching PREVIEW frames only; separate original A2E-ready, verified location photography, voice, licenses and QA are still missing."
+  },
+  "visualApproval": {
+    "date": "2026-11-23",
+    "userStatement": "верно",
+    "scope": "Corrected preview video using exact approved 12-panel yellow-title storyboard, including Leo cover first and combined Abanotubani/Ourense last.",
+    "approvedPreviewName": "thermal_reel_v1_preview/thermal_reel_exact_approved_frames_v2.mp4",
+    "approvedPreviewSha256": "ad1dd6d421c263ac739e587d6e7e9145df2885241a5c628d01330f8ea02a0b8e",
+    "notApproved": "Final MP4 / production asset substitution / unverified venue photos / audio voice synthesis / paid A2E / publication",
+    "keepExactVisualOrder": true
+  }
+}

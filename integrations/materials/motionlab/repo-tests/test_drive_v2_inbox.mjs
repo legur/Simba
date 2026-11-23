@@ -182,6 +182,34 @@ test('Separate standalone v2 Studio requires private fragment and no demo/auto p
  assert.match(ui,/V2_SELECTION_SAVED_AWAITING_CANONICAL_CAS/);
  assert.doesNotMatch(ui,/GDRIVE_OAUTH_CLIENT_SECRET|MOTIONLAB_GITHUB_ACTIONS_TOKEN/);
 });
+test('legacy visual draft imports only matching source and supported typography',()=>{
+ const start=ui.indexOf('  function importLegacyLayout(draft){');
+ const end=ui.indexOf('  function buildSelection(){',start);
+ assert.ok(start>=0&&end>start);
+ const s={option:1,materials:structuredClone(materials),layout:null};
+ s.materials.renderer_capabilities.visual_layout={schema:'bontours.montage.visual-layout/v1'};
+ let invalidated=0;
+ const runImport=new Function('S','invalidate','render',ui.slice(start,end)+'; return importLegacyLayout;')(
+   s,()=>invalidated++,()=>{});
+ const draft={schema:'bontours.motionlab.visual-layout-draft/v2',status:'DRAFT_NOT_DELIVERED',
+  project_id:s.materials.project_id,expected_input_fingerprint:s.materials.expected_input_fingerprint,
+  selected_option:1,scene_layout:[{scene_id:'scene-01',asset_id:'asset-01',
+   layout:{title:{x:50,y:40,scale:105},subtitle:{x:50,y:82,scale:100}},
+   typography:{title:{family:'Unbounded',color:'#ffffff',size:100},
+    subtitle:{family:'Manrope',color:'#ffffff',size:100}}}]};
+ runImport(draft);
+ assert.equal(s.layout[0].layout.title.y,40);
+ assert.equal(invalidated,1);
+ for(const change of [
+  d=>d.expected_input_fingerprint='f'.repeat(64),
+  d=>d.scene_layout[0].asset_id='other',
+  d=>d.scene_layout[0].typography.title.color='#ff0000',
+  d=>d.scene_layout[0].layout.title.y=80]){
+   const bad=structuredClone(draft);change(bad);
+   assert.throws(()=>runImport(bad));
+   assert.equal(s.layout[0].layout.title.y,40);
+  }
+});
 test('v2 project read includes three options and omits raw Drive file IDs',()=>{
  const e=run(),ret=e.post(e.request('v2_load')).html;
  assert.match(ret,/V2_PROJECT_READY/);
@@ -210,6 +238,37 @@ test('One owner-approved v2 selection is saved once, never sent to v1 queue',()=
  // An idempotent retry must be byte-identical, including approval time.
  assert.match(e.submit(ownerChoice).html,/V2_SELECTION_SAVED_AWAITING_CANONICAL_CAS/);
  assert.equal(e.inboxFiles.size,1);
+});
+test('v2 preserves approved per-scene layout and rejects unsafe or unbound edits',()=>{
+ const prev=caps.visual_layout;
+ caps.visual_layout={schema:'bontours.montage.visual-layout/v1'};
+ try{
+  const make=()=>{
+   const p=selection();p.materials_sha256=sha(canonical(materials));
+   p.proposals_sha256=sha(canonical(proposals));
+   p.decision.visual_layout_edited=true;
+   p.scene_layout=[{scene_id:'scene-01',asset_id:'asset-01',layout:{
+    title:{x:50,y:40,scale:105},subtitle:{x:50,y:82,scale:100}}}];
+   return p;
+  };
+  // Proposals bind the same capability manifest as the ticket.
+  const oldHash=proposals.materials_sha256;proposals.materials_sha256=sha(canonical(materials));
+  try{
+   const e=run(),p=make();
+   assert.match(e.submit(p).html,/V2_SELECTION_SAVED_AWAITING_CANONICAL_CAS/);
+   assert.equal([...e.inboxFiles.values()][0].selection.scene_layout[0].layout.title.y,40);
+   for(const [mutate,code] of [
+    [p=>p.scene_layout[0].asset_id='foreign','V2_LAYOUT_BINDING_MISMATCH'],
+    [p=>p.scene_layout[0].layout.title.x=1,'V2_LAYOUT_UNSAFE'],
+    [p=>p.scene_layout[0].layout.title.y=80,'V2_LAYOUT_TEXT_COLLISION'],
+    [p=>p.decision.visual_layout_edited=false,'V2_LAYOUT_CHANGE_NOT_APPROVED'],
+    [p=>delete p.scene_layout,'V2_LAYOUT_MISSING']]){
+     const env=run(),bad=make();mutate(bad);
+     assert.match(env.submit(bad).html,new RegExp(code));
+     assert.equal(env.inboxFiles.size,0);
+   }
+  }finally{proposals.materials_sha256=oldHash}
+ }finally{if(prev===undefined)delete caps.visual_layout;else caps.visual_layout=prev}
 });
 test('Tampering project, option hashes, approval or paid guards fails closed',()=>{
  const scenarios=[

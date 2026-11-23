@@ -1,0 +1,72 @@
+{
+  "schema": "simba.studio.option2.sync_review/v1",
+  "date": "2026-11-14",
+  "project_id": "vietnam-cambodia-2027",
+  "studio_decision": {
+    "receipt_id": "14481802-0761-4ebd-bfbb-886a52f5f524",
+    "selection_sha256": "0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10",
+    "option": 2,
+    "name": "Киноистория"
+  },
+  "preview": {
+    "status": "LOCAL_TECHNICAL_AUDITION_NOT_FINAL",
+    "file": "Vietnam_Cambodia_Selected_Render/Vietnam_Cambodia_Studio_Option2_NaturalVoice_SYNC_AUDITION.mp4",
+    "sha256": "6c8f79d557ede6e6f43b0638a5d4481352cd0a3d37cef6d63d0295583cbdd667",
+    "bytes": 8973009,
+    "duration_seconds": 51.291667,
+    "video": "H.264 540x960",
+    "audio": "AAC 48000 Hz, WarmBaritone two existing private WAVs at natural playback speed and quiet original temporary synthetic music",
+    "ffmpeg_full_stream_decode": "PASS",
+    "media_preservation": "10 unchanged original A2E scene sources; montage preview only",
+    "montage": "scene boundary 1->2 fadewhite 0.9s; transitions 2->3 through 9->10 crossfade 0.9s",
+    "title_subtitles": "existing Studio option 2 image overlays + approx ASR-informed clean karaoke captions, no independent word alignment",
+    "timing_changes": "Variable scene times adjusted to existing natural voice; source 5.06s clips sped/trimmed or slowed; not the exact 10x5.06s owner scene timing selection",
+    "review_status": "NEEDS_OWNER_LISTENING_AND_RENDERER_QA"
+  },
+  "existing_drive_voiced_audition": {
+    "file_id": "1jJvh0SGQGaij8O-Ef_2BXfJXuKWum5U9",
+    "url": "https://drive.google.com/file/d/1jJvh0SGQGaij8O-Ef_2BXfJXuKWum5U9/view",
+    "duration_seconds": 42.75,
+    "issue": "Existing draft squeezed nearly 49.8s natural TTS into 42.75s which misaligns longer phrases with original fixed scenes."
+  },
+  "asr_independent_draft": {
+    "drive_file_id": "1HrBEZ8F2Z2QqHsGAhXpd-C1PlasqQHTw",
+    "tool": "faster-whisper small CPU unprompted Russian",
+    "normalized_match_part1": 0.7843,
+    "normalized_match_part2": 0.875,
+    "review_examples": [
+      "Камбоджо vs Камбоджа",
+      "ночной корабле vs ночь на корабле",
+      "Палуме vs палубе",
+      "Теляви / Этихат vs Тель-Авива / Etihad",
+      "Подням vs по дням"
+    ],
+    "interpretation": "Speech recognition uncertainty or TTS mispronunciation; cannot treat ASR-only match as proof of literal spoken text; independent listening needed.",
+    "approved_text_modified": false
+  },
+  "source_voice": {
+    "file_ids": [
+      "1eDH5Nv3fcnGlgiZrJFEnaUSsIDocmD4J",
+      "1G3YAmv610UywU_jZIXVC_bprFRRPQRNo"
+    ],
+    "durations_seconds": [
+      27.88,
+      21.92
+    ],
+    "new_paid_tts_calls": 0
+  },
+  "safeguards": {
+    "final_master": false,
+    "owner_publication_approved": false,
+    "final_audio_and_music_lock_approved": false,
+    "paid_A2E_restarts": 0,
+    "can_trigger_existing_auto_render_without_changes": false,
+    "missing_production_render_profile_and_support_for_flash_layout_true": true
+  },
+  "next_actions": [
+    "Listen to exact source speech for names and disputed words; do not automatically regenerate paid TTS.",
+    "Perform independent source-audio alignment and verify subtitle onsets against samples.",
+    "Lock desired music and narration then implement source-pinned renderer honoring the real owner option2 flash and layout instead of bypassing guards.",
+    "Run release master 1080x1920 technical QA, owner review, no auto-publish."
+  ]
+}

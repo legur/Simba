@@ -6,7 +6,7 @@
   "selected_storyboard_option": 2,
   "selected_storyboard_name": "Путевой дневник",
   "owner_decision": "Лео выбрал раскадровку 2 для сценария 2, 2026-11-14, в чате ChatGPT",
-  "status": "VISUAL_STYLE_2_SELECTED_REAL_IMAGE_SETS_REQUIRED",
+  "status": "STUDIO_OPTION_2_TECHNICAL_AUDIO_SYNC_PREVIEW_PREPARED_NOT_FINAL",
   "source_script_path": "campaigns/vietnam-cambodia-2027/storyboard_variant_2_WORKING.md",
   "source_script_git_blob_sha": "5546ef722e1ad06851f79a0649b394015982badb",
   "reference_options_path": "campaigns/vietnam-cambodia-2027/storyboard_options_3_WORKING.md",
@@ -39,9 +39,39 @@
       "style_override": null,
       "transition_to_next": "Легкое перелистывание разворота: две фотографии уступают место маршрутной странице",
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S01_A.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2413179,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S01_B.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2787033,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S01_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2596338,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "A",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S01_A.png"
     },
     {
       "scene_id": "s02",
@@ -55,9 +85,39 @@
       "style_override": null,
       "transition_to_next": "Плавное раскрытие фотографии корабля на странице дневника",
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S02_A.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2427553,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S02_B.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2903984,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S02_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3044446,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "A",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S02_A.png"
     },
     {
       "scene_id": "s03",
@@ -71,9 +131,39 @@
       "style_override": null,
       "transition_to_next": "Мягкое затухание снимка и появление полароидного кадра рассвета",
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S03_A.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2302672,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S03_B.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2773548,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S03_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2539320,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "A",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S03_A.png"
     },
     {
       "scene_id": "s04",
@@ -87,9 +177,39 @@
       "style_override": null,
       "transition_to_next": "Неспешное перелистывание к странице с корнями и архитектурой Ангкора",
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S04_A.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2457923,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S04_B.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2492032,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S04_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2671953,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "A",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S04_A.png"
     },
     {
       "scene_id": "s05",
@@ -103,9 +223,39 @@
       "style_override": null,
       "transition_to_next": "Простая склейка на разворот с кадром экскурсионной группы",
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S05_A.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3437591,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S05_B.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3688583,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S05_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3249779,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "B",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S05_B.png"
     },
     {
       "scene_id": "s06",
@@ -119,9 +269,39 @@
       "style_override": null,
       "transition_to_next": "Перелистывание к путевой карточке с датами и перелетом",
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S06_A.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2885050,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S06_B.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3167979,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S06_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3175352,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "A",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S06_A.png"
     },
     {
       "scene_id": "s07",
@@ -135,9 +315,39 @@
       "style_override": null,
       "transition_to_next": "Плавная смена карточки на фуд-фото без декоративных спецэффектов",
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S07_A.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2163008,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S07_B.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3318162,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S07_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2778260,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "A",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S07_A.png"
     },
     {
       "scene_id": "s08",
@@ -151,9 +361,39 @@
       "style_override": null,
       "transition_to_next": "Появление бумажной ценовой карточки без движения цифр",
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S08_A.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2502650,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S08_B.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3004806,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S08_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3126882,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "A",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S08_A.png"
     },
     {
       "scene_id": "s09",
@@ -167,9 +407,39 @@
       "style_override": null,
       "transition_to_next": "Спокойный переход к финальной карточке с WhatsApp и контактами",
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S09_A.jpg",
+          "mime_type": "image/jpeg",
+          "url": "",
+          "size_bytes": 647208,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S09_B.jpg",
+          "mime_type": "image/jpeg",
+          "url": "",
+          "size_bytes": 754942,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S09_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3088513,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "A",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S09_A.jpg"
     },
     {
       "scene_id": "s10",
@@ -183,9 +453,39 @@
       "style_override": null,
       "transition_to_next": null,
       "notes": "",
-      "media_asset_id": null,
-      "media_status": "NOT_GENERATED",
-      "scene_approval": "PENDING_SCENE_REVIEW"
+      "media_asset_id": "",
+      "media_status": "STILL_SELECTED_A2E_CLIP_ARCHIVED_AND_FULL_DECODE_VERIFIED_NOT_FINAL",
+      "scene_approval": "IMAGE_SELECTED_OWNER",
+      "visual_alternatives": {
+        "A": {
+          "drive_id": "",
+          "filename": "S10_A.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2658632,
+          "qa": "OWNER_SELECTED_PENDING_ANIMATION_QA"
+        },
+        "B": {
+          "drive_id": "",
+          "filename": "S10_B.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 3169079,
+          "qa": "OWNER_REVIEW_PENDING"
+        },
+        "C": {
+          "drive_id": "",
+          "filename": "S10_C.png",
+          "mime_type": "image/png",
+          "url": "",
+          "size_bytes": 2898666,
+          "qa": "OWNER_REVIEW_PENDING"
+        }
+      },
+      "selected_visual_option": "A",
+      "selected_media_drive_file_id": "",
+      "selected_media_drive_url": "",
+      "selected_media_filename": "S10_A.png"
     }
   ],
   "decisions": {
@@ -193,16 +493,136 @@
     "editorial_script_approved_for_production": false,
     "all_scenes_final_approved": false,
     "render_authorized": false,
-    "a2e_authorized": false,
+    "a2e_authorized": true,
     "tts_authorized": false,
     "music_authorized": false,
     "publication_authorized": false,
     "visual_style_2_selected": true,
-    "three_image_sets_shown": false,
-    "individual_images_approved": false
+    "three_image_sets_shown": true,
+    "individual_images_approved": true
   },
   "external_paid_cost_quote_status": "NOT_PREPARED",
-  "image_generation_status": "COLLAGE_PREVIEWS_ONLY_NOT_A2E_READY",
-  "archive_status": "PREVIEW_ARCHIVE_PENDING_AND_INDIVIDUAL_IMAGES_MISSING",
-  "notes": "Прежние контактные листы не являются тремя полноценными наборами индивидуальных изображений. Должны быть созданы/загружены 3×10 отдельных чистых кадров с individual files+QA; только после выбора набора допустим переход к A2E с указанным бюджетом и владельческим решением. Studio принимает настоящие MP4 клипы."
+  "image_generation_status": "ALL_10_SELECTED_FROM_ARCHIVED_30_STILLS",
+  "archive_status": "ALL_30_SOURCE_IMAGES_PRESENT_ON_PRIVATE_GOOGLE_DRIVE_HISTORICAL_RECORD; SELECTED_10_STILLS_AND_10_A2E_MP4S_PRIVATE_BYTE_READBACK_PASS_2026-11-17; FINAL_MASTER_PENDING",
+  "notes": "30 отдельных вариантов по 10 сценам (A/B/C), реально созданных, с Drive ID в сценах. Их можно выбирать по каждой сцене. Никаких готовых видео или A2E пока нет. Ограничения: S04C нет палубы; S07B/C — пейзажи назначения вместо самолета; S08B/C — овощи/фрукты рынка вместо готового обеда; S10B/C — визуальные иллюстрации с географическим смешением, не документальные фото. Подходящие кадры — прежде всего A этих сцен. Исходники ИИ, не рекламировать как реальную съемку.\n14.11.2026: owner approved A all scenes except scene 5 B. Source selection manifest selected_images_2026-11-14.json. A2E not started; charged action pending exact quote/credit cap and technical preflight.",
+  "archived_media_folder_url": "",
+  "owner_selection_gallery": "vietnam_cambodia_choose_30_images.html (current ChatGPT conversation artifact)",
+  "separate_still_image_bundle": "vietnam_cambodia_30_individual_images.zip (current ChatGPT conversation artifact)",
+  "a2e_preflight_report_path": "campaigns/vietnam-cambodia-2027/a2e_preflight_2026-11-14.json",
+  "a2e_quote_status": "V2_300_CREDITS_QUOTED_AND_AUTHORIZED",
+  "a2e_total_quote_credits": 300,
+  "a2e_credits_limit_approved": 300,
+  "a2e_scene_count": 10,
+  "a2e_clip_duration_seconds": 5,
+  "media_status": "STILLS_AND_A2E_10_MP4S_TECHNICALLY_READBACK_VERIFIED; FINAL_AUDIO_TIMINGS_AND_MASTER_PENDING",
+  "a2e_motion_prompt_plan_path": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
+  "a2e_current_quote_issues": [
+    202,
+    203
+  ],
+  "a2e_ready_issues": [
+    204,
+    205
+  ],
+  "a2e_ready_issue_labels_applied": true,
+  "a2e_clips_drive_folder": "",
+  "studio_exports_drive_folder": "",
+  "a2e_completed_mp4_count": 10,
+  "a2e_completed_task_ids": [
+    "6af80e57d3477bfe7205319c",
+    "6af80e5855360d7e3320a5a3",
+    "6af80e5c9b283da24d6503fd",
+    "6af80e5d55360d7e3320a61f",
+    "6af80e5f55360d7e3320a657",
+    "6af80e71879932a87cf1a9ff",
+    "6af80e73879932a87cf1aa26",
+    "6af80e7512f2d31bad470e46",
+    "6af80e7712f2d31bad470e98",
+    "6af80e7a12f2d31bad470eed"
+  ],
+  "a2e_mp4s_local_verified": true,
+  "a2e_mp4s_individual_drive_verified": true,
+  "a2e_drive_backup_zip_verified": true,
+  "a2e_video_preview_ready": true,
+  "studio_video_clips_imported": true,
+  "studio_handoff_workflow_run": "https://github.com/legur/Simba/actions/runs/43576207969",
+  "studio_private_previews": 10,
+  "studio_montage_options": 3,
+  "studio_browser_open_ack": false,
+  "studio_owner_selected_option": 2,
+  "studio_tts_produced": false,
+  "studio_music_selected": false,
+  "studio_owner_selection_receipt_verified": true,
+  "studio_selection_receipt": {
+    "receipt_file_id": "",
+    "receipt_id": "14481802-0761-4ebd-bfbb-886a52f5f524",
+    "selection_sha256": "0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10",
+    "source_fingerprint": "b7dbe0068919332275117c927410345fb47f0c8dcf59733981949e6510e12633",
+    "option": 2,
+    "option_name": "Киноистория",
+    "scenes": 10,
+    "selected_utc": "2026-11-14T14:20:35.766Z",
+    "receipt_saved_utc": "2026-11-14T14:20:42.234Z",
+    "montage_issue": "https://github.com/legur/Simba/issues/206",
+    "montage_attempt": "https://github.com/legur/Simba/actions/runs/43604384067",
+    "montage_attempt_status": "FAILED_NO_OWNER_APPROVED_RENDER_PROFILE",
+    "rendered_mp4": false,
+    "requested_scene2_transition": "flash",
+    "other_scene_transitions": "crossfade",
+    "requested_camera": {
+      "id": "cinematic-zoom",
+      "intensity_percent": 20
+    },
+    "requested_subtitles": {
+      "style_id": "clean",
+      "word_motion_id": "karaoke"
+    },
+    "layout_override_status": "PENDING_MONTAGE_V2_LAYOUT_SUPPORT",
+    "contact_approval_not_inferred": true,
+    "note": "Studio selection was persisted, but file records DRAFT_NOT_DELIVERED as decision state and render_authorized=false. Never silently reinterpret as final render approval or strip visual layout/flash."
+  },
+  "studio_montage_issue": "https://github.com/legur/Simba/issues/206",
+  "studio_audio_preview_drive_id": "",
+  "studio_voice_profile": "WarmBaritone",
+  "studio_audio_preview_seconds": 42.75,
+  "studio_approved_voice_music_final_lock": false,
+  "studio_source_pinned_visual_qa_pass": true,
+  "studio_auto_publish": false,
+  "studio_final_master_ready": false,
+  "studio_option2_voice_sync_qa_path": "campaigns/vietnam-cambodia-2027/studio_option2_sync_qa_2026-11-14.json",
+  "studio_option2_technical_preview": {
+    "status": "LOCAL_TECHNICAL_AUDITION_QA_PASS_NOT_FINAL",
+    "source_receipt_id": "14481802-0761-4ebd-bfbb-886a52f5f524",
+    "chosen_option": 2,
+    "duration_seconds": 51.291667,
+    "sha256": "6c8f79d557ede6e6f43b0638a5d4481352cd0a3d37cef6d63d0295583cbdd667",
+    "audio_original_speed": true,
+    "subtitle_alignment": "ASR_INFORMED_APPROXIMATE_NOT_VERIFIED",
+    "music_status": "ORIGINAL_TEMPORARY_SYNTHETIC_NOT_LOCKED",
+    "final_master": false,
+    "published": false
+  },
+  "private_media_redaction": {
+    "status": "OWNER_PRIVATE_LOOKUP_REQUIRED",
+    "escrow_key": "Simba_Private_Media_Locator_Escrow_2026-11-17",
+    "redacted_at": "2026-11-17",
+    "original_public_commit": "8f143e94a89c58ac2e71e346c96d5e338986523a",
+    "note": "Original project and Drive pointers copied to owner-only archive, exact bytes read back; no private lookup is possible from this public file alone. Do not claim media verified without authorized readback."
+  },
+  "technical_media_qa_latest": {
+    "audit_date": "2026-11-17",
+    "audit_mode": "READ_ONLY_PRIVATE_OWNER_ARCHIVE_BYTE_READBACK_NO_PAID_CALLS",
+    "verified_selected_stills": 10,
+    "verified_archived_a2e_mp4s": 10,
+    "selected_stills_size_matches_registry": 10,
+    "still_decode_pass": 10,
+    "video_probe_pass": 10,
+    "video_full_decode_pass": 10,
+    "clips_encoding": "H264 / 1080x1920 / 16 fps / about 5.0625 seconds each / no embedded audio stream",
+    "private_acl_checked_reference_ids": 52,
+    "private_acl_result": "ALL_OWNER_ONLY_AS_OF_AUDIT",
+    "digest_record": "Owner-only Simba_Vietnam_Cambodia_2027_Private_Media_QA_2026-11-17",
+    "paid_regeneration_authorized": false,
+    "limitations": "Codec/byte checks are not final visual match, voice/music lock, word-level subtitle alignment, final MP4 or owner approval."
+  }
 }

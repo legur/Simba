@@ -1,6 +1,6 @@
 # CONTENT PIPELINE
 
-Версия: 10.0 · 10.11.2026
+Версия: 11.6 · 23.11.2026 (owner-manual article delivery via comment keyword); ранее 11.5 · 23.11.2026 (Longform article to Info teaser handoff); ранее 11.4 · 17.11.2026 (truthful live role receipts and declared-only offline statuses); ранее 11.3 · 17.11.2026 (explicit source-only author gate & fulfillment); ранее 11.2 · 17.11.2026 (verified news single-event/digest & author gates); ранее 11.1 · 17.11.2026 (bounded Critic state graph); ранее 11.0 · 17.11.2026 (source routing, Critic stop); ранее 10.0 · 10.11.2026
 
 ## COPYWRITER_TEST_MODE — 31.10.2026
 
@@ -39,15 +39,22 @@ PROCESS_OWNER — существующая функция координации
 ```text
 SOURCE_ONLY_INPUT
   → NEW_SOURCE
+  → ROUTER_CORE_PREFLIGHT(KNOWLEDGE_MAP+KB_RUNTIME_PROTOCOL)
   → SOURCE_RESOLUTION(BODY→HTML/MIME→ATTACHMENTS→INLINE→WEB_VERSION)
   → ROUTER_TASK_CLASSIFIED
-  → KB_PREFLIGHT
+  → MODULE_KB_PREFLIGHT
   → EXECUTOR_SELECTED
   → EXECUTOR_RULES_LOADED
+  → INTRIGAN_CHECK (для создаваемых/существенно редактируемых постов, возможен FACT_FIRST skip)
+  → TIA_CHECK_AND_REPORT (для пяти Facebook-авторов)
   → PROFILE_MODULE_EXECUTED
   → EXECUTOR_RESULT_VALIDATED
-  → [ДЛЯ ПОСТОВ SIMBA/INFO/TRAVEL/LEO/NEWS: AUTHOR_FINALIZE → HUMANIZER_EXECUTED → HUMANIZER_PASS]
-  → RESULT_TO_LEO
+  → [SIMBA ONLY: SIMBA_DRAFT_READY → INTERNAL_CRITIC_MODE
+       → (INTERNAL_CRITIC_REVISE → SIMBA_REPAIR → INTERNAL_CRITIC_MODE)*
+       → {INTERNAL_CRITIC_PASS → SIMBA_FINALIZE | BLOCKED_CRITIC_NO_PROGRESS → STOP}]
+  → [INFO/TRAVEL/LEO/NEWS ONLY: AUTHOR_QA_PASS → AUTHOR_FINALIZE]
+  → [ALL FIVE POST AUTHORS: HUMANIZER_EXECUTED → HUMANIZER_PASS → TEXT_READY_FOR_LEO]
+  → RESULT_TO_LEO (ready for review, not APPROVED_TEXT or PUBLISHED)
 ```
 
 Router не спрашивает назначение материала, если его можно определить из содержания.
@@ -66,7 +73,7 @@ Router не спрашивает назначение материала, есл
 
 Если Leo одновременно дал явную команду, она имеет приоритет над source-only default. Системные файлы и материалы, присланные для явного анализа/редактирования/сохранения, не превращаются автоматически в пост.
 
-Внешний Critic/внешняя критика автоматически в этот маршрут не входят. `INTERNAL_CRITIC_MODE` является обязательным скрытым gate для результата Simba.
+Внешний Critic/внешняя критика автоматически в этот маршрут не входят. `INTERNAL_CRITIC_MODE` является обязательным скрытым gate для результата Simba **при любом входе**, в том числе `SOURCE_ONLY_INPUT`. `AUTHOR_FINALIZE → HUMANIZER_PASS` никогда не заменяет его. Для каждого готового варианта нужен собственный QA/PASS: PASS одной версии не удостоверяет другие. Это распространяется и на тестовый четвертый вариант COPYWRITER_UNIVERSAL.
 
 ## Основной маршрут рекламного материала
 
@@ -93,8 +100,9 @@ NEW_SOURCE
   → SIMBA_DRAFT_READY
   → INTERNAL_CRITIC_MODE
   → [REVISE → SIMBA_REPAIR → INTERNAL_CRITIC_MODE]*
-  → INTERNAL_CRITIC_PASS
-  → SIMBA_FINALIZE
+  → {INTERNAL_CRITIC_PASS | BLOCKED_CRITIC_NO_PROGRESS → STOP}
+  → [ТОЛЬКО ПРИ INTERNAL_CRITIC_PASS] SIMBA_FINALIZE
+  (STOP: после трех подряд безрезультатных исправлений; НЕ переходить к HUMANIZER/APPROVED/PUBLISHED)
   → HUMANIZER_EXECUTED
   → HUMANIZER_PASS
   → TEXT_READY_FOR_LEO
@@ -119,15 +127,16 @@ NEW_SOURCE
 ## Новостная ветка «Новости туризма»
 
 ```text
-SOURCE_RESOLVED
-  → MARKETER_NORMALIZED
-  → NEWS_SCORE_HIGH
-  → NEWS_TASK
+SOURCE_RESOLVED (user source, attached material or fetched official/current source)
+  → [MARKETER_NORMALIZED → NEWS_SCORE_HIGH | USER_DIRECT_NEWS_TASK]
+  → NEWS_TASK (NEWS_SINGLE_EVENT | NEWS_DIGEST)
   → NEWS_KB_PREFLIGHT
   → NEWS_RULES_LOADED
+  → NEWS_SOURCE_VERIFIED (event date, source, applicable current conditions)
   → INTRIGAN_SKIPPED(FACT_FIRST)
   → NEWS_EXECUTED
   → NEWS_RESULT_VALIDATED
+  → NEWS_AUTHOR_QA_PASS
   → NEWS_FINALIZE
   → HUMANIZER_EXECUTED
   → HUMANIZER_PASS
@@ -141,7 +150,7 @@ SOURCE_RESOLVED
   → PROVENANCE_SAVED
 ```
 
-News, а не Router/Маркетолог, является текстовым исполнителем. Цена не требуется для прохождения этой ветки.
+News, а не Router/Маркетолог, является текстовым исполнителем. Один подтвержденный инфоповод не требует фиктивного дайджеста или даты сбора от Leo. Для прямого задания `USER_DIRECT_NEWS_TASK` коммерческий `NEWS_SCORE_HIGH` не является блокирующим условием. У News должно быть подтверждение факта, даты события/вступления в силу и источника (сначала доступный материал, затем официальные источники), иначе `BLOCKED_NEWS_SOURCE_UNVERIFIED`; без синтетических фактов. Цена не требуется. Только `HUMANIZER_PASS` разрешает `NEWS_TEXT_READY`; Internal Critic Simba к News автоматически не применяется.
 
 ## AUTOMATION_CONTINUOUS_MODE
 
@@ -151,6 +160,8 @@ Rafael остается владельцем визуального решени
 
 ## Разговорное видео / Сценарист
 
+Самостоятельный рилс без поста может использовать явным образом утвержденный `APPROVED_SCRIPT` с `APPROVAL_EVIDENCE` и `SOURCE_REFERENCE`. Для него Монтажер получает `sourceScript` вместо `sourcePost`, не создает фиктивный пост и сохраняет все визуальные, бюджетные и публикационные gates. Для ролика к посту остается прежний `APPROVED_TEXT`.
+
 `VIDEO_BRIEF → SCENARIST_KB_PREFLIGHT → SCENARIST_RULES_LOADED → LIVE_SCRIPT → VOICE_AND_SCRIPT_AUDIT → SCENE_TABLE → TIMING_AND_CONSISTENCY_CHECK → READY → LEO_APPROVAL`.
 
 По умолчанию: чистовая речь и таблица сцен; просьба только о репликах ограничивает формат. Если запрошены промпты анимации — отдельный промпт на каждый доступный/согласованный кадр с точной репликой, действием, голосом и звуком, со сверкой по таблице. До утверждения материал остаётся проектом; утверждённые реплики не переписывать.
@@ -159,7 +170,7 @@ Rafael остается владельцем визуального решени
 
 При адаптации утверждённого поста его факты/смысл сохраняются, сценарий утверждается отдельно. Изменение самого исходного поста снимает его approval и повторяет обычные проверки. Сценарии проходят собственный аудит; Internal Critic/Humanizer готовых постов автоматически не добавляются.
 
-## Видео к утверждённому посту / Монтажер Клод
+## Видео из утвержденного поста или самостоятельного сценария / Монтажер Клод
 
 По решению Leo от 06.11.2026 исполнитель видео делает ролик и проверяет техническое качество; проверка актуальности и достоверности цен, наличия и иных фактов не входит в его задачу. Исходные данные переносятся без самостоятельного изменения.
 
@@ -172,6 +183,7 @@ Rafael остается владельцем визуального решени
 ## Critic: internal gate и внешний review
 
 ### Internal Critic
+Контроль прогресса: после трех безрезультатных исправлений одной и той же проблемы — `BLOCKED_CRITIC_NO_PROGRESS` без фиктивного PASS. Сохранять последнюю редакцию и конкретные блокеры, а не повторять бесконечно.
 `INTERNAL_CRITIC_MODE` — обязательный скрытый production-gate **только для Simba**. Он запускается после черновой редакции Simba и до `SIMBA_FINALIZE`; после финализации текст обязательно проходит Humanizer до `TEXT_READY_FOR_LEO`.
 
 - `PASS` → Simba финализирует текст и передаёт его в Humanizer; результат показывается Leo только после `HUMANIZER_PASS`;
@@ -190,9 +202,35 @@ Leo по-прежнему может отдельно запускать Critic 
 Для готовых постов Simba, Info, Travel, Leo и News действует порядок: автор завершает собственную редакцию и проверки → `HUMANIZER_EXECUTED → HUMANIZER_PASS` → соответствующий ready-state → approval/policy-trigger. Этот gate не распространяется автоматически на Wix-форматтер, клиентские письма/документы, JSON или визуальные результаты.
 
 - Simba до Humanizer обязательно получает `INTERNAL_CRITIC_PASS` и выполняет `SIMBA_FINALIZE`;
-- Info, Travel, Leo и News проходят собственную финальную проверку и Humanizer без автоматического Internal Critic;
+- Info, Travel, Leo и News проходят собственную финальную проверку и Humanizer без автоматического Internal Critic. Ограниченные две локальные стилистические итерации в их профилях не разрешают выдавать как `READY` текст с неподтвержденными фактами/личным опытом либо hard blocker;
 - смысловая правка Humanizer возвращает текст профильному автору; Simba после такой правки повторяет Internal Critic, остальные авторы — только собственную проверку;
 - оставшийся Humanizer hard blocker даёт `BLOCKED_HUMANIZER`; ready-state, approval и визуальный маршрут запрещены.
+
+## LIVE EXECUTION EVIDENCE — различать прогон и описание прогона
+
+## ChatGPT-native editorial lane — 18.11.2026
+
+### ChatGPT Work subagents — отдельные наблюдаемые исполнители
+
+Для `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` предпочтительна нативная делегация внутри **ChatGPT Work** по `CHATGPT_WORK_SUBAGENTS.md`. Собрать фактические результаты от **отдельных** субагентов Simba, Critic, Humanizer, проверять точное совпадение входа Critic с редакцией автора и заново проверять правки Humanizer. Недоступная функция Work, декларация о запущенном subagent или пустой результат → `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE`/`CHAT_NATIVE_WORK_SUBAGENTS_EVIDENCE_INCOMPLETE`, а не production PASS. Нет внешнего API-биллинга, используются продуктовые лимиты ChatGPT. User approval и публикация — самостоятельные gates.
+
+
+
+Канонический контракт: `CHATGPT_NATIVE_EDITORIAL.md`. **ChatGPT исполняет текстовый workflow в текущем чате** по реально прочитанным Router/KB/профилям; GitHub — источник истины и write-back. Для `CHAT_NATIVE_SINGLE_MODEL` последовательные авторский, критический и языковой проходы могут дать полезный текст, однако результат — `CHAT_DRAFT_SELF_REVIEWED_INDEPENDENCE_UNVERIFIED`: не ставить независимые `INTERNAL_CRITIC_PASS`/`HUMANIZER_PASS` по self-review. Для `CHAT_NATIVE_VERIFIED_ROLE_TOOLS` каждый вызов отдельного агента/инструмента, SHA-256 точного текста и итоговый verdict должны быть подтверждены фактическим ответом. Если таких инструментов нет, не имитировать их; при запросе независимой редколлегии → `BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE` (не отменяя выдачу честно маркированного черновика, если это уместно). Local MCP/Windows/python/внешний billable API **не являются** условиями редакционной задачи в ChatGPT. Соблюдать source/TIA/fact, approval и publication gates. Киностудия не меняется.
+
+
+
+Для реального редакционного цикла `SOURCE_RESOLVED → AUTHOR → INTERNAL_CRITIC (Simba only) → HUMANIZER → LEO_APPROVAL` хранить отдельные подтверждаемые receipts: фактический источник/версия KB, вызванная роль и ее результат, точный SHA256 текста на входе/выходе, Critic PASS для **этой** редакции, Humanizer PASS для **этой** редакции и явное решение Leo. Запись роли в manifest или название файла prompt **не доказывает реального вызова роли**. Если в данной среде нет доступного исполнительного механизма, ответ `BLOCKED_EXECUTOR_NOT_RUN` вместо выдуманных `INTERNAL_CRITIC_PASS`/`HUMANIZER_PASS`. Отсутствие receipts в **старом** архиве обозначается `HISTORICAL_EXECUTION_UNVERIFIED` и не является свидетельством, что работа тогда не проводилась или что Leo не утверждал текст.
+
+`integrations/core/editorial_readonly_audit.py` делает только **действительный KB/readback preflight** существующего архивного поста, но не запускает писателей/критиков; его ожидаемое состояние `BLOCKED_LIVE_EXECUTOR_NOT_RUN`. `integrations/core/editorial_trace.py` проверяет только заявленные события (synthetic/declared), поэтому даже при всех событиях возвращает лишь `DECLARED_*` и никогда не является основанием для настоящего `APPROVED_TEXT`, `PUBLISHED` или автопубликации. Для реального production нужны независимо проверенные receipts/вызовы, которых эти инструменты сами не предоставляют.
+
+## PREPUBLICATION FULFILLMENT GATE — обещанный результат для читателя
+
+Если утвержденный Facebook-текст обещает читателю фактическую выдачу конкретного PDF, файла, формы регистрации, чеклиста, купона или другого артефакта, перед публикацией проверить существование/доступность именно этого материала и возможность передать его (реальный файл/URL/допустимый процесс + readback). LEO_APPROVAL означает одобрение текста и НЕ доказывает существования вложения.
+
+`APPROVED_TEXT` может сохраняться при непроверенном fulfillment, однако `PUBLICATION_PACKAGE_READY`, `PUBLISH_AUTHORIZED` и `PUBLISHED` запрещены до `FULFILLMENT_VERIFIED`. Неизвестная доставка → `BLOCKED_FULFILLMENT_NOT_VERIFIED` (только для публикации), без выдуманного файла и без изменения уже одобренного текста.
+
+Реальный audit-case: `03_CONTENT_LIBRARY/2026-11-17__SIMBA__VIETNAM-SEASONS-GUIDE__APPROVED.md` обещает PDF-гид, но в записи явно указано, что наличие и выдача PDF НЕ проверены. Это не отменяет утверждение текста Лео и не разрешает его публиковать. Динамические данные также требуют актуального source/freshness preflight.
 
 ## Изменение утверждённого текста
 
@@ -213,6 +251,10 @@ Leo по-прежнему может отдельно запускать Critic 
 - только подтвержденная фактическая публикация меняет статус на `PUBLISHED`;
 - внутренний Critic является quality-gate, но его единичные замечания не становятся вечными правилами автоматически;
 - внешний Critic/внешняя критика дает evidence для текущей доработки и также не становится вечным правилом автоматически.
+
+## Самостоятельный визуал Rafael
+
+По прямой команде Лео `STANDALONE_VISUAL` использует визуальный бриф, а не фиктивный `APPROVED_TEXT`. Картинка к конкретному посту остается в `POST_DERIVED_VISUAL` и требует approval исходного текста. Пять preview, выбор, отдельный финальный render и QA обязательны. Канон — `RAFAEL_TRIGGER.md`.
 
 ## Rafael selected-variant final render
 - Пять первоначально сгенерированных вариантов являются preview-кандидатами для выбора.
@@ -254,7 +296,21 @@ Preview не подменяет финальную картинку. Повто�
 `DRAFT_VERIFIED` и `scheduled` не означают `PUBLISHED`.
 
 
+## Longform: статья сайта + вводный Facebook-анонс (23.11.2026, пилот)
+
+Явные команды «статья для блога», «большая статья», «лонгрид», «SEO-статья» → Router → `Симба (Писатель)/Longform-v1.0.md` после KB PREFLIGHT. Автор статьи исследует, проверяет актуальные внешние факты, создает один полный материал + SEO/источники, затем проводит собственный factual/style QA. Черновик не является опубликованным контентом, и наличие скилов не равно независимому исполнению редакторов.
+
+Смешанная задача «статья + вводный пост в Facebook» выполняется в следующем порядке:
+1. Longform — исследование и полный блог-материал (пилот; честный статус без fake PASS).
+2. Info — самостоятельный короткий Facebook-анонс на проверенных фактах статьи, с собственными TIA/Intrigan/Humanizer и approval. Публичной ссылки на статью нет даже после ее публикации. Завершение: одно тематическое кодовое слово для комментариев («ТЕРМЫ» для курортов), без ссылки в посте или в первом комментарии. Обращения обрабатывает и статью отправляет вручную Leo, не ассистент и не автоматизация.
+3. Leo — отдельно согласует статью и пост; публикация сайта/FB требует проверки действия и явного разрешения. Перед любым публичным анонсом проверяется FULFILLMENT_VERIFIED: статья действительно существует, доступна Leo для ручной отправки и соответствует обещанному содержанию. Само одобрение черновика не подтверждает доступность для выдачи. Если меняются существенные факты статьи, связанные аннотации и FB-текст повторно проверяются.
+
+Результат Longform не запускает автоматически Rafael, не переопределяет обязательный Internal Critic Simba и не считается finished production без фактических проверок. Связанный Info-пост следует штатному процессу Info и визуальному триггеру только там, где он действительно применим.
+
 ## Changelog
+
+### 11.1 — 17.11.2026
+`BLOCKED_CRITIC_NO_PROGRESS` является терминальным состоянием в основном маршруте. Только реальный `INTERNAL_CRITIC_PASS` допускает Simba finalize, Humanizer и утверждение. Три последовательных безрезультатных исправления не допускают бесконечной петли и фиктивного PASS.
 
 ### 6.0 — 22.10.2026
 Добавлена ветка «Видео к утверждённому посту / Монтажер Клод»: из таблицы сцен и визуала собирается готовый ролик. Публикация по-прежнему отдельная команда.
@@ -322,3 +378,6 @@ humanizer-ru включается в существующую финальную
 
 ## Changelog 10.0 — 10.11.2026
 Тип: структурное уточнение. Зафиксированы проверяемый handoff между существующими исполнителями, единый конечный пользовательский статус и обновление существующей записи проекта. Видео-цепочка синхронизирована с REELS_STAGE_OPTIONS: один показанный выбор = разрешение показанной стоимости/объема, без повторного вопроса. QA, права на треки, пользовательское утверждение финала и публикация не отменены.
+
+## Changelog 11.0 — 17.11.2026
+Синхронизированы самостоятельный визуал, самостоятельный утвержденный сценарий, однотипные повторения Critic и порядок core/module preflight. Платные действия и публикационные разрешения не расширены.

@@ -1,0 +1,71 @@
+{
+  "schema": "simba.studio.option2_audio_preview_receipt/v1",
+  "project_id": "vietnam-cambodia-2027",
+  "date": "2026-11-14",
+  "owner_studio_decision": {
+    "option": 2,
+    "name": "Киноистория",
+    "receipt_id": "14481802-0761-4ebd-bfbb-886a52f5f524",
+    "receipt_sha256": "0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10",
+    "scene_count": 10
+  },
+  "final_video": false,
+  "visual_preview": {
+    "sha256": "78789de8af96f241eb63a4db36a6ccb93ccae4e315ba8360ee9feb8bda36c3ba",
+    "drive_file_id": "1ZvLpf5C579kK53fDGZZL2h1qLUV4L8yr",
+    "github_run": "https://github.com/legur/Simba/actions/runs/43606278347",
+    "duration_seconds": 42.75,
+    "has_audio": false,
+    "status": "QA_PASS"
+  },
+  "approved_voice": {
+    "reusable_profile": "WarmBaritone",
+    "parts": [
+      {
+        "issue": 210,
+        "drive_file_id": "1eDH5Nv3fcnGlgiZrJFEnaUSsIDocmD4J",
+        "sha256": "9bd2c1d171c8dde56395ea99aa5953b25d2b7a2fef1ddd97aeb7beac3727f2fe",
+        "duration_seconds": 27.88
+      },
+      {
+        "issue": 211,
+        "drive_file_id": "1G3YAmv610UywU_jZIXVC_bprFRRPQRNo",
+        "sha256": "54023c2497f7c83caa50bcbded44ba3af61ccad33ac9f3936c93c08a4bbb5044",
+        "duration_seconds": 21.92
+      }
+    ],
+    "tts_charged_requests_possible": 2,
+    "automatic_retry": false,
+    "synthesized_text_from_owner_studio_scenes": true,
+    "independent_spoken_word_asr_qa": false
+  },
+  "voiced_preview": {
+    "drive_file_id": "1jJvh0SGQGaij8O-Ef_2BXfJXuKWum5U9",
+    "url": "https://drive.google.com/file/d/1jJvh0SGQGaij8O-Ef_2BXfJXuKWum5U9/view?usp=drivesdk",
+    "sha256": "dfe9de5ae6eede863a650d33202ab7709a6568f630aea1e207e98f680aeb629c",
+    "byte_size": 16461148,
+    "duration_seconds": 42.75,
+    "container": "MP4",
+    "video": "H264 vertical 540x960, source-pinned selected owner option2",
+    "audio": "AAC, two WarmBaritone WAVs joined and modestly time-compressed",
+    "music": "Original programmatically synthesized temporary score; musical choice not approved",
+    "subtitles": "Clean / karaoke approximately paced; not independently word-aligned",
+    "date_price_contact": "Additional approximate spoken-window callouts present; acoustic timestamps not validated",
+    "preview_watermark": true,
+    "run": "https://github.com/legur/Simba/actions/runs/43607816143",
+    "status": "QA_PASS_AUDITION_ONLY",
+    "paid_calls_for_this_mix": 0
+  },
+  "safety": {
+    "original_a2e_clips_modified": false,
+    "studio_selection_preserved": true,
+    "owner_selected_flash_between_scenes_1_and_2": true,
+    "other_crossfades_900_ms": true,
+    "paid_a2e_restarted": false,
+    "auto_published": false,
+    "final_master_ready": false,
+    "confirmed_spoken_word_alignment": false,
+    "final_voice_music_lock_approved": false
+  },
+  "next_stage": "Independent spoken-text and timing QA against the original approved script; finalize music and final locked audio; render release-quality 1080x1920 master, owner QA before publication."
+}

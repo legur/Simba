@@ -32,39 +32,51 @@
       "id": "animated-review",
       "kind": "review_video",
       "title": "Анимированный черновик A2E с титрами от 05.11",
-      "url": "https://drive.google.com/file/d/15zgVCXp_KBM02sGogYgzIRfK-xXZx5UD/view",
+      "url": "",
       "state": "available",
       "reuse": true,
       "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
       "recorded_sha256": "7ec84e9ce61b333894476544e995e410f562a374cddc8e9d2c45e52a33e37b37",
-      "recorded_duration_seconds": 30.375
+      "recorded_duration_seconds": 30.375,
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "qa-review",
       "kind": "qa_report",
       "title": "QA анимированного черновика",
-      "url": "https://drive.google.com/file/d/1uHDhS3-fA01VF2iVVWFCFaSKIrg_eLPq/view",
+      "url": "",
       "state": "available",
       "reuse": false,
-      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "media-manifest",
       "kind": "media_manifest",
       "title": "Манифест существующей сборки",
-      "url": "https://drive.google.com/file/d/1sILGUKvWUkEVAhnYQJ8EBp2moGw1HxG_/view",
+      "url": "",
       "state": "available",
       "reuse": true,
-      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "overlay-project",
       "kind": "project_archive",
       "title": "Редактируемый проект плашек ZIP",
-      "url": "https://drive.google.com/file/d/1h6Z4VwLyl8XcfuYdCXAOszZQHCmz-D8v/view",
+      "url": "",
       "state": "available",
       "reuse": true,
-      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot."
+      "evidence": "Recorded in canonical project source; external bytes not downloaded in catalog pilot.",
+      "storage": "owner_private_drive",
+      "private_locator_status": "OWNER_ONLY_LOOKUP_REQUIRED",
+      "private_locator_key": "PRIVATE_MEDIA_ESCROW_20261117"
     },
     {
       "id": "github-reel",
@@ -148,5 +160,12 @@
     "matched_approved_asset_id": "warmbaritone-editorial-approved-20261110",
     "matched_media_unverified": true,
     "verification_note": "Лео сообщил о завершенной публикации. Ссылка/ID и независимая сверка площадки отсутствуют, но не являются условием завершения работы Киностудии. Ролик повторно не публиковать."
+  },
+  "private_media_redaction": {
+    "status": "OWNER_PRIVATE_LOOKUP_REQUIRED",
+    "escrow_key": "Simba_Private_Media_Locator_Escrow_2026-11-17",
+    "redacted_at": "2026-11-17",
+    "original_public_commit": "8f143e94a89c58ac2e71e346c96d5e338986523a",
+    "note": "Original project and Drive pointers copied to owner-only archive, exact bytes read back; no private lookup is possible from this public file alone. Do not claim media verified without authorized readback."
   }
 }

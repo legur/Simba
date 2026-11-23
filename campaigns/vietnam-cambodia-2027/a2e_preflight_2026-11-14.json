@@ -1,0 +1,286 @@
+{
+  "schema": "simba.a2e_preflight_report/v1",
+  "project_id": "vietnam-cambodia-2027",
+  "date": "2026-11-14",
+  "source_selection_manifest": "campaigns/vietnam-cambodia-2027/selected_images_2026-11-14.json",
+  "scene_count": 10,
+  "selected_variants": "1A,2A,3A,4A,5B,6A,7A,8A,9A,10A",
+  "image_source_provider": "Wix Media Manager, site 489d3aa0-caf3-400e-bdc3-7c9510d86236",
+  "source_upload_status": "10/10 READY (confirmed by Wix upload response)",
+  "a2e_model": "a2e",
+  "clip_seconds": 5,
+  "expected_clip_count": 10,
+  "expected_generated_seconds": 50,
+  "script_duration_preliminary_seconds": 60,
+  "montage_timing_note": "50 seconds of 5-second A2E clips versus preliminary 60-second spoken script; final voice alignment and scene pacing must be reviewed in Studio, not presumed.",
+  "price_quote_status": "QUOTED_NO_CHARGE",
+  "credits_per_clip": 30,
+  "quote_batches": [
+    {
+      "scenes": "1-5",
+      "github_issue_number": 202,
+      "quote_url": "https://github.com/legur/Simba/issues/202",
+      "credits": 150
+    },
+    {
+      "scenes": "6-10",
+      "github_issue_number": 203,
+      "quote_url": "https://github.com/legur/Simba/issues/203",
+      "credits": 150
+    }
+  ],
+  "total_quoted_credits": 300,
+  "total_approved_credit_ceiling": 300,
+  "paid_start_authorized": true,
+  "paid_start_attempted": true,
+  "a2e_task_ids": [
+    "6af80e57d3477bfe7205319c",
+    "6af80e5855360d7e3320a5a3",
+    "6af80e5c9b283da24d6503fd",
+    "6af80e5d55360d7e3320a61f",
+    "6af80e5f55360d7e3320a657",
+    "6af80e71879932a87cf1a9ff",
+    "6af80e73879932a87cf1aa26",
+    "6af80e7512f2d31bad470e46",
+    "6af80e7712f2d31bad470e98",
+    "6af80e7a12f2d31bad470eed"
+  ],
+  "completed_mp4_count": 10,
+  "studio_handoff_status": "OPTION_2_SELECTED_WITH_VERIFIED_ORIGINALS_AND_WARMBARITONE_VOICE_DRAFT_NOT_FINAL",
+  "important_caveats": [
+    "Quote is an estimate, not reserved pricing; generationRequestValidated not proven.",
+    "Do not use a2e-generate-approved label until owner accepts total quoted credit ceiling.",
+    "On any ambiguous A2E start outcome, reconcile task history before retry; no automatic paid retry.",
+    "Media assets staged via Wix Media Manager have publicly addressable URLs; source Google Drive stays archive.",
+    "Image generation is approved, but soundtrack, overlays and Montage remain pending."
+  ],
+  "next_gate": "Read actual A2E task IDs and completed MP4s from workflow receipts; do not retry charged POSTs.",
+  "status": "STUDIO_OPTION2_VOICE_MUSIC_PREVIEW_ARCHIVED_FULL_AUDIO_QA_PENDING",
+  "prompt_source": "campaigns/vietnam-cambodia-2027/a2e_motion_prompts_v2_2026-11-14.json",
+  "replaces_old_quote_issue_numbers": [
+    200,
+    201
+  ],
+  "pricing_version": 2,
+  "ready_to_generate_issue_numbers": [
+    204,
+    205
+  ],
+  "ready_to_generate_issue_urls": [
+    "https://github.com/legur/Simba/issues/204",
+    "https://github.com/legur/Simba/issues/205"
+  ],
+  "ready_job_credit_limits": [
+    150,
+    150
+  ],
+  "ready_jobs_trigger_labels_applied": true,
+  "original_media_archive": "https://drive.google.com/drive/folders/1wpuCHmgqFb4t2DTP0JLEOr8CxwuoqxFe",
+  "generated_clips_archive": "https://drive.google.com/drive/folders/1X79seJaleD4JctrjwPYE3RZZH77_lerq",
+  "studio_exports_archive": "https://drive.google.com/drive/folders/14ZYeTB6a7Qd1K11npIdlwPGFYlcvdFvi",
+  "paid_start_receipts": [
+    "https://github.com/legur/Simba/issues/204#issuecomment-6873859441",
+    "https://github.com/legur/Simba/issues/205#issuecomment-6873865661"
+  ],
+  "active_runs": [
+    {
+      "issue_number": 204,
+      "run_id": 43571488643,
+      "run_url": "https://github.com/legur/Simba/actions/runs/43571488643"
+    },
+    {
+      "issue_number": 205,
+      "run_id": 43571516030,
+      "run_url": "https://github.com/legur/Simba/actions/runs/43571516030"
+    }
+  ],
+  "a2e_video_total_duration_seconds": 50.625,
+  "local_mp4_technical_decode_pass": 10,
+  "local_mp4_verified_format": "1080x1920 H.264, 16 FPS, ~5.0625 seconds each",
+  "local_mp4_manifest": [
+    {
+      "scene_number": 1,
+      "task_id": "6af80e57d3477bfe7205319c",
+      "name": "scene_01.mp4",
+      "size_bytes": 8234247,
+      "sha256": "025b433259509b9c5702c800938847cd940e162a53eeb1d432912cbea6c3ea42"
+    },
+    {
+      "scene_number": 2,
+      "task_id": "6af80e5855360d7e3320a5a3",
+      "name": "scene_02.mp4",
+      "size_bytes": 9339363,
+      "sha256": "6129f82bcc77d2aa30f695f462f5e33c845bb7b8aa781bde531b7e85cc6bdf88"
+    },
+    {
+      "scene_number": 3,
+      "task_id": "6af80e5c9b283da24d6503fd",
+      "name": "scene_03.mp4",
+      "size_bytes": 8967899,
+      "sha256": "d550349043ac186fa7533426ce78477891c25786813bf68e4101656007560ce0"
+    },
+    {
+      "scene_number": 4,
+      "task_id": "6af80e5d55360d7e3320a61f",
+      "name": "scene_04.mp4",
+      "size_bytes": 6022753,
+      "sha256": "3ba1141ebed410db75f6ef48fcbe3bd67005a0abcf54f5c281518eb34760fbf4"
+    },
+    {
+      "scene_number": 5,
+      "task_id": "6af80e5f55360d7e3320a657",
+      "name": "scene_05.mp4",
+      "size_bytes": 7827521,
+      "sha256": "e983e5302f03c424f6c707ba6f70325a714fb14267fa8ef49cf82da035ee8e8e"
+    },
+    {
+      "scene_number": 6,
+      "task_id": "6af80e71879932a87cf1a9ff",
+      "name": "scene_06.mp4",
+      "size_bytes": 12723631,
+      "sha256": "55b987acf817636b40884f158c2a9890b176ac8305c08f39045166462af29626"
+    },
+    {
+      "scene_number": 7,
+      "task_id": "6af80e73879932a87cf1aa26",
+      "name": "scene_07.mp4",
+      "size_bytes": 8613028,
+      "sha256": "cc0009b2a031292f3cb1cd2ace0e80ce56d684800ed7e69552bd738d92a05986"
+    },
+    {
+      "scene_number": 8,
+      "task_id": "6af80e7512f2d31bad470e46",
+      "name": "scene_08.mp4",
+      "size_bytes": 5905037,
+      "sha256": "a5721f20b862c1c817cb8f90eb81d2ce97a38c16a1d485e9d890d33cb9ce7103"
+    },
+    {
+      "scene_number": 9,
+      "task_id": "6af80e7712f2d31bad470e98",
+      "name": "scene_09.mp4",
+      "size_bytes": 7424888,
+      "sha256": "0af679ea3351d7029dfbf727124d63886e5754c6105d4c3b037b82e96b9b377a"
+    },
+    {
+      "scene_number": 10,
+      "task_id": "6af80e7a12f2d31bad470eed",
+      "name": "scene_10.mp4",
+      "size_bytes": 8628005,
+      "sha256": "9698088c62ffbdf7b5f2c43f2aa9c5e93e3ddec666fe5723ad925559b12896e8"
+    }
+  ],
+  "a2e_workflow_conclusions": [
+    {
+      "run_id": 43571488643,
+      "status": "success",
+      "completed": 5
+    },
+    {
+      "run_id": 43571516030,
+      "status": "success",
+      "completed": 5
+    }
+  ],
+  "a2e_github_artifacts": [
+    {
+      "id": 14103694125,
+      "issue_number": 204,
+      "file_count": 5
+    },
+    {
+      "id": 14105250163,
+      "issue_number": 205,
+      "file_count": 5
+    }
+  ],
+  "google_drive_backups": [
+    {
+      "name": "A2E_Vietnam_Cambodia_scenes_01-05_ARCHIVE.zip",
+      "drive_id": "12TDPeRHX8VFoO4wyFQqS7cR8qntajkyH",
+      "size_bytes": 40400047
+    },
+    {
+      "name": "A2E_Vietnam_Cambodia_scenes_06-10_ARCHIVE.zip",
+      "drive_id": "1lBONSu0ImS1Q9N5BXe8nlcCqBI5Mwgcv",
+      "size_bytes": 43303763
+    }
+  ],
+  "google_drive_backup_readback_count": 2,
+  "google_drive_individual_mp4_count": 10,
+  "google_drive_individual_files_pending": false,
+  "status_note": "10 original A2E MP4s extracted, probed and fully decoded successfully; GitHub artifacts retained, two archive ZIPs saved and listed on private Drive. User requires individual MP4 copies, not just ZIPs. Studio not imported or reviewed.",
+  "google_drive_individual_clips_folder_url": "https://drive.google.com/drive/folders/1X79seJaleD4JctrjwPYE3RZZH77_lerq",
+  "studio_handoff_workflow_run": "https://github.com/legur/Simba/actions/runs/43576207969",
+  "studio_private_media_verified_count": 10,
+  "studio_options_present": 3,
+  "studio_ticket_expiration_utc": "2026-11-14T16:26:45.791185Z",
+  "studio_owner_browser_open_verified": true,
+  "studio_owner_selection_receipt_verified": true,
+  "preview_variants_created_local": [
+    {
+      "id": 1,
+      "title": "Путевой дневник",
+      "file": "Vietnam_Cambodia_Studio_Drafts/01_diary.mp4",
+      "duration_s": 45.0625
+    },
+    {
+      "id": 2,
+      "title": "Киноистория",
+      "file": "Vietnam_Cambodia_Studio_Drafts/02_cinema.mp4",
+      "duration_s": 46.25
+    },
+    {
+      "id": 3,
+      "title": "Энергичный маршрут",
+      "file": "Vietnam_Cambodia_Studio_Drafts/03_dynamic.mp4",
+      "duration_s": 47.625
+    }
+  ],
+  "preview_variants_voice_status": "NOT_RECORDED",
+  "preview_variants_music_status": "NOT_SELECTED",
+  "studio_latest_private_ticket_id": "12aOImzwSQqxtb79kfGiaXSqE-r-wxazA",
+  "studio_latest_private_ticket_issued_utc": "2026-11-14T13:26:45.791185Z",
+  "studio_ticket_renewal_run": "https://github.com/legur/Simba/actions/runs/43599762648",
+  "studio_selected_option": 2,
+  "studio_selection_receipt": {
+    "receipt_file_id": "1-2BFlzjHdiqhVskR5ooCDP164SRwfzSd",
+    "receipt_id": "14481802-0761-4ebd-bfbb-886a52f5f524",
+    "selection_sha256": "0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10",
+    "source_fingerprint": "b7dbe0068919332275117c927410345fb47f0c8dcf59733981949e6510e12633",
+    "option": 2,
+    "option_name": "Киноистория",
+    "scenes": 10,
+    "selected_utc": "2026-11-14T14:20:35.766Z",
+    "receipt_saved_utc": "2026-11-14T14:20:42.234Z",
+    "montage_issue": "https://github.com/legur/Simba/issues/206",
+    "montage_attempt": "https://github.com/legur/Simba/actions/runs/43604384067",
+    "montage_attempt_status": "FAILED_NO_OWNER_APPROVED_RENDER_PROFILE",
+    "rendered_mp4": false,
+    "requested_scene2_transition": "flash",
+    "other_scene_transitions": "crossfade",
+    "requested_camera": {
+      "id": "cinematic-zoom",
+      "intensity_percent": 20
+    },
+    "requested_subtitles": {
+      "style_id": "clean",
+      "word_motion_id": "karaoke"
+    },
+    "layout_override_status": "PENDING_MONTAGE_V2_LAYOUT_SUPPORT",
+    "contact_approval_not_inferred": true,
+    "note": "Studio selection was persisted, but file records DRAFT_NOT_DELIVERED as decision state and render_authorized=false. Never silently reinterpret as final render approval or strip visual layout/flash."
+  },
+  "studio_approved_selected_option": 2,
+  "studio_voice_profile": "WarmBaritone",
+  "studio_voice_parts_drive_ids": [
+    "1eDH5Nv3fcnGlgiZrJFEnaUSsIDocmD4J",
+    "1G3YAmv610UywU_jZIXVC_bprFRRPQRNo"
+  ],
+  "studio_audio_preview_drive_id": "1jJvh0SGQGaij8O-Ef_2BXfJXuKWum5U9",
+  "studio_audio_preview_qa_sha256": "dfe9de5ae6eede863a650d33202ab7709a6568f630aea1e207e98f680aeb629c",
+  "studio_audio_preview_seconds": 42.75,
+  "studio_audio_preview_status": "SOURCE_VERIFIED_AUDITION_ONLY_NO_INDEPENDENT_ASR",
+  "studio_qa_receipt_path": "campaigns/vietnam-cambodia-2027/studio_option2_voice_preview_receipt_2026-11-14.json",
+  "studio_publication_authorized": false,
+  "studio_final_master_ready": false
+}

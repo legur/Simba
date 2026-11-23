@@ -2,7 +2,7 @@
 ## Bon Tours / Simba by Bon Tours
 
 
-Версия: 6.2
+Версия: 6.3 · 17.11.2026 (standalone degraded-mode routing); ранее 6.2
 Статус: PRODUCTION
 Тип изменения: visual-example runtime обновлён 11.09.2026; runtime amendment 14.09.2026: добавлен обязательный SELECTED_VARIANT_FINAL_RENDER после выбора Лео; runtime amendment 25.09.2026: добавлен HERO IDENTITY OVERRIDE для личных и экспертных постов; GPT Image 2.5 Prompting Protocol и reference governance сохранены.
 
@@ -299,7 +299,7 @@ Trusted-card имеет приоритет только на этапе поис
 
 Если Archivarius технически недоступен:
 - зафиксировать `ARCHIVARIUS_STATUS: UNAVAILABLE`;
-- продолжить с YouMind + Visual Rules + APPROVED_TEXT + текущими фактами.
+- продолжить с YouMind + Visual Rules + **источником соответствующего режима**: `APPROVED_TEXT`/`POLICY_APPROVED_FOR_VISUAL` для `POST_DERIVED_VISUAL`, либо `DIRECT_VISUAL_BRIEF` для `STANDALONE_VISUAL`, плюс подтвержденные факты. Отсутствие поста в самостоятельном режиме не является блокировкой.
 
 
 Если доступен Archivarius, отсутствие trusted-card не является ошибкой: поиск расширяется на остальные релевантные `active` visual cards.
@@ -387,7 +387,7 @@ YouMind-шаблон — сырье, а не готовый prompt Rafael. Из�
 - Archivarius доступен, YouMind недоступен → продолжить с Archivarius.
 - YouMind доступен, Archivarius недоступен → продолжить с YouMind.
 - Обе доступны → использовать лучшие релевантные механики из обеих.
-- Обе недоступны → продолжить по Visual Rules + APPROVED_TEXT + текущим фактам и зафиксировать `REFERENCE_LIBRARIES_UNAVAILABLE`.
+- Обе недоступны → продолжить по Visual Rules + **валидному источнику текущего режима** (`APPROVED_TEXT`/`POLICY_APPROVED_FOR_VISUAL` к посту или `DIRECT_VISUAL_BRIEF` для самостоятельного постера) + текущим подтвержденным фактам; зафиксировать `REFERENCE_LIBRARIES_UNAVAILABLE`. Нельзя придумывать фиктивный пост или коммерческие данные.
 
 
 Недоступность внешней библиотеки сама по себе не является `BLOCKED_*`.

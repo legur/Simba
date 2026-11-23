@@ -1,0 +1,56 @@
+{
+  "schema": "simba.studio.final_master_receipt/v1",
+  "project_id": "vietnam-cambodia-2027",
+  "render_date": "2026-11-14",
+  "selection": {
+    "option": 2,
+    "label": "Киноистория",
+    "receipt_id": "14481802-0761-4ebd-bfbb-886a52f5f524",
+    "selection_sha256": "0847854b1353655904fc5459ef5b65e54c5739b33b2adf45daf47ebcbccebf10",
+    "later_owner_change": "Titles at top, karaoke subtitles at bottom; confirmed in previous preview"
+  },
+  "master": {
+    "filename": "Vietnam_Cambodia_2027_BonTours_FINAL_1080x1920.mp4",
+    "sha256": "b38272c2bc93a33f463b864056f8c5734e06d73c2e8a95ea575faecbb49a79df",
+    "bytes": 59775795,
+    "duration_s": 51.291667,
+    "video": "H.264 1080x1920 24fps",
+    "audio": "AAC 48kHz stereo",
+    "location": "ChatGPT Library /Vietnam_Cambodia_2027/Vietnam_Cambodia_2027_BonTours_MASTER_1080x1920.mp4",
+    "source_video_resolution": "10 original A2E clips 1080x1920; not an upscaled old 540x960 preview",
+    "video_decoding": "PASS_FULL_FFMPEG_DECODE",
+    "audio_stream_sha256": "a5bd24b585da74f780d90035ac75172541a7523cd2f9df3766b416f3858a38ea",
+    "audio_stream_exactly_matches_approved_layout_swap_preview": true,
+    "scene_count": 10,
+    "original_mp4_sha_verified_count": 10,
+    "transitions": "0.9s fade to white between 1-2; other eight are 0.9s crossfades",
+    "overlay": "Crisp rebuilt HD titles on top, karaoke subtitles below, dates price and Bon Tours contacts",
+    "watermark_removed": true,
+    "google_drive_id": "1oEYX4yxuwVVDx4CtktMdZOXS_WsZmVPV",
+    "google_drive_url": "https://drive.google.com/file/d/1oEYX4yxuwVVDx4CtktMdZOXS_WsZmVPV/view",
+    "google_drive_size_verified": true,
+    "google_drive_parent_verified": true
+  },
+  "preview": {
+    "filename": "Vietnam_Cambodia_2027_BonTours_FINAL_Preview.mp4",
+    "sha256": "f180496a12681388b1d35b943eb91fe52c6acffe4131b1445cc9d2856559c2c7",
+    "bytes": 5123366,
+    "video": "H.264 540x960",
+    "location": "ChatGPT Library /Vietnam_Cambodia_2027/Vietnam_Cambodia_2027_BonTours_FINAL_Preview.mp4",
+    "google_drive_id": "1n1aDJGTJzLyuhuEpImUvk1SdpiD-blwp",
+    "google_drive_url": "https://drive.google.com/file/d/1n1aDJGTJzLyuhuEpImUvk1SdpiD-blwp/view",
+    "google_drive_size_verified": true,
+    "google_drive_parent_verified": true
+  },
+  "constraints": {
+    "paid_api_calls": 0,
+    "existing_A2E_clips_modified": false,
+    "publication_done": false,
+    "external_google_drive_master_upload_verified": true,
+    "acoustic_pronunciation_listening_qa": "NOT_INDEPENDENTLY_PASSED",
+    "original_preview_temporary_music_preserved": true
+  },
+  "status": "FINAL_MASTER_RENDERED_QA_PASS_PRIVATE_GOOGLE_DRIVE_ARCHIVED_NOT_PUBLISHED",
+  "google_drive_folder": "https://drive.google.com/drive/folders/14ZYeTB6a7Qd1K11npIdlwPGFYlcvdFvi",
+  "google_drive_privacy": "OWNER_ONLY_NO_PUBLIC_SHARING"
+}

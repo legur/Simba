@@ -173,11 +173,36 @@ function verifyV2Scenes(scenes,materials) {
     globalStyle=signature;
   }
 }
+function verifyV2Layout(items,materials) {
+  const caps=materials.renderer_capabilities?.visual_layout;
+  if(caps?.schema!=='bontours.montage.visual-layout/v1'
+     ||!Array.isArray(items)||items.length!==materials.scenes.length)
+    fail('V2_LAYOUT_UNSUPPORTED');
+  for(let i=0;i<items.length;i++){
+    const item=items[i],src=materials.scenes[i],layout=item?.layout;
+    if(!item||Object.keys(item).sort().join(',')!=='asset_id,layout,scene_id'
+       ||item.scene_id!==src.scene_id||item.asset_id!==src.asset_id
+       ||!layout||Object.keys(layout).sort().join(',')!=='subtitle,title')
+      fail('V2_LAYOUT_BINDING_MISMATCH');
+    for(const kind of ['title','subtitle']){
+      const v=layout[kind];
+      if(!v||Object.keys(v).sort().join(',')!=='scale,x,y'
+         ||![v.x,v.y,v.scale].every(Number.isInteger)
+         ||v.x<36||v.x>64||v.y<13||v.y>87
+         ||v.scale<70||v.scale>140||(v.scale-70)%5!==0)
+        fail('V2_LAYOUT_UNSAFE');
+    }
+    if(src.locked.title_text.trim()&&src.locked.subtitle_preview.trim()
+       &&Math.abs(layout.title.y-layout.subtitle.y)<
+         Math.max(12,(layout.title.scale+layout.subtitle.scale)/16))
+      fail('V2_LAYOUT_TEXT_COLLISION');
+  }
+}
 function verifyV2Selection(selection,source,ticket) {
   const materials=source.materials,proposals=source.proposals,decision=selection&&selection.decision;
   if(!selection||selection.schema!==V2.selectionSchema
-     ||Object.keys(selection).sort().join(',')!==
-       'decision,expected_input_fingerprint,format,guards,materials_sha256,next_stage,project_id,proposals_sha256,request_id,scenes,schema'
+     ||!['decision,expected_input_fingerprint,format,guards,materials_sha256,next_stage,project_id,proposals_sha256,request_id,scenes,schema',
+          'decision,expected_input_fingerprint,format,guards,materials_sha256,next_stage,project_id,proposals_sha256,request_id,scene_layout,scenes,schema'].includes(Object.keys(selection).sort().join(','))
      ||selection.project_id!==ticket.project_id
      ||selection.request_id!==ticket.session_id
      ||selection.expected_input_fingerprint!==ticket.source_fingerprint
@@ -192,7 +217,7 @@ function verifyV2Selection(selection,source,ticket) {
      ||decision.options_presented!==3
      ||decision.state!=='USER_SELECTED_IN_CONNECTED_SESSION'
      ||decision.explicit_approval!==true
-     ||decision.visual_layout_edited!==false
+     ||typeof decision.visual_layout_edited!=='boolean'
      ||!Number.isFinite(Date.parse(decision.user_selected_at))
      ||Date.parse(decision.user_selected_at)>Date.now()+300000
      ||Date.parse(decision.user_selected_at)<Date.now()-7*86400000)
@@ -204,6 +229,16 @@ function verifyV2Selection(selection,source,ticket) {
      ||['preserve_approved_music','preserve_approved_narration','preserve_approved_voice'].some(k=>guards[k]!==true))
     fail('V2_EXECUTION_GUARDS_INVALID');
   verifyV2Scenes(selection.scenes,materials);
+  const proposed=proposals.proposals[decision.selected_option-1].scene_layout;
+  if(!selection.scene_layout){
+    if(decision.visual_layout_edited||proposed)fail('V2_LAYOUT_MISSING');
+  }else{
+    verifyV2Layout(selection.scene_layout,materials);
+    const defaults=materials.scenes.map(s=>({scene_id:s.scene_id,asset_id:s.asset_id,
+      layout:{title:{x:50,y:47,scale:100},subtitle:{x:50,y:82,scale:100}}}));
+    if(!decision.visual_layout_edited && canonical(selection.scene_layout)!==canonical(proposed||defaults))
+      fail('V2_LAYOUT_CHANGE_NOT_APPROVED');
+  }
   noSecrets(selection,0);
 }
 function readV2Project(params) {
