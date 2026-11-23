@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "EXACT_LEO_APPROVED_STORYBOARD_VISUAL_PREVIEW_REBUILT",
-  "status": "CORRECTED_PREVIEW_MATCHES_APPROVED_STORYBOARD_NOT_PRODUCTION_READY",
+  "stage": "EXACT_FRAME_PREVIEW_LEO_CONFIRMED__PRODUCTION_ASSETS_PENDING",
+  "status": "LEO_CONFIRMED_CORRECTED_PREVIEW_ONLY",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Leo reviews corrected exact-frame 59s MP4. Production must start from the approved frames, using independent higher-resolution scene assets matching them and owner-approved narration; do not silently substitute other photos or illustrations, and no paid operations without transparent quote.",
+  "nextAction": "Create separate high-resolution production-ready scene images visually faithful to the user-confirmed exact storyboard (cover first; all named resort scenes preserved; no substitutions). Verify venue-identity attribution and rights before any production A2E/TTS, and sync selected narration. Do not render/pay/publish without required gates.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -269,5 +269,14 @@
     "sceneCropManifest": "thermal_reel_v1_preview/approved_storyboard_exact_scenes/exact_panel_manifest.json",
     "archive": "Local ChatGPT sandbox only. Exact images/MP4 NOT uploaded to GitHub or owner-private Drive.",
     "limitations": "Crops are from a 941×1672 combined approved storyboard, with baked Russian titles/timecodes and variable tile resolution. They are legitimate visual-matching PREVIEW frames only; separate original A2E-ready, verified location photography, voice, licenses and QA are still missing."
+  },
+  "visualApproval": {
+    "date": "2026-11-23",
+    "userStatement": "верно",
+    "scope": "Corrected preview video using exact approved 12-panel yellow-title storyboard, including Leo cover first and combined Abanotubani/Ourense last.",
+    "approvedPreviewName": "thermal_reel_v1_preview/thermal_reel_exact_approved_frames_v2.mp4",
+    "approvedPreviewSha256": "ad1dd6d421c263ac739e587d6e7e9145df2885241a5c628d01330f8ea02a0b8e",
+    "notApproved": "Final MP4 / production asset substitution / unverified venue photos / audio voice synthesis / paid A2E / publication",
+    "keepExactVisualOrder": true
   }
 }
