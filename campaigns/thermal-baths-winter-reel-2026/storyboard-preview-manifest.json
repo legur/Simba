@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "INDIVIDUAL_PANEL_UPSCALES_AND_1080P_PREVIEW_READY_VOICE_BLOCKED",
-  "status": "PARTIAL_PRODUCTION_PREVIEW_DELIVERED__VOICED_FINAL_NOT_AVAILABLE",
+  "stage": "RAFAEL_INDIVIDUAL_SCENE_GENERATION_REQUIRED",
+  "status": "UPSCALING_REJECTED_AS_PRODUCTION_SOURCE_BY_LEO",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Use verified selected script #1 with approved Simba WarmBaritone voice once actual synthesis connector and source-scoped authorization are available; do not replace with generic TTS. Clean original independent 1080p scene art/photos required for true sharp final; do not silently replace approved images. Perform source/license QA, sync narration, full listen/video QA and seek separate publication approval.",
+  "nextAction": "Load official Rafael 9:16 rules; generate proper separate source images for every approved storyboard scene using explicit scene-specific prompts and approved overview as reference; verify each actual individual image, provenance and visual continuity before advancing to video. Do not use 1080p re-scaled storyboard crops as A2E_READY.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -298,5 +298,14 @@
     "license": "AI illustrations depicted generic versions of specific resorts; independent venue-photo identity and usage checks NOT verified",
     "storage": "ChatGPT sandbox only; owner-private Drive backup pending; GitHub stores metadata not media bytes",
     "finalStatus": "NOT FINAL_MP4; no paid A2E/TTS and no publication"
+  },
+  "latestUserCorrection": {
+    "date": "2026-11-23",
+    "statement": "почему не дал рафаэлю создать изображения по промту",
+    "interpretation": "Do not mechanically upscale tiny panels from the approved overview; route production source images to Rafael with per-scene prompts and use approved overview strictly as visual reference.",
+    "diagnosis": "Assistant wrongfully chose collage slicing/upscale rather than Rafael per-scene generation; no separate native high-resolution scene images were generated.",
+    "retain": "User-approved first scene and sequence/layout/compositions; do not silently change artistic direction.",
+    "technical": "Create actual separate 9:16 source images per scene with no embedded typography, verify visual match and only then add captions at edit stage.",
+    "note": "This correction logs a requested workflow correction, not evidence that Rafael was invoked or that assets exist."
   }
 }
