@@ -62,3 +62,13 @@ L05: No competing file for this item found.
 L06: No unsupported independent agent receipts or publication claims.
 L08: Stable single canonical file path; future statuses update in place.
 L09/L11: Full text present; index promotion deferred until APPROVED_TEXT gate.
+
+## Self-review and preliminary visual exploration — 2026-11-23
+
+- User follow-up: «Делай» following author-approved revision №3, requesting Humanizer then Rafael visuals.
+- Exact text remains unchanged. A single-model read-through found no long dashes, no «ё», no public URLs, and one «ТЕРМЫ» CTA (not an independent Humanizer execution).
+- Gate remains **BLOCKED_INDEPENDENT_EXECUTOR_UNAVAILABLE**: independent `HUMANIZER_PASS` not observed; do not promote this entry to `APPROVED_TEXT` production status and do not set `PUBLICATION_PACKAGE_READY`.
+- Image tool created concept-sheet previews for discussion only, without proven independent Rafael role execution, accurate individually preserved prompts, or Rafael identity/reference QA.
+- Concepts visible in draft sheets: (1) Bath Roman baths museum contrast; (2) winter steaming Alpine pool; (3) natural Saturnia terrace pools; (4) Roman museum vs contemporary thermal pool split; (5) generic snowy spa ambience. They are **not** final individual 1:1 renders or proof that a venue is pictured faithfully.
+- Preview selection, official Rafael final render and Facebook publication remain NOT_AUTHORIZED and NOT_CONFIRMED.
+- Next production action: use an independent Humanizer execution for the exact Leo-approved text; only then perform official `POST_DERIVED_VISUAL` workflow with five separately auditable previews and visual QA.
