@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "RAFAEL_INDIVIDUAL_SCENE_GENERATION_REQUIRED",
-  "status": "UPSCALING_REJECTED_AS_PRODUCTION_SOURCE_BY_LEO",
+  "stage": "RAFAEL_SINGLE_FRAME_GENERATION_PARTIAL_TOOL_MISROUTED",
+  "status": "ONE_SCENE_VALID_DRAFT_OTHERS_BLOCKED_RENDERER_OUTPUT_MISMATCH",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "UPSCALING_RENDERED_AND_QA_VERIFIED; NO_REAL_DETAIL_GAIN; NO_APPROVED_NARRATION; NO_PAID_A2E; NOT_PUBLISHED",
+  "productionStatus": "NO_NEW_COMPLETE_IMAGE_SET; NO_A2E; NO_TTS; NOT_PUBLISHED",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Load official Rafael 9:16 rules; generate proper separate source images for every approved storyboard scene using explicit scene-specific prompts and approved overview as reference; verify each actual individual image, provenance and visual continuity before advancing to video. Do not use 1080p re-scaled storyboard crops as A2E_READY.",
+  "nextAction": "Resume individually targeted Rafael renders only with a renderer proven to follow scene-specific prompt; use approved Baden-Baden input as next test and stop after first mismatch. Do not treat Spa draft as documentary venue photo or change already approved storyboard. Additional paid service needs clear credit cost/authorization.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -307,5 +307,35 @@
     "retain": "User-approved first scene and sequence/layout/compositions; do not silently change artistic direction.",
     "technical": "Create actual separate 9:16 source images per scene with no embedded typography, verify visual match and only then add captions at edit stage.",
     "note": "This correction logs a requested workflow correction, not evidence that Rafael was invoked or that assets exist."
+  },
+  "latestRafaelAttempt": {
+    "date": "2026-11-23",
+    "userScope": "Generate actual individual 9:16 high-quality resort images, not collages, from approved storyboard",
+    "attemptedCount": 3,
+    "acceptedCount": 1,
+    "accepted": [
+      {
+        "scene": 2,
+        "location": "Спа, Бельгия",
+        "filename": "thermal_reel_v1_preview/rafael_single_frames/scene_02_spa_ai_draft.png",
+        "sha256": "e7f3d57b7c6f37351ade97b7b5bf771c1108538737552d7cd0b14b22e8c57263",
+        "size": "941x1672",
+        "status": "VISUAL_DRAFT_ONLY_NOT_AUTHENTICATED_LOCATION"
+      }
+    ],
+    "rejected": [
+      {
+        "intended": "Баден-Баден",
+        "actual": "Повтор обложки с Лео в альпийском бассейне"
+      },
+      {
+        "intended": "Баден-Баден with single cropped reference",
+        "actual": "Изображение другого спа-комплекса с женщиной в бассейне; архитектура Баден-Бадена отсутствует"
+      }
+    ],
+    "reason": "Native renderer ignored destination-specific instruction in repeated calls, producing unrelated subjects; repeated attempts stopped to prevent more mismatched images.",
+    "evidenceStorage": "One accepted AI image in ChatGPT sandbox; unapproved attempts exist in conversation only; not copied to Drive",
+    "referenceValidated": false,
+    "notFinal": true
   }
 }
