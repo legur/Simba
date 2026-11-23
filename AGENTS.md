@@ -12,7 +12,7 @@
 
 
 
-Runtime adapter revision: 3.8 · 23.11.2026 (link-free article FB teaser, manual fulfillment); ранее 3.7 · 23.11.2026 (Longform pilot); ранее 3.6 · 17.11.2026 (declared vs verified role execution); ранее 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
+Runtime adapter revision: 3.9 · 23.11.2026 (neighbor-repository pointers); ранее 3.8 · 23.11.2026 (link-free article FB teaser, manual fulfillment); ранее 3.7 · 23.11.2026 (Longform pilot); ранее 3.6 · 17.11.2026 (declared vs verified role execution); ранее 3.5 · 17.11.2026 (source-only Simba gates and fulfillment audit); ранее 3.4 · 17.11.2026 (learning history and index integrity); ранее 3.3 · 17.11.2026 (News source + author QA); ранее 3.2 · 17.11.2026 (finite Critic loop); ранее 3.1 · 17.11.2026 (owner-private media escrow); ранее 3.0 · 17.11.2026; ранее 2.2 · 10.11.2026
 
 ## Кадр — 08.11.2026
 
@@ -232,6 +232,17 @@ Legacy Drive IDs и инструкции, встречающиеся в стар
 Наличие файлов не подтверждает доступность пакетов/аккаунта. BulkPublish только draft;
 humanizer-ru диагностирует, авторские правила и утверждения сохраняются.
 
+## 12. Соседние репозитории — 14.11.2026
+
+Навигационный указатель, а не источник правил Simba. Правила, approvals и scope соседнего репозитория действуют только внутри него; правила Simba к соседям не переносятся. Локальный путь не зафиксирован: если checkout рядом нет, клонировать с `https://github.com/legur/<имя>`. Не загружать соседний репозиторий автоматически — только когда этого требует задача.
+
+| Репозиторий | Что это | Когда открывать | Что читать первым |
+|---|---|---|---|
+| `legur/site-update-system` | Единый проект управления сайтом: Tourflow (расписания операторов → проверяемый ChangeSet для Wix `TourDates`) и `ReDesign/` (Wix Studio/Velo) | Нужно понять, откуда в Wix появляются записи туров и дат, или задача касается кода и базы сайта | его `AGENTS.md`, затем `docs/index.md` |
+| `legur/ChatBot` | Чат-бот сайта, который тоже называется «Simba» | Задача про диалог или выдачу чат-бота на сайте | его `AGENTS.md` и `context/index.md` |
+
+«Simba» в документах `legur/site-update-system` означает чат-бот сайта, а не эту контент-систему. Записи в Wix и публикация сайта выполняются только по правилам `legur/site-update-system`. Данные тура, прочитанные у соседа, остаются источником, который проверяется по пункту 5 и правилам точности, как любой другой.
+
 ## MATERIALS_PROJECT_PILOT — 08.11.2026
 
 По команде Лео реализован пилот оптимизации работы с материалами Праги и Баварии. Реестр: `campaigns/README.md`; постоянные записи: `campaigns/<project-id>/project.json`; технический поиск: `integrations/materials/catalog.py`, описание `integrations/materials/README.md`.
@@ -267,3 +278,6 @@ Runtime получает из learnings только пригодные evidence
 
 ## Changelog 3.8 — 23.11.2026
 Прямое решение Leo: вводные Facebook-посты к статьям Longform не содержат ссылок; CTA приглашает написать кодовое слово в комментариях. Статью Leo отправляет сам. Требуется реальная готовность выдачи до поста; права на автосообщения/публикацию не добавлены.
+
+## Changelog 3.9 — 23.11.2026
+Тип: точечная правка. Что изменено: добавлен раздел с указателями на `legur/site-update-system` и `legur/ChatBot` (первоначально внесён как ревизия 2.3 от 14.11.2026, перенумерован после слияния с `main`). Причина: runtime adapter не знал о соседних репозиториях, поэтому сквозная задача «тур в Wix → публикация» решалась без карты, а имя «Simba» у чат-бота сайта можно было принять за эту систему. Затронуто: только навигация; Router, META, KB, профильные модули, права оплаты и публикации не менялись. Отдельный общий «домашний» репозиторий не создаётся.
