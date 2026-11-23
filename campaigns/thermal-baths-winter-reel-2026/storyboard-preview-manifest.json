@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "SILENT_ANIMATIC_PREVIEW_NEEDS_LEO_REVIEW",
-  "status": "LOCAL_SILENT_MP4_VERIFIED_AI_VISUALS_NOT_PRODUCTION_READY",
+  "stage": "SILENT_ANIMATIC_REORDERED_NEEDS_LEO_REVIEW",
+  "status": "PREVIEW_REVISED_NOT_PRODUCTION_READY",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -189,7 +189,39 @@
     "archive_status": "NOT_COPIED_TO_OWNER_PRIVATE_GOOGLE_DRIVE; sandbox copies available only within this chat",
     "illustrator_warning": "NOT verified real venue imagery. Not approved as documentary visual / A2E-ready footage.",
     "zip_name": "thermal_reel_v1_frames_and_storyboard.zip",
-    "zip_sha256": "1db0619601fb3491dcbe5fab415ed6431d834a30b44f772e5762f4e707db0596"
+    "zip_sha256": "1db0619601fb3491dcbe5fab415ed6431d834a30b44f772e5762f4e707db0596",
+    "latestUserEdit": {
+      "instruction": "убери последний кадр и используй этот первым",
+      "meaning": "Move existing scene #13 ('12 МЕСТ / ОДНО ПУТЕШЕСТВИЕ' with Leo photo) to position #1, removing it from its former end position. Preserve other scenes and durations.",
+      "result": "Local preview MP4 reordered; scene order 13,1,2,3,4,5,6,7,8,9,10,11,12",
+      "file": "thermal_reel_silent_animatic_intro_first.mp4",
+      "sha256": "6a6166d3b75debd4eccff44af5292588ec80106f40abd64cb74e81498e11828d",
+      "duration_seconds": 59,
+      "resolution": "720x1280",
+      "videoCodec": "H264",
+      "audio": "NONE",
+      "timingsFile": "timings_intro_first.csv",
+      "contactSheet": "scene_contact_sheet_intro_first.jpg",
+      "viewable_in_current_chat_sandbox": true,
+      "archiveStatus": "NOT_COPIED_TO_PRIVATE_DRIVE, copy stored in ChatGPT sandbox; do not claim permanent archive",
+      "qa": "ffprobe shows 59.00s 1180 frames 20fps; visual sampling first and last verified"
+    }
   },
-  "nextAction": "Leo reviews 59s silent animatic, makes scene edits if needed. For production replace 12 AI illustrations with verified real venue photos or explicitly mark AI visuals, perform license QA, secure owner's script approval evidence, and obtain approved voice + paid quote before A2E. Do not treat preview MP4 as final."
+  "nextAction": "User reviews reordered 59-second silent preview. Voiceover timing must be remapped for 8-second intro shift; no TTS, A2E, paid generation, publication.",
+  "scenesPreviousOrderRetained": true,
+  "currentSceneOrder": [
+    13,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ]
 }
