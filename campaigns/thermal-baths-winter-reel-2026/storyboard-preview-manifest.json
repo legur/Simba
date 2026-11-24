@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "MULTISHOT_REAL_MEDIA_SHORTLIST_28_PHOTOS_3_VIDEOS_READY_FOR_LEO_REVIEW",
-  "status": "AUTHENTIC_MULTISHOT_LINKS_SELECTED_NOT_SOURCE_BYTES",
+  "stage": "AUTHENTIC_ORIGINAL_MEDIA_VERIFIED_31_OF_31__REAL_MEDIA_VIDEO_DRAFT_59S_READY",
+  "status": "NEEDS_LEO_REVIEW_VISUAL_MP4__VOICE_AND_RIGHTS_GATE_PENDING",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "28_SOURCE_PHOTO_FILE_PAGES_AND_3_VIDEO_PAGES_CURATED; ORIGINAL_MEDIA_BYTES_NOT_DOWNLOADED; NO_RENDER_MP4_OR_TTS; NOT_PUBLISHED",
+  "productionStatus": "31/31 ORIGINAL_MEDIA_BYTES_RECEIVED_AND_MANIFEST_SHA_MATCHED; 59S REAL_MEDIA_MP4_PREVIEW_RENDERED; NOT APPROVED/PUBLISHED; VOICE_MISSING; COMMERCIAL_LICENSE_GATES_PENDING",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Leo reviews expanded real-media gallery and selections. Download the exact original files in network-enabled media runtime, validate contents/license/credits, replace AI storyboard frames keeping approved order, then create and QA a 59s real-media MP4.",
+  "nextAction": "Leo reviews actual 59s real-photo/real-video MP4 draft and gives focused feedback. Preserve supplied 31-source archive; replace Sky Lagoon auxiliary view if approved source for main infinity lagoon becomes available; then verify licensed music/voice and full photo credits before final render/publication. No paid TTS/A2E without approval.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -456,5 +456,62 @@
     "status": "CURATED_NOT_FINAL_ASSETS",
     "allowed": "Frame alternatives and footage for single location without changing approved look, order or Leo cover",
     "notAuthorized": "Paid API/A2E/TTS/final MP4/publication"
+  },
+  "latestMaterialReceipt": {
+    "date": "2026-11-24",
+    "trigger": "User uploaded THERMAL_RESORTS_2026_MEDIA_PACKAGE.zip following agent collection assignment",
+    "providedPackage": "THERMAL_RESORTS_2026_MEDIA_PACKAGE.zip",
+    "providedPackageSha256": "446e7c1c13df245e093c727ba7eb98f9295449e405da9cceca3abda13155bbaa",
+    "packageBytes": 196356728,
+    "archiveCRCPass": true,
+    "imagesVerified": 28,
+    "videoFilesVerified": 3,
+    "mediaFileManifestSha256Matches": 31,
+    "videoFilesPhysicallyAvailable": [
+      "Mill_Colonnade.ogg",
+      "Kusatsu_gunma_yubatake_-_2020_3_1.webm",
+      "Flight_over_Ourense_140857_1.webm"
+    ],
+    "locationMediaCount": 12,
+    "licensing": "31 source records with author/license; rights remain pending for full commercial composite (CC BY-SA attribution/sharealike and third-party rights)",
+    "previousNetworkBlockerResolved": "Owner directly provided full original package; bytes mounted and verified in chat runtime",
+    "preview": {
+      "filename": "THERMAL_RESORTS_REAL_MEDIA_PREVIEW_59s.mp4",
+      "storage": "ChatGPT sandbox only (not in GitHub or Drive)",
+      "bytes": 5942311,
+      "sha256": "3467835ad835868b567ad6338db5e319c8e1c41fe055ebb61c8e6cab57b268a6",
+      "width": 1080,
+      "height": 1920,
+      "durationSeconds": 59,
+      "videoCodec": "H.264",
+      "audioCodec": "AAC",
+      "fps": 24,
+      "montageShots": 24,
+      "distinctAuthenticFilesUsed": 23,
+      "realVideoSourcesIncluded": 2,
+      "omittedVideo": "Ourense aerial clip depicts flight/wing/clouds, not venue; excluded from draft",
+      "skyLagoonWarning": "Only sauna/cold plunge photos, not main hot infinity lagoon",
+      "voice": "MISSING, not generated",
+      "backgroundMusic": "Old temporary synthesized instrumental from preview, not final licensed track",
+      "titles": "Yellow/navy approved Atlas style; real photos, no generated replacement images",
+      "cover": "Existing Leo-approved photographed cover first",
+      "end": "Combined Georgia/Spain final frame",
+      "finalApproval": false,
+      "publication": false
+    },
+    "qaFiles": [
+      "thermal_resorts_2026_verified/montage_preview/QA_REPORT.md",
+      "thermal_resorts_2026_verified/montage_preview/scene_timeline.csv",
+      "thermal_resorts_2026_verified/montage_preview/used_media_credits.csv",
+      "thermal_resorts_2026_verified/REAL_MEDIA_VIDEO_QA_CONTACT_SHEET.jpg",
+      "thermal_resorts_2026_verified/THERMAL_RESORTS_REVIEW_FILES.zip"
+    ],
+    "qaKadrReferences": [
+      "KADR-002 fixed title across multiple shots",
+      "KADR-003 final split view; visuals only"
+    ],
+    "rightsReviewStatus": "NOT_RIGHTS_CLEARED_FOR_FINAL_PUBLICATION",
+    "finalProductionStatus": "NOT_READY_VOICE_MISSING_AND_OWNER_APPROVAL_PENDING",
+    "noPaidOperations": true
   }
 }
