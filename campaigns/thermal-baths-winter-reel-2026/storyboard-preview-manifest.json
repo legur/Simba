@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Leo visually reviews the 59s HTML animatic with real Wikimedia photo URLs; in a network-enabled media environment obtain/download original photo/video bytes, check visual accuracy and attribution/ShareAlike, then render a proper MP4 with the exact approved style. No payments or publication inferred.",
+  "nextAction": "Gather more than one real photograph or permitted video for resorts as composition benefits; compare authentic shots, verify rights, acquire actual file bytes and prepare revised 59-second authentic-media animatic with variable shots per location for Leo review. No paid A2E/TTS, no publication.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -425,5 +425,15 @@
     "QA": "ZIP CRC checked; 12 slides/59s timing programmatically checked; JavaScript image loading not browser-tested in a network-connected environment",
     "approval": "Owner chose prior storyboard; new actual photographic substitutions require Leo review; no owner approval yet",
     "payment": "No A2E / no TTS / no paid external creation"
+  },
+  "latestOwnerRevision": {
+    "date": "2026-11-24",
+    "quote": "кстати можно и не по одному фото на объект",
+    "decision": "ALLOW_MULTIPLE_AUTHENTIC_PHOTOS_PER_RESORT_AND_REAL_VIDEO",
+    "scope": "Individual resort segments can use one, two, three or more genuine source images/footage shots when they improve rhythm and accurately depict the same location.",
+    "visualContinuity": "Maintain 12 resort names, approved order, Leo-first cover, yellow/navy Atlas headings, and last Tbilisi/Ourense paired segment.",
+    "proposedEdit": "For ~59-second first cut, favor 1-3 shots per resort, prioritizing quality, motion and factual place recognition, without forcing equality. Videos can replace some stills. Shot count is not fixed and may change with narration sync.",
+    "unchanged": "Approved broad storyboard art direction and script #1. Separate authentic-photo shot choices and final MP4 still require Leo review.",
+    "noPaidOperationsOrPublicationAuthorized": true
   }
 }
