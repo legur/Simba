@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "RAFAEL_SINGLE_FRAMES_5_OF_12__BUDAPEST_RENDERER_MISMATCH",
-  "status": "FIVE_DISTINCT_INDIVIDUAL_AI_DRAFTS_QA__REMAINING_SEVEN_NOT_READY",
+  "stage": "REAL_MEDIA_SOURCING__12_PHOTO_PAGES_3_VIDEO_PAGES_FOUND",
+  "status": "REAL_WORLD_MEDIA_REPLACEMENT_CANDIDATES_FOUND__DOWNLOAD_AND_LICENSE_QA_PENDING",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "5/12 separate AI drafts; 0 location-authenticated production frames; no A2E, no TTS, no publication",
+  "productionStatus": "REAL_SOURCE_CATALOGUE_VERIFIED_NOT_MEDIA_BYTES; NO_NEW_EDIT_OR_MP4; NO_PAID_A2E_OR_TTS; NOT_PUBLISHED",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Do not reattempt this renderer for Budapest without fixing scene-context stickiness; use a proven one-scene image renderer with no auto-expansion to Baden-Baden. Render Budapest exactly then Saturnia, Leukerbad, Bormio, Sky Lagoon, Kusatsu, Abanotubani/Ourense; keep already verified five drafts unchanged. Paid alternate tools need known price/credit authorization. User-approved storyboard fixed.",
+  "nextAction": "Acquire the actual real original photo/video files from the validated source pages in an environment with media retrieval, validate correct depiction and licenses, create owner-private source archive and real-scene visual preview for Leo approval; no substitution or paid render yet.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -378,5 +378,22 @@
     "progress": "5 / 12 independent AI drafts, verified by distinct SHA256 and dimensions 941x1672. Still unverified likeness of resorts, not final production.",
     "newFrameFile": "thermal_reel_v1_preview/rafael_single_frames/scene_04_bath_ai_draft.png",
     "previewLocal": "thermal_reel_v1_preview/rafael_single_frames/rafael_5_scene_preview.jpg"
+  },
+  "sourceSwitchProposal": {
+    "date": "2026-11-24",
+    "userInstruction": "я вот подумал, а почему бы тебе не найти реальны фото и виде этих курортов",
+    "interpretation": "Research original media of real places rather than keep synthesizing imaginary resort photography",
+    "sourceManifest": "campaigns/thermal-baths-winter-reel-2026/real-media-sources.md",
+    "sourceOnlyPhotoCount": 12,
+    "sourceOnlyVideoCount": 3,
+    "videoDepictsExactVenueCount": 2,
+    "otherVideo": "Ourense city overflight, NOT thermal baths",
+    "sourcePagesSeen": "Wikimedia Commons individual File: source pages showing author and explicit CC or CC0 licence",
+    "remoteOriginalBytesRetrieved": false,
+    "licensedForCommercialReel": "PENDING per-asset rights, credit and ShareAlike compliance",
+    "localSourceArchive": "NOT_CREATED; no original byte verification, no private Drive archived media",
+    "preserve": "approved exact 12-panel atlas composition/order and Leo cover, including 2 separate source photos for final Tbilisi/Ourense split-screen",
+    "replaces": "5/12 AI drafts only as a proposed content-source improvement. They remain drafts, not approved documentary assets",
+    "noPublicUpload": true
   }
 }
