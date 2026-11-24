@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "REAL_PHOTO_59S_BROWSER_PREVIEW_READY_ORIGINAL_BYTES_BLOCKED",
-  "status": "REAL_LOCATIONS_SOURCE_VERIFIED__HTML_PREVIEW_NEEDS_LEO_REVIEW__NOT_FINAL_MP4",
+  "stage": "MULTISHOT_REAL_MEDIA_SHORTLIST_28_PHOTOS_3_VIDEOS_READY_FOR_LEO_REVIEW",
+  "status": "AUTHENTIC_MULTISHOT_LINKS_SELECTED_NOT_SOURCE_BYTES",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "REAL_MEDIA_WEB_PREVIEW_BUT_NOT_DOWNLOADED; REAL_LOCATION_MEDIA_ASSETS_MISSING; NO_FINAL_MP4_NO_PAID_A2E_OR_TTS_NOT_PUBLISHED",
+  "productionStatus": "28_SOURCE_PHOTO_FILE_PAGES_AND_3_VIDEO_PAGES_CURATED; ORIGINAL_MEDIA_BYTES_NOT_DOWNLOADED; NO_RENDER_MP4_OR_TTS; NOT_PUBLISHED",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Gather more than one real photograph or permitted video for resorts as composition benefits; compare authentic shots, verify rights, acquire actual file bytes and prepare revised 59-second authentic-media animatic with variable shots per location for Leo review. No paid A2E/TTS, no publication.",
+  "nextAction": "Leo reviews expanded real-media gallery and selections. Download the exact original files in network-enabled media runtime, validate contents/license/credits, replace AI storyboard frames keeping approved order, then create and QA a 59s real-media MP4.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -435,5 +435,26 @@
     "proposedEdit": "For ~59-second first cut, favor 1-3 shots per resort, prioritizing quality, motion and factual place recognition, without forcing equality. Videos can replace some stills. Shot count is not fixed and may change with narration sync.",
     "unchanged": "Approved broad storyboard art direction and script #1. Separate authentic-photo shot choices and final MP4 still require Leo review.",
     "noPaidOperationsOrPublicationAuthorized": true
+  },
+  "multishotSelection": {
+    "date": "2026-11-24",
+    "trigger": "подбирай",
+    "confirmedDecision": "Owner permits multiple real photos per place, chosen sequence unchanged",
+    "photographs": 28,
+    "resorts": 12,
+    "videoCandidates": 3,
+    "videosDepictActualResort": 2,
+    "linksManifest": "campaigns/thermal-baths-winter-reel-2026/real-media-expanded-shortlist.md",
+    "previewHTML": "thermal_reel_real_media_sources/expanded_multishot_gallery.html",
+    "previewHTMLSHA256": "e3a351ce41f79a1d914cd35b8e3b3366e1fb1cbaffbd296ff7c9053656d28dd7",
+    "packageName": "thermal_reel_real_media_sources/expanded_multishot_selection_package.zip",
+    "packageSHA256": "0aba4cab6c1c738bf5960dd668579d22d050daa0a4bfcf548cabae7e81793974",
+    "realBytesStored": false,
+    "externalThumbnailURLsUsed": true,
+    "qualityIssue": "Sky Lagoon Commons images are auxiliary cold plunge/sauna, not the main warm infinity lagoon",
+    "sourceRightsStatus": "License labels on Commons source pages; full per-file recheck/credit adaptation review pending before commercial use",
+    "status": "CURATED_NOT_FINAL_ASSETS",
+    "allowed": "Frame alternatives and footage for single location without changing approved look, order or Leo cover",
+    "notAuthorized": "Paid API/A2E/TTS/final MP4/publication"
   }
 }
