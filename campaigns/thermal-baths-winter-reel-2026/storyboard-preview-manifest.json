@@ -1,7 +1,7 @@
 {
   "project": "thermal-baths-winter-reel-2026",
-  "stage": "REAL_MEDIA_SOURCING__12_PHOTO_PAGES_3_VIDEO_PAGES_FOUND",
-  "status": "REAL_WORLD_MEDIA_REPLACEMENT_CANDIDATES_FOUND__DOWNLOAD_AND_LICENSE_QA_PENDING",
+  "stage": "REAL_PHOTO_59S_BROWSER_PREVIEW_READY_ORIGINAL_BYTES_BLOCKED",
+  "status": "REAL_LOCATIONS_SOURCE_VERIFIED__HTML_PREVIEW_NEEDS_LEO_REVIEW__NOT_FINAL_MP4",
   "script_selection": "1 - explicit Leo chat approval 2026-11-23",
   "source": "Published full Wix article /post/12-zimnih-termalnyh-kurortov",
   "sourceArticleId": "60e8b25a-9288-4baa-9d25-15e52e062427",
@@ -9,7 +9,7 @@
   "seconds": 59,
   "numberOfScenes": 13,
   "renderingStatus": "INTERACTIVE_HTML_PREVIEWS_IN_CHAT; remote photo sources read via Wix metadata; NOT DOWNLOADED_OR_ARCHIVED",
-  "productionStatus": "REAL_SOURCE_CATALOGUE_VERIFIED_NOT_MEDIA_BYTES; NO_NEW_EDIT_OR_MP4; NO_PAID_A2E_OR_TTS; NOT_PUBLISHED",
+  "productionStatus": "REAL_MEDIA_WEB_PREVIEW_BUT_NOT_DOWNLOADED; REAL_LOCATION_MEDIA_ASSETS_MISSING; NO_FINAL_MP4_NO_PAID_A2E_OR_TTS_NOT_PUBLISHED",
   "licenseCheck": "NOT_VERIFIED_FOR_AI_ILLUSTRATIONS_AS_LOCATION_PHOTOS; original Wix article real photos require independent attribution/license audit before production",
   "variants": [
     {
@@ -230,7 +230,7 @@
       ]
     }
   },
-  "nextAction": "Acquire the actual real original photo/video files from the validated source pages in an environment with media retrieval, validate correct depiction and licenses, create owner-private source archive and real-scene visual preview for Leo approval; no substitution or paid render yet.",
+  "nextAction": "Leo visually reviews the 59s HTML animatic with real Wikimedia photo URLs; in a network-enabled media environment obtain/download original photo/video bytes, check visual accuracy and attribution/ShareAlike, then render a proper MP4 with the exact approved style. No payments or publication inferred.",
   "scenesPreviousOrderRetained": true,
   "currentSceneOrder": [
     13,
@@ -395,5 +395,35 @@
     "preserve": "approved exact 12-panel atlas composition/order and Leo cover, including 2 separate source photos for final Tbilisi/Ourense split-screen",
     "replaces": "5/12 AI drafts only as a proposed content-source improvement. They remain drafts, not approved documentary assets",
     "noPublicUpload": true
+  },
+  "realMediaPreview20261124": {
+    "userTrigger": "делай (after research of authentic photos and 2 directly matching videos)",
+    "sourceManifestGitHub": "campaigns/thermal-baths-winter-reel-2026/real-media-sources.md",
+    "kind": "HTML 59s interactive photo animatic (NOT an MP4); external Wikimedia Commons image URLs resolved at viewing time",
+    "format": "9:16",
+    "durationSeconds": 59,
+    "slides": 12,
+    "locations": 12,
+    "lastScene": "Abanotubani + Ourense original photos shown as 2-panel split within slide 12",
+    "firstSlide": "exact owner-accepted cover with Leo supplied photograph from local previous reel",
+    "styling": "yellow headline / navy label, gentle Ken Burns zoom, original order preserved",
+    "visualSources": "12 Commons original File pages; 2 video candidates separately linked but not yet integrated",
+    "improvedCandidates": [
+      "Therme Leukerbad 2024a.jpg | Whgler | CC BY 4.0 | 4000×3000",
+      "Sky Lagoon Saunas.jpg | Laurenmcl | CC BY-SA 4.0 | 2048×1365 | lagoon background, not infinity edge"
+    ],
+    "packageName": "thermal_reel_real_media_sources/real_media_preview_package.zip",
+    "packageSHA256": "65ca823627b21964a510ca611f1e18a0ef7e8a65a6a9b62caf996e1bb382e896",
+    "htmlName": "thermal_reel_real_media_sources/real_media_storyboard_preview.html",
+    "sceneManifestSHA256": "b9a37382fe4a555639285bfaac6f0cef294b27cc08a0536fe124c5f6c3fecd7c",
+    "containsActualDownloadedOriginals": false,
+    "actualVideoBytesDownloaded": false,
+    "artifactStorage": "ChatGPT sandbox only; GitHub manifest and source licenses, no media bytes uploaded to owner Drive or GitHub",
+    "reasonNoDownload": "Direct container Wikimedia download failed due to disabled outbound internet/DNS. Player fetches live remote images in end-user browser when internet is available.",
+    "audio": "Optional previously existing temporary instrumental, NO generated WarmBaritone or other narrated voice",
+    "licensing": "Commons file author/license metadata reverified; commercial composite rights evaluation not yet complete; do not publish",
+    "QA": "ZIP CRC checked; 12 slides/59s timing programmatically checked; JavaScript image loading not browser-tested in a network-connected environment",
+    "approval": "Owner chose prior storyboard; new actual photographic substitutions require Leo review; no owner approval yet",
+    "payment": "No A2E / no TTS / no paid external creation"
   }
 }
