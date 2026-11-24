@@ -2,7 +2,7 @@
 
 DATE: 2026-11-24
 BRIEF: Leo предложил отказаться от вымышленных ИИ-пейзажей и найти реальную фотографию/видео каждой локации для принятого Atlas reel.
-STATUS: PUBLIC_SOURCE_CARDS_FOUND; ORIGINAL_BYTES_NOT_DOWNLOADED; LICENSE_AUDIT_PRELIMINARY; PRODUCTION_REPLACEMENT_NOT_STARTED
+STATUS: 12_SOURCE_PAGES_REVERIFIED; INTERACTIVE_59S_REAL_PHOTO_STORYBOARD_PREVIEW_CREATED; ORIGINAL_IMAGE_BYTES_NOT_DOWNLOADED; LICENSE_AUDIT_PRELIMINARY; NO_FINAL_MP4
 SOURCE_TYPE: Wikimedia Commons individual file pages with authors/licences; all links resolve to specific source cards, not invented media.
 VISUAL_APPROVAL: prior storyboard composition/order remains accepted; separate choice of external authentic photos for production not yet claimed as approved.
 
@@ -42,3 +42,16 @@ VISUAL_APPROVAL: prior storyboard composition/order remains accepted; separate c
 - Do not upload private media Drive URLs or IDs to this public repo. Do not mark MEDIA_AVAILABLE or RIGHTS_CLEARED without actual byte/metadata readback.
 
 NEXT_ACTION: Select and inspect authentic imagery for all 12 real locations (including actual video for two); verify exact license and download original files to owner-private archive when possible, then present a real-media vertical scene preview for Leo's approval before montage. No A2E/TTS or publication authorization inferred.
+
+
+## Подтвержденный интерактивный предпросмотр на реальных фото — 24.11.2026
+
+- Следующий выбор Leo после «делай»: смонтировать именно реальные кадры, сохранив 12 утвержденных кадров и вступление с личной фотографией Leo.
+- Создан воспроизводимый browser-only HTML `real_media_storyboard_preview.html` с 59-секундным таймлайном, динамической сменой 11 visual scenes (10 одиночных и один split-screen Georgia/Spain), yellow/navy титрами, Leonid cover и временной ранее подготовленной инструментальной дорожкой (по выбору). **Этот HTML и ZIP находятся в ChatGPT sandbox, не в GitHub и не в пользовательском Drive**. Он по сети берет Wikimedia-фотографии; это не локально скачанный источник и не готовый MP4.
+- Отправка коммерческого материала или синтетической озвучки не запускалась. Никакие видео не вмонтированы; ссылки на два релевантных оригинальных видеоклипа включены как кандидаты.
+- Заменен некачественный кандидат Leukerbad (960×1280) на **Therme Leukerbad 2024a.jpg**, фотограф Whgler, 4000×3000, CC BY 4.0: https://commons.wikimedia.org/wiki/File:Therme_Leukerbad_2024a.jpg (верифицировано по Commons).
+- Для Sky Lagoon исходный `Sky Lagoon Exterior.jpg` документированно показывает лишь внешний вход; визуальная кандидатура заменена на **Sky Lagoon Saunas.jpg**, фотограф Laurenmcl, 2048×1365, CC BY-SA 4.0: https://commons.wikimedia.org/wiki/File:Sky_Lagoon_Saunas.jpg (там холодный бассейн, на дальнем плане лагуна; НЕ утверждать что фото показывает вид из infinity pool).
+- В состав веб-предпросмотра входят проверенные источники для всех двенадцати мест с кредитами, точными лицензиями и прямыми `File:` ссылками; original MediaWiki File pages были реально повторно открыты в этом сеансе. Вне Сommons лицензии private rights/model releases не оценивались.
+- HTML has not been browser-executed in runtime with internet; visual correctness of remote images on target browser remains PENDING. Local static checks: 12 scenes including cover, exact 59s timeline, source manifest, ZIP CRC and SHA256.
+- ZIP file `real_media_preview_package.zip` SHA256 `65ca823627b21964a510ca611f1e18a0ef7e8a65a6a9b62caf996e1bb382e896`; `scene_manifest.json` SHA256 `b9a37382fe4a555639285bfaac6f0cef294b27cc08a0536fe124c5f6c3fecd7c`.
+- Direct network downloads from the local container were attempted but failed because DNS/network is disabled. Therefore **NO original Wikimedia photo or video bytes were downloaded**; do not claim real media archive or final render. For connected runtime the package includes a source-retrieval script, not executed. Production stage remains pending media bytes and license/licence-attribution QA.
