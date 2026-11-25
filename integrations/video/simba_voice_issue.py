@@ -15,6 +15,29 @@ MAX_REQUEST_BYTES = 8192
 MAX_OUTPUT_TOKENS_PER_PART = 1400
 
 
+def validate_event(event):
+    """Read historical owner-issued WAV provenance for Montage write-back."""
+    issue = event.get('issue') or {}
+    if ((event.get('repository') or {}).get('full_name') != 'legur/Simba'
+        or event.get('action') != 'labeled'
+        or (event.get('label') or {}).get('name') != 'simba-approved-voice'
+        or (event.get('sender') or {}).get('login') != 'legur'
+        or (issue.get('user') or {}).get('login') != 'legur'
+        or issue.get('pull_request') is not None
+        or type(issue.get('number')) is not int or issue['number'] < 1):
+        raise ValueError('Untrusted event')
+    data = json.loads(issue.get('body') or '')
+    if not isinstance(data, dict) or set(data) != {'kind', 'text', 'destination_folder_id'}:
+        raise ValueError('Invalid request fields')
+    if data['kind'] != 'simba_approved_voice':
+        raise ValueError('Invalid request kind')
+    text = data['text']
+    if not isinstance(text, str) or not text.strip() or len(text) > 450:
+        raise ValueError('Text must be between 1 and 450 characters')
+    folder = store.validate_drive_id(data['destination_folder_id'])
+    return issue['number'], text, folder
+
+
 def request_digest(event, env):
     inputs = event.get("inputs") or {}
     digest = inputs.get("request_sha256")

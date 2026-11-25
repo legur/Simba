@@ -154,7 +154,7 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 
 | Компонент | Файл | Версия | Статус |
 |---|---|---|---|
-| Router | ROUTER_v10.1.md | 20.5 · 17.11.2026 | ✅ routing; добавлен запрос поиска референсов Кадром; его реальный пилот ожидается |
+| Router | ROUTER_v10.1.md | 20.7 · 23.11.2026 | ✅ routing; добавлен запрос поиска референсов Кадром; его реальный пилот ожидается |
 | Кадр | `Кадр/KADR_v1.0.md` + `Кадр/База/INDEX.md` | 2.1 · 08.11.2026 | 🔧 поиск по запросу → отбор → разбор лучших → база; реальный Instagram-пилот не проверен |
 | Сценарист | `Сценарист/SCENARIST_Simba_by_Bon_Tours_v1.0.md` | 3.1 · 17.11.2026 | ✅ активен — речь, таблица сцен, промпты анимации по запросу; VIDEO HANDOFF → Монтажер Клод |
 | Монтажер Клод | `Монтажер Клод/MONTAZHER_KLOD_v1.0.md` + `integrations/video/` | 2.1 · 17.11.2026 | 🔧 в разработке — ролик до 60 с: фото-история, клипы Grok, нарисованные вставки, мультяшный Симба по команде Leo; gates фактов, речи, читаемости |
@@ -174,10 +174,10 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 | Archivarius | Archivarius-System-v2.7.md + `01_Изображения` | 2.7 | ✅ внешняя библиотека; Rafael ищет trusted-first, затем по релевантным active visual cards вне blocklist |
 | YouMind AI Image Prompts | GitHub `YouMind-OpenLab/ai-image-prompts-skill` / `references/*` | external live | ✅ активен; постоянный reference-source Rafael, external failure non-blocking |
 | Audit | Audit-v1.2.md | 2.5 · 27.10.2026 (путь прежний) | ✅ активен — опциональная external review / Session Log ветка; не production-разрешение |
-| Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.2 · 17.11.2026 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
+| Feedback Learning / PATTERN_WATCH | `SIMBA KNOWLEDGE BASE/07_LEARNINGS/PATTERN_WATCH.md` | 2.5 · 20.11.2026 | ✅ активен — канонический learning-слой budetsdelano.ai и перенос релевантных PATTERN в будущие посты |
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
-| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 2.1 / runtime 9.5 | ✅ обязательный общий контекст; preflight поиска Кадра |
-| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 11.4 · 17.11.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
+| SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 2.3 / runtime 9.7 | ✅ обязательный общий контекст; preflight поиска Кадра |
+| Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 11.6 · 23.11.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
 | Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 3.2 · 25.11.2026 | Пост → сценарий → визуал (optional A2E via Wix) → Монтажер Клод → QA → Leo; публикация отдельно |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 3.0 · 17.11.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
