@@ -5,7 +5,7 @@
 Тип: POST_DERIVED_VISUAL.  
 VISUAL_EXECUTOR: RAFAEL_System_v6.2  
 RENDERER: ChatGPT Image Generation  
-STATUS: FINAL_VISUAL_READY / VARIANT_01  
+STATUS: FINAL_VISUAL_READY / VARIANT_01_REV_02  
 QA: пять отдельных квадратных превью 1254 × 1254, тексты и визуальные различия сверены. Сцены иллюстративные.  
 Reference pass: прочитаны канонические Archivarius trusted-описания механик; поиск исходных карточек не вернул совпадений. Из актуального YouMind manifest прочитан poster-flyer JSON; использована только композиционная идея карточки 33923, образец исходного изображения не использовался. Для точного текста применены правила EX-01. Референс личности Simba не подавался.
 
@@ -81,3 +81,11 @@ Create ONE individual square 1:1 Russian-language Facebook travel poster preview
 Premium minimal magazine-cover art direction: still pale jade water in the lower half, dense Lithuanian pine silhouettes behind, close-level horizontal view, diffuse silver morning light and velvety deep green upper negative space. Calm realistic image with gentle late-autumn atmosphere, no human figure. Lower-left warm-cream type on a subtle dark gradient.
 
 FINAL RENDER. This is the approved visual direction #1, now with the Simba mascot added at the user's request. Output one full-resolution square poster 1:1 at the highest resolution available, ideally 2048 × 2048. Image 1 is the exact poster reference and should remain overwhelmingly recognizable: preserve its forest, lake, warm light, palette, header, exact typography and positions, lower-left offer block and lower-right signature in place. Image 2 is a character reference ONLY: match the same adult photorealistic anthropomorphic tawny lion Simba, dignified naturally aged expression and beige linen jacket from Image 2, with no background or typography transferred. Add him naturally on the right of image 1, waist-up around the middle right, occupying roughly the rightmost quarter, never covering the headline, the bottom-left information, or the brand signature. Give him realistic subdued woodland lighting, scale and color blending. Keep the misty water and pines as the main visual field; retain original shoreline in the majority of the image. The previously written 'no human figure' is superseded solely for this added lion. Do not remove, replace, or retype any existing Cyrillic letter incorrectly. Exact text: “2027 ПО ЦЕНАМ 2026”, “UPA Medical SPA”, “Друскининкай, Литва”, “Eshet FLEX бесплатно в ноябре”, “Simba by Bon Tours”. Render these exactly once each.
+
+## Правка финального постера
+
+LEO_CORRECTION: «удали упоминание про флекс». Применено к постеру.  
+FINAL_VISUAL_REV_02: exec-9e8c8257-02eb-4712-8606-a697cb8ac446.png  
+SHA256: ba6b42d9dcdefc7189daf4cd9a644dd3705e44a2df56f53577a74282e7dbdc2e  
+QA: строка Eshet FLEX удалена, фон восстановлен. Заголовок, название UPA, город и подпись бренда читаются.  
+RENDERER: ChatGPT Image Generation, локальная правка выбранного оригинала.
