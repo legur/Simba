@@ -5,7 +5,7 @@
 Тип: POST_DERIVED_VISUAL.  
 VISUAL_EXECUTOR: RAFAEL_System_v6.2  
 RENDERER: ChatGPT Image Generation  
-STATUS: PREVIEWS_READY / LEO_SELECTION_PENDING  
+STATUS: FINAL_VISUAL_READY / VARIANT_01  
 QA: пять отдельных квадратных превью 1254 × 1254, тексты и визуальные различия сверены. Сцены иллюстративные.  
 Reference pass: прочитаны канонические Archivarius trusted-описания механик; поиск исходных карточек не вернул совпадений. Из актуального YouMind manifest прочитан poster-flyer JSON; использована только композиционная идея карточки 33923, образец исходного изображения не использовался. Для точного текста применены правила EX-01. Референс личности Simba не подавался.
 
@@ -63,3 +63,21 @@ REFERENCE_TRACE: Independent cinematic brand-mascot concept.
 Create ONE individual square 1:1 Russian-language Facebook travel poster preview for a premium Lithuanian wellness campaign. Visually polished, generous margins, phone-legible for adults 45+. This is advertising illustration for UPA Medical SPA, so all scenery is Baltic woodland-inspired and symbolic, with no falsely documentary hotel facade or represented exact UPA premises. Let the composition breathe; maximum typographic fidelity. Render each of the following exact strings once only, no extra copy or digits. Large headline near the top: “2027 ПО ЦЕНАМ 2026”. Bottom-left offer block with high contrast and readable sizes, exact lines “UPA Medical SPA”, “Друскининкай, Литва”, “Eshet FLEX бесплатно в ноябре”. Subtle but legible brand signature “Simba by Bon Tours” bottom right or directly below the info block, whichever is calmer. Print only the text inside quote marks, without quotation marks. No telephone, contacts, QR, URLs, badges, fake logos, tiny labels or watermark. All text should sit within 8% of edges, no cropping. Poster might be elegantly art-directed, but use only one coherent full-bleed focal design, never a mockup, grid or mockup environment.
 
 Editorial character-led version. A dignified adult photorealistic anthropomorphic lion travel ambassador with a tawny thick natural mane, subtly graying edges, calm reassuring eyes and tailored beige linen jacket, relaxed on the right beside a Baltic pine boardwalk, framed waist-up, inspired by a quiet Lithuanian wellness getaway. Naturally integrated real directional dawn light, no mascot costume, no cartoon, no medical garb. Woods in desaturated pale sage; type uses dark moss on lighter open space at the top, info block strongly readable lower left. Keep left side open.
+
+## Выбор и финальный рендер
+
+LEO_SELECTION: «берем вариант 1», 25.11.2026. Вопрос о присутствии Симбы применен как уточнение к выбранному постеру.  
+SELECTED_VARIANT_ID: 01, Сосновый лес.  
+IMAGE_REFERENCES: исходное превью 1 для макета, превью 5 для образа Симбы.  
+FINAL_VISUAL: exec-f589fb45-eddd-4d06-93eb-4a962a465271.png  
+SHA256: 988d44f766f0b2bbcb2f5758a071962e5d8c20a1620aa3cf0435fb2b075e68ae  
+QA: PNG RGB 1254 × 1254. Заголовок, инфоблок, брендовая подпись и условия сверены визуально. Лев справа, лес и озеро по выбранному превью. Сцена иллюстративная.  
+PUBLICATION: отдельное решение Leo.
+
+### Final generation prompt
+
+Create ONE individual square 1:1 Russian-language Facebook travel poster preview for a premium Lithuanian wellness campaign. Visually polished, generous margins, phone-legible for adults 45+. This is advertising illustration for UPA Medical SPA, so all scenery is Baltic woodland-inspired and symbolic, with no falsely documentary hotel facade or represented exact UPA premises. Let the composition breathe; maximum typographic fidelity. Render each of the following exact strings once only, no extra copy or digits. Large headline near the top: “2027 ПО ЦЕНАМ 2026”. Bottom-left offer block with high contrast and readable sizes, exact lines “UPA Medical SPA”, “Друскининкай, Литва”, “Eshet FLEX бесплатно в ноябре”. Subtle but legible brand signature “Simba by Bon Tours” bottom right or directly below the info block, whichever is calmer. Print only the text inside quote marks, without quotation marks. No telephone, contacts, QR, URLs, badges, fake logos, tiny labels or watermark. All text should sit within 8% of edges, no cropping. Poster might be elegantly art-directed, but use only one coherent full-bleed focal design, never a mockup, grid or mockup environment.
+
+Premium minimal magazine-cover art direction: still pale jade water in the lower half, dense Lithuanian pine silhouettes behind, close-level horizontal view, diffuse silver morning light and velvety deep green upper negative space. Calm realistic image with gentle late-autumn atmosphere, no human figure. Lower-left warm-cream type on a subtle dark gradient.
+
+FINAL RENDER. This is the approved visual direction #1, now with the Simba mascot added at the user's request. Output one full-resolution square poster 1:1 at the highest resolution available, ideally 2048 × 2048. Image 1 is the exact poster reference and should remain overwhelmingly recognizable: preserve its forest, lake, warm light, palette, header, exact typography and positions, lower-left offer block and lower-right signature in place. Image 2 is a character reference ONLY: match the same adult photorealistic anthropomorphic tawny lion Simba, dignified naturally aged expression and beige linen jacket from Image 2, with no background or typography transferred. Add him naturally on the right of image 1, waist-up around the middle right, occupying roughly the rightmost quarter, never covering the headline, the bottom-left information, or the brand signature. Give him realistic subdued woodland lighting, scale and color blending. Keep the misty water and pines as the main visual field; retain original shoreline in the majority of the image. The previously written 'no human figure' is superseded solely for this added lion. Do not remove, replace, or retype any existing Cyrillic letter incorrectly. Exact text: “2027 ПО ЦЕНАМ 2026”, “UPA Medical SPA”, “Друскининкай, Литва”, “Eshet FLEX бесплатно в ноябре”, “Simba by Bon Tours”. Render these exactly once each.
