@@ -178,7 +178,7 @@ Audit 17.11.2026: активные ссылки и внутренние верс
 | AI plugin tools | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/AI_PLUGIN_TOOLS.md` + `integrations/ai_plugins/` | 2.0 · 19.10.2026 | Xberg, humanizer-ru, BulkPublish и Zernio draft; внешние smoke-тесты отдельно |
 | SIMBA Knowledge Base | `SIMBA KNOWLEDGE BASE/00_CORE/KNOWLEDGE_MAP.md` + `KB_RUNTIME_PROTOCOL.md` | Knowledge Map 2.1 / runtime 9.5 | ✅ обязательный общий контекст; preflight поиска Кадра |
 | Content Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/CONTENT_PIPELINE.md` | 11.4 · 17.11.2026 | COPYWRITER_TEST_MODE; GROK_ADS_MODE; Humanizer до approval; Zernio draft; сценарная ветка с таблицей сцен; монтаж ролика |
-| Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 3.1 · 17.11.2026 | Пост → сценарий → визуал (optional A2E via Wix) → Монтажер Клод → QA → Leo; публикация отдельно |
+| Video Pipeline | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/VIDEO_PIPELINE.md` | 3.2 · 25.11.2026 | Пост → сценарий → визуал (optional A2E via Wix) → Монтажер Клод → QA → Leo; публикация отдельно |
 | Rafael trigger | `SIMBA KNOWLEDGE BASE/06_AGENT_WORKFLOWS/RAFAEL_TRIGGER.md` | 3.0 · 17.11.2026 | Точная редакция после Humanizer; повторное утверждение и QA при изменении |
 
 

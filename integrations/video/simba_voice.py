@@ -62,28 +62,15 @@ def _require_github_secrets_workflow():
     checkout_sha = os.environ.get("GITHUB_SHA", "")
     workflow_sha = os.environ.get("GITHUB_WORKFLOW_SHA", "")
     event_kind = os.environ.get("GITHUB_EVENT_NAME")
-    trusted_issue = False
-    if event_kind == "issues":
-        try:
-            event = json.loads(Path(os.environ.get("GITHUB_EVENT_PATH", "")).read_text(encoding="utf-8"))
-            issue = event.get("issue") or {}
-            trusted_issue = (
-                event.get("action") == "labeled"
-                and (event.get("label") or {}).get("name") == "simba-approved-voice"
-                and (event.get("sender") or {}).get("login") == "legur"
-                and (issue.get("user") or {}).get("login") == "legur"
-                and issue.get("pull_request") is None
-                and os.environ.get("GITHUB_WORKFLOW") == "Simba approved voice issue runner"
-                and os.environ.get("GITHUB_WORKFLOW_REF") == "legur/Simba/.github/workflows/simba-approved-voice-issue.yml@refs/heads/main"
-            )
-        except (OSError, ValueError, TypeError):
-            trusted_issue = False
-    trusted_dispatch = (event_kind == "workflow_dispatch"
-        and os.environ.get("GITHUB_WORKFLOW") == GITHUB_TTS_WORKFLOW
-        and os.environ.get("GITHUB_WORKFLOW_REF") == GITHUB_TTS_WORKFLOW_REF)
+    workflow = (os.environ.get("GITHUB_WORKFLOW"), os.environ.get("GITHUB_WORKFLOW_REF"))
+    trusted_dispatch = event_kind == "workflow_dispatch" and workflow in {
+        (GITHUB_TTS_WORKFLOW, GITHUB_TTS_WORKFLOW_REF),
+        ("Simba approved voice private runner",
+         "legur/Simba/.github/workflows/simba-approved-voice-issue.yml@refs/heads/main"),
+    }
     trusted = (
         os.environ.get("GITHUB_ACTIONS") == "true"
-        and (trusted_dispatch or trusted_issue)
+        and trusted_dispatch
         and os.environ.get("GITHUB_ACTOR") == os.environ.get("GITHUB_REPOSITORY_OWNER")
         and os.environ.get("GITHUB_TRIGGERING_ACTOR") == os.environ.get("GITHUB_REPOSITORY_OWNER")
         and os.environ.get("GITHUB_ACTOR") == "legur"
@@ -244,7 +231,7 @@ def _audio_from_response(obj):
     return blob
 
 
-def _generate_once(text, voice_id, model, *, response_path=None):
+def _generate_once(text, voice_id, model, *, response_path=None, max_output_tokens=None):
     # Keep this check at the actual network boundary too: callers can inject a
     # wrapper around this private generator and bypass synthesize_lines' early
     # preflight identity check.
@@ -261,6 +248,8 @@ def _generate_once(text, voice_id, model, *, response_path=None):
         "response_format": {"type": "audio"},
         "generation_config": {"speech_config": [{"voice": voice_id}]}
     }
+    if max_output_tokens is not None:
+        payload["generation_config"]["max_output_tokens"] = max_output_tokens
     data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(
         INTERACTIONS_URL, data=data, method="POST",
