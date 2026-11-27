@@ -30,3 +30,41 @@ Flydubai объявила о возобновлении полетов межд�
 Для себя я бы выбрал несколько дней в Дубае и еще несколько у моря на Саадияте. Чтобы нагуляться и побыть у воды столько, сколько захочется.
 
 **А у вас что перевесит: прогулки или море? Хватит одного слова.**
+
+---
+
+## Rafael visual session
+
+- Format: 1:1. Title: «ПРОГУЛКИ ИЛИ МОРЕ?». Footer: «Simba by Bon Tours».
+- Workflow: 5 previews; user selects number before a separate final render. PUBLISHED: NO.
+- Reference trace: Archivarius trusted list reviewed; lookup did not return the full requested card. YouMind manifest and search checked; no template validated or supplied to the renderer. Original compositions; no external reference images supplied.
+
+### 1. Вечерняя Марина
+
+```text
+One square 1:1 polished Russian Facebook travel poster for the UAE. Exactly two inscriptions only. Across the very top in large bold readable white or navy Cyrillic place exactly «ПРОГУЛКИ ИЛИ МОРЕ?» once. At bottom left write exactly «Simba by Bon Tours» once. No quotation marks printed, no other lettering or numeral or watermark. Quiet background behind title, strong hierarchy, safe margins. An adult photorealistic lion mascot Simba in a subtle sand linen jacket, elegant restrained expression, secondary to scenery. Blue-hour photography, Dubai Marina promenade from eye level, evening cafe tables, glass towers, water reflections. A cinematic soft transition across the composition to a separate daytime Gulf beach, distinct travel experiences. Lion at parapet in profile. Cobalt and amber.
+```
+
+### 2. Утро в Фуджейре
+
+```text
+One square 1:1 polished Russian Facebook travel poster for the UAE. Exactly two inscriptions only. Across the very top in large bold readable white or navy Cyrillic place exactly «ПРОГУЛКИ ИЛИ МОРЕ?» once. At bottom left write exactly «Simba by Bon Tours» once. No quotation marks printed, no other lettering or numeral or watermark. Quiet background behind title, strong hierarchy, safe margins. An adult photorealistic lion mascot Simba in a subtle sand linen jacket, elegant restrained expression, secondary to scenery. Beach-first premium destination photography, Fujairah at sunrise, distant Hajar mountains, warm pale sand, closed book in close foreground, the lion seated far away facing water. Tiny city skyline visible reflected in sunglasses on the book as a travel daydream. Airy turquoise, peach, ivory.
+```
+
+### 3. Две открытки
+
+```text
+One square 1:1 polished Russian Facebook travel poster for the UAE. Exactly two inscriptions only. Across the very top in large bold readable white or navy Cyrillic place exactly «ПРОГУЛКИ ИЛИ МОРЕ?» once. At bottom left write exactly «Simba by Bon Tours» once. No quotation marks printed, no other lettering or numeral or watermark. Quiet background behind title, strong hierarchy, safe margins. An adult photorealistic lion mascot Simba in a subtle sand linen jacket, elegant restrained expression, secondary to scenery. Overhead travel-magazine flat lay on a light limestone desk, two overlapping tactile photographic postcards with no text, one showing Dubai Marina at dusk and the other waves on mountain-backed Gulf shore, gentle palm-leaf shadow. In the city postcard place a visible small lion near the promenade. Retro travel-print colors.
+```
+
+### 4. Графический постер
+
+```text
+One square 1:1 polished Russian Facebook travel poster for the UAE. Exactly two inscriptions only. Across the very top in large bold readable white or navy Cyrillic place exactly «ПРОГУЛКИ ИЛИ МОРЕ?» once. At bottom left write exactly «Simba by Bon Tours» once. No quotation marks printed, no other lettering or numeral or watermark. Quiet background behind title, strong hierarchy, safe margins. An adult photorealistic lion mascot Simba in a subtle sand linen jacket, elegant restrained expression, secondary to scenery. Contemporary mixed-media design with vintage travel-poster composition. Dramatic stylized Dubai architecture and flowing graphic ocean waves, independent shapes rising left and sweeping right, plum coral teal. A precisely cropped photoreal adult lion in profile harmonizes with the graphic composition.
+```
+
+### 5. Две арки
+
+```text
+One square 1:1 polished Russian Facebook travel poster for the UAE. Exactly two inscriptions only. Across the very top in large bold readable white or navy Cyrillic place exactly «ПРОГУЛКИ ИЛИ МОРЕ?» once. At bottom left write exactly «Simba by Bon Tours» once. No quotation marks printed, no other lettering or numeral or watermark. Quiet background behind title, strong hierarchy, safe margins. An adult photorealistic lion mascot Simba in a subtle sand linen jacket, elegant restrained expression, secondary to scenery. Minimal cinematic photoreal scene: through two separate stone arches on one refined sand-toned terrace see two distinct vistas, Dubai Marina dusk and bright Gulf seascape backed by mountains. Adult lion stands small at center choosing his view, seen three-quarter from behind. Terracotta indigo turquoise.
+```
