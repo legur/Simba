@@ -1,6 +1,7 @@
 # APPROVED TEXT — Прогулки или море в Эмиратах (27.11.2026)
 
-- STATUS: APPROVED_TEXT; VISUAL: FIVE_PREVIEWS_READY; PUBLISHED: NO.
+- STATUS: APPROVED_TEXT; VISUAL: FIVE_PREVIEWS_READY; PUBLISHED: YES (text, Leo confirmation 27.11.2026).
+- PUBLICATION_EVIDENCE: Leo «опубликованно» 27.11.2026; public URL and visual variant not supplied.
 - APPROVAL_EVIDENCE: Leo «оддобряю. делай постер» к точной редакции ниже.
 - CLASSIFICATION: Simba / Facebook / прогревающий гид с новостным поводом; цель: комментарии и охват.
 - TEXT_EXECUTOR: Simba; VISUAL_EXECUTOR: Rafael; RENDERER: ChatGPT Images.
@@ -36,7 +37,7 @@ Flydubai объявила о возобновлении полетов межд�
 ## Rafael visual session
 
 - Format: 1:1. Title: «ПРОГУЛКИ ИЛИ МОРЕ?». Footer: «Simba by Bon Tours».
-- Workflow: 5 previews; preview images 1–5 visually checked for title and brand caption; user selects number before a separate final render. PUBLISHED: NO.
+- Workflow: 5 previews; preview images 1–5 visually checked for title and brand caption; user selects number before a separate final render. Visual publication not confirmed.
 - Reference trace: Archivarius trusted list reviewed; lookup did not return the full requested card. YouMind manifest and search checked; no template validated or supplied to the renderer. Original compositions; no external reference images supplied.
 
 ### 1. Вечерняя Марина
