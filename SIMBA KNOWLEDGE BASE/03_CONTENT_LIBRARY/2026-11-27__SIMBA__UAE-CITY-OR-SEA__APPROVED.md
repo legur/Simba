@@ -1,6 +1,6 @@
 # APPROVED TEXT — Прогулки или море в Эмиратах (27.11.2026)
 
-- STATUS: APPROVED_TEXT; VISUAL: RAFAEL_PREVIEWS_PENDING; PUBLISHED: NO.
+- STATUS: APPROVED_TEXT; VISUAL: FIVE_PREVIEWS_READY; PUBLISHED: NO.
 - APPROVAL_EVIDENCE: Leo «оддобряю. делай постер» к точной редакции ниже.
 - CLASSIFICATION: Simba / Facebook / прогревающий гид с новостным поводом; цель: комментарии и охват.
 - TEXT_EXECUTOR: Simba; VISUAL_EXECUTOR: Rafael; RENDERER: ChatGPT Images.
@@ -36,7 +36,7 @@ Flydubai объявила о возобновлении полетов межд�
 ## Rafael visual session
 
 - Format: 1:1. Title: «ПРОГУЛКИ ИЛИ МОРЕ?». Footer: «Simba by Bon Tours».
-- Workflow: 5 previews; user selects number before a separate final render. PUBLISHED: NO.
+- Workflow: 5 previews; preview images 1–5 visually checked for title and brand caption; user selects number before a separate final render. PUBLISHED: NO.
 - Reference trace: Archivarius trusted list reviewed; lookup did not return the full requested card. YouMind manifest and search checked; no template validated or supplied to the renderer. Original compositions; no external reference images supplied.
 
 ### 1. Вечерняя Марина
@@ -48,7 +48,7 @@ One square 1:1 polished Russian Facebook travel poster for the UAE. Exactly two 
 ### 2. Утро в Фуджейре
 
 ```text
-One square 1:1 polished Russian Facebook travel poster for the UAE. Exactly two inscriptions only. Across the very top in large bold readable white or navy Cyrillic place exactly «ПРОГУЛКИ ИЛИ МОРЕ?» once. At bottom left write exactly «Simba by Bon Tours» once. No quotation marks printed, no other lettering or numeral or watermark. Quiet background behind title, strong hierarchy, safe margins. An adult photorealistic lion mascot Simba in a subtle sand linen jacket, elegant restrained expression, secondary to scenery. Beach-first premium destination photography, Fujairah at sunrise, distant Hajar mountains, warm pale sand, closed book in close foreground, the lion seated far away facing water. Tiny city skyline visible reflected in sunglasses on the book as a travel daydream. Airy turquoise, peach, ivory.
+Create a square beach travel poster as an original painterly editorial landscape, with the outlines and depth of a real scene. A calm empty Fujairah shoreline at early morning, blue water, distant rocky mountains, a closed book on a wooden deck in the foreground. A tiny circular medallion with a simple adult lion profile above the footer is the only character. The composition is airy with blue, sand and white. Place the exact Russian heading ПРОГУЛКИ ИЛИ МОРЕ? in dark navy at the top and the exact brand caption Simba by Bon Tours at the bottom left. No other text. One image, square.
 ```
 
 ### 3. Две открытки
